@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SettingsIndexRouteImport } from './routes/settings.index'
 import { Route as SettingsAutomationRouteImport } from './routes/settings.automation'
+import { Route as SettingsGuidelinesRouteImport } from './routes/settings.guidelines'
 import { Route as SettingsTeamRouteImport } from './routes/settings.team'
 import { Route as SettingsTemplatesRouteImport } from './routes/settings.templates'
 
@@ -36,6 +37,11 @@ const SettingsAutomationRoute = SettingsAutomationRouteImport.update({
   path: '/automation',
   getParentRoute: () => SettingsRoute,
 } as any)
+const SettingsGuidelinesRoute = SettingsGuidelinesRouteImport.update({
+  id: '/guidelines',
+  path: '/guidelines',
+  getParentRoute: () => SettingsRoute,
+} as any)
 const SettingsTeamRoute = SettingsTeamRouteImport.update({
   id: '/team',
   path: '/team',
@@ -51,6 +57,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/settings': typeof SettingsRouteWithChildren
   '/settings/automation': typeof SettingsAutomationRoute
+  '/settings/guidelines': typeof SettingsGuidelinesRoute
   '/settings/team': typeof SettingsTeamRoute
   '/settings/templates': typeof SettingsTemplatesRoute
   '/settings/': typeof SettingsIndexRoute
@@ -58,6 +65,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/settings/automation': typeof SettingsAutomationRoute
+  '/settings/guidelines': typeof SettingsGuidelinesRoute
   '/settings/team': typeof SettingsTeamRoute
   '/settings/templates': typeof SettingsTemplatesRoute
   '/settings': typeof SettingsIndexRoute
@@ -67,6 +75,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/settings': typeof SettingsRouteWithChildren
   '/settings/automation': typeof SettingsAutomationRoute
+  '/settings/guidelines': typeof SettingsGuidelinesRoute
   '/settings/team': typeof SettingsTeamRoute
   '/settings/templates': typeof SettingsTemplatesRoute
   '/settings/': typeof SettingsIndexRoute
@@ -77,6 +86,7 @@ export interface FileRouteTypes {
     | '/'
     | '/settings'
     | '/settings/automation'
+    | '/settings/guidelines'
     | '/settings/team'
     | '/settings/templates'
     | '/settings/'
@@ -84,6 +94,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/settings/automation'
+    | '/settings/guidelines'
     | '/settings/team'
     | '/settings/templates'
     | '/settings'
@@ -92,6 +103,7 @@ export interface FileRouteTypes {
     | '/'
     | '/settings'
     | '/settings/automation'
+    | '/settings/guidelines'
     | '/settings/team'
     | '/settings/templates'
     | '/settings/'
@@ -132,6 +144,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsAutomationRouteImport
       parentRoute: typeof SettingsRoute
     }
+    '/settings/guidelines': {
+      id: '/settings/guidelines'
+      path: '/guidelines'
+      fullPath: '/settings/guidelines'
+      preLoaderRoute: typeof SettingsGuidelinesRouteImport
+      parentRoute: typeof SettingsRoute
+    }
     '/settings/team': {
       id: '/settings/team'
       path: '/team'
@@ -151,6 +170,7 @@ declare module '@tanstack/react-router' {
 
 interface SettingsRouteChildren {
   SettingsAutomationRoute: typeof SettingsAutomationRoute
+  SettingsGuidelinesRoute: typeof SettingsGuidelinesRoute
   SettingsTeamRoute: typeof SettingsTeamRoute
   SettingsTemplatesRoute: typeof SettingsTemplatesRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
@@ -158,6 +178,7 @@ interface SettingsRouteChildren {
 
 const SettingsRouteChildren: SettingsRouteChildren = {
   SettingsAutomationRoute: SettingsAutomationRoute,
+  SettingsGuidelinesRoute: SettingsGuidelinesRoute,
   SettingsTeamRoute: SettingsTeamRoute,
   SettingsTemplatesRoute: SettingsTemplatesRoute,
   SettingsIndexRoute: SettingsIndexRoute,
