@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
-import { Search, Filter, Users } from "lucide-react";
-import { createFileRoute } from "@tanstack/react-router";
+import { Search, Filter, Users, Settings } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -102,7 +102,13 @@ function PipelinePage() {
                 created.
               </p>
             </div>
-            <div className="flex gap-6">
+            <div className="flex items-center gap-6">
+              <Link
+                to="/settings"
+                className="inline-flex items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-sm text-foreground transition-colors hover:bg-accent"
+              >
+                <Settings className="size-4" /> Settings
+              </Link>
               <Stat label="In pipeline" value={filtered.length} />
               <Stat label="Needs attention" value={blocked} accent />
               <Stat label="Micro-stages" value={STAGES.length} />
