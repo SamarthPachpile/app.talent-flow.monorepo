@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
-import { Search, Filter, Users, Settings } from "lucide-react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Search, Filter, Users } from "lucide-react";
+import { createFileRoute } from "@tanstack/react-router";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -10,17 +10,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { AppNav } from "@/components/layout/app-nav";
 import { CandidateCard } from "@/components/ats/candidate-card";
 import { CandidateDrawer } from "@/components/ats/candidate-drawer";
+import { useWorkspace } from "@/lib/workspace-store";
 import {
-  CANDIDATES,
   PHASES,
   RECRUITERS,
   ROLES,
   STAGES,
-  type Candidate,
   phaseOfStage,
-  stageIndex,
 } from "@/lib/ats-data";
 
 export const Route = createFileRoute("/")({
@@ -46,7 +45,7 @@ export const Route = createFileRoute("/")({
 });
 
 function PipelinePage() {
-  const [candidates, setCandidates] = useState<Candidate[]>(CANDIDATES);
+  const { candidates, advanceCandidate, company } = useWorkspace();
   const [query, setQuery] = useState("");
   const [role, setRole] = useState("all");
   const [recruiter, setRecruiter] = useState("all");
@@ -69,32 +68,15 @@ function PipelinePage() {
   const selected = candidates.find((c) => c.id === selectedId) ?? null;
   const blocked = filtered.filter((c) => c.blocked).length;
 
-  function advance(id: string) {
-    setCandidates((prev) =>
-      prev.map((c) => {
-        if (c.id !== id) return c;
-        const next = STAGES[Math.min(stageIndex(c.stage) + 1, STAGES.length - 1)];
-        return {
-          ...c,
-          stage: next,
-          blocked: undefined,
-          history: [
-            ...c.history,
-            { stage: next, at: `Day ${c.history.length + 1}`, actor: c.recruiter },
-          ],
-        };
-      }),
-    );
-  }
-
   return (
     <div className="min-h-screen bg-background">
+      <AppNav />
       <header className="border-b border-border bg-surface">
         <div className="px-6 py-6">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
               <p className="text-xs tracking-[0.18em] text-muted-foreground uppercase">
-                Recruitment operations
+                {company.name} · Recruitment operations
               </p>
               <h1 className="mt-1 text-4xl leading-none">Pipeline board</h1>
               <p className="mt-2 max-w-xl text-sm text-muted-foreground">
@@ -103,12 +85,6 @@ function PipelinePage() {
               </p>
             </div>
             <div className="flex items-center gap-6">
-              <Link
-                to="/settings"
-                className="inline-flex items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-sm text-foreground transition-colors hover:bg-accent"
-              >
-                <Settings className="size-4" /> Settings
-              </Link>
               <Stat label="In pipeline" value={filtered.length} />
               <Stat label="Needs attention" value={blocked} accent />
               <Stat label="Micro-stages" value={STAGES.length} />
@@ -200,7 +176,7 @@ function PipelinePage() {
       <CandidateDrawer
         candidate={selected}
         onOpenChange={(open) => !open && setSelectedId(null)}
-        onAdvance={advance}
+        onAdvance={(id) => advanceCandidate(id)}
       />
     </div>
   );

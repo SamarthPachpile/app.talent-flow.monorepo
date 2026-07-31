@@ -80,11 +80,6 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     [],
   );
 
-  const nameOf = useCallback(
-    (id: string) => candidates.find((c) => c.id === id)?.name ?? "Candidate",
-    [candidates],
-  );
-
   const advanceCandidate = useCallback(
     (id: string, actor = "Recruiter") => {
       const c = candidates.find((x) => x.id === id);
@@ -320,9 +315,6 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     sendReminder,
     setCandidateStage,
   ]);
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-  nameOf;
 
   return <WorkspaceContext.Provider value={value}>{children}</WorkspaceContext.Provider>;
 }

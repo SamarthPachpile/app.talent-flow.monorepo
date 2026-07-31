@@ -10,6 +10,8 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApprovalsRouteImport } from './routes/approvals'
+import { Route as InterviewsRouteImport } from './routes/interviews'
 import { Route as OffersRouteImport } from './routes/offers'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SettingsIndexRouteImport } from './routes/settings.index'
@@ -21,6 +23,16 @@ import { Route as SettingsTemplatesRouteImport } from './routes/settings.templat
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApprovalsRoute = ApprovalsRouteImport.update({
+  id: '/approvals',
+  path: '/approvals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InterviewsRoute = InterviewsRouteImport.update({
+  id: '/interviews',
+  path: '/interviews',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OffersRoute = OffersRouteImport.update({
@@ -61,6 +73,8 @@ const SettingsTemplatesRoute = SettingsTemplatesRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/approvals': typeof ApprovalsRoute
+  '/interviews': typeof InterviewsRoute
   '/offers': typeof OffersRoute
   '/settings': typeof SettingsRouteWithChildren
   '/settings/automation': typeof SettingsAutomationRoute
@@ -71,6 +85,8 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/approvals': typeof ApprovalsRoute
+  '/interviews': typeof InterviewsRoute
   '/offers': typeof OffersRoute
   '/settings/automation': typeof SettingsAutomationRoute
   '/settings/guidelines': typeof SettingsGuidelinesRoute
@@ -81,6 +97,8 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/approvals': typeof ApprovalsRoute
+  '/interviews': typeof InterviewsRoute
   '/offers': typeof OffersRoute
   '/settings': typeof SettingsRouteWithChildren
   '/settings/automation': typeof SettingsAutomationRoute
@@ -93,6 +111,8 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/approvals'
+    | '/interviews'
     | '/offers'
     | '/settings'
     | '/settings/automation'
@@ -103,6 +123,8 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/approvals'
+    | '/interviews'
     | '/offers'
     | '/settings/automation'
     | '/settings/guidelines'
@@ -112,6 +134,8 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/approvals'
+    | '/interviews'
     | '/offers'
     | '/settings'
     | '/settings/automation'
@@ -123,6 +147,8 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ApprovalsRoute: typeof ApprovalsRoute
+  InterviewsRoute: typeof InterviewsRoute
   OffersRoute: typeof OffersRoute
   SettingsRoute: typeof SettingsRouteWithChildren
 }
@@ -134,6 +160,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/approvals': {
+      id: '/approvals'
+      path: '/approvals'
+      fullPath: '/approvals'
+      preLoaderRoute: typeof ApprovalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/interviews': {
+      id: '/interviews'
+      path: '/interviews'
+      fullPath: '/interviews'
+      preLoaderRoute: typeof InterviewsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/offers': {
@@ -210,6 +250,8 @@ const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ApprovalsRoute: ApprovalsRoute,
+  InterviewsRoute: InterviewsRoute,
   OffersRoute: OffersRoute,
   SettingsRoute: SettingsRouteWithChildren,
 }
