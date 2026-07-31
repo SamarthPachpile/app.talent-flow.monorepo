@@ -1,0 +1,226 @@
+import { useState } from "react";
+import { createFileRoute } from "@tanstack/react-router";
+import { CalendarClock, Video, BellRing, CheckCircle2 } from "lucide-react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { AppNav } from "@/components/layout/app-nav";
+import { SettingsCard } from "@/components/settings/settings-card";
+import { AuditTrail } from "@/components/ats/audit-trail";
+import { useWorkspace } from "@/lib/workspace-store";
+
+export const Route = createFileRoute("/interviews")({
+  head: () => ({
+    meta: [
+      { title: "Interview Scheduling — CROTON IT SOLUTIONS" },
+      {
+        name: "description",
+        content:
+          "Request interviews and automatically create Google Calendar events with Google Meet links, reminders and Calendar Invite Sent notifications.",
+      },
+      { property: "og:title", content: "Interview Scheduling — CROTON IT SOLUTIONS" },
+      {
+        property: "og:description",
+        content: "Calendar invites, Meet links, reminders and interview completion tracking.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
+  component: InterviewsPage,
+});
+
+function InterviewsPage() {
+  const { candidates, interviews, audit, scheduleInterview, sendReminder, completeInterview, company } =
+    useWorkspace();
+
+  const [candidateId, setCandidateId] = useState("");
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("10:00");
+  const [duration, setDuration] = useState("60");
+  const [panel, setPanel] = useState("");
+
+  const calendarAudit = audit.filter((a) =>
+    ["Interview Requested", "Calendar Invite Sent", "Reminder Sent", "Interview Completed"].includes(
+      a.action,
+    ),
+  );
+
+  function request() {
+    const c = candidates.find((x) => x.id === candidateId);
+    if (!c || !date) {
+      toast.error("Pick a candidate and a date");
+      return;
+    }
+    scheduleInterview({
+      candidateId: c.id,
+      candidateName: c.name,
+      role: c.role,
+      panel: panel ? panel.split(",").map((p) => p.trim()) : [c.hiringManager],
+      date,
+      time,
+      durationMins: Number(duration),
+      timezone: company.timezone,
+    });
+    toast.success("Google Calendar event created — Calendar Invite Sent");
+    setCandidateId("");
+    setDate("");
+    setPanel("");
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      <AppNav />
+      <header className="border-b border-border bg-surface px-6 py-6">
+        <p className="text-xs tracking-[0.18em] text-muted-foreground uppercase">
+          {company.name} · Scheduling
+        </p>
+        <h1 className="mt-1 text-4xl leading-none">Interview scheduling</h1>
+        <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+          Requesting an interview creates a Google Calendar event with a Google Meet link and fires
+          the Calendar Invite Sent notification automatically.
+        </p>
+      </header>
+
+      <div className="grid gap-6 px-6 py-6 xl:grid-cols-[1.6fr_1fr]">
+        <div className="space-y-6">
+          <SettingsCard
+            icon={CalendarClock}
+            title="Request an interview"
+            description="Moves the candidate through Interview Requested → Calendar Invite Sent."
+          >
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2 sm:col-span-2">
+                <Label>Candidate</Label>
+                <Select value={candidateId} onValueChange={setCandidateId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a candidate" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {candidates.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        {c.name} — {c.role} ({c.stage})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="date">Date</Label>
+                <Input
+                  id="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  placeholder="12 Aug 2026"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="time">Start time ({company.timezone})</Label>
+                <Input id="time" value={time} onChange={(e) => setTime(e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="dur">Duration (minutes)</Label>
+                <Input id="dur" value={duration} onChange={(e) => setDuration(e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="panel">Panel (comma separated)</Label>
+                <Input
+                  id="panel"
+                  value={panel}
+                  onChange={(e) => setPanel(e.target.value)}
+                  placeholder="Tom Ellis, Priya Nair"
+                />
+              </div>
+            </div>
+            <div className="mt-5 flex flex-wrap items-center gap-3">
+              <Button onClick={request}>
+                <Video className="size-4" /> Create calendar invite
+              </Button>
+              <p className="text-xs text-muted-foreground">
+                Live Google Calendar sync activates once the backend is connected — the flow,
+                notifications and audit entries are already wired.
+              </p>
+            </div>
+          </SettingsCard>
+
+          <SettingsCard
+            icon={Video}
+            title="Scheduled interviews"
+            description="Send reminders and record completion to unlock feedback and approvals."
+          >
+            <div className="space-y-3">
+              {interviews.length === 0 && (
+                <p className="rounded-md border border-dashed border-border px-4 py-8 text-center text-sm text-muted-foreground">
+                  Nothing scheduled for {company.name}.
+                </p>
+              )}
+              {interviews.map((i) => (
+                <article key={i.id} className="rounded-lg border border-border bg-surface p-4">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-medium text-foreground">{i.candidateName}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {i.role} · {i.date} at {i.time} ({i.timezone}) · {i.durationMins} min
+                      </p>
+                      <p className="mt-1 text-[11px] text-muted-foreground">
+                        Panel: {i.panel.join(", ")}
+                        {i.calendarEventId ? ` · event ${i.calendarEventId}` : ""}
+                      </p>
+                      {i.meetLink && (
+                        <a
+                          href={i.meetLink}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="mt-1 inline-block text-xs text-ember underline underline-offset-2"
+                        >
+                          {i.meetLink}
+                        </a>
+                      )}
+                    </div>
+                    <Badge variant="outline" className="font-normal capitalize">
+                      {i.status}
+                    </Badge>
+                  </div>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={i.status === "completed"}
+                      onClick={() => {
+                        sendReminder(i.id);
+                        toast.success("Reminder Sent");
+                      }}
+                    >
+                      <BellRing className="size-3.5" /> Send reminder
+                    </Button>
+                    <Button
+                      size="sm"
+                      disabled={i.status === "completed"}
+                      onClick={() => {
+                        completeInterview(i.id);
+                        toast.success("Interview Completed");
+                      }}
+                    >
+                      <CheckCircle2 className="size-3.5" /> Mark completed
+                    </Button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </SettingsCard>
+        </div>
+
+        <AuditTrail title="Scheduling audit log" entries={calendarAudit} />
+      </div>
+    </div>
+  );
+}
