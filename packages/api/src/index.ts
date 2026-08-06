@@ -20,9 +20,12 @@ export type { CandidateDocument } from "./services/candidateService";
 export { SettingsBackendService } from "./services/settingsService";
 export { FirebaseAuthService } from "./services/authService";
 export { sendMemberCredentialsSmtp, getSmtpConfig } from "./services/smtpService";
-export type { SendMemberCredentialsParams, SmtpSendResult, SmtpConfig } from "./services/smtpService";
+export type {
+  SendMemberCredentialsParams,
+  SmtpSendResult,
+  SmtpConfig,
+} from "./services/smtpService";
 
 // Export Domain & API Types
 export * from "./types";
 export * from "./constants/signupOptions";
-

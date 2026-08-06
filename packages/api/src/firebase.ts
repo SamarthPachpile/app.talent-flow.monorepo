@@ -85,4 +85,3 @@ export function getBackendStatus(): FirebaseBackendStatus {
     lastPing: new Date().toISOString(),
   };
 }
-

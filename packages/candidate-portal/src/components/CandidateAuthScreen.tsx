@@ -84,7 +84,10 @@ export function CandidateAuthScreen({
       const userEmail = result.user.email || "";
       const userDisplayName = result.user.displayName || "";
       const uid = result.user.uid;
-      const companySlug = company?.subdomain || company?.id || (company?.name ? company.name.toLowerCase().replace(/[^a-z0-9]/g, "") : "");
+      const companySlug =
+        company?.subdomain ||
+        company?.id ||
+        (company?.name ? company.name.toLowerCase().replace(/[^a-z0-9]/g, "") : "");
 
       // Fetch candidate profile from Firestore 'candidates' collection if it exists
       let candDoc = await CandidateApiService.getCandidateByEmailOrUid(userEmail, uid);
@@ -92,14 +95,21 @@ export function CandidateAuthScreen({
       if (candDoc) {
         // PER-COMPANY REGISTRATION CHECK: Must be registered for this company's portal
         if (companySlug) {
-          const isRegistered = CandidateApiService.isCandidateRegisteredForCompany(candDoc, companySlug);
+          const isRegistered = CandidateApiService.isCandidateRegisteredForCompany(
+            candDoc,
+            companySlug,
+          );
           if (!isRegistered) {
             toast.error(
               `Account '${userEmail}' is not registered for ${company?.name || companySlug}'s candidate portal. Please sign up for this company portal first.`,
             );
             return;
           }
-          const updated = await CandidateApiService.addCompanyToCandidate(candDoc.id, companySlug, company?.name);
+          const updated = await CandidateApiService.addCompanyToCandidate(
+            candDoc.id,
+            companySlug,
+            company?.name,
+          );
           if (updated) candDoc = updated;
           await CompanyApiService.registerCandidateToCompany(companySlug, candDoc);
         }
@@ -134,7 +144,13 @@ export function CandidateAuthScreen({
           companyId: companySlug,
           registeredCompanyIds: companySlug ? [companySlug] : [],
           registeredCompanies: companySlug
-            ? [{ companyId: companySlug, companyName: company?.name || companySlug, registeredAt: new Date().toISOString() }]
+            ? [
+                {
+                  companyId: companySlug,
+                  companyName: company?.name || companySlug,
+                  registeredAt: new Date().toISOString(),
+                },
+              ]
             : [],
           isCompleted: false,
           emailVerified: true,
@@ -216,7 +232,10 @@ export function CandidateAuthScreen({
     setIsCheckingVerification(false);
 
     const activeEmail = createdUserEmail || email;
-    const companySlug = company?.subdomain || company?.id || (company?.name ? company.name.toLowerCase().replace(/[^a-z0-9]/g, "") : "");
+    const companySlug =
+      company?.subdomain ||
+      company?.id ||
+      (company?.name ? company.name.toLowerCase().replace(/[^a-z0-9]/g, "") : "");
 
     const activePayload: CandidateDocument = pendingCandidatePayload || {
       id: "", // Auto-generated ID in saveCandidateToFirestore
@@ -231,7 +250,13 @@ export function CandidateAuthScreen({
       companyId: companySlug,
       registeredCompanyIds: companySlug ? [companySlug] : [],
       registeredCompanies: companySlug
-        ? [{ companyId: companySlug, companyName: company?.name || companySlug, registeredAt: new Date().toISOString() }]
+        ? [
+            {
+              companyId: companySlug,
+              companyName: company?.name || companySlug,
+              registeredAt: new Date().toISOString(),
+            },
+          ]
         : [],
       termsAccepted: acceptTerms,
       captchaVerified: true,
@@ -244,10 +269,16 @@ export function CandidateAuthScreen({
 
     if (companySlug) {
       activePayload.companyId = companySlug;
-      activePayload.registeredCompanyIds = Array.from(new Set([...(activePayload.registeredCompanyIds || []), companySlug]));
+      activePayload.registeredCompanyIds = Array.from(
+        new Set([...(activePayload.registeredCompanyIds || []), companySlug]),
+      );
       activePayload.registeredCompanies = [
         ...(activePayload.registeredCompanies || []).filter((c) => c.companyId !== companySlug),
-        { companyId: companySlug, companyName: company?.name || companySlug, registeredAt: new Date().toISOString() },
+        {
+          companyId: companySlug,
+          companyName: company?.name || companySlug,
+          registeredAt: new Date().toISOString(),
+        },
       ];
     }
 
@@ -366,7 +397,10 @@ export function CandidateAuthScreen({
       const result = await FirebaseAuthService.signUpWithFullDetails(signupPayload);
 
       if (result.user || result.userProfile) {
-        const companySlug = company?.subdomain || company?.id || (company?.name ? company.name.toLowerCase().replace(/[^a-z0-9]/g, "") : "");
+        const companySlug =
+          company?.subdomain ||
+          company?.id ||
+          (company?.name ? company.name.toLowerCase().replace(/[^a-z0-9]/g, "") : "");
 
         const initialCandidateDoc: CandidateDocument = {
           id: "", // Auto-generated default Firestore ID in saveCandidateToFirestore
@@ -381,7 +415,13 @@ export function CandidateAuthScreen({
           companyId: companySlug,
           registeredCompanyIds: companySlug ? [companySlug] : [],
           registeredCompanies: companySlug
-            ? [{ companyId: companySlug, companyName: company?.name || companySlug, registeredAt: new Date().toISOString() }]
+            ? [
+                {
+                  companyId: companySlug,
+                  companyName: company?.name || companySlug,
+                  registeredAt: new Date().toISOString(),
+                },
+              ]
             : [],
           termsAccepted: acceptTerms,
           captchaVerified: true,
@@ -425,7 +465,10 @@ export function CandidateAuthScreen({
         return;
       }
 
-      const companySlug = company?.subdomain || company?.id || (company?.name ? company.name.toLowerCase().replace(/[^a-z0-9]/g, "") : "");
+      const companySlug =
+        company?.subdomain ||
+        company?.id ||
+        (company?.name ? company.name.toLowerCase().replace(/[^a-z0-9]/g, "") : "");
 
       // 2. PER-COMPANY PERMISSION CHECK: Login credentials only work from companies where candidate registered!
       if (companySlug) {

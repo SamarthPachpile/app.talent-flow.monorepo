@@ -78,7 +78,8 @@ export const CompanyProfileSettings: React.FC<SettingsProps> = ({ state, setStat
           Company Profile & Custom Branding
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Customize your company portal appearance, brand colors, logo, and cover images from your device.
+          Customize your company portal appearance, brand colors, logo, and cover images from your
+          device.
         </p>
       </div>
 

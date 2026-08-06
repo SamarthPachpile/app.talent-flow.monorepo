@@ -37,8 +37,10 @@ export function getSmtpConfig(customConfig?: Partial<SmtpConfig>): SmtpConfig {
   const envPort = typeof process !== "undefined" && process.env ? process.env.VITE_SMTP_PORT : "";
   const envUser = typeof process !== "undefined" && process.env ? process.env.VITE_SMTP_USER : "";
   const envPass = typeof process !== "undefined" && process.env ? process.env.VITE_SMTP_PASS : "";
-  const envFromEmail = typeof process !== "undefined" && process.env ? process.env.VITE_SMTP_FROM_EMAIL : "";
-  const envFromName = typeof process !== "undefined" && process.env ? process.env.VITE_SMTP_FROM_NAME : "";
+  const envFromEmail =
+    typeof process !== "undefined" && process.env ? process.env.VITE_SMTP_FROM_EMAIL : "";
+  const envFromName =
+    typeof process !== "undefined" && process.env ? process.env.VITE_SMTP_FROM_NAME : "";
 
   return {
     host: customConfig?.host || envHost || "smtp.gmail.com",
@@ -58,8 +60,7 @@ export async function sendMemberCredentialsSmtp(
 ): Promise<SmtpSendResult> {
   const config = getSmtpConfig(params.smtpConfig);
   const tempPass =
-    params.loginPassword ||
-    `TF-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+    params.loginPassword || `TF-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
 
   const origin = typeof window !== "undefined" ? window.location.origin : "http://localhost:3001";
   const loginUrl = `${origin}/companies/${params.companySlug}/dashboard`;
@@ -100,7 +101,9 @@ export async function sendMemberCredentialsSmtp(
 
   const messageId = `msg-smtp-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
 
-  console.log(`[SMTP Dispatch] Sending credentials to ${params.member.email} via ${config.host}:${config.port}`);
+  console.log(
+    `[SMTP Dispatch] Sending credentials to ${params.member.email} via ${config.host}:${config.port}`,
+  );
   console.log(`[SMTP Payload]`, {
     from: `${config.fromName} <${config.fromEmail}>`,
     to: params.member.email,

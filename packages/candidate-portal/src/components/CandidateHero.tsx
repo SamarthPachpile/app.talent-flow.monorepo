@@ -1,7 +1,18 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { CandidateProfile, OnboardingStage } from "../types/candidate";
-import { Calendar, MapPin, Sparkles, CheckCircle2, Shield, ArrowRight, Building2, Briefcase, Globe, Users } from "lucide-react";
+import {
+  Calendar,
+  MapPin,
+  Sparkles,
+  CheckCircle2,
+  Shield,
+  ArrowRight,
+  Building2,
+  Briefcase,
+  Globe,
+  Users,
+} from "lucide-react";
 import { CompanyDocument } from "@talent-flow/api";
 
 interface CandidateHeroProps {
@@ -52,7 +63,10 @@ export const CandidateHero: React.FC<CandidateHeroProps> = ({
           </div>
         </div>
       ) : (
-        <div className="absolute top-0 right-10 size-72 rounded-full blur-3xl pointer-events-none" style={{ backgroundColor: `${compColor}20` }} />
+        <div
+          className="absolute top-0 right-10 size-72 rounded-full blur-3xl pointer-events-none"
+          style={{ backgroundColor: `${compColor}20` }}
+        />
       )}
 
       <div className="px-6 py-8 max-w-7xl mx-auto relative z-10">
@@ -107,8 +121,9 @@ export const CandidateHero: React.FC<CandidateHeroProps> = ({
               {company?.about || (
                 <>
                   Candidate onboarding lifecycle for{" "}
-                  <strong className="text-foreground font-semibold">{candidate.roleTitle}</strong> in
-                  the <strong className="text-foreground font-semibold">{candidate.department}</strong>{" "}
+                  <strong className="text-foreground font-semibold">{candidate.roleTitle}</strong>{" "}
+                  in the{" "}
+                  <strong className="text-foreground font-semibold">{candidate.department}</strong>{" "}
                   squad ({candidate.location}).
                 </>
               )}
