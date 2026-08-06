@@ -1,162 +1,96 @@
-# Talent Flow Hub
+# Talent Flow Hub Monorepo
 
-Core Objectives
+Talent Flow Hub is organized as a multi-package monorepo containing the main Startup Admin Panel and the multi-tenant Company Onboarding Portal.
 
-Centralize every hiring activity in one platform.
+## Workspace Packages
 
-Track every micro-stage from application receipt to employee onboarding.
+This monorepo consists of two packages in the [`packages/`](file:///home/samarthpachpile/CRM/talent-flow-hub/packages) directory:
 
-Automate emails, approvals, reminders, and status transitions.
+1. **[`packages/admin-panel`](file:///home/samarthpachpile/CRM/talent-flow-hub/packages/admin-panel)** (`@talent-flow/admin-panel`)
+   - The central **Startup Admin Panel** used by the core team.
+   - Comprehensive Recruitment CRM, ATS Pipeline, Interview Scheduler, Approval Engine, Offer Management, and IT Asset Management.
 
-Provide recruiter, hiring manager, HR, IT, and candidate portals.
+2. **[`packages/company-onboarding`](file:///home/samarthpachpile/CRM/talent-flow-hub/packages/company-onboarding)** (`@talent-flow/company-onboarding`)
+   - The **Company Onboarding Portal** provided to external client companies.
+   - Includes a 6-step guided Onboarding Wizard, Company Branding & Subdomain Customizer, Plan & Subscription Billing, Integration Hub (Google Workspace, Slack, Teams, SMTP), Team Member Invites, and a Live Interactive Portal Preview.
 
-Integrate Google Calendar, Google Meet, Google Sheets, SMTP, and document storage.
+---
 
-Primary Modules
+## Workspace Structure
 
-Authentication & RBAC
+```
+talent-flow-hub/
+├── package.json                   # Root monorepo workspace configuration
+├── tsconfig.json                   # Base TypeScript config referencing packages
+├── README.md                      # Documentation
+├── packages/
+│   ├── admin-panel/               # Startup Admin Panel (Package 1)
+│   │   ├── package.json
+│   │   ├── vite.config.ts
+│   │   ├── tsconfig.json
+│   │   └── src/
+│   └── company-onboarding/        # Company Onboarding Portal (Package 2)
+│       ├── package.json
+│       ├── vite.config.ts
+│       ├── tsconfig.json
+│       └── src/
+```
 
-Recruitment CRM
+---
 
-ATS Pipeline
+## Getting Started & Development
 
-Interview Scheduler
+### 1. Install Dependencies
 
-Approval Engine
-
-Offer Management
-
-Candidate Portal
-
-Document Verification
-
-Onboarding
-
-IT Asset Management
-
-Employee Creation
-
-Reporting & Analytics
-
-Audit Logs
-
-Automation Engine
-
-Notification Center
-
-Email Template Manager
-
-Integration Hub
-
-Recruitment Lifecycle
-
-Application Received
-
-Acknowledgement Email Sent
-
-Resume Uploaded
-
-Resume Parsed
-
-Duplicate Check
-
-Recruiter Assigned
-
-Screening Pending
-
-Screening Complete
-
-Shortlisted
-
-Interview Requested
-
-Calendar Invite Sent
-
-Reminder Sent
-
-Interview Completed
-
-Feedback Submitted
-
-Hiring Manager Approved
-
-HR Approved
-
-Offer Generated
-
-Offer Sent
-
-Offer Viewed
-
-Offer Accepted
-
-Documents Requested
-
-Documents Uploaded
-
-Verification Complete
-
-Onboarding Started
-
-Laptop Assigned
-
-Accounts Created
-
-Joining Confirmed
-
-Employee Created
-
-Integrations
-
-Google Calendar
-
-Google Meet
-
-Google Sheets
-
-SMTP
-
-Slack
-
-Microsoft Teams
-
-GitHub
-
-Jira
-
-Cloud Storage
-
-E-signature
-
-Automation Examples
-
-When application is received, create candidate profile, send acknowledgement email, notify recruiter, and log audit event.
-
-When interview is scheduled, create Google Calendar event, generate Meet link, send reminders to interviewer and candidate.
-
-When offer accepted, automatically create onboarding tasks for HR and IT.
-
-Note
-
-A complete enterprise specification with every screen, workflow, API, database table, validation rule, email template, and automation would span several hundred pages and must be split across multiple documents.
-
-This project was built with [Lovable](https://lovable.dev).
-
-## Build with Lovable
-
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/6b177b5d-861a-4cdd-92b6-61729bab724b).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
-
-## Development
-
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+Install workspace dependencies from the root:
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
+npm install
 ```
+
+### 2. Run Applications
+
+To start the **Startup Admin Panel**:
+
+```sh
+npm run dev:admin
+```
+
+_(Runs at `http://localhost:3000`)_
+
+To start the **Company Onboarding Portal**:
+
+```sh
+npm run dev:onboarding
+```
+
+_(Runs at `http://localhost:3001`)_
+
+To run **both applications concurrently**:
+
+```sh
+npm run dev:all
+```
+
+---
+
+## Build Commands
+
+Build both packages for production:
+
+```sh
+npm run build
+```
+
+Build individual packages:
+
+```sh
+npm run build:admin        # Build Admin Panel
+npm run build:onboarding   # Build Company Onboarding Portal
+```
+
+---
+
+## Lovable Integration
+
+This project is connected to [Lovable](https://lovable.dev). Pushed commits sync back automatically.
