@@ -276,7 +276,11 @@ export const App: React.FC = () => {
       let requestedSlug: string | null = null;
       if (segments[0] === "companies" && segments.length >= 2) {
         const potentialSlug = decodeURIComponent(segments[1]);
-        if (!["login", "auth", "dashboard", "dashbaord", "home", "wizard"].includes(potentialSlug.toLowerCase())) {
+        if (
+          !["login", "auth", "dashboard", "dashbaord", "home", "wizard"].includes(
+            potentialSlug.toLowerCase(),
+          )
+        ) {
           requestedSlug = potentialSlug;
         }
       }
@@ -293,7 +297,9 @@ export const App: React.FC = () => {
             if (action === "login") {
               setActiveTab("auth");
             } else if (!isAuth) {
-              toast.error("Authentication required. Please sign in to access your company dashboard.");
+              toast.error(
+                "Authentication required. Please sign in to access your company dashboard.",
+              );
               window.history.pushState({}, "", "/companies/login");
               setActiveTab("auth");
             } else {
@@ -308,7 +314,11 @@ export const App: React.FC = () => {
       // Generic non-company-specific routes
       setCompanyNotFound(false);
 
-      if (cleanPath === "/companies/login" || cleanPath === "/login" || cleanPath.startsWith("/auth")) {
+      if (
+        cleanPath === "/companies/login" ||
+        cleanPath === "/login" ||
+        cleanPath.startsWith("/auth")
+      ) {
         setActiveTab("auth");
       } else if (
         cleanPath === "/companies/dashboard" ||

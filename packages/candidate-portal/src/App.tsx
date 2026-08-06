@@ -220,7 +220,9 @@ export function App() {
   useEffect(() => {
     const route = getRouteInfo(currentPath);
     if (
-      (route.targetView === "dashboard" || route.targetView === "company_root" || route.targetView === "wizard") &&
+      (route.targetView === "dashboard" ||
+        route.targetView === "company_root" ||
+        route.targetView === "wizard") &&
       !isAuthenticated
     ) {
       const slug = route.companySlug || "company";
@@ -337,7 +339,9 @@ export function App() {
     const companySlug =
       activeCompany?.subdomain ||
       activeCompany?.id ||
-      (activeCompany?.name ? activeCompany.name.toLowerCase().replace(/[^a-z0-9]/g, "-") : "company");
+      (activeCompany?.name
+        ? activeCompany.name.toLowerCase().replace(/[^a-z0-9]/g, "-")
+        : "company");
 
     if (companySlug) {
       await CompanyApiService.registerCandidateToCompany(companySlug, updatedCandidate);
@@ -527,7 +531,9 @@ export function App() {
   // 2. Candidate Auth Screen View (/candidates-portal/<company_name>/login)
   if (
     routeInfo.targetView === "auth" ||
-    ((routeInfo.targetView === "dashboard" || routeInfo.targetView === "company_root" || routeInfo.targetView === "wizard") &&
+    ((routeInfo.targetView === "dashboard" ||
+      routeInfo.targetView === "company_root" ||
+      routeInfo.targetView === "wizard") &&
       !isAuthenticated)
   ) {
     return (

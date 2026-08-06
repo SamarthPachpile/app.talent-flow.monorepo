@@ -80,7 +80,10 @@ export const CandidateCompanySelector: React.FC<CandidateCompanySelectorProps> =
 
   const getSlug = (c: CompanyDocument) => {
     const raw = c.subdomain || c.id || c.name || "";
-    return raw.toLowerCase().replace(/[^a-z0-9]/g, "-").replace(/-+/g, "-");
+    return raw
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, "-")
+      .replace(/-+/g, "-");
   };
 
   return (
@@ -206,7 +209,9 @@ export const CandidateCompanySelector: React.FC<CandidateCompanySelectorProps> =
             </h2>
             <p className="text-xs text-muted-foreground">
               Click any onboarded company to launch its candidate login page at{" "}
-              <code className="text-ember font-mono font-medium">/candidates-portal/&lt;company_name&gt;/login</code>
+              <code className="text-ember font-mono font-medium">
+                /candidates-portal/&lt;company_name&gt;/login
+              </code>
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -245,8 +250,8 @@ export const CandidateCompanySelector: React.FC<CandidateCompanySelectorProps> =
             </div>
             <h3 className="text-xl font-display font-bold text-foreground">No Company Available</h3>
             <p className="text-sm text-muted-foreground max-w-md mx-auto leading-relaxed">
-              No companies have registered or enabled candidate portals in the database yet.
-              When a company completes registration, its candidate portal will appear here automatically.
+              No companies have registered or enabled candidate portals in the database yet. When a
+              company completes registration, its candidate portal will appear here automatically.
             </p>
             {onCompanyOnboardingLink && (
               <div className="pt-2">
@@ -264,7 +269,9 @@ export const CandidateCompanySelector: React.FC<CandidateCompanySelectorProps> =
         ) : filteredCompanies.length === 0 ? (
           <div className="text-center py-16 bg-card border border-border rounded-2xl p-8 space-y-4 max-w-lg mx-auto">
             <Building2 className="size-12 mx-auto text-muted-foreground/60" />
-            <h3 className="text-base font-semibold text-foreground">No companies found matching search</h3>
+            <h3 className="text-base font-semibold text-foreground">
+              No companies found matching search
+            </h3>
             <p className="text-xs text-muted-foreground max-w-md mx-auto">
               Try searching with another keyword or reset your category filter.
             </p>
@@ -322,7 +329,9 @@ export const CandidateCompanySelector: React.FC<CandidateCompanySelectorProps> =
                                 <img
                                   src={logoSrc}
                                   alt={c.name}
-                                  onError={() => setImgErrorMap((prev) => ({ ...prev, [c.id || slug]: true }))}
+                                  onError={() =>
+                                    setImgErrorMap((prev) => ({ ...prev, [c.id || slug]: true }))
+                                  }
                                   className="size-12 rounded-xl object-cover border border-border bg-surface p-1 shadow-xs shrink-0"
                                 />
                               );
@@ -401,7 +410,9 @@ export const CandidateCompanySelector: React.FC<CandidateCompanySelectorProps> =
             </span>
           </div>
           <div className="flex items-center gap-4">
-            <span className="font-mono text-[11px]">Route: /candidates-portal/&lt;company_name&gt;/login</span>
+            <span className="font-mono text-[11px]">
+              Route: /candidates-portal/&lt;company_name&gt;/login
+            </span>
           </div>
         </div>
       </footer>

@@ -1,4 +1,13 @@
-import { doc, getDoc, setDoc, deleteDoc, getDocs, collection, onSnapshot, serverTimestamp } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  deleteDoc,
+  getDocs,
+  collection,
+  onSnapshot,
+  serverTimestamp,
+} from "firebase/firestore";
 import { db } from "../firebase";
 import { sendMemberCredentialsSmtp } from "./smtpService";
 import type {
@@ -172,11 +181,7 @@ export function normalizeCompanyDoc(raw: any): CompanyDocument {
     raw.fullOnboardingState?.profile?.headquarters ||
     "Remote";
 
-  const about =
-    raw.about ||
-    raw.profile?.about ||
-    raw.fullOnboardingState?.profile?.about ||
-    "";
+  const about = raw.about || raw.profile?.about || raw.fullOnboardingState?.profile?.about || "";
 
   return {
     ...raw,
@@ -623,8 +628,13 @@ export class CompanyApiService {
       if (activeProf) {
         try {
           const parsed = JSON.parse(activeProf);
-          const pId = (parsed.id || parsed.subdomain || parsed.name || "").toLowerCase().replace(/[^a-z0-9]/g, "");
-          if (pId === cleanDocId || (parsed.id || "").toLowerCase() === companyIdOrSlug.toLowerCase()) {
+          const pId = (parsed.id || parsed.subdomain || parsed.name || "")
+            .toLowerCase()
+            .replace(/[^a-z0-9]/g, "");
+          if (
+            pId === cleanDocId ||
+            (parsed.id || "").toLowerCase() === companyIdOrSlug.toLowerCase()
+          ) {
             localStorage.removeItem("talentflow_company_profile");
             localStorage.removeItem("talentflow_active_company_id");
           }
@@ -638,8 +648,13 @@ export class CompanyApiService {
         if (key && key.startsWith("talentflow_company_")) {
           try {
             const item = JSON.parse(localStorage.getItem(key) || "");
-            const itemId = (item.id || item.subdomain || item.name || "").toLowerCase().replace(/[^a-z0-9]/g, "");
-            if (itemId === cleanDocId || (item.id || "").toLowerCase() === companyIdOrSlug.toLowerCase()) {
+            const itemId = (item.id || item.subdomain || item.name || "")
+              .toLowerCase()
+              .replace(/[^a-z0-9]/g, "");
+            if (
+              itemId === cleanDocId ||
+              (item.id || "").toLowerCase() === companyIdOrSlug.toLowerCase()
+            ) {
               localStorage.removeItem(key);
             }
           } catch {
@@ -845,14 +860,17 @@ export class CompanyApiService {
         };
       }
 
-      const candId = (candidate.id || candidate.email || "").toLowerCase().replace(/[^a-z0-9]/g, "");
-      const existingCandidates = (company.registeredCandidates as Array<{
-        id: string;
-        fullName: string;
-        email: string;
-        registeredAt: string;
-        stage?: string;
-      }>) || [];
+      const candId = (candidate.id || candidate.email || "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, "");
+      const existingCandidates =
+        (company.registeredCandidates as Array<{
+          id: string;
+          fullName: string;
+          email: string;
+          registeredAt: string;
+          stage?: string;
+        }>) || [];
       const existingIds = (company.candidateIds as string[]) || [];
 
       const filteredList = existingCandidates.filter(
@@ -896,4 +914,3 @@ export class CompanyApiService {
     }
   }
 }
-

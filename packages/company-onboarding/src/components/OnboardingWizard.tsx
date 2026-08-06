@@ -646,7 +646,9 @@ export const OnboardingWizard: React.FC<WizardProps> = ({ state, setState, onCom
                 <div className="space-y-2">
                   <label className="block text-xs font-bold text-foreground uppercase tracking-wider flex items-center justify-between">
                     <span>Company Logo (From Device Storage)</span>
-                    <span className="text-[10px] text-ember font-semibold">Device Storage Only</span>
+                    <span className="text-[10px] text-ember font-semibold">
+                      Device Storage Only
+                    </span>
                   </label>
                   <div className="flex items-center gap-3">
                     {state.profile.logoUrl ? (
@@ -692,7 +694,9 @@ export const OnboardingWizard: React.FC<WizardProps> = ({ state, setState, onCom
                 <div className="space-y-2">
                   <label className="block text-xs font-bold text-foreground uppercase tracking-wider flex items-center justify-between">
                     <span>Company Cover Image (From Device Storage)</span>
-                    <span className="text-[10px] text-ember font-semibold">Device Storage Only</span>
+                    <span className="text-[10px] text-ember font-semibold">
+                      Device Storage Only
+                    </span>
                   </label>
                   <div className="flex items-center gap-3">
                     {state.profile.coverImageUrl ? (
