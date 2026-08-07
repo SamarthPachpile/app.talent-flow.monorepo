@@ -139,55 +139,69 @@ const defaultCompanySettings: CompanySettings = {
   team: [],
 };
 
-export function normalizeCompanyDoc(raw: any): CompanyDocument {
-  if (!raw) return raw;
-  const cleanId = (raw.id || raw.subdomain || raw.name || "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]/g, "");
+export function normalizeCompanyDoc(
+  raw: Record<string, unknown> | null | undefined,
+): CompanyDocument {
+  if (!raw || typeof raw !== "object") return raw as unknown as CompanyDocument;
+  const r = raw as Record<string, unknown>;
+  const profile = r.profile as Record<string, unknown> | undefined;
+  const fullState = r.fullOnboardingState as Record<string, unknown> | undefined;
+  const fullProfile = fullState?.profile as Record<string, unknown> | undefined;
+
+  const rawId = typeof r.id === "string" ? r.id : "";
+  const rawSubdomain = typeof r.subdomain === "string" ? r.subdomain : "";
+  const rawName = typeof r.name === "string" ? r.name : "";
+  const profileName = typeof profile?.name === "string" ? profile.name : "";
+
+  const cleanId = (rawId || rawSubdomain || rawName || "").toLowerCase().replace(/[^a-z0-9]/g, "");
 
   const logoUrl =
-    raw.logoUrl ||
-    raw.logo ||
-    raw.profile?.logoUrl ||
-    raw.profile?.logo ||
-    raw.fullOnboardingState?.profile?.logoUrl ||
-    raw.fullOnboardingState?.profile?.logo ||
+    (typeof r.logoUrl === "string" && r.logoUrl) ||
+    (typeof r.logo === "string" && r.logo) ||
+    (typeof profile?.logoUrl === "string" && profile.logoUrl) ||
+    (typeof profile?.logo === "string" && profile.logo) ||
+    (typeof fullProfile?.logoUrl === "string" && fullProfile.logoUrl) ||
+    (typeof fullProfile?.logo === "string" && fullProfile.logo) ||
     "";
 
   const coverImageUrl =
-    raw.coverImageUrl ||
-    raw.coverImage ||
-    raw.profile?.coverImageUrl ||
-    raw.profile?.coverImage ||
-    raw.fullOnboardingState?.profile?.coverImageUrl ||
-    raw.fullOnboardingState?.profile?.coverImage ||
+    (typeof r.coverImageUrl === "string" && r.coverImageUrl) ||
+    (typeof r.coverImage === "string" && r.coverImage) ||
+    (typeof profile?.coverImageUrl === "string" && profile.coverImageUrl) ||
+    (typeof profile?.coverImage === "string" && profile.coverImage) ||
+    (typeof fullProfile?.coverImageUrl === "string" && fullProfile.coverImageUrl) ||
+    (typeof fullProfile?.coverImage === "string" && fullProfile.coverImage) ||
     "";
 
   const brandColor =
-    raw.brandColor ||
-    raw.profile?.brandColor ||
-    raw.fullOnboardingState?.profile?.brandColor ||
+    (typeof r.brandColor === "string" && r.brandColor) ||
+    (typeof profile?.brandColor === "string" && profile.brandColor) ||
+    (typeof fullProfile?.brandColor === "string" && fullProfile.brandColor) ||
     "#6366f1";
 
   const industry =
-    raw.industry ||
-    raw.profile?.industry ||
-    raw.fullOnboardingState?.profile?.industry ||
+    (typeof r.industry === "string" && r.industry) ||
+    (typeof profile?.industry === "string" && profile.industry) ||
+    (typeof fullProfile?.industry === "string" && fullProfile.industry) ||
     "Technology & Software";
 
   const headquarters =
-    raw.headquarters ||
-    raw.profile?.headquarters ||
-    raw.fullOnboardingState?.profile?.headquarters ||
+    (typeof r.headquarters === "string" && r.headquarters) ||
+    (typeof profile?.headquarters === "string" && profile.headquarters) ||
+    (typeof fullProfile?.headquarters === "string" && fullProfile.headquarters) ||
     "Remote";
 
-  const about = raw.about || raw.profile?.about || raw.fullOnboardingState?.profile?.about || "";
+  const about =
+    (typeof r.about === "string" && r.about) ||
+    (typeof profile?.about === "string" && profile.about) ||
+    (typeof fullProfile?.about === "string" && fullProfile.about) ||
+    "";
 
   return {
-    ...raw,
-    id: cleanId || raw.id,
-    name: raw.name || raw.profile?.name || cleanId || "Company",
-    subdomain: (raw.subdomain || cleanId).toLowerCase().replace(/[^a-z0-9]/g, ""),
+    ...(r as unknown as CompanyDocument),
+    id: cleanId || rawId,
+    name: rawName || profileName || cleanId || "Company",
+    subdomain: (rawSubdomain || cleanId).toLowerCase().replace(/[^a-z0-9]/g, ""),
     logoUrl,
     coverImageUrl,
     brandColor,

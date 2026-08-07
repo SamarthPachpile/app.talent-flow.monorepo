@@ -314,13 +314,26 @@ export const CandidateCompanySelector: React.FC<CandidateCompanySelectorProps> =
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex items-center gap-3">
                           {(() => {
+                            const rawC = c as unknown as Record<string, unknown>;
+                            const profile = rawC.profile as Record<string, unknown> | undefined;
+                            const fullState = rawC.fullOnboardingState as
+                              Record<string, unknown> | undefined;
+                            const fullProfile = fullState?.profile as
+                              Record<string, unknown> | undefined;
+
                             const logoSrc =
                               c.logoUrl ||
-                              (c as any).logo ||
-                              (c as any).profile?.logoUrl ||
-                              (c as any).profile?.logo ||
-                              (c as any).fullOnboardingState?.profile?.logoUrl ||
-                              (c as any).fullOnboardingState?.profile?.logo ||
+                              (typeof rawC.logo === "string" ? rawC.logo : undefined) ||
+                              (typeof profile?.logoUrl === "string"
+                                ? profile.logoUrl
+                                : undefined) ||
+                              (typeof profile?.logo === "string" ? profile.logo : undefined) ||
+                              (typeof fullProfile?.logoUrl === "string"
+                                ? fullProfile.logoUrl
+                                : undefined) ||
+                              (typeof fullProfile?.logo === "string"
+                                ? fullProfile.logo
+                                : undefined) ||
                               "";
                             const hasErr = imgErrorMap[c.id || slug];
 
