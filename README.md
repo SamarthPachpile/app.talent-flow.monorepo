@@ -117,7 +117,3 @@ npm run build:candidates   # Build Candidate Portal
 ```
 
 ---
-
-## Lovable Integration
-
-This project is connected to [Lovable](https://lovable.dev). Pushed commits sync back automatically.
