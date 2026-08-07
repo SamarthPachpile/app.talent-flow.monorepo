@@ -74,7 +74,7 @@ To start the **Startup Admin Panel**:
 npm run dev:admin
 ```
 
-_(Runs at `http://localhost:3000`)_
+_(Runs at `http://localhost:3000` via VITE_PORT/PORT env variable)_
 
 To start the **Company Onboarding Portal**:
 
@@ -82,7 +82,7 @@ To start the **Company Onboarding Portal**:
 npm run dev:onboarding
 ```
 
-_(Runs at `http://localhost:3001`)_
+_(Runs at `http://localhost:3000` via VITE_PORT/PORT env variable)_
 
 To start the **Candidate Portal**:
 
@@ -90,7 +90,7 @@ To start the **Candidate Portal**:
 npm run dev:candidates
 ```
 
-_(Runs at `http://localhost:3002`)_
+_(Runs at `http://localhost:3000` via VITE_PORT/PORT env variable)_
 
 To run **all applications concurrently**:
 

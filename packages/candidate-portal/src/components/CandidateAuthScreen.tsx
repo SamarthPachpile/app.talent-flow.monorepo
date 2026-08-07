@@ -20,10 +20,10 @@ import { toast } from "sonner";
 import {
   FirebaseAuthService,
   CandidateApiService,
-  CompanyApiService,
   CandidateDocument,
-  CompanyDocument,
   COUNTRY_OPTIONS,
+  CompanyApiService,
+  CompanyDocument,
 } from "@talent-flow/api";
 
 export interface CandidateAuthSuccessData {

@@ -161,7 +161,12 @@ export function AdminSettingsPage() {
               <Label htmlFor="environment">Deployment Environment</Label>
               <Select
                 value={settings.environment}
-                onValueChange={(val: string) => setSettings({ ...settings, environment: val })}
+                onValueChange={(val: string) =>
+                  setSettings({
+                    ...settings,
+                    environment: val as "production" | "staging" | "development",
+                  })
+                }
               >
                 <SelectTrigger>
                   <SelectValue />

@@ -43,10 +43,19 @@ interface AuthSuccessData {
 interface AuthScreenProps {
   onSuccess: (data: AuthSuccessData) => void;
   onBackToHome: () => void;
+  initialIsSignUp?: boolean;
 }
 
-export const AuthScreen: React.FC<AuthScreenProps> = ({ onSuccess, onBackToHome }) => {
-  const [isSignUp, setIsSignUp] = useState(false);
+export const AuthScreen: React.FC<AuthScreenProps> = ({
+  onSuccess,
+  onBackToHome,
+  initialIsSignUp = false,
+}) => {
+  const [isSignUp, setIsSignUp] = useState(initialIsSignUp);
+
+  useEffect(() => {
+    setIsSignUp(initialIsSignUp);
+  }, [initialIsSignUp]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");

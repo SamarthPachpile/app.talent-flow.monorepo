@@ -10,10 +10,12 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, "./src"),
       "@talent-flow/api": path.resolve(__dirname, "../api/src/index.ts"),
+      "@talent-flow/api/*": path.resolve(__dirname, "../api/src/*"),
     },
   },
+  envDir: path.resolve(__dirname, "../../"),
   server: {
-    port: 3001,
+    port: Number(process.env.VITE_PORT || process.env.PORT || 3000),
     host: true,
   },
 });

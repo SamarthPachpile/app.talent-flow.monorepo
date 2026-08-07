@@ -28,10 +28,10 @@ import "lenis/dist/lenis.css";
 import { Building2, ArrowLeft, Plus } from "lucide-react";
 import {
   CandidateApiService,
-  CompanyApiService,
   CandidateDocument,
-  CompanyDocument,
   FirebaseAuthService,
+  CompanyApiService,
+  CompanyDocument,
 } from "@talent-flow/api";
 
 type CandidatePortalView = "companies_list" | "auth" | "wizard" | "dashboard" | "company_root";
@@ -489,11 +489,7 @@ export function App() {
             <button
               onClick={() => {
                 if (typeof window !== "undefined") {
-                  if (window.location.port === "3002") {
-                    window.location.href = "http://localhost:3001";
-                  } else {
-                    window.location.href = "/companies";
-                  }
+                  window.location.href = "/companies/register";
                 }
               }}
               className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-surface border border-border hover:bg-accent text-foreground font-semibold text-xs transition-colors cursor-pointer"
@@ -516,11 +512,7 @@ export function App() {
           onSelectCompany={handleSelectCompanyFromList}
           onCompanyOnboardingLink={() => {
             if (typeof window !== "undefined") {
-              if (window.location.port === "3002") {
-                window.location.href = "http://localhost:3001";
-              } else {
-                window.location.href = "/companies";
-              }
+              window.location.href = "/companies/register";
             }
           }}
         />

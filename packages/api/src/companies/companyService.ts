@@ -6,9 +6,8 @@ import {
   getDocs,
   collection,
   onSnapshot,
-  serverTimestamp,
 } from "firebase/firestore";
-import { db } from "../firebase";
+import { companyDb } from "./firebase";
 import { sendMemberCredentialsSmtp } from "./smtpService";
 import type {
   CompanySettings,
@@ -226,8 +225,8 @@ export class CompanyApiService {
       if (company.subdomain) {
         company.subdomain = company.subdomain.toLowerCase().replace(/[^a-z0-9]/g, "");
       }
-      const normalized = normalizeCompanyDoc(company);
-      const companyRef = doc(db, "companies", company.id);
+      const normalized = normalizeCompanyDoc(company as unknown as Record<string, unknown>);
+      const companyRef = doc(companyDb, "companies", company.id);
       const payload = {
         ...normalized,
         updatedAt: new Date().toISOString(),
@@ -248,7 +247,7 @@ export class CompanyApiService {
       };
     } catch (err) {
       console.warn("Firestore saveCompany error (using local cache fallback):", err);
-      const normalized = normalizeCompanyDoc(company);
+      const normalized = normalizeCompanyDoc(company as unknown as Record<string, unknown>);
       if (typeof window !== "undefined") {
         localStorage.setItem(`talentflow_company_${company.id}`, JSON.stringify(normalized));
         localStorage.setItem("talentflow_active_company_id", company.id);
@@ -267,7 +266,7 @@ export class CompanyApiService {
    */
   static async getCompanyFromFirestore(companyId: string): Promise<CompanyDocument | null> {
     try {
-      const companyRef = doc(db, "companies", companyId);
+      const companyRef = doc(companyDb, "companies", companyId);
       const docSnap = await getDoc(companyRef);
       if (docSnap.exists()) {
         return normalizeCompanyDoc(docSnap.data());
@@ -294,7 +293,7 @@ export class CompanyApiService {
    */
   static async getAllCompaniesFromFirestore(): Promise<CompanyDocument[]> {
     try {
-      const colRef = collection(db, "companies");
+      const colRef = collection(companyDb, "companies");
       const snap = await getDocs(colRef);
       const list: CompanyDocument[] = [];
       snap.forEach((docSnap) => {
@@ -620,11 +619,11 @@ export class CompanyApiService {
 
     // 1. Delete from Firestore collection 'companies'
     try {
-      const companyRef = doc(db, "companies", cleanDocId);
+      const companyRef = doc(companyDb, "companies", cleanDocId);
       await deleteDoc(companyRef);
       if (companyIdOrSlug !== cleanDocId) {
         try {
-          await deleteDoc(doc(db, "companies", companyIdOrSlug));
+          await deleteDoc(doc(companyDb, "companies", companyIdOrSlug));
         } catch {
           // ignore
         }
@@ -694,7 +693,7 @@ export class CompanyApiService {
     onError?: (err: Error) => void,
   ): () => void {
     try {
-      const colRef = collection(db, "companies");
+      const colRef = collection(companyDb, "companies");
       const unsubscribe = onSnapshot(
         colRef,
         (snapshot) => {

@@ -11,8 +11,7 @@ import {
   signInWithPopup,
   User,
 } from "firebase/auth";
-import { doc, setDoc, getDoc } from "firebase/firestore";
-import { auth, db } from "../firebase";
+import { candidateAuth } from "./firebase";
 import type { SignupFormData } from "../types";
 
 export interface AuthResult {
@@ -22,14 +21,14 @@ export interface AuthResult {
   verificationSent?: boolean;
 }
 
-export const FirebaseAuthService = {
+export const CandidateAuthService = {
   /**
    * Signs in or registers a user using Google Authentication popup.
    */
   async signInWithGoogle(): Promise<AuthResult> {
     try {
       const provider = new GoogleAuthProvider();
-      const userCredential = await signInWithPopup(auth, provider);
+      const userCredential = await signInWithPopup(candidateAuth, provider);
       return { user: userCredential.user };
     } catch (err) {
       console.error("Firebase Google Sign In Error:", err);
@@ -42,7 +41,7 @@ export const FirebaseAuthService = {
    */
   async signUp(email: string, password: string, displayName?: string): Promise<AuthResult> {
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(candidateAuth, email, password);
       if (displayName && userCredential.user) {
         await updateProfile(userCredential.user, { displayName });
       }
@@ -68,7 +67,11 @@ export const FirebaseAuthService = {
     data: Partial<SignupFormData> & { email: string; password: string; fullName: string },
   ): Promise<AuthResult> {
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
+      const userCredential = await createUserWithEmailAndPassword(
+        candidateAuth,
+        data.email,
+        data.password,
+      );
       const user = userCredential.user;
 
       if (user) {
@@ -126,9 +129,8 @@ export const FirebaseAuthService = {
     customEmail?: string,
   ): Promise<{ success: boolean; message?: string }> {
     try {
-      const user = auth.currentUser;
+      const user = candidateAuth.currentUser;
       if (user) {
-        // If customEmail is provided and differs from user.email, update Firebase Auth email first
         if (customEmail && customEmail.trim() && customEmail.trim() !== user.email) {
           return await this.updateUserEmailAndResend(customEmail.trim());
         }
@@ -156,7 +158,7 @@ export const FirebaseAuthService = {
     newEmail: string,
   ): Promise<{ success: boolean; message?: string }> {
     try {
-      const user = auth.currentUser;
+      const user = candidateAuth.currentUser;
       const targetEmail = newEmail.trim();
       if (!user) {
         return {
@@ -165,7 +167,6 @@ export const FirebaseAuthService = {
         };
       }
 
-      // 1. Try verifyBeforeUpdateEmail (Sends email verification directly to the new email address)
       try {
         await verifyBeforeUpdateEmail(user, targetEmail);
         return {
@@ -176,7 +177,6 @@ export const FirebaseAuthService = {
         console.warn("verifyBeforeUpdateEmail fallback trigger:", e);
       }
 
-      // 2. Fallback to updateEmail + sendEmailVerification
       try {
         await updateEmail(user, targetEmail);
         await sendEmailVerification(user);
@@ -207,7 +207,7 @@ export const FirebaseAuthService = {
    */
   async checkEmailVerified(): Promise<boolean> {
     try {
-      const user = auth.currentUser;
+      const user = candidateAuth.currentUser;
       if (user) {
         await user.reload();
         return user.emailVerified;
@@ -224,7 +224,7 @@ export const FirebaseAuthService = {
    */
   async signIn(email: string, password: string): Promise<AuthResult> {
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(candidateAuth, email, password);
       return { user: userCredential.user };
     } catch (err) {
       console.error("Firebase Sign In Error:", err);
@@ -238,7 +238,7 @@ export const FirebaseAuthService = {
    */
   async signOut(): Promise<{ success: boolean; error?: string }> {
     try {
-      await firebaseSignOut(auth);
+      await firebaseSignOut(candidateAuth);
       return { success: true };
     } catch (err: unknown) {
       console.error("Firebase Sign Out Error:", err);
@@ -256,7 +256,6 @@ export const FirebaseAuthService = {
     destination: string,
   ): Promise<{ success: boolean; otp: string; message: string }> {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    // Cache active OTP in localStorage for verification
     if (typeof window !== "undefined") {
       localStorage.setItem(
         `talentflow_otp_${destination}`,
@@ -299,7 +298,6 @@ export const FirebaseAuthService = {
         }
       }
     }
-    // Accept default demo code for testing convenience
     if (trimmedInput === "123456" || trimmedInput === "849201") {
       return { valid: true, message: "Demo OTP verified!" };
     }
@@ -310,14 +308,14 @@ export const FirebaseAuthService = {
    * Subscribes to real-time auth state changes.
    */
   onAuthChange(callback: (user: User | null) => void) {
-    return onAuthStateChanged(auth, callback);
+    return onAuthStateChanged(candidateAuth, callback);
   },
 
   /**
    * Returns current authenticated user or null.
    */
   getCurrentUser(): User | null {
-    return auth?.currentUser || null;
+    return candidateAuth?.currentUser || null;
   },
 };
 
