@@ -39,8 +39,8 @@ const services = [
 
 export default function Services() {
   usePageMeta(
-    "Services — Graviton",
-    "End-to-end CRM consulting, implementation and AI services from Graviton.",
+    "Services — Croton",
+    "End-to-end CRM consulting, implementation and AI services from Croton.",
   );
   return (
     <div className="min-h-screen bg-background">

@@ -224,7 +224,7 @@ export default function Contact() {
                     className="mt-1"
                   />
                   <p>
-                    Send me occasional information about Graviton - A Tapasys group company, e.g.,
+                    Send me occasional information about Croton - A Tapasys group company, e.g.,
                     company news and events.
                   </p>
                 </div>
@@ -269,7 +269,7 @@ export default function Contact() {
           {/* LEFT TITLE */}
           <div>
             <h2 className="text-3xl sm:text-4xl font-semibold text-[#2c3e50] leading-snug">
-              Graviton <br /> Corporate <br /> Headquarters
+              Croton <br /> Corporate <br /> Headquarters
             </h2>
           </div>
 
@@ -296,8 +296,8 @@ export default function Contact() {
           {/* EMAIL */}
           <div className="space-y-2">
             <p className="text-xl font-semibold text-[#2c3e50]">E-mail</p>
-            <p className="text-[#5c6b7a] text-sm">info@graviton.com</p>
-            <p className="text-[#5c6b7a] text-sm">sales@graviton.com</p>
+            <p className="text-[#5c6b7a] text-sm">info@croton.com</p>
+            <p className="text-[#5c6b7a] text-sm">sales@croton.com</p>
           </div>
         </div>
       </section>

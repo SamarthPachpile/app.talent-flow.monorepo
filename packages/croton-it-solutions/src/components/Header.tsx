@@ -28,7 +28,7 @@ const navItems = [
       { label: "Professional Services", href: "/industries/professional-services" },
     ],
   },
-  { label: "Graviton AI", href: "/velocity-ai", highlight: true },
+  { label: "Croton AI", href: "/velocity-ai", highlight: true },
   { label: "Insights", href: "/insights" },
   { label: "About Us", href: "/about" },
   { label: "Careers", href: "/careers" },
@@ -53,7 +53,7 @@ export default function Header() {
             {/* LOGO */}
             <Link to="/" className="flex flex-col leading-none">
               <span className="text-lg sm:text-xl font-bold tracking-[0.8px] text-foreground">
-                Graviton<sup className="text-[25px] top-0 ml-0.5">®</sup>
+                Croton<sup className="text-[25px] top-0 ml-0.5">®</sup>
               </span>
               <span className="text-[9px] sm:text-[10px] text-muted-foreground mt-0.5">
                 A Tapasys Group Company

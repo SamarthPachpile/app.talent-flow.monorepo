@@ -3,8 +3,8 @@ import { useRef } from "react";
 
 const columns = [
   {
-    label: "GRAVITON",
-    text: "For more than a decade, Graviton has helped revenue, marketing and service teams turn fragmented customer data into a single source of truth. We sit at the intersection of CRM strategy, platform engineering and applied AI.",
+    label: "CROTON",
+    text: "For more than a decade, Croton has helped revenue, marketing and service teams turn fragmented customer data into a single source of truth. We sit at the intersection of CRM strategy, platform engineering and applied AI.",
   },
   {
     label: "OUR APPROACH",
@@ -12,7 +12,7 @@ const columns = [
   },
   {
     label: "INNOVATION",
-    text: "As a Tapasys Group company, Graviton taps into a wider network of data, cloud and AI specialists — co-creating with clients to solve the hardest customer-experience challenges of today.",
+    text: "As a Tapasys Group company, Croton taps into a wider network of data, cloud and AI specialists — co-creating with clients to solve the hardest customer-experience challenges of today.",
   },
 ];
 

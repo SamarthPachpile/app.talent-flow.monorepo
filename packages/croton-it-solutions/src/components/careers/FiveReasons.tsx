@@ -7,7 +7,7 @@ const REASONS = [
   },
   {
     title: "Learning and development",
-    desc: "Learn and grow daily at Graviton. Try new things. Sharpen your skills. Advance your career.",
+    desc: "Learn and grow daily at Croton. Try new things. Sharpen your skills. Advance your career.",
   },
   {
     title: "Interesting & meaningful work",
@@ -28,15 +28,15 @@ export default function FiveReasons() {
     <section
       id="five-reasons"
       data-section="five-reasons"
-      data-label="Why Graviton"
+      data-label="Why Croton"
       className="bg-background py-16 sm:py-24"
     >
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6">
-        <p className="text-sm sm:text-base text-foreground/70 mb-8">Why join Graviton?</p>
+        <p className="text-sm sm:text-base text-foreground/70 mb-8">Why join Croton?</p>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-14">
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-medium text-primary leading-[1.05] tracking-tight">
-            5 reasons to build your career at Graviton
+            5 reasons to build your career at Croton
           </h2>
 
           <div className="flex flex-col justify-center gap-6 lg:pt-6">

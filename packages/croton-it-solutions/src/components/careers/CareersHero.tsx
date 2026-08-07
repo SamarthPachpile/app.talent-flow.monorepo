@@ -23,7 +23,7 @@ export default function CareersHero() {
           transition={{ duration: 0.6 }}
         >
           <p className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-primary mb-4">
-            Careers at Graviton
+            Careers at Croton
           </p>
 
           <h1 className="text-5xl sm:text-7xl md:text-8xl font-semibold text-white mb-30 leading-[0.95] tracking-tight">

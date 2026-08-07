@@ -283,7 +283,7 @@ export default function ZeroDistance() {
             to clients
           </h3>
           <p className="mt-6 text-gray-600 max-w-md text-lg">
-            Graviton's footprint offers timezone alignment and geographic proximity to support our{" "}
+            Croton's footprint offers timezone alignment and geographic proximity to support our{" "}
             <span className="font-medium text-[#2f3a4a]">"zero distance"</span> to clients
             philosophy.
           </p>

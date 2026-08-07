@@ -84,7 +84,7 @@ export default function SplashScreen({ children }: { children: React.ReactNode }
     return () => ctx.revert();
   }, []);
 
-  const word = "GRAVITON";
+  const word = "CROTON";
 
   return (
     <>

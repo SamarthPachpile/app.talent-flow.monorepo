@@ -51,8 +51,8 @@ const STORIES = [
 
 const FAQS = [
   {
-    q: "What is Graviton VelocityAI?",
-    a: "Graviton VelocityAI is our applied-AI practice that helps enterprises move from AI experimentation to production-grade outcomes inside their CRM and revenue stack.",
+    q: "What is Croton VelocityAI?",
+    a: "Croton VelocityAI is our applied-AI practice that helps enterprises move from AI experimentation to production-grade outcomes inside their CRM and revenue stack.",
   },
   {
     q: "How does VelocityAI accelerate AI adoption?",
@@ -74,8 +74,8 @@ const FAQS = [
 
 export default function VelocityAI() {
   usePageMeta(
-    "Graviton VelocityAI — From bold ideas to measurable impact",
-    "Graviton VelocityAI harnesses AI, digital and human-centered design to turn bold ideas into production-ready realities.",
+    "Croton VelocityAI — From bold ideas to measurable impact",
+    "Croton VelocityAI harnesses AI, digital and human-centered design to turn bold ideas into production-ready realities.",
   );
 
   return (
@@ -85,7 +85,7 @@ export default function VelocityAI() {
       {/* HERO */}
       <section className="relative pt-32 sm:pt-40 pb-20 bg-gradient-to-br from-[#ffe5d4] via-[#ffd4b8] to-[#ffb892] overflow-hidden">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 relative z-10">
-          <p className="text-sm text-foreground/70 mb-6">Graviton VelocityAI</p>
+          <p className="text-sm text-foreground/70 mb-6">Croton VelocityAI</p>
           <h1 className="text-5xl sm:text-7xl md:text-8xl font-medium leading-[0.95] tracking-tight text-foreground max-w-5xl">
             Beyond Bold Ideas
             <br />
@@ -102,7 +102,7 @@ export default function VelocityAI() {
             Reimagining business with VelocityAI
           </p>
           <p className="text-2xl sm:text-3xl md:text-4xl text-foreground leading-tight max-w-5xl tracking-tight">
-            Graviton VelocityAI harnesses the intersecting power of{" "}
+            Croton VelocityAI harnesses the intersecting power of{" "}
             <span className="text-primary">AI, digital,</span> and{" "}
             <span className="text-primary">human-centered design</span> to turn bold ideas into
             production-ready realities. We help your business move from experimentation to{" "}
@@ -337,7 +337,7 @@ export default function VelocityAI() {
       <section className="bg-[#3f4b6b] py-20 sm:py-28">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
           <h2 className="text-5xl sm:text-7xl md:text-8xl font-medium text-white leading-[0.95] tracking-tight">
-            Get moving with Graviton{" "}
+            Get moving with Croton{" "}
             <span className="text-primary italic font-light">VelocityAI</span>
           </h2>
           <div className="flex lg:justify-end">

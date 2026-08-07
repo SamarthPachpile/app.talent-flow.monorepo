@@ -12,7 +12,7 @@ export default function PeopleFirst() {
         <p className="text-xs uppercase tracking-[0.3em] text-primary mb-4">Our culture</p>
 
         <h2 className="text-3xl sm:text-7xl mb-5">
-          At Graviton, we put <span className="text-primary">people first.</span>
+          At Croton, we put <span className="text-primary">people first.</span>
         </h2>
 
         <p className="text-muted-foreground mb-4">

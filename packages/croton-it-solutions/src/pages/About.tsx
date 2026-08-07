@@ -14,8 +14,8 @@ import CTASection from "@croton/components/CTASection";
 
 export default function About() {
   usePageMeta(
-    "About Us — Graviton",
-    "Graviton, a Tapasys Group company, is a CRM consultancy and applied-AI partner.",
+    "About Us — Croton",
+    "Croton, a Tapasys Group company, is a CRM consultancy and applied-AI partner.",
   );
   return (
     <div className="min-h-screen bg-background">

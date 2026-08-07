@@ -8,7 +8,7 @@ import {
   exportUnmatchedLog,
   getUnmatchedLog,
   type MatchResult,
-} from "@croton/lib/graviton-kb";
+} from "@croton/lib/croton-kb";
 import { Check, X, Download, Trash2, Play } from "lucide-react";
 
 type TestCase = {
@@ -19,8 +19,8 @@ type TestCase = {
 
 const SUITE: TestCase[] = [
   // Company
-  { query: "What does Graviton do?", expectId: "what-is-graviton" },
-  { query: "tell me about your company", expectId: "what-is-graviton" },
+  { query: "What does Croton do?", expectId: "what-is-croton" },
+  { query: "tell me about your company", expectId: "what-is-croton" },
   { query: "where are you located", expectId: "office-location" },
   { query: "address?", expectId: "office-location" },
   { query: "which industries do you serve", expectId: "industries" },
@@ -88,7 +88,7 @@ function runSuite(): Row[] {
 
 export default function ChatbotTest() {
   usePageMeta(
-    "Chatbot Test — Graviton",
+    "Chatbot Test — Croton",
     "Internal: run sample questions against the local chatbot knowledge base.",
   );
   const [rows, setRows] = useState<Row[]>(() => runSuite());
@@ -105,7 +105,7 @@ export default function ChatbotTest() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `graviton-unmatched-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `croton-unmatched-${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };

@@ -25,7 +25,7 @@ export default function AboutHeroSection() {
           transition={{ duration: 0.6 }}
           className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-primary mb-3 sm:mb-4"
         >
-          About Graviton
+          About Croton
         </motion.p>
 
         <motion.h1
@@ -34,7 +34,7 @@ export default function AboutHeroSection() {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-tight tracking-tight text-foreground max-w-5xl"
         >
-          <h1 className="font-semibold">Graviton :</h1>
+          <h1 className="font-semibold">Croton :</h1>
           <span className="text-primary">CRM consultancy</span> built around customer gravity and
           applied AI
         </motion.h1>
@@ -46,9 +46,9 @@ export default function AboutHeroSection() {
           className="mt-6 sm:mt-8 max-w-2xl"
         >
           <p className="text-xl text-muted-foreground leading-relaxed">
-            Part of the Tapasys Group, Graviton helps modern enterprises design, deploy and
-            modernize CRM platforms — and infuse them with AI that drives measurable revenue,
-            retention and experience.
+            Part of the Tapasys Group, Croton helps modern enterprises design, deploy and modernize
+            CRM platforms — and infuse them with AI that drives measurable revenue, retention and
+            experience.
           </p>
         </motion.div>
       </div>
