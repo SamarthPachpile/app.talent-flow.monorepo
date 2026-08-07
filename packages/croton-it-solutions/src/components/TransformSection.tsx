@@ -76,7 +76,7 @@ export default function TransformSection() {
           </p>
 
           <p className="max-w-[720px] text-[#33456b] text-[16px] sm:text-[22px] lg:text-[30px] leading-[1.22] tracking-[-0.02em]">
-            Graviton is a trusted digital transformation partner helping ambitious businesses
+            Croton is a trusted digital transformation partner helping ambitious businesses
             modernize customer relationships and scale smarter.
           </p>
         </div>

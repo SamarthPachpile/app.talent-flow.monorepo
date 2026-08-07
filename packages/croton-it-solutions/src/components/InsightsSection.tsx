@@ -9,25 +9,25 @@ const insights = [
     img: insight1,
     tag: "Case Studies",
     title: "How a B2B SaaS firm cut sales cycle by 38% with AI lead scoring on Salesforce",
-    author: "Graviton",
+    author: "Croton",
   },
   {
     img: insight2,
     tag: "Blogs",
     title: "From RevOps to AgentOps: the next chapter of CRM operations",
-    author: "Graviton",
+    author: "Croton",
   },
   {
     img: insight3,
     tag: "Blogs",
     title: "Clean data is the new CRM superpower — a practical playbook",
-    author: "Graviton",
+    author: "Croton",
   },
   {
     img: insight4,
     tag: "Case Studies",
     title: "Voice-AI for service: 4× faster ticket triage on HubSpot Service Hub",
-    author: "Graviton",
+    author: "Croton",
   },
 ];
 

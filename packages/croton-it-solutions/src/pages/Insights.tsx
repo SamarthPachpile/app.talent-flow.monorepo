@@ -37,7 +37,7 @@ const articles = [
     tag: "Blogs",
     title: "From RevOps to AgentOps: the next chapter of CRM operations",
     date: "7 April 2026",
-    author: "Graviton",
+    author: "Croton",
     tags: ["RevOps", "Agentic AI"],
   },
   {
@@ -45,7 +45,7 @@ const articles = [
     tag: "Case Studies",
     title: "B2B SaaS firm cuts sales cycle by 38% with AI lead scoring on Salesforce",
     date: "",
-    author: "Graviton",
+    author: "Croton",
     tags: ["Salesforce", "AI Scoring"],
   },
   {
@@ -53,7 +53,7 @@ const articles = [
     tag: "Blogs",
     title: "Clean data is the new CRM superpower — a practical playbook",
     date: "2 April 2026",
-    author: "Graviton",
+    author: "Croton",
     tags: ["Data Quality", "Governance"],
   },
   {
@@ -61,7 +61,7 @@ const articles = [
     tag: "Case Studies",
     title: "Voice-AI for service: 4× faster ticket triage on HubSpot Service Hub",
     date: "",
-    author: "Graviton",
+    author: "Croton",
     tags: ["HubSpot", "Service AI"],
   },
   {
@@ -69,7 +69,7 @@ const articles = [
     tag: "Blogs",
     title: "From RevOps to AgentOps: the next chapter of CRM operations",
     date: "7 April 2026",
-    author: "Graviton",
+    author: "Croton",
     tags: ["RevOps", "Agentic AI"],
   },
   {
@@ -77,7 +77,7 @@ const articles = [
     tag: "Case Studies",
     title: "B2B SaaS firm cuts sales cycle by 38% with AI lead scoring on Salesforce",
     date: "",
-    author: "Graviton",
+    author: "Croton",
     tags: ["Salesforce", "AI Scoring"],
   },
   {
@@ -85,7 +85,7 @@ const articles = [
     tag: "Blogs",
     title: "Clean data is the new CRM superpower — a practical playbook",
     date: "2 April 2026",
-    author: "Graviton",
+    author: "Croton",
     tags: ["Data Quality", "Governance"],
   },
   {
@@ -93,7 +93,7 @@ const articles = [
     tag: "Case Studies",
     title: "Voice-AI for service: 4× faster ticket triage on HubSpot Service Hub",
     date: "",
-    author: "Graviton",
+    author: "Croton",
     tags: ["HubSpot", "Service AI"],
   },
 ];
@@ -101,7 +101,7 @@ const articles = [
 const tabs = ["All", "Case Studies", "Blogs", "White Papers"];
 
 export default function Insights() {
-  usePageMeta("Insights — Graviton", "Fresh thinking on CRM, RevOps and applied AI from Graviton.");
+  usePageMeta("Insights — Croton", "Fresh thinking on CRM, RevOps and applied AI from Croton.");
 
   const [index, setIndex] = useState(0);
 
@@ -125,7 +125,7 @@ export default function Insights() {
       >
         <p className="text-xs uppercase tracking-[0.3em] text-primary mb-3">Insights</p>
         <h1 className="text-3xl sm:text-4xl md:text-7xl mb-10 max-w-6xl">
-          Fresh thinking on CRM, <br /> RevOps and applied AI from Graviton
+          Fresh thinking on CRM, <br /> RevOps and applied AI from Croton
         </h1>
       </section>
 

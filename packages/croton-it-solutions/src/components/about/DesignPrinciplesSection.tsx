@@ -31,7 +31,7 @@ export default function DesignPrinciplesSection() {
             transition={{ duration: 0.7 }}
           >
             <p className="text-xl text-black max-w-[420px] leading-relaxed">
-              Graviton provides unique experience and expertise at the intersection of data, design,
+              Croton provides unique experience and expertise at the intersection of data, design,
               and Customer Relations
             </p>
           </motion.div>

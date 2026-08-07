@@ -40,7 +40,7 @@ export default function CarouselSection() {
       className="h-screen w-full flex flex-col justify-center max-w-[1400px] mx-auto px-2 sm:px-2 py-10"
     >
       {/* Desktop (Single Row with flex-nowrap and exact width math) */}
-      <div className="hidden md:flex flex-nowrap gap-2 overflow-hidden flex-1 max-h-[78vh]">
+      <div className="max-md:hidden flex flex-nowrap gap-2 overflow-hidden flex-1 max-h-[78vh]">
         {slides.map((slide, i) => {
           const active = i === current;
 

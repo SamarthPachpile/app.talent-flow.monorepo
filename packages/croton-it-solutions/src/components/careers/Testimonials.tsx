@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 const TESTIMONIALS = [
   {
     quote:
-      "The atmosphere at Graviton is unmatched. I get to learn from world-class CRM architects every day.",
+      "The atmosphere at Croton is unmatched. I get to learn from world-class CRM architects every day.",
     highlight: "Every project feels like a masterclass.",
     name: "Aarti M.",
     role: "Senior Consultant · Pune",
@@ -20,7 +20,7 @@ const TESTIMONIALS = [
   },
   {
     quote:
-      "Graviton invests in people — certifications, mentorship, and learning are part of the job.",
+      "Croton invests in people — certifications, mentorship, and learning are part of the job.",
     highlight: "Growth here is intentional, not accidental.",
     name: "Priya K.",
     role: "RevOps Lead · Pune",
@@ -97,7 +97,7 @@ export default function Testimonials() {
             </h2>
           </div>
           <p className="text-sm text-gray-500 max-w-[260px] leading-relaxed text-right">
-            Explore why people joined Graviton—{" "}
+            Explore why people joined Croton—{" "}
             <a href="#" className="text-orange-500 font-medium hover:underline">
               and what keeps them here
             </a>

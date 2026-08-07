@@ -37,7 +37,7 @@ export function DashboardPage() {
   const [selectedCompanyFilter, setSelectedCompanyFilter] = useState("all");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    if (typeof window === "undefined") return true;
+    if (typeof window === "undefined") return false;
     return !!localStorage.getItem("talentflow_admin_auth");
   });
 

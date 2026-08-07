@@ -42,8 +42,8 @@ export default function PeopleCultureSection() {
               A <span className="text-primary">people-first</span> consultancy
             </h2>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-md">
-              Graviton is built on certified consultants, architects and engineers who care about
-              the customer behind every record. We invest in continuous learning, certifications and
+              Croton is built on certified consultants, architects and engineers who care about the
+              customer behind every record. We invest in continuous learning, certifications and
               inclusive teams — because better people build better CRMs.
             </p>
           </motion.div>

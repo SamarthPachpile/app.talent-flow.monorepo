@@ -75,7 +75,7 @@ export default function SectionNavigator() {
   return (
     <div
       key={location.pathname}
-      className="fixed right-4 md:right-6 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col items-end gap-4"
+      className="fixed right-4 md:right-6 top-1/2 -translate-y-1/2 z-50 max-md:hidden flex flex-col items-end gap-4"
     >
       {sections.map((s, i) => {
         const isActive = active === i;

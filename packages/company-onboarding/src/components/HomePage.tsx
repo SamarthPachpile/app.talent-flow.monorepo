@@ -25,6 +25,8 @@ import {
   DollarSign,
   Cpu,
   RefreshCw,
+  Menu,
+  X,
 } from "lucide-react";
 
 interface HomePageProps {
@@ -34,6 +36,7 @@ interface HomePageProps {
 }
 
 export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onSignIn, onSelectPlan }) => {
+  const [mobileNavOpen, setMobileNavOpen] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<"all" | "sourcing" | "pipeline" | "compliance">("all");
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annually">("annually");
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -147,61 +150,147 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onSignIn, onSe
         style={{ scaleX }}
       />
 
-      {/* Top Portfolio Navigation Header */}
-      <header className="sticky top-0 z-50 backdrop-blur-md bg-card/95 border-b border-border">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <motion.span
-              whileHover={{ rotate: 5, scale: 1.05 }}
-              className="grid size-9 place-items-center rounded-lg bg-ember text-ember-foreground font-bold shadow-sm text-sm cursor-pointer"
-            >
-              TF
-            </motion.span>
-            <div className="leading-tight">
-              <span className="font-display text-xl font-bold text-foreground tracking-tight">
-                TalentFlow Hub
-              </span>
-              <span className="text-[10px] block text-muted-foreground uppercase tracking-widest font-semibold">
-                Enterprise Candidate OS
-              </span>
+      {/* Top Portfolio Navigation Header (Croton Capsule Style) */}
+      <header className="fixed top-3 sm:top-5 left-1/2 -translate-x-1/2 z-[9999] w-[calc(100%-1.5rem)] sm:w-[calc(100%-2.5rem)] max-w-[1400px]">
+        <div className="clip-path-nav-sm bg-background/95 backdrop-blur-xl shadow-[0_8px_32px_-12px_rgba(0,0,0,0.15)] border border-border/60">
+          <div className="flex items-center justify-between pl-5 pr-2 sm:pl-7 sm:pr-3 py-2.5">
+            {/* Brand Logo */}
+            <div className="flex items-center gap-3 cursor-pointer">
+              <motion.span
+                whileHover={{ rotate: 5, scale: 1.05 }}
+                className="grid size-9 place-items-center rounded-xl bg-ember text-ember-foreground font-bold shadow-xs text-xs shrink-0"
+              >
+                TF
+              </motion.span>
+              <div className="flex flex-col leading-none">
+                <span className="text-base sm:text-lg font-bold text-foreground tracking-tight">
+                  TalentFlow Hub
+                </span>
+                <span className="text-[10px] text-muted-foreground mt-0.5 font-medium">
+                  Enterprise Candidate OS
+                </span>
+              </div>
             </div>
-          </div>
 
-          <nav className="hidden md:flex items-center gap-8 text-xs font-medium text-muted-foreground">
-            <a href="#about" className="hover:text-foreground transition-colors">
-              Who We Are
-            </a>
-            <a href="#features" className="hover:text-foreground transition-colors">
-              Features & Connectors
-            </a>
-            <a href="#roi-calculator" className="hover:text-foreground transition-colors">
-              ROI Calculator
-            </a>
-            <a href="#clients" className="hover:text-foreground transition-colors">
-              Clients
-            </a>
-            <a href="#pricing" className="hover:text-foreground transition-colors">
-              Pricing
-            </a>
-          </nav>
+            {/* Desktop Navigation Links */}
+            <nav className="hidden lg:flex items-center gap-6 text-xs font-medium text-muted-foreground">
+              <a href="#about" className="hover:text-ember transition-colors">
+                Who We Are
+              </a>
+              <a href="#features" className="hover:text-ember transition-colors">
+                Features & Connectors
+              </a>
+              <a href="#roi-calculator" className="hover:text-ember transition-colors">
+                ROI Calculator
+              </a>
+              <a href="#clients" className="hover:text-ember transition-colors">
+                Clients
+              </a>
+              <a href="#pricing" className="hover:text-ember transition-colors">
+                Pricing
+              </a>
+            </nav>
 
-          <div className="flex items-center gap-3">
+            {/* Right Side Buttons */}
+            <div className="hidden lg:flex items-center gap-3">
+              <button
+                onClick={onSignIn}
+                className="px-3.5 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer"
+              >
+                Sign In
+              </button>
+              <button
+                onClick={onGetStarted}
+                className="clip-path-button-sm bg-ember text-ember-foreground px-6 py-2.5 text-xs font-semibold hover:bg-ember/90 transition-colors flex items-center gap-2 cursor-pointer"
+              >
+                <span>Get Started</span>
+                <ArrowRight className="size-3.5" />
+              </button>
+            </div>
+
+            {/* Mobile Menu Toggle Button */}
             <button
-              onClick={onSignIn}
-              className="px-3.5 py-1.5 rounded-md text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer"
+              className="hidden max-lg:flex w-10 h-10 items-center justify-center text-foreground hover:text-ember transition-colors cursor-pointer"
+              onClick={() => setMobileNavOpen(!mobileNavOpen)}
+              aria-label="Toggle Navigation Menu"
             >
-              Sign In
-            </button>
-            <button
-              onClick={onGetStarted}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-md text-xs font-semibold bg-ember text-ember-foreground hover:bg-ember/90 shadow-card transition-all hover:scale-[1.02] cursor-pointer"
-            >
-              <span>Get Started</span>
-              <ArrowRight className="size-3.5" />
+              {mobileNavOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
       </header>
+
+      {/* Mobile Navigation Dropdown Overlay */}
+      <AnimatePresence>
+        {mobileNavOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="hidden max-lg:block fixed top-[70px] left-3 right-3 z-[9999] border border-border/60 bg-background/95 backdrop-blur-xl rounded-xl shadow-xl p-4 space-y-3"
+          >
+            <div className="flex flex-col gap-2.5 text-xs font-medium">
+              <a
+                href="#about"
+                onClick={() => setMobileNavOpen(false)}
+                className="p-2 rounded-lg hover:bg-accent text-foreground"
+              >
+                Who We Are
+              </a>
+              <a
+                href="#features"
+                onClick={() => setMobileNavOpen(false)}
+                className="p-2 rounded-lg hover:bg-accent text-foreground"
+              >
+                Features & Connectors
+              </a>
+              <a
+                href="#roi-calculator"
+                onClick={() => setMobileNavOpen(false)}
+                className="p-2 rounded-lg hover:bg-accent text-foreground"
+              >
+                ROI Calculator
+              </a>
+              <a
+                href="#clients"
+                onClick={() => setMobileNavOpen(false)}
+                className="p-2 rounded-lg hover:bg-accent text-foreground"
+              >
+                Clients
+              </a>
+              <a
+                href="#pricing"
+                onClick={() => setMobileNavOpen(false)}
+                className="p-2 rounded-lg hover:bg-accent text-foreground"
+              >
+                Pricing
+              </a>
+            </div>
+
+            <div className="pt-2 border-t border-border/50 flex items-center justify-between gap-2">
+              <button
+                onClick={() => {
+                  setMobileNavOpen(false);
+                  onSignIn();
+                }}
+                className="p-2 rounded-lg bg-muted text-xs font-medium w-1/2 text-center"
+              >
+                Sign In
+              </button>
+              <button
+                onClick={() => {
+                  setMobileNavOpen(false);
+                  onGetStarted();
+                }}
+                className="clip-path-button-sm bg-ember text-ember-foreground w-1/2 py-2 text-xs font-semibold flex items-center justify-center gap-1.5"
+              >
+                <span>Get Started</span>
+                <ArrowRight className="size-3.5" />
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Hero Section with Parallax Background & Glass Components */}
       <section

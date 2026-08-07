@@ -309,3 +309,38 @@
     transparent 4px 8px
   );
 }
+
+/* Custom Sticky Scrollbar - Flush to the right edge with zero gap, transparent track */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  background: transparent !important;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent !important;
+  margin: 0;
+  padding: 0;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(140, 140, 150, 0.45);
+  border: 0 !important;
+  border-radius: 4px 0 0 4px;
+  margin: 0;
+  padding: 0;
+  transition: background 0.2s ease-in-out;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(249, 115, 22, 0.9);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent !important;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(140, 140, 150, 0.45) transparent;
+}

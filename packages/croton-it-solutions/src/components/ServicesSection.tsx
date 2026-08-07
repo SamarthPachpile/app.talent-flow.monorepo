@@ -6,7 +6,7 @@ const services = [
   {
     title: "Product Strategy &",
     subtitle: "Experience Design",
-    description: "Design and build what’s next with help from Graviton, a Tapasys company.",
+    description: "Design and build what’s next with help from Croton, a Tapasys company.",
   },
   {
     title: "Digital Business",

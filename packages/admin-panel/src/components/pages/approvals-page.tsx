@@ -16,7 +16,7 @@ import { AdminLoginPage } from "../admin-login-page";
 
 export function ApprovalsPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    if (typeof window === "undefined") return true;
+    if (typeof window === "undefined") return false;
     return !!localStorage.getItem("talentflow_admin_auth");
   });
 

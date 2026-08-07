@@ -19,8 +19,15 @@ export function AdminPanelContainer() {
   });
 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    if (typeof window === "undefined") return true;
-    return !!localStorage.getItem("talentflow_admin_auth");
+    if (typeof window !== "undefined") {
+      const cleanPath = window.location.pathname.split("?")[0].replace(/\/+$/, "");
+      if (cleanPath === "/admin-panel" || cleanPath === "" || cleanPath.endsWith("/login")) {
+        localStorage.removeItem("talentflow_admin_auth");
+        return false;
+      }
+      return !!localStorage.getItem("talentflow_admin_auth");
+    }
+    return false;
   });
 
   useEffect(() => {

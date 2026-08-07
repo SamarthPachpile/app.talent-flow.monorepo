@@ -58,7 +58,7 @@ type FloatProps = {
 function FloatingIcon({ children, label, className, delay = 0, duration = 6 }: FloatProps) {
   return (
     <motion.div
-      className={`absolute hidden md:flex items-center gap-2 ${className}`}
+      className={`absolute max-md:hidden flex items-center gap-2 z-20 ${className}`}
       initial={{ opacity: 0, y: 24, scale: 0.8 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.9, delay, ease: [0.22, 1, 0.36, 1] }}
@@ -96,13 +96,13 @@ export default function HeroSection() {
       id="hero"
       data-section="hero"
       data-label="Home"
-      className="relative h-screen w-full flex items-end pb-12 sm:pb-16 overflow-hidden"
+      className="relative h-screen w-full flex items-end pb-12 sm:pb-8 overflow-hidden"
     >
       {/* Background Image */}
       <div className="absolute inset-0">
         <img
           src={heroBg}
-          alt="Graviton CRM consulting"
+          alt="Croton CRM consulting"
           className="w-full h-full object-cover"
           width={1920}
           height={1080}
@@ -132,7 +132,7 @@ export default function HeroSection() {
 
       <FloatingIcon
         label="Automate with AI"
-        className="top-[55%] left-[10%]"
+        className="top-[48%] left-[15%]"
         delay={0.7}
         duration={50}
       >

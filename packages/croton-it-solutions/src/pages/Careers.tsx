@@ -18,7 +18,7 @@ import ZeroDistance from "@croton/components/careers/ZeroDistance";
 import CareersSearch from "@croton/components/careers/CareersSearch";
 
 export default function Careers() {
-  usePageMeta("Careers — Graviton", "Join Graviton — a CRM and applied-AI consultancy.");
+  usePageMeta("Careers — Croton", "Join Croton — a CRM and applied-AI consultancy.");
 
   return (
     <div className="min-h-screen bg-background">

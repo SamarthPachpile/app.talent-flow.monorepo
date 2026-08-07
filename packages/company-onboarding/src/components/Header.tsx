@@ -7,7 +7,6 @@ import {
   ShieldCheck,
   Settings,
   Wand2,
-  CheckCircle2,
   LogOut,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -47,7 +46,6 @@ export const Header: React.FC<HeaderProps> = ({
   const companySlug = companyName ? companyName.toLowerCase().replace(/[^a-z0-9]/g, "") : "company";
   const dynamicDashPath = `/companies/${companySlug}/dashboard`;
 
-  // Dynamic navbar items based on completion status
   const navItems = isCompleted
     ? [
         { id: "pipeline", label: "Pipeline Board", icon: LayoutGrid },
