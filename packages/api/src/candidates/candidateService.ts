@@ -1,5 +1,5 @@
 import { doc, getDoc, setDoc, getDocs, collection } from "firebase/firestore";
-import { db } from "../firebase";
+import { candidateDb } from "./firebase";
 import type { CandidateSettings, ApiResponse } from "../types";
 
 export interface CandidateDocument {
@@ -115,10 +115,10 @@ export class CandidateApiService {
           candidate.id.includes("@"));
 
       if (!candidate.id || isEmailBasedId) {
-        candidate.id = doc(collection(db, "candidates")).id;
+        candidate.id = doc(collection(candidateDb, "candidates")).id;
       }
 
-      const candidateRef = doc(db, "candidates", candidate.id);
+      const candidateRef = doc(candidateDb, "candidates", candidate.id);
       const payload: CandidateDocument = {
         ...candidate,
         updatedAt: new Date().toISOString(),
@@ -159,7 +159,7 @@ export class CandidateApiService {
    */
   static async getCandidateFromFirestore(candidateId: string): Promise<CandidateDocument | null> {
     try {
-      const candidateRef = doc(db, "candidates", candidateId);
+      const candidateRef = doc(candidateDb, "candidates", candidateId);
       const docSnap = await getDoc(candidateRef);
       if (docSnap.exists()) {
         return docSnap.data() as CandidateDocument;
@@ -185,7 +185,7 @@ export class CandidateApiService {
    */
   static async getAllCandidatesFromFirestore(): Promise<CandidateDocument[]> {
     try {
-      const colRef = collection(db, "candidates");
+      const colRef = collection(candidateDb, "candidates");
       const snap = await getDocs(colRef);
       const list: CandidateDocument[] = [];
       snap.forEach((docSnap) => {

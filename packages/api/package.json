@@ -11,6 +11,18 @@
     ".": {
       "import": "./src/index.ts",
       "types": "./src/index.ts"
+    },
+    "./admin": {
+      "import": "./src/admin/index.ts",
+      "types": "./src/admin/index.ts"
+    },
+    "./companies": {
+      "import": "./src/companies/index.ts",
+      "types": "./src/companies/index.ts"
+    },
+    "./candidates": {
+      "import": "./src/candidates/index.ts",
+      "types": "./src/candidates/index.ts"
     }
   },
   "scripts": {

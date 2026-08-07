@@ -14,9 +14,11 @@ export default defineConfig({
     server: { entry: "server" },
   },
   vite: {
+    envDir: path.resolve(__dirname, "../../"),
     resolve: {
       alias: {
         "@talent-flow/api": path.resolve(__dirname, "../api/src/index.ts"),
+        "@talent-flow/api/*": path.resolve(__dirname, "../api/src/*"),
         "@talent-flow/candidate-portal": path.resolve(__dirname, "../candidate-portal/src/App.tsx"),
         "@talent-flow/company-onboarding": path.resolve(
           __dirname,

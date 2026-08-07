@@ -4,7 +4,7 @@ import type {
   AuditLogEntry,
   ApiResponse,
 } from "../types";
-import { getBackendStatus } from "../firebase";
+import { getAdminBackendStatus } from "./firebase";
 
 const STORAGE_KEY_ADMIN_SETTINGS = "talentflow_admin_settings";
 
@@ -34,7 +34,7 @@ const defaultAdminSettings: PlatformAdminSettings = {
 const defaultSystemHealth: SystemHealthMetric[] = [
   {
     id: "srv-1",
-    service: "Firebase Auth API",
+    service: "Firebase Auth API (Admin)",
     status: "healthy",
     latencyMs: 38,
     uptime: "99.98%",
@@ -42,7 +42,7 @@ const defaultSystemHealth: SystemHealthMetric[] = [
   },
   {
     id: "srv-2",
-    service: "Firestore Database",
+    service: "Firestore Database (Admin)",
     status: "healthy",
     latencyMs: 42,
     uptime: "99.99%",
@@ -112,7 +112,7 @@ export class AdminApiService {
   }
 
   static getHealthMetrics(): SystemHealthMetric[] {
-    const backendStatus = getBackendStatus();
+    const backendStatus = getAdminBackendStatus();
     return defaultSystemHealth.map((item) => {
       if (item.service.includes("Firebase")) {
         return {

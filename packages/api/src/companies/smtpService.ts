@@ -62,7 +62,12 @@ export async function sendMemberCredentialsSmtp(
   const tempPass =
     params.loginPassword || `TF-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
 
-  const origin = typeof window !== "undefined" ? window.location.origin : "http://localhost:3001";
+  const defaultPort =
+    typeof process !== "undefined" && process.env
+      ? process.env.VITE_PORT || process.env.PORT || "3000"
+      : "3000";
+  const origin =
+    typeof window !== "undefined" ? window.location.origin : `http://localhost:${defaultPort}`;
   const loginUrl = `${origin}/companies/${params.companySlug}/dashboard`;
 
   const emailSubject = `Welcome to ${params.companyName} on TalentFlow - Your Admin Credentials`;

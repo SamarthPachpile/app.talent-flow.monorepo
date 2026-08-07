@@ -31,6 +31,7 @@ export const App: React.FC = () => {
   });
 
   const [activeTab, setActiveTab] = useState<string>("home");
+  const [authMode, setAuthMode] = useState<"signin" | "register">("signin");
   const [dashboardSubTab, setDashboardSubTab] = useState<string>("pipeline");
 
   const [companyNotFound, setCompanyNotFound] = useState<boolean>(false);
@@ -277,9 +278,16 @@ export const App: React.FC = () => {
       if (segments[0] === "companies" && segments.length >= 2) {
         const potentialSlug = decodeURIComponent(segments[1]);
         if (
-          !["login", "auth", "dashboard", "dashbaord", "home", "wizard"].includes(
-            potentialSlug.toLowerCase(),
-          )
+          ![
+            "login",
+            "auth",
+            "dashboard",
+            "dashbaord",
+            "home",
+            "wizard",
+            "register",
+            "signup",
+          ].includes(potentialSlug.toLowerCase())
         ) {
           requestedSlug = potentialSlug;
         }
@@ -295,12 +303,17 @@ export const App: React.FC = () => {
             setCompanyNotFound(false);
             const action = segments[2]?.toLowerCase();
             if (action === "login") {
+              setAuthMode("signin");
+              setActiveTab("auth");
+            } else if (action === "register" || action === "signup") {
+              setAuthMode("register");
               setActiveTab("auth");
             } else if (!isAuth) {
               toast.error(
                 "Authentication required. Please sign in to access your company dashboard.",
               );
               window.history.pushState({}, "", "/companies/login");
+              setAuthMode("signin");
               setActiveTab("auth");
             } else {
               loadAuthenticatedCompanyData();
@@ -314,11 +327,23 @@ export const App: React.FC = () => {
       // Generic non-company-specific routes
       setCompanyNotFound(false);
 
-      if (
+      const isRegisterRoute =
+        cleanPath === "/companies/register" ||
+        cleanPath === "/companies/signup" ||
+        cleanPath === "/register" ||
+        cleanPath === "/signup" ||
+        searchParams.get("mode") === "register" ||
+        searchParams.get("register") === "true";
+
+      if (isRegisterRoute) {
+        setAuthMode("register");
+        setActiveTab("auth");
+      } else if (
         cleanPath === "/companies/login" ||
         cleanPath === "/login" ||
         cleanPath.startsWith("/auth")
       ) {
+        setAuthMode("signin");
         setActiveTab("auth");
       } else if (
         cleanPath === "/companies/dashboard" ||
@@ -328,6 +353,7 @@ export const App: React.FC = () => {
         if (!isAuth) {
           toast.error("Authentication required. Please sign in to access your company dashboard.");
           window.history.pushState({}, "", "/companies/login");
+          setAuthMode("signin");
           setActiveTab("auth");
         } else {
           loadAuthenticatedCompanyData();
@@ -355,6 +381,12 @@ export const App: React.FC = () => {
   ]);
 
   const navigateTo = (path: string, targetTab?: string, isCompletedOverride?: boolean) => {
+    if (path.includes("/register") || path.includes("/signup")) {
+      setAuthMode("register");
+    } else if (path.includes("/login") || path.includes("/auth")) {
+      setAuthMode("signin");
+    }
+
     const isAuth =
       isAuthenticated ||
       (typeof window !== "undefined" &&
@@ -373,6 +405,7 @@ export const App: React.FC = () => {
       toast.error("Authentication required. Please sign in to access your company dashboard.");
       window.history.pushState({}, "", "/companies/login");
       setCurrentPath("/companies/login");
+      setAuthMode("signin");
       setActiveTab("auth");
       return;
     }
@@ -736,7 +769,7 @@ export const App: React.FC = () => {
                 <button
                   onClick={() => {
                     setCompanyNotFound(false);
-                    navigateTo("/companies/login", "auth");
+                    navigateTo("/companies/register", "auth");
                   }}
                   className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-surface border border-border hover:bg-accent text-foreground font-semibold text-xs transition-colors cursor-pointer"
                 >
@@ -751,19 +784,20 @@ export const App: React.FC = () => {
             {activeTab === "home" && (
               <HomePage
                 onGetStarted={() => {
-                  navigateTo("/companies/login", "auth");
+                  navigateTo("/companies/register", "auth");
                 }}
                 onSignIn={() => {
                   navigateTo("/companies/login", "auth");
                 }}
                 onSelectPlan={() => {
-                  navigateTo("/companies/login", "auth");
+                  navigateTo("/companies/register", "auth");
                 }}
               />
             )}
 
             {activeTab === "auth" && (
               <AuthScreen
+                initialIsSignUp={authMode === "register"}
                 onSuccess={handleAuthSuccess}
                 onBackToHome={() => {
                   navigateTo("/companies", "home");
