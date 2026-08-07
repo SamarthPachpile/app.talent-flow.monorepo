@@ -27,7 +27,9 @@
   },
   "scripts": {
     "build": "tsc",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "lint-fix": "eslint . --fix"
   },
   "dependencies": {
     "firebase": "^12.17.0"
