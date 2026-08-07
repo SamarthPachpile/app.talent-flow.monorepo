@@ -6,7 +6,8 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "npm run dev --workspace=packages/admin-panel",
+    "dev": "npm run dev --workspace=packages/croton-it-solutions",
+    "dev:croton": "npm run dev --workspace=packages/croton-it-solutions",
     "dev:admin": "npm run dev --workspace=packages/admin-panel",
     "dev:onboarding": "npm run dev --workspace=packages/company-onboarding",
     "dev:candidates": "npm run dev --workspace=packages/candidate-portal",
@@ -15,6 +16,7 @@
     "build:admin": "npm run build --workspace=packages/admin-panel",
     "build:onboarding": "npm run build --workspace=packages/company-onboarding",
     "build:candidates": "npm run build --workspace=packages/candidate-portal",
+    "build:croton": "npm run build --workspace=packages/croton-it-solutions",
     "lerna:list": "lerna list",
     "lerna:build": "lerna run build",
     "lerna:dev": "lerna run dev --parallel",

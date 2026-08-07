@@ -3,6 +3,7 @@
   "private": true,
   "sideEffects": false,
   "type": "module",
+  "main": "src/App.tsx",
   "scripts": {
     "dev": "vite --port 3000",
     "build": "tsc -b && vite build",

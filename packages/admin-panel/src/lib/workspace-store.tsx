@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
-import { STAGES, type Stage, stageIndex } from "@/lib/ats-data";
+import { STAGES, type Stage, stageIndex } from "./ats-data";
 import {
   COMPANIES,
   SEED_APPROVALS,
@@ -17,7 +17,7 @@ import {
   type Offer,
   type OfferStatus,
   type TenantCandidate,
-} from "@/lib/workspace-data";
+} from "./workspace-data";
 
 let seq = 0;
 const uid = (p: string) => `${p}-${Date.now().toString(36)}-${seq++}`;

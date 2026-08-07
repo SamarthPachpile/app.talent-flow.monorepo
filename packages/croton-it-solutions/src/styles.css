@@ -1,0 +1,315 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Manrope:wght@200..800&display=swap");
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-gl-orange: var(--gl-orange);
+  --color-gl-orange-hover: var(--gl-orange-hover);
+  --color-gl-dark: var(--gl-dark);
+  --color-gl-navy: var(--gl-navy);
+  --color-gl-gray: var(--gl-gray);
+  --color-gl-light-gray: var(--gl-light-gray);
+  --color-gl-bg: var(--gl-bg);
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+}
+
+.croton-scope {
+  --radius: 0.625rem;
+  --font-sans: "Poppins", sans-serif;
+  --font-display: "Poppins", sans-serif;
+  --background: oklch(0.99 0 0);
+  --foreground: oklch(0.15 0.02 260);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.15 0.02 260);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.15 0.02 260);
+  --primary: oklch(0.637 0.194 29);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.96 0.005 260);
+  --secondary-foreground: oklch(0.15 0.02 260);
+  --muted: oklch(0.96 0.005 260);
+  --muted-foreground: oklch(0.5 0.02 260);
+  --accent: oklch(0.96 0.005 260);
+  --accent-foreground: oklch(0.15 0.02 260);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.984 0.003 247.858);
+  --border: oklch(0.92 0.005 260);
+  --input: oklch(0.92 0.005 260);
+  --ring: oklch(0.637 0.194 29);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.984 0.003 247.858);
+  --sidebar-foreground: oklch(0.129 0.042 264.695);
+  --sidebar-primary: oklch(0.208 0.042 265.755);
+  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-accent: oklch(0.968 0.007 247.896);
+  --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
+  --sidebar-border: oklch(0.929 0.013 255.508);
+  --sidebar-ring: oklch(0.704 0.04 256.788);
+
+  --gl-orange: oklch(0.637 0.194 29);
+  --gl-orange-hover: oklch(0.58 0.194 29);
+  --gl-dark: oklch(0.15 0.02 260);
+  --gl-navy: oklch(0.18 0.04 265);
+  --gl-gray: oklch(0.5 0.01 260);
+  --gl-light-gray: oklch(0.96 0.005 260);
+  --gl-bg: oklch(0.985 0.002 260);
+}
+
+.croton-scope {
+  color-scheme: dark light;
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+}
+
+@layer base {
+  .croton-scope * {
+    border-color: var(--color-border);
+  }
+
+  .croton-scope {
+    overflow-x: hidden;
+  }
+
+  /* Strictly hide scrollbar everywhere in croton-it-solutions */
+  html:has(.croton-scope),
+  body:has(.croton-scope),
+  .croton-scope,
+  .croton-scope * {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+
+  html:has(.croton-scope)::-webkit-scrollbar,
+  body:has(.croton-scope)::-webkit-scrollbar,
+  .croton-scope::-webkit-scrollbar,
+  .croton-scope *::-webkit-scrollbar {
+    width: 0 !important;
+    height: 0 !important;
+    display: none !important;
+    background: transparent !important;
+  }
+
+  /* Embedded portal subnets retain normal scrollbar rules */
+  .croton-scope .talentflow-admin-panel-scope,
+  .croton-scope .talentflow-admin-panel-scope *,
+  .croton-scope .talentflow-company-onboarding-scope,
+  .croton-scope .talentflow-company-onboarding-scope *,
+  .croton-scope .talentflow-candidate-portal-scope,
+  .croton-scope .talentflow-candidate-portal-scope * {
+    scrollbar-width: auto;
+    -ms-overflow-style: auto;
+  }
+
+  .croton-scope .talentflow-admin-panel-scope::-webkit-scrollbar,
+  .croton-scope .talentflow-admin-panel-scope *::-webkit-scrollbar,
+  .croton-scope .talentflow-company-onboarding-scope::-webkit-scrollbar,
+  .croton-scope .talentflow-company-onboarding-scope *::-webkit-scrollbar,
+  .croton-scope .talentflow-candidate-portal-scope::-webkit-scrollbar,
+  .croton-scope .talentflow-candidate-portal-scope *::-webkit-scrollbar {
+    width: auto;
+    height: auto;
+    display: block;
+  }
+
+  /* Custom cursor - strictly active inside croton-scope, never bleeding into other portals */
+  @media (min-width: 768px) and (pointer: fine) {
+    html.custom-cursor-active .croton-scope,
+    html.custom-cursor-active .croton-scope a,
+    html.custom-cursor-active .croton-scope button,
+    html.custom-cursor-active .croton-scope input,
+    html.custom-cursor-active .croton-scope textarea,
+    html.custom-cursor-active .croton-scope select,
+    html.custom-cursor-active .croton-scope [role="button"] {
+      cursor: none !important;
+    }
+
+    /* Embedded portal subnets and external components retain native cursor */
+    html.custom-cursor-active iframe,
+    html.custom-cursor-active .talentflow-admin-panel-scope,
+    html.custom-cursor-active .talentflow-admin-panel-scope *,
+    html.custom-cursor-active .talentflow-company-onboarding-scope,
+    html.custom-cursor-active .talentflow-company-onboarding-scope *,
+    html.custom-cursor-active .talentflow-candidate-portal-scope,
+    html.custom-cursor-active .talentflow-candidate-portal-scope * {
+      cursor: auto !important;
+    }
+  }
+
+  /* Lenis required */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+  }
+  .lenis.lenis-stopped {
+    overflow: clip;
+  }
+
+  .croton-scope img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Headings use display font */
+  .croton-scope h1,
+  .croton-scope h2,
+  .croton-scope h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
+}
+
+.croton-scope .clip-path-card {
+  clip-path: polygon(
+    28px 0,
+    calc(100% - 28px) 0,
+    100% 28px,
+    100% calc(100% - 28px),
+    calc(100% - 28px) 100%,
+    28px 100%,
+    0 calc(100% - 28px),
+    0 28px
+  );
+}
+
+.croton-scope .clip-service {
+  clip-path: polygon(
+    20px 0,
+    calc(100% - 20px) 0,
+    100% 20px,
+    100% calc(100% - 20px),
+    calc(100% - 20px) 100%,
+    20px 100%,
+    0 calc(100% - 20px),
+    0 20px
+  );
+}
+
+.croton-scope .form-input {
+  @apply w-full bg-[#e9ebef] rounded-md px-4 py-3 text-sm 
+  placeholder:text-gray-500 outline-none border-none;
+}
+
+/* Optional: Smooth corners on mobile */
+@media (max-width: 768px) {
+  .croton-scope .clip-path-card {
+    clip-path: polygon(
+      16px 0,
+      calc(100% - 16px) 0,
+      100% 16px,
+      100% calc(100% - 16px),
+      calc(100% - 16px) 100%,
+      16px 100%,
+      0 calc(100% - 16px),
+      0 16px
+    );
+  }
+}
+
+/* Smaller Clip Path for Navbar */
+.croton-scope .clip-path-nav-sm {
+  clip-path: polygon(
+    18px 0,
+    calc(100% - 18px) 0,
+    100% 18px,
+    100% calc(100% - 18px),
+    calc(100% - 18px) 100%,
+    18px 100%,
+    0 calc(100% - 18px),
+    0 18px
+  );
+  border-radius: 0;
+}
+
+/* Smaller Clip Path for Talk to Sales Button */
+.croton-scope .clip-path-button-sm {
+  clip-path: polygon(
+    10px 0,
+    calc(100% - 10px) 0,
+    100% 10px,
+    100% calc(100% - 10px),
+    calc(100% - 10px) 100%,
+    10px 100%,
+    0 calc(100% - 10px),
+    0 10px
+  );
+  border-radius: 0;
+}
+
+/* Responsive adjustment for mobile */
+@media (max-width: 640px) {
+  .croton-scope .clip-path-nav-sm {
+    clip-path: polygon(
+      12px 0,
+      calc(100% - 12px) 0,
+      100% 12px,
+      100% calc(100% - 12px),
+      calc(100% - 12px) 100%,
+      12px 100%,
+      0 calc(100% - 12px),
+      0 12px
+    );
+  }
+}
+
+.croton-scope .scrollable {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.croton-scope .scrollable::-webkit-scrollbar {
+  display: none;
+}

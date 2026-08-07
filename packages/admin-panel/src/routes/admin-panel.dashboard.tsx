@@ -1,23 +1,24 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Search, Filter, Users, Building2, Globe2 } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+import { Input } from "../components/ui/input";
+import { Badge } from "../components/ui/badge";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { AppNav } from "@/components/layout/app-nav";
-import { CandidateCard } from "@/components/ats/candidate-card";
-import { CandidateDrawer } from "@/components/ats/candidate-drawer";
-import { useWorkspace } from "@/lib/workspace-store";
-import { PHASES, RECRUITERS, ROLES, STAGES, phaseOfStage } from "@/lib/ats-data";
-import { COMPANIES, OPERATOR } from "@/lib/workspace-data";
-import { AdminLoginPage } from "@/components/admin-login-page";
+} from "../components/ui/select";
+import { AppNav } from "../components/layout/app-nav";
+import { CandidateCard } from "../components/ats/candidate-card";
+import { CandidateDrawer } from "../components/ats/candidate-drawer";
+import { useWorkspace } from "../lib/workspace-store";
+import { PHASES, RECRUITERS, ROLES, STAGES, phaseOfStage } from "../lib/ats-data";
+import { COMPANIES, OPERATOR } from "../lib/workspace-data";
+import { AdminLoginPage } from "../components/admin-login-page";
 
+// @ts-expect-error TanStack Router route definition fallback
 export const Route = createFileRoute("/admin-panel/dashboard")({
   head: () => ({
     meta: [
@@ -28,7 +29,7 @@ export const Route = createFileRoute("/admin-panel/dashboard")({
   component: DashboardPage,
 });
 
-function DashboardPage() {
+export function DashboardPage() {
   const { allCandidates, advanceCandidate } = useWorkspace();
   const [query, setQuery] = useState("");
   const [role, setRole] = useState("all");

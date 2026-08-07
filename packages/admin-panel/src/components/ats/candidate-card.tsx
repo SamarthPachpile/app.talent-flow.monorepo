@@ -1,7 +1,7 @@
 import { AlertTriangle, ArrowUpRight, MapPin } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
-import { type Candidate, STAGES, stageIndex } from "@/lib/ats-data";
+import { Badge } from "../ui/badge";
+import { cn } from "../../lib/utils";
+import { type Candidate, STAGES, stageIndex } from "../../lib/ats-data";
 
 const priorityLabel: Record<Candidate["priority"], string> = {
   standard: "Standard",

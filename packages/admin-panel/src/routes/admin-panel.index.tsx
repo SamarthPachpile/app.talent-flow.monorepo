@@ -1,12 +1,13 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { AdminHomePage } from "@/components/admin-home-page";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/admin-panel/")({
-  head: () => ({
-    meta: [
-      { title: "TalentFlow Admin Suite — Home Portfolio" },
-      { name: "description", content: "Centralized ATS governance and multi-tenant CRM engine." },
-    ],
-  }),
-  component: AdminHomePage,
+  beforeLoad: () => {
+    const isAuth = typeof window !== "undefined" && !!localStorage.getItem("talentflow_admin_auth");
+
+    if (isAuth) {
+      throw redirect({ to: "/admin-panel/dashboard" });
+    } else {
+      throw redirect({ to: "/admin-panel/login" });
+    }
+  },
 });

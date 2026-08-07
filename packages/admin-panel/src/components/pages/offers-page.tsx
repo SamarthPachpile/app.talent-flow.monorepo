@@ -1,22 +1,16 @@
 import { useMemo, useState } from "react";
 import { FileSignature, Send, Eye, PenLine, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { AppNav } from "@/components/layout/app-nav";
-import { SettingsCard } from "@/components/settings/settings-card";
-import { AuditTrail } from "@/components/ats/audit-trail";
-import { useWorkspace } from "@/lib/workspace-store";
-import { OFFER_FLOW, type Offer } from "@/lib/workspace-data";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { Badge } from "../ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { AppNav } from "../layout/app-nav";
+import { SettingsCard } from "../settings/settings-card";
+import { AuditTrail } from "../ats/audit-trail";
+import { useWorkspace } from "../../lib/workspace-store";
+import { OFFER_FLOW, type Offer } from "../../lib/workspace-data";
 
 const statusTone: Record<Offer["status"], string> = {
   draft: "bg-muted text-muted-foreground",

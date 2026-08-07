@@ -6,6 +6,7 @@
     "eslint.config.js",
     "../candidate-portal/src/**/*.tsx",
     "../company-onboarding/src/**/*.tsx",
+    "../croton-it-solutions/src/**/*.tsx",
     "../api/src/**/*.ts"
   ],
   "compilerOptions": {
@@ -33,7 +34,10 @@
       "@talent-flow/api": ["../api/src/index.ts"],
       "@talent-flow/api/*": ["../api/src/*"],
       "@talent-flow/candidate-portal": ["../candidate-portal/src/App.tsx"],
-      "@talent-flow/company-onboarding": ["../company-onboarding/src/App.tsx"]
+      "@talent-flow/company-onboarding": ["../company-onboarding/src/App.tsx"],
+      "@talent-flow/croton-it-solutions": ["../croton-it-solutions/src/pages/Index.tsx"],
+      "@talent-flow/croton-it-solutions/*": ["../croton-it-solutions/src/*"],
+      "@croton/*": ["../croton-it-solutions/src/*"]
     }
   }
 }

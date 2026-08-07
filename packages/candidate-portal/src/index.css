@@ -16,8 +16,8 @@
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
-  --font-display: "Instrument Serif", Georgia, serif;
-  --font-sans: "Work Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display);
+  --font-sans: var(--font-sans);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -65,7 +65,9 @@
     0 2px 6px oklch(0.22 0.02 60 / 0.08), 0 18px 40px -20px oklch(0.22 0.02 60 / 0.45);
 }
 
-:root {
+.talentflow-candidate-portal-scope {
+  --font-display: "Instrument Serif", Georgia, serif;
+  --font-sans: "Work Sans", ui-sans-serif, system-ui, sans-serif;
   --radius: 0.5rem;
   --background: oklch(0.985 0.004 85);
   --foreground: oklch(0.216 0.008 55);
@@ -110,7 +112,9 @@
   --sidebar-ring: oklch(0.63 0.18 42);
 }
 
-.dark {
+.talentflow-candidate-portal-scope.dark,
+.dark .talentflow-candidate-portal-scope,
+.talentflow-candidate-portal-scope .dark {
   --background: oklch(0.19 0.006 55);
   --foreground: oklch(0.96 0.006 85);
   --surface: oklch(0.23 0.007 55);
@@ -154,41 +158,41 @@
   --sidebar-ring: oklch(0.68 0.17 45);
 }
 
+.talentflow-candidate-portal-scope {
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "cv05";
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+}
+
+.talentflow-candidate-portal-scope h1,
+.talentflow-candidate-portal-scope h2,
+.talentflow-candidate-portal-scope h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
 @layer base {
-  * {
+  .talentflow-candidate-portal-scope * {
     border-color: var(--color-border);
-  }
-
-  body {
-    background-color: var(--color-background);
-    color: var(--color-foreground);
-    font-family: var(--font-sans);
-    font-feature-settings: "ss01", "cv05";
-  }
-
-  h1,
-  h2,
-  h3 {
-    font-family: var(--font-display);
-    font-weight: 400;
-    letter-spacing: -0.01em;
   }
 }
 
 /* Glass & Panel utilities aligned to design tokens */
-.glass-panel {
+.talentflow-candidate-portal-scope .glass-panel {
   background-color: var(--color-card);
   border: 1px solid var(--color-border);
   box-shadow: var(--shadow-card);
 }
 
-.glass-card {
+.talentflow-candidate-portal-scope .glass-card {
   background-color: var(--color-card);
   border: 1px solid var(--color-border);
   box-shadow: var(--shadow-card);
 }
 
-.glass-card:hover {
+.talentflow-candidate-portal-scope .glass-card:hover {
   border-color: var(--color-ember);
   background-color: var(--color-card);
 }
