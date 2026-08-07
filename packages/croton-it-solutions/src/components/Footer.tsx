@@ -83,7 +83,7 @@ export default function Footer() {
           </div>
 
           <p className="text-center md:text-left">
-            © 2026 Copyright Graviton Inc. All rights reserved.
+            © 2026 Copyright Croton Inc. All rights reserved.
           </p>
 
           <div className="text-white/80">Made with ❤️ by SamarthPachpile</div>

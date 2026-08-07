@@ -36,7 +36,7 @@ const baseStats = [
 
 const baseFaqs = [
   {
-    q: "How does Graviton support digital transformation in this sector?",
+    q: "How does Croton support digital transformation in this sector?",
     a: "We combine industry domain expertise with applied AI, cloud, and data engineering to modernize platforms, products, and operating models — measured against business KPIs, not vanity metrics.",
   },
   {

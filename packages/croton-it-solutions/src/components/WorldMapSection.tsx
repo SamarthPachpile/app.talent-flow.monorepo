@@ -18,7 +18,7 @@ export default function WorldMapSection() {
               CRM partners on every continent your customers live on
             </h2>
             <p className="text-sm text-primary-foreground/60 mb-6 max-w-md">
-              With delivery hubs across India, the UK, the US and the GCC, Graviton gives you
+              With delivery hubs across India, the UK, the US and the GCC, Croton gives you
               follow-the-sun CRM expertise for every time zone.
             </p>
             <a href="/about" className="text-sm text-primary hover:underline">
@@ -28,7 +28,7 @@ export default function WorldMapSection() {
           <div>
             <img
               src={worldMap}
-              alt="Graviton worldwide locations"
+              alt="Croton worldwide locations"
               className="w-full rounded-xl"
               loading="lazy"
               width={1920}

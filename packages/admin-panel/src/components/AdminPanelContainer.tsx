@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import "../styles.css";
 import { WorkspaceProvider } from "../lib/workspace-store";
 import { DashboardPage } from "../routes/admin-panel.dashboard";
 import { OnboardedCompaniesPage } from "./pages/companies-page";

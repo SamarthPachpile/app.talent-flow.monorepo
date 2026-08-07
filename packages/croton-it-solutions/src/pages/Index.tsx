@@ -15,8 +15,8 @@ import { usePageMeta } from "@croton/lib/use-page-meta";
 
 export default function Index() {
   usePageMeta(
-    "Graviton — CRM Consultancy & Applied AI",
-    "Graviton, a Tapasys Group company, is a CRM consultancy and applied-AI partner helping revenue, marketing and service teams turn customer data into measurable growth.",
+    "Croton — CRM Consultancy & Applied AI",
+    "Croton, a Tapasys Group company, is a CRM consultancy and applied-AI partner helping revenue, marketing and service teams turn customer data into measurable growth.",
   );
   return (
     <div className="min-h-screen bg-background">

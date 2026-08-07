@@ -1,4 +1,4 @@
-// Graviton local knowledge base for the in-app chatbot.
+// Croton local knowledge base for the in-app chatbot.
 // Pure data + a deterministic matcher — no external AI calls.
 
 export type KBEntry = {
@@ -17,19 +17,12 @@ export type KBEntry = {
 export const KB: KBEntry[] = [
   // ───────────────────────── Company ─────────────────────────
   {
-    id: "what-is-graviton",
-    keywords: [
-      "graviton",
-      "what is graviton",
-      "about graviton",
-      "who are you",
-      "company",
-      "tapasys",
-    ],
-    questions: ["What is Graviton?", "Who is Graviton?", "Tell me about Graviton"],
+    id: "what-is-croton",
+    keywords: ["croton", "what is croton", "about croton", "who are you", "company", "tapasys"],
+    questions: ["What is Croton?", "Who is Croton?", "Tell me about Croton"],
     weight: 1.2,
     answer:
-      "**Graviton** is a CRM consultancy and applied-AI partner — part of the **Tapasys Group**. " +
+      "**Croton** is a CRM consultancy and applied-AI partner — part of the **Tapasys Group**. " +
       "We help revenue, marketing, and service teams turn customer data into measurable growth through " +
       "CRM strategy, implementation, RevOps automation, and AI built directly into the workflows your teams already use.",
     followups: [
@@ -54,7 +47,7 @@ export const KB: KBEntry[] = [
       "country",
       "india",
     ],
-    questions: ["Where is Graviton located?", "What's your office address?"],
+    questions: ["Where is Croton located?", "What's your office address?"],
     answer:
       "Our office is in **Pune, India**:\n\n" +
       "Nyati Hermitage, Dr. Homi Bhabha Rd, Ram Nagar, Bavdhan, Pune, Maharashtra 411021.\n\n" +
@@ -104,10 +97,10 @@ export const KB: KBEntry[] = [
       "capabilities",
       "expertise",
     ],
-    questions: ["What services does Graviton offer?", "What can you help with?"],
+    questions: ["What services does Croton offer?", "What can you help with?"],
     weight: 1.2,
     answer:
-      "Graviton delivers four core service tracks:\n\n" +
+      "Croton delivers four core service tracks:\n\n" +
       "1. **CRM Strategy & Consulting** — platform selection, customer-360 architecture, RevOps blueprints\n" +
       "2. **Implementation & Migration** — Salesforce, HubSpot, Zoho, Microsoft Dynamics rollouts and re-platforming\n" +
       "3. **Applied AI** — copilots, predictive lead scoring, conversation intelligence, agentic workflows\n" +
@@ -552,7 +545,7 @@ export const KB: KBEntry[] = [
       "job",
       "jobs",
       "hiring",
-      "work at graviton",
+      "work at croton",
       "open roles",
       "apply",
       "vacancy",
@@ -568,17 +561,17 @@ export const KB: KBEntry[] = [
     id: "tapasys",
     keywords: ["tapasys", "tapasys group", "parent company", "subsidiary"],
     answer:
-      "Graviton is part of the **Tapasys Group** — a family of focused B2B technology and consulting brands. " +
+      "Croton is part of the **Tapasys Group** — a family of focused B2B technology and consulting brands. " +
       "Being part of the group gives us access to deeper engineering, data and design capabilities when projects need them.",
   },
   {
     id: "greeting",
     keywords: ["hi", "hello", "hey", "greetings", "good morning", "good afternoon", "good evening"],
     answer:
-      "Hi! I'm **Graviton AI** — your guide to our CRM and applied-AI services. " +
+      "Hi! I'm **Croton AI** — your guide to our CRM and applied-AI services. " +
       "Ask me about CRM platforms, implementation timelines, AI use cases, pricing, or anything else.",
     followups: [
-      "What does Graviton do?",
+      "What does Croton do?",
       "Salesforce vs HubSpot?",
       "How long does implementation take?",
     ],
@@ -768,8 +761,8 @@ export function answerQuestion(rawQuery: string): MatchResult {
       matched: false,
       confidence: "none",
       answer:
-        "Ask me anything about Graviton, CRM platforms, implementation timelines, AI in CRM, or pricing.",
-      followups: ["What does Graviton do?", "Salesforce vs HubSpot?", "Pricing?"],
+        "Ask me anything about Croton, CRM platforms, implementation timelines, AI in CRM, or pricing.",
+      followups: ["What does Croton do?", "Salesforce vs HubSpot?", "Pricing?"],
     };
   }
 
@@ -844,7 +837,7 @@ export function answerQuestion(rawQuery: string): MatchResult {
       "are you asking about a **CRM platform**, an **AI use case**, **pricing/timeline**, or **how to contact us**?\n\n" +
       "Here are popular topics I can help with:",
     followups: [
-      "What does Graviton do?",
+      "What does Croton do?",
       "Salesforce vs HubSpot — which fits us?",
       "How long does CRM implementation take?",
       "Where can AI add value in my CRM?",
@@ -864,7 +857,7 @@ export type UnmatchedLogEntry = {
   topScore: number;
 };
 
-const LOG_KEY = "graviton_kb_unmatched_v1";
+const LOG_KEY = "croton_kb_unmatched_v1";
 const LOG_LIMIT = 500;
 
 function isBrowser() {

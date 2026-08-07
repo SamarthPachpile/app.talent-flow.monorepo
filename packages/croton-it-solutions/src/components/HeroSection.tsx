@@ -102,7 +102,7 @@ export default function HeroSection() {
       <div className="absolute inset-0">
         <img
           src={heroBg}
-          alt="Graviton CRM consulting"
+          alt="Croton CRM consulting"
           className="w-full h-full object-cover"
           width={1920}
           height={1080}

@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Manrope:wght@200..800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap");
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
@@ -5,17 +6,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Design system definition.
- *
- * The @theme inline block maps CSS custom properties to Tailwind utility
- * classes (e.g. --color-primary -> bg-primary, text-primary).
- *
- * The :root and .dark blocks define the actual color values using oklch.
- * All colors MUST use oklch format.
- *
- * To add a new semantic color:
- * 1. Add the variable to :root (light value) and .dark (dark value)
- * 2. Register it in @theme inline as --color-<name>: var(--<name>)
+ * Design system matched 1:1 with croton-it-solutions.
  */
 
 @theme inline {
@@ -70,116 +61,131 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-gl-orange: var(--gl-orange);
+  --color-gl-orange-hover: var(--gl-orange-hover);
+  --color-gl-dark: var(--gl-dark);
+  --color-gl-navy: var(--gl-navy);
+  --color-gl-gray: var(--gl-gray);
+  --color-gl-light-gray: var(--gl-light-gray);
+  --color-gl-bg: var(--gl-bg);
   --shadow-card: 0 1px 2px oklch(0.22 0.02 60 / 0.06), 0 8px 24px -16px oklch(0.22 0.02 60 / 0.35);
   --shadow-lifted:
     0 2px 6px oklch(0.22 0.02 60 / 0.08), 0 18px 40px -20px oklch(0.22 0.02 60 / 0.45);
 }
 
 .talentflow-admin-panel-scope {
-  --font-display: "Instrument Serif", Georgia, serif;
-  --font-sans: "Work Sans", ui-sans-serif, system-ui, sans-serif;
-  --radius: 0.5rem;
-  --background: oklch(0.985 0.004 85);
-  --foreground: oklch(0.216 0.008 55);
-  --surface: oklch(0.966 0.006 84);
-  --surface-foreground: oklch(0.216 0.008 55);
+  --radius: 0.625rem;
+  --font-sans: "Poppins", sans-serif;
+  --font-display: "Poppins", sans-serif;
+  --background: oklch(0.99 0 0);
+  --foreground: oklch(0.15 0.02 260);
+  --surface: oklch(0.96 0.005 260);
+  --surface-foreground: oklch(0.15 0.02 260);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.216 0.008 55);
+  --card-foreground: oklch(0.15 0.02 260);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.216 0.008 55);
-  --primary: oklch(0.216 0.008 55);
-  --primary-foreground: oklch(0.985 0.004 85);
-  --secondary: oklch(0.943 0.008 80);
-  --secondary-foreground: oklch(0.3 0.01 55);
-  --muted: oklch(0.949 0.006 80);
-  --muted-foreground: oklch(0.53 0.014 60);
-  --accent: oklch(0.93 0.02 60);
-  --accent-foreground: oklch(0.3 0.03 45);
-  --ember: oklch(0.63 0.18 42);
-  --ember-foreground: oklch(0.99 0.005 85);
-  --clay: oklch(0.72 0.07 55);
-  --success: oklch(0.55 0.1 155);
-  --success-foreground: oklch(0.99 0.005 85);
-  --warning: oklch(0.72 0.14 75);
-  --warning-foreground: oklch(0.24 0.02 60);
-  --destructive: oklch(0.55 0.2 27);
-  --destructive-foreground: oklch(0.99 0.005 85);
-  --border: oklch(0.9 0.008 75);
-  --input: oklch(0.9 0.008 75);
-  --ring: oklch(0.63 0.18 42);
-  --chart-1: oklch(0.63 0.18 42);
-  --chart-2: oklch(0.72 0.07 55);
-  --chart-3: oklch(0.55 0.1 155);
-  --chart-4: oklch(0.72 0.14 75);
-  --chart-5: oklch(0.43 0.03 60);
-  --sidebar: oklch(0.966 0.006 84);
-  --sidebar-foreground: oklch(0.3 0.01 55);
-  --sidebar-primary: oklch(0.63 0.18 42);
-  --sidebar-primary-foreground: oklch(0.99 0.005 85);
-  --sidebar-accent: oklch(0.93 0.02 60);
-  --sidebar-accent-foreground: oklch(0.3 0.03 45);
-  --sidebar-border: oklch(0.9 0.008 75);
-  --sidebar-ring: oklch(0.63 0.18 42);
+  --popover-foreground: oklch(0.15 0.02 260);
+  --primary: oklch(0.637 0.194 29);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.96 0.005 260);
+  --secondary-foreground: oklch(0.15 0.02 260);
+  --muted: oklch(0.96 0.005 260);
+  --muted-foreground: oklch(0.5 0.02 260);
+  --accent: oklch(0.96 0.005 260);
+  --accent-foreground: oklch(0.15 0.02 260);
+  --ember: oklch(0.637 0.194 29);
+  --ember-foreground: oklch(1 0 0);
+  --clay: oklch(0.637 0.194 29);
+  --success: oklch(0.6 0.18 145);
+  --success-foreground: oklch(1 0 0);
+  --warning: oklch(0.75 0.15 75);
+  --warning-foreground: oklch(0.15 0.02 260);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.984 0.003 247.858);
+  --border: oklch(0.92 0.005 260);
+  --input: oklch(0.92 0.005 260);
+  --ring: oklch(0.637 0.194 29);
+  --chart-1: oklch(0.637 0.194 29);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.984 0.003 247.858);
+  --sidebar-foreground: oklch(0.129 0.042 264.695);
+  --sidebar-primary: oklch(0.637 0.194 29);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.968 0.007 247.896);
+  --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
+  --sidebar-border: oklch(0.929 0.013 255.508);
+  --sidebar-ring: oklch(0.637 0.194 29);
+
+  --gl-orange: oklch(0.637 0.194 29);
+  --gl-orange-hover: oklch(0.58 0.194 29);
+  --gl-dark: oklch(0.15 0.02 260);
+  --gl-navy: oklch(0.18 0.04 265);
+  --gl-gray: oklch(0.5 0.01 260);
+  --gl-light-gray: oklch(0.96 0.005 260);
+  --gl-bg: oklch(0.985 0.002 260);
 }
 
 .talentflow-admin-panel-scope.dark,
-.dark .talentflow-admin-panel-scope,
 .talentflow-admin-panel-scope .dark {
-  --background: oklch(0.19 0.006 55);
-  --foreground: oklch(0.96 0.006 85);
-  --surface: oklch(0.23 0.007 55);
-  --surface-foreground: oklch(0.96 0.006 85);
-  --card: oklch(0.245 0.008 55);
-  --card-foreground: oklch(0.96 0.006 85);
-  --popover: oklch(0.245 0.008 55);
-  --popover-foreground: oklch(0.96 0.006 85);
-  --primary: oklch(0.95 0.006 85);
-  --primary-foreground: oklch(0.21 0.008 55);
-  --secondary: oklch(0.3 0.01 55);
-  --secondary-foreground: oklch(0.95 0.006 85);
-  --muted: oklch(0.3 0.01 55);
-  --muted-foreground: oklch(0.72 0.012 70);
-  --accent: oklch(0.33 0.03 50);
-  --accent-foreground: oklch(0.95 0.01 70);
-  --ember: oklch(0.68 0.17 45);
-  --ember-foreground: oklch(0.18 0.01 55);
-  --clay: oklch(0.62 0.06 55);
+  --background: oklch(0.15 0.02 260);
+  --foreground: oklch(0.98 0.005 260);
+  --surface: oklch(0.18 0.04 265);
+  --surface-foreground: oklch(0.98 0.005 260);
+  --card: oklch(0.18 0.04 265);
+  --card-foreground: oklch(0.98 0.005 260);
+  --popover: oklch(0.18 0.04 265);
+  --popover-foreground: oklch(0.98 0.005 260);
+  --primary: oklch(0.637 0.194 29);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.22 0.03 260);
+  --secondary-foreground: oklch(0.98 0.005 260);
+  --muted: oklch(0.22 0.03 260);
+  --muted-foreground: oklch(0.65 0.01 260);
+  --accent: oklch(0.24 0.03 260);
+  --accent-foreground: oklch(0.98 0.005 260);
+  --ember: oklch(0.637 0.194 29);
+  --ember-foreground: oklch(1 0 0);
+  --clay: oklch(0.637 0.194 29);
   --success: oklch(0.66 0.11 155);
-  --success-foreground: oklch(0.18 0.01 55);
+  --success-foreground: oklch(1 0 0);
   --warning: oklch(0.78 0.13 78);
-  --warning-foreground: oklch(0.2 0.02 60);
+  --warning-foreground: oklch(0.15 0.02 260);
   --destructive: oklch(0.63 0.19 27);
   --destructive-foreground: oklch(0.98 0.005 85);
   --border: oklch(1 0 0 / 12%);
   --input: oklch(1 0 0 / 16%);
-  --ring: oklch(0.68 0.17 45);
-  --chart-1: oklch(0.68 0.17 45);
+  --ring: oklch(0.637 0.194 29);
+  --chart-1: oklch(0.637 0.194 29);
   --chart-2: oklch(0.62 0.06 55);
   --chart-3: oklch(0.66 0.11 155);
   --chart-4: oklch(0.78 0.13 78);
   --chart-5: oklch(0.72 0.012 70);
-  --sidebar: oklch(0.23 0.007 55);
-  --sidebar-foreground: oklch(0.92 0.006 85);
-  --sidebar-primary: oklch(0.68 0.17 45);
-  --sidebar-primary-foreground: oklch(0.18 0.01 55);
-  --sidebar-accent: oklch(0.33 0.03 50);
-  --sidebar-accent-foreground: oklch(0.95 0.01 70);
+  --sidebar: oklch(0.18 0.04 265);
+  --sidebar-foreground: oklch(0.98 0.005 260);
+  --sidebar-primary: oklch(0.637 0.194 29);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.24 0.03 260);
+  --sidebar-accent-foreground: oklch(0.98 0.005 260);
   --sidebar-border: oklch(1 0 0 / 12%);
-  --sidebar-ring: oklch(0.68 0.17 45);
+  --sidebar-ring: oklch(0.637 0.194 29);
 }
 
 .talentflow-admin-panel-scope {
   font-family: var(--font-sans);
-  font-feature-settings: "ss01", "cv05";
   background-color: var(--color-background);
   color: var(--color-foreground);
 }
 
 .talentflow-admin-panel-scope h1,
 .talentflow-admin-panel-scope h2,
-.talentflow-admin-panel-scope h3 {
+.talentflow-admin-panel-scope h3,
+.talentflow-admin-panel-scope h4,
+.talentflow-admin-panel-scope h5,
+.talentflow-admin-panel-scope h6 {
   font-family: var(--font-display);
-  font-weight: 400;
   letter-spacing: -0.01em;
 }
 
@@ -189,9 +195,111 @@
   }
 }
 
+/* Croton glowing effects and background grid */
+.talentflow-admin-panel-scope .bg-grid-pattern {
+  background-size: 40px 40px;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+}
+
+.talentflow-admin-panel-scope .glow-gradient-purple {
+  background: radial-gradient(
+    circle at center,
+    rgba(124, 58, 237, 0.15) 0%,
+    rgba(15, 23, 42, 0) 70%
+  );
+}
+
+.talentflow-admin-panel-scope .glow-gradient-blue {
+  background: radial-gradient(
+    circle at center,
+    rgba(59, 130, 246, 0.15) 0%,
+    rgba(15, 23, 42, 0) 70%
+  );
+}
+
+/* Glassmorphism utility */
+.talentflow-admin-panel-scope .glass-card,
+.talentflow-admin-panel-scope .glass-panel {
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.talentflow-admin-panel-scope .glass-card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.talentflow-admin-panel-scope .glass-card-hover:hover {
+  background: rgba(30, 41, 59, 0.75);
+  border-color: rgba(99, 102, 241, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px -10px rgba(79, 70, 229, 0.25);
+}
+
+.talentflow-admin-panel-scope .clip-path-card {
+  clip-path: polygon(
+    28px 0,
+    calc(100% - 28px) 0,
+    100% 28px,
+    100% calc(100% - 28px),
+    calc(100% - 28px) 100%,
+    28px 100%,
+    0 calc(100% - 28px),
+    0 28px
+  );
+}
+
+.talentflow-admin-panel-scope .clip-service {
+  clip-path: polygon(
+    20px 0,
+    calc(100% - 20px) 0,
+    100% 20px,
+    100% calc(100% - 20px),
+    calc(100% - 20px) 100%,
+    20px 100%,
+    0 calc(100% - 20px),
+    0 20px
+  );
+}
+
+.talentflow-admin-panel-scope .clip-path-nav-sm {
+  clip-path: polygon(
+    18px 0,
+    calc(100% - 18px) 0,
+    100% 18px,
+    100% calc(100% - 18px),
+    calc(100% - 18px) 100%,
+    18px 100%,
+    0 calc(100% - 18px),
+    0 18px
+  );
+  border-radius: 0;
+}
+
+.talentflow-admin-panel-scope .clip-path-button-sm {
+  clip-path: polygon(
+    10px 0,
+    calc(100% - 10px) 0,
+    100% 10px,
+    100% calc(100% - 10px),
+    calc(100% - 10px) 100%,
+    10px 100%,
+    0 calc(100% - 10px),
+    0 10px
+  );
+  border-radius: 0;
+}
+
+.talentflow-admin-panel-scope .form-input {
+  @apply w-full bg-[#e9ebef] rounded-md px-4 py-3 text-sm 
+  placeholder:text-gray-500 outline-none border-none;
+}
+
 @utility board-scroll {
   scrollbar-width: thin;
-  scrollbar-color: var(--color-clay) transparent;
+  scrollbar-color: var(--color-primary) transparent;
 }
 
 @utility stage-rail {

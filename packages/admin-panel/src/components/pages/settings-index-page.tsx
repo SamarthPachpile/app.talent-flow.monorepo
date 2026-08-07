@@ -66,8 +66,8 @@ export function AdminSettingsPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-6xl font-sans">
-      <div className="rounded-xl border border-border bg-card p-5 shadow-xs flex flex-wrap items-center justify-between gap-4">
+    <div className="font-sans">
+      <div className="px-5 py-5 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="grid size-10 place-items-center rounded-lg bg-ember/15 text-ember font-bold">
             <Server className="size-5" />
@@ -108,7 +108,7 @@ export function AdminSettingsPage() {
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2 border-b border-border pb-3">
+      <div className="flex flex-wrap gap-2 px-5 pb-3">
         {[
           { id: "general", label: "Platform General", icon: Shield },
           { id: "health", label: "System Health & Backend", icon: Activity },

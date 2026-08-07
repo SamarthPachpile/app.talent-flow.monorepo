@@ -18,7 +18,7 @@ import { PHASES, RECRUITERS, ROLES, STAGES, phaseOfStage } from "../lib/ats-data
 import { COMPANIES, OPERATOR } from "../lib/workspace-data";
 import { AdminLoginPage } from "../components/admin-login-page";
 
-// @ts-expect-error TanStack Router route definition fallback
+// @ts-expect-error TanStack router route id type sync
 export const Route = createFileRoute("/admin-panel/dashboard")({
   head: () => ({
     meta: [

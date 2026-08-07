@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Sparkles, X, Send } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
-import { answerQuestion } from "@croton/lib/graviton-kb";
+import { answerQuestion } from "@croton/lib/croton-kb";
 
 type Msg = {
   role: "user" | "assistant";
@@ -11,7 +11,7 @@ type Msg = {
 };
 
 const INITIAL_SUGGESTIONS = [
-  "What does Graviton do?",
+  "What does Croton do?",
   "Salesforce vs HubSpot — which fits us?",
   "How long does a CRM implementation take?",
   "Where can AI add value in my CRM?",
@@ -109,7 +109,7 @@ export default function AskAIButton() {
                     <Sparkles className="w-3.5 h-3.5" strokeWidth={2.5} />
                   </span>
                   <div className="flex flex-col leading-tight">
-                    <span className="text-sm font-semibold text-foreground">Graviton AI</span>
+                    <span className="text-sm font-semibold text-foreground">Croton AI</span>
                     <span className="text-[10px] text-muted-foreground">
                       CRM &amp; AI assistant
                     </span>
@@ -138,7 +138,7 @@ export default function AskAIButton() {
                   </span>
                   <div className="flex-1">
                     <p className="text-sm font-semibold text-foreground mb-1.5">
-                      Hi there — I'm your Graviton AI guide.
+                      Hi there — I'm your Croton AI guide.
                     </p>
                     <p className="text-sm text-muted-foreground leading-relaxed mb-4">
                       Ask me anything about CRM strategy, Salesforce / HubSpot / Zoho, AI in CRM,
@@ -246,7 +246,7 @@ export default function AskAIButton() {
                   </button>
                 </form>
                 <p className="text-[10px] text-muted-foreground text-center mt-2 leading-relaxed">
-                  Answers come from Graviton's own knowledge base — no external AI.
+                  Answers come from Croton's own knowledge base — no external AI.
                 </p>
               </div>
             </motion.div>

@@ -28,7 +28,7 @@ export default function PlanetSection() {
               Responsible <span className="text-primary">AI</span>, responsible data
             </h2>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-md">
-              Customer data is a privilege, not a commodity. Graviton builds CRM and AI systems with
+              Customer data is a privilege, not a commodity. Croton builds CRM and AI systems with
               privacy, consent and explainability designed in — so growth never comes at the cost of
               trust.
             </p>

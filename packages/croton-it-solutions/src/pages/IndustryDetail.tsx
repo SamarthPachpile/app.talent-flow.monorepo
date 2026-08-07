@@ -17,7 +17,7 @@ export default function IndustryDetail() {
   const industry = getIndustryBySlug(slug);
 
   usePageMeta(
-    industry ? `${industry.name} — Graviton` : "Graviton Industries",
+    industry ? `${industry.name} — Croton` : "Croton Industries",
     industry ? industry.intro.slice(0, 155) : "Industry solutions and digital transformation.",
   );
 
@@ -265,19 +265,13 @@ export default function IndustryDetail() {
         </div>
       </section>
 
-      {/* WHY GRAVITON */}
+      {/* WHY CROTON */}
       <section className="py-20 bg-background border-t border-border/50">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-3 gap-10">
           <div>
-            <p className="text-xs uppercase tracking-wider text-foreground/60 mb-4">
-              Why Graviton?
-            </p>
+            <p className="text-xs uppercase tracking-wider text-foreground/60 mb-4">Why Croton?</p>
             <div className="aspect-[4/3] rounded-2xl overflow-hidden">
-              <img
-                src={industry.heroImg}
-                alt="Why Graviton"
-                className="w-full h-full object-cover"
-              />
+              <img src={industry.heroImg} alt="Why Croton" className="w-full h-full object-cover" />
             </div>
           </div>
           <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-8">

@@ -60,7 +60,7 @@ export default function CareersIntro() {
           }}
           className="text-sm text-gray-600 max-w-md mb-10 leading-relaxed"
         >
-          Graviton is a trusted digital engineering partner helping forward-thinking companies build
+          Croton is a trusted digital engineering partner helping forward-thinking companies build
           impactful solutions
         </motion.p>
 

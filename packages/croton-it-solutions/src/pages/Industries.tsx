@@ -77,7 +77,7 @@ const FEATURED = [
 
 export default function Industries() {
   usePageMeta(
-    "Industries — Graviton",
+    "Industries — Croton",
     "Redefining industries by solving their unique challenges with CRM and applied-AI expertise.",
   );
 
@@ -168,7 +168,7 @@ export default function Industries() {
             <h2 className="text-3xl sm:text-6xl font-medium text-foreground">Featured Insights</h2>
             <div>
               <p className="text-foreground/70 mb-3">
-                Explore fresh thinking from some of Graviton's strategists and engineers on how
+                Explore fresh thinking from some of Croton's strategists and engineers on how
                 technology is reshaping industries and what it means for business leaders.
               </p>
               <a
