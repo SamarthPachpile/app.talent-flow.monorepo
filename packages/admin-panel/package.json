@@ -3,6 +3,7 @@
   "private": true,
   "sideEffects": false,
   "type": "module",
+  "main": "src/components/AdminPanelContainer.tsx",
   "scripts": {
     "dev": "vite dev --port 3000",
     "build": "vite build",
@@ -45,6 +46,7 @@
     "@talent-flow/api": "*",
     "@talent-flow/candidate-portal": "*",
     "@talent-flow/company-onboarding": "*",
+    "@talent-flow/croton-it-solutions": "*",
     "@tanstack/react-query": "^5.101.1",
     "@tanstack/react-router": "^1.170.18",
     "@tanstack/react-start": "^1.168.32",

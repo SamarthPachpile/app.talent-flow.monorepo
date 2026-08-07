@@ -1,11 +1,11 @@
 import { Check, Circle, Mail, User, Building2, CalendarDays, Tag } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
-import { type Candidate, STAGES, phaseOfStage, stageIndex } from "@/lib/ats-data";
+import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
+import { ScrollArea } from "../ui/scroll-area";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "../ui/sheet";
+import { Separator } from "../ui/separator";
+import { cn } from "../../lib/utils";
+import { type Candidate, STAGES, phaseOfStage, stageIndex } from "../../lib/ats-data";
 
 export function CandidateDrawer({
   candidate,

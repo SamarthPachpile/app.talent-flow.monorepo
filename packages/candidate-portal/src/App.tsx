@@ -23,8 +23,6 @@ import { CandidateOnboardingWizard } from "./components/CandidateOnboardingWizar
 import { CandidateSettingsComponent } from "./components/CandidateSettings";
 import { CandidateCompanySelector } from "./components/CandidateCompanySelector";
 import { Toaster, toast } from "sonner";
-import { ReactLenis } from "lenis/react";
-import "lenis/dist/lenis.css";
 import { Building2, ArrowLeft, Plus } from "lucide-react";
 import {
   CandidateApiService,
@@ -455,7 +453,7 @@ export function App() {
   // 0. Dedicated 404 - Company Not Found View when an invalid/non-existent company route is accessed
   if (routeInfo.companySlug && !isCompanyLoading && isCompanyNotFound) {
     return (
-      <div className="min-h-screen bg-background font-sans text-foreground flex flex-col items-center justify-center p-6 text-center animate-fadeIn">
+      <div className="talentflow-candidate-portal-scope min-h-screen bg-background font-sans text-foreground flex flex-col items-center justify-center p-6 text-center animate-fadeIn">
         <Toaster position="top-right" theme={darkMode ? "dark" : "light"} />
         <div className="max-w-md w-full bg-card border border-border/80 rounded-2xl p-8 shadow-xl space-y-6">
           <div className="size-16 rounded-2xl bg-destructive/10 text-destructive flex items-center justify-center mx-auto ring-8 ring-destructive/5">
@@ -506,7 +504,7 @@ export function App() {
   // 1. Companies Selection Landing View at /candidates-portal
   if (routeInfo.targetView === "companies_list") {
     return (
-      <div className="min-h-screen bg-background font-sans text-foreground">
+      <div className="talentflow-candidate-portal-scope min-h-screen bg-background font-sans text-foreground">
         <Toaster position="top-right" theme={darkMode ? "dark" : "light"} />
         <CandidateCompanySelector
           onSelectCompany={handleSelectCompanyFromList}
@@ -529,7 +527,7 @@ export function App() {
       !isAuthenticated)
   ) {
     return (
-      <div className="min-h-screen bg-background font-sans text-foreground">
+      <div className="talentflow-candidate-portal-scope min-h-screen bg-background font-sans text-foreground">
         <Toaster position="top-right" theme={darkMode ? "dark" : "light"} />
         <CandidateAuthScreen
           company={activeCompany}
@@ -544,7 +542,7 @@ export function App() {
   // 3. Setup Wizard View (/candidates-portal/<company_name>/wizard)
   if (routeInfo.targetView === "wizard" && isAuthenticated) {
     return (
-      <div className="min-h-screen bg-background font-sans text-foreground">
+      <div className="talentflow-candidate-portal-scope min-h-screen bg-background font-sans text-foreground">
         <Toaster position="top-right" theme={darkMode ? "dark" : "light"} />
         <CandidateOnboardingWizard
           candidateData={candidateProfile}
@@ -556,112 +554,110 @@ export function App() {
 
   // 4. Candidate Dashboard View (/candidates-portal/<company_name>/dashboard or /candidates-portal/<company_name>/)
   return (
-    <ReactLenis root options={{ lerp: 0.1, duration: 1.2, smoothWheel: true }}>
-      <div className="min-h-screen bg-background font-sans text-foreground">
-        <Toaster position="top-right" theme={darkMode ? "dark" : "light"} />
+    <div className="talentflow-candidate-portal-scope min-h-screen bg-background font-sans text-foreground">
+      <Toaster position="top-right" theme={darkMode ? "dark" : "light"} />
 
-        {/* Top AppNav Header */}
-        <Header
-          candidate={portalState.candidate}
-          company={activeCompany}
-          activeCandidateKey={activeCandidateKey}
-          onSelectCandidate={handleSelectCandidate}
-          unreadCount={unreadNotifCount}
-          onToggleNotifications={() => setShowNotifications(!showNotifications)}
-          onOpenHelpdesk={() => setShowHelpdesk(true)}
-          onOpenSettings={() => setShowSettings(true)}
-          darkMode={darkMode}
-          onToggleDarkMode={() => setDarkMode(!darkMode)}
-          onLogout={handleLogout}
-        />
+      {/* Top AppNav Header */}
+      <Header
+        candidate={portalState.candidate}
+        company={activeCompany}
+        activeCandidateKey={activeCandidateKey}
+        onSelectCandidate={handleSelectCandidate}
+        unreadCount={unreadNotifCount}
+        onToggleNotifications={() => setShowNotifications(!showNotifications)}
+        onOpenHelpdesk={() => setShowHelpdesk(true)}
+        onOpenSettings={() => setShowSettings(true)}
+        darkMode={darkMode}
+        onToggleDarkMode={() => setDarkMode(!darkMode)}
+        onLogout={handleLogout}
+      />
 
-        {showSettings ? (
-          <main className="px-6 py-6 max-w-7xl mx-auto">
-            <CandidateSettingsComponent onClose={() => setShowSettings(false)} />
-          </main>
-        ) : (
-          <>
-            {/* Page Title & Stats Header Banner */}
-            <CandidateHero
-              candidate={portalState.candidate}
-              company={activeCompany}
-              stages={portalState.stages}
-              onOpenStage={(stageId) => setActiveStageId(stageId as StageId)}
-            />
-
-            <main className="px-6 py-8 max-w-7xl mx-auto space-y-8">
-              {/* 7-Stage Roadmap Stepper */}
-              <StageStepper
-                stages={portalState.stages}
-                activeStageId={activeStageId}
-                onSelectStage={(stageId) => setActiveStageId(stageId)}
-              />
-
-              {/* Active Stage Details View */}
-              <div className="bg-card border border-border rounded-xl p-6 shadow-lifted">
-                {activeStageId === "application" && (
-                  <ApplicationStageView
-                    application={portalState.application}
-                    candidate={portalState.candidate}
-                  />
-                )}
-
-                {activeStageId === "interview" && (
-                  <InterviewStageView interviews={portalState.interviews} />
-                )}
-
-                {activeStageId === "offer" && (
-                  <OfferStageView
-                    offer={portalState.offer}
-                    candidate={portalState.candidate}
-                    onAcceptOffer={handleAcceptOffer}
-                  />
-                )}
-
-                {activeStageId === "background_check" && (
-                  <BackgroundCheckStageView
-                    backgroundCheck={portalState.backgroundCheck}
-                    onUploadDoc={(docId) => toast.success(`Uploaded document: ${docId}`)}
-                  />
-                )}
-
-                {activeStageId === "hardware_setup" && (
-                  <HardwareSetupStageView
-                    hardware={portalState.hardware}
-                    onUpdateHardware={handleUpdateHardware}
-                  />
-                )}
-
-                {activeStageId === "credentials" && (
-                  <CredentialsStageView credentials={portalState.credentials} />
-                )}
-
-                {activeStageId === "day_one" && (
-                  <DayOneStageView dayOne={portalState.dayOne} candidate={portalState.candidate} />
-                )}
-              </div>
-            </main>
-          </>
-        )}
-
-        {/* Notifications Drawer */}
-        {showNotifications && (
-          <NotificationCenter
-            notifications={portalState.notifications}
-            onClose={() => setShowNotifications(false)}
-            onSelectStage={(stageId) => setActiveStageId(stageId)}
-          />
-        )}
-
-        {/* Helpdesk Modal */}
-        {showHelpdesk && (
-          <HelpdeskModal
+      {showSettings ? (
+        <main className="px-6 py-6 max-w-7xl mx-auto">
+          <CandidateSettingsComponent onClose={() => setShowSettings(false)} />
+        </main>
+      ) : (
+        <>
+          {/* Page Title & Stats Header Banner */}
+          <CandidateHero
             candidate={portalState.candidate}
             company={activeCompany}
-            onClose={() => setShowHelpdesk(false)}
+            stages={portalState.stages}
+            onOpenStage={(stageId) => setActiveStageId(stageId as StageId)}
           />
-        )}
-      </div>
-    </ReactLenis>
+
+          <main className="px-6 py-8 max-w-7xl mx-auto space-y-8">
+            {/* 7-Stage Roadmap Stepper */}
+            <StageStepper
+              stages={portalState.stages}
+              activeStageId={activeStageId}
+              onSelectStage={(stageId) => setActiveStageId(stageId)}
+            />
+
+            {/* Active Stage Details View */}
+            <div className="bg-card border border-border rounded-xl p-6 shadow-lifted">
+              {activeStageId === "application" && (
+                <ApplicationStageView
+                  application={portalState.application}
+                  candidate={portalState.candidate}
+                />
+              )}
+
+              {activeStageId === "interview" && (
+                <InterviewStageView interviews={portalState.interviews} />
+              )}
+
+              {activeStageId === "offer" && (
+                <OfferStageView
+                  offer={portalState.offer}
+                  candidate={portalState.candidate}
+                  onAcceptOffer={handleAcceptOffer}
+                />
+              )}
+
+              {activeStageId === "background_check" && (
+                <BackgroundCheckStageView
+                  backgroundCheck={portalState.backgroundCheck}
+                  onUploadDoc={(docId) => toast.success(`Uploaded document: ${docId}`)}
+                />
+              )}
+
+              {activeStageId === "hardware_setup" && (
+                <HardwareSetupStageView
+                  hardware={portalState.hardware}
+                  onUpdateHardware={handleUpdateHardware}
+                />
+              )}
+
+              {activeStageId === "credentials" && (
+                <CredentialsStageView credentials={portalState.credentials} />
+              )}
+
+              {activeStageId === "day_one" && (
+                <DayOneStageView dayOne={portalState.dayOne} candidate={portalState.candidate} />
+              )}
+            </div>
+          </main>
+        </>
+      )}
+
+      {/* Notifications Drawer */}
+      {showNotifications && (
+        <NotificationCenter
+          notifications={portalState.notifications}
+          onClose={() => setShowNotifications(false)}
+          onSelectStage={(stageId) => setActiveStageId(stageId)}
+        />
+      )}
+
+      {/* Helpdesk Modal */}
+      {showHelpdesk && (
+        <HelpdeskModal
+          candidate={portalState.candidate}
+          company={activeCompany}
+          onClose={() => setShowHelpdesk(false)}
+        />
+      )}
+    </div>
   );
 }

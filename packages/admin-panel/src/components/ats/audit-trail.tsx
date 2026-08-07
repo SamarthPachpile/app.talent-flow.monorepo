@@ -1,7 +1,7 @@
 import { History } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import type { AuditEntry } from "@/lib/workspace-data";
+import { Badge } from "../ui/badge";
+import { ScrollArea } from "../ui/scroll-area";
+import type { AuditEntry } from "../../lib/workspace-data";
 
 export function AuditTrail({
   title = "Audit log",

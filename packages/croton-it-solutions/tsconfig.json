@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "types": ["vite/client", "node"],
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "@/*": ["./src/*"],
+      "@croton/*": ["./src/*"],
+      "@talent-flow/api": ["../api/src/index.ts"],
+      "@talent-flow/api/*": ["../api/src/*"],
+      "@talent-flow/candidate-portal": ["../candidate-portal/src/App.tsx"],
+      "@talent-flow/company-onboarding": ["../company-onboarding/src/App.tsx"],
+      "@talent-flow/admin-panel": ["../admin-panel/src/components/AdminPanelContainer.tsx"]
+    }
+  },
+  "include": ["src"]
+}

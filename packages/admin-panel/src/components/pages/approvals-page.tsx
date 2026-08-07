@@ -1,24 +1,18 @@
 import { useState } from "react";
 import { ClipboardCheck, ThumbsDown, ThumbsUp, UserPlus } from "lucide-react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { AppNav } from "@/components/layout/app-nav";
-import { SettingsCard } from "@/components/settings/settings-card";
-import { AuditTrail } from "@/components/ats/audit-trail";
-import { useWorkspace } from "@/lib/workspace-store";
-import type { ApprovalRole } from "@/lib/workspace-data";
-import { AdminLoginPage } from "@/components/admin-login-page";
+import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
+import { Label } from "../ui/label";
+import { Textarea } from "../ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
+import { AppNav } from "../layout/app-nav";
+import { SettingsCard } from "../settings/settings-card";
+import { AuditTrail } from "../ats/audit-trail";
+import { useWorkspace } from "../../lib/workspace-store";
+import type { ApprovalRole } from "../../lib/workspace-data";
+import { AdminLoginPage } from "../admin-login-page";
 
 export function ApprovalsPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {

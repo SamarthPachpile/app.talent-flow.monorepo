@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Link } from "@tanstack/react-router";
 import {
   Lock,
   KeyRound,
@@ -26,6 +25,14 @@ export function AdminLoginPage({ onSuccess }: AdminLoginPageProps = {}) {
   const [password, setPassword] = useState(() => envPassword || "");
   const [showPassword, setShowPassword] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
+
+  const handleNavigateHome = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (typeof window !== "undefined") {
+      window.history.pushState({}, "", "/admin-panel/dashboard");
+      window.dispatchEvent(new PopStateEvent("popstate"));
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,7 +68,8 @@ export function AdminLoginPage({ onSuccess }: AdminLoginPageProps = {}) {
         if (onSuccess) {
           onSuccess();
         } else {
-          window.location.href = "/admin-panel/dashboard";
+          window.history.pushState({}, "", "/admin-panel/dashboard");
+          window.dispatchEvent(new PopStateEvent("popstate"));
         }
       } else {
         setIsAuthenticating(false);
@@ -85,7 +93,7 @@ export function AdminLoginPage({ onSuccess }: AdminLoginPageProps = {}) {
   return (
     <div className="min-h-screen bg-background font-sans text-foreground flex flex-col justify-between p-4 sm:p-6 my-4">
       <header className="flex items-center justify-between max-w-7xl mx-auto w-full">
-        <Link to="/admin-panel" className="flex items-center gap-3">
+        <a href="/admin-panel" onClick={handleNavigateHome} className="flex items-center gap-3">
           <div className="grid size-9 place-items-center rounded-lg bg-ember text-sm font-bold text-ember-foreground shadow-xs">
             TF
           </div>
@@ -95,14 +103,15 @@ export function AdminLoginPage({ onSuccess }: AdminLoginPageProps = {}) {
               Strict Environment Security Portal
             </p>
           </div>
-        </Link>
+        </a>
 
-        <Link
-          to="/admin-panel"
-          className="text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors"
+        <a
+          href="/admin-panel"
+          onClick={handleNavigateHome}
+          className="text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
         >
           ← Back to Admin Home
-        </Link>
+        </a>
       </header>
 
       <main className="flex items-center justify-center py-8">

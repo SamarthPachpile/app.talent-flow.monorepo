@@ -9,21 +9,15 @@ import {
   Filter,
   LayoutGrid,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { AppNav } from "@/components/layout/app-nav";
-import { CandidateCard } from "@/components/ats/candidate-card";
-import { CandidateDrawer } from "@/components/ats/candidate-drawer";
-import { useWorkspace } from "@/lib/workspace-store";
-import { PHASES, RECRUITERS, ROLES, phaseOfStage } from "@/lib/ats-data";
-import { AdminLoginPage } from "@/components/admin-login-page";
+import { Badge } from "../ui/badge";
+import { Input } from "../ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { AppNav } from "../layout/app-nav";
+import { CandidateCard } from "../ats/candidate-card";
+import { CandidateDrawer } from "../ats/candidate-drawer";
+import { useWorkspace } from "../../lib/workspace-store";
+import { PHASES, RECRUITERS, ROLES, phaseOfStage } from "../../lib/ats-data";
+import { AdminLoginPage } from "../admin-login-page";
 
 export function OnboardedCompaniesPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {

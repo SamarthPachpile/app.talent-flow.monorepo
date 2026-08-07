@@ -4,6 +4,7 @@
     { "path": "./packages/api" },
     { "path": "./packages/admin-panel" },
     { "path": "./packages/company-onboarding" },
-    { "path": "./packages/candidate-portal" }
+    { "path": "./packages/candidate-portal" },
+    { "path": "./packages/croton-it-solutions" }
   ]
 }

@@ -699,7 +699,7 @@ export const App: React.FC = () => {
   const progressPercent = Math.round((state.currentStep / totalSteps) * 100);
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
+    <div className="talentflow-company-onboarding-scope min-h-screen bg-background text-foreground flex flex-col font-sans">
       <Toaster position="top-right" richColors />
 
       {/* Header Navigation for Company Portal */}
@@ -733,7 +733,7 @@ export const App: React.FC = () => {
       {/* Main View Router */}
       <main className="flex-1">
         {companyNotFound ? (
-          <div className="min-h-screen bg-background font-sans text-foreground flex flex-col items-center justify-center p-6 text-center animate-fadeIn">
+          <div className="talentflow-company-onboarding-scope min-h-screen bg-background font-sans text-foreground flex flex-col items-center justify-center p-6 text-center animate-fadeIn">
             <div className="max-w-md w-full bg-card border border-border/80 rounded-2xl p-8 shadow-xl space-y-6">
               <div className="size-16 rounded-2xl bg-destructive/10 text-destructive flex items-center justify-center mx-auto ring-8 ring-destructive/5">
                 <Building2 className="size-8" />

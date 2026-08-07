@@ -24,6 +24,13 @@ export default defineConfig({
           __dirname,
           "../company-onboarding/src/App.tsx",
         ),
+        "@talent-flow/croton-it-solutions": path.resolve(__dirname, "../croton-it-solutions/src"),
+        "@talent-flow/croton-it-solutions/*": path.resolve(
+          __dirname,
+          "../croton-it-solutions/src/*",
+        ),
+        "@croton": path.resolve(__dirname, "../croton-it-solutions/src"),
+        "@croton/*": path.resolve(__dirname, "../croton-it-solutions/src/*"),
       },
     },
   },

@@ -14,8 +14,6 @@ import { WorkspaceProvider } from "@/lib/workspace-store";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { ReactLenis } from "lenis/react";
-import "lenis/dist/lenis.css";
 
 function NotFoundComponent() {
   return (
@@ -118,7 +116,7 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        {children}
+        <div className="talentflow-admin-panel-scope min-h-screen">{children}</div>
         <Scripts />
       </body>
     </html>
@@ -130,13 +128,11 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ReactLenis root options={{ lerp: 0.08, duration: 1.2, smoothWheel: true }}>
-        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-        <WorkspaceProvider>
-          <Outlet />
-        </WorkspaceProvider>
-        <Toaster />
-      </ReactLenis>
+      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+      <WorkspaceProvider>
+        <Outlet />
+      </WorkspaceProvider>
+      <Toaster />
     </QueryClientProvider>
   );
 }
