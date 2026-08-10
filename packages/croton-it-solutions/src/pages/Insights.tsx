@@ -120,7 +120,7 @@ export default function Insights() {
       <section
         id="insights-hero"
         data-section="insights-hero"
-        data-label="Intro"
+        data-label="Overview"
         className="max-w-[1500px] mx-auto px-4 sm:px-6 py-32 sm:py-40"
       >
         <p className="text-xs uppercase tracking-[0.3em] text-primary mb-3">Insights</p>

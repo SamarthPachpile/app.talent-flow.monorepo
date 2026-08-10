@@ -123,16 +123,20 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+import SmoothScrollProvider from "@/components/SmoothScrollProvider";
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
-    <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <WorkspaceProvider>
-        <Outlet />
-      </WorkspaceProvider>
-      <Toaster />
-    </QueryClientProvider>
+    <SmoothScrollProvider>
+      <QueryClientProvider client={queryClient}>
+        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+        <WorkspaceProvider>
+          <Outlet />
+        </WorkspaceProvider>
+        <Toaster />
+      </QueryClientProvider>
+    </SmoothScrollProvider>
   );
 }

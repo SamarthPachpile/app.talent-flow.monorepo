@@ -1,3 +1,4 @@
+import bg_img_companies from "../../public/assets/hero-bg.jpg";
 import React, { useState, useRef } from "react";
 import { motion, useScroll, useTransform, useSpring, AnimatePresence } from "framer-motion";
 import {
@@ -5,9 +6,7 @@ import {
   ArrowRight,
   CheckCircle2,
   Building2,
-  Zap,
   ShieldCheck,
-  Globe2,
   Users,
   Layers,
   FileSpreadsheet,
@@ -15,16 +14,10 @@ import {
   BarChart3,
   Bot,
   Star,
-  ChevronRight,
   Play,
-  Lock,
   Workflow,
   Calculator,
   ChevronDown,
-  Clock,
-  DollarSign,
-  Cpu,
-  RefreshCw,
   Menu,
   X,
 } from "lucide-react";
@@ -295,17 +288,22 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onSignIn, onSe
       {/* Hero Section with Parallax Background & Glass Components */}
       <section
         ref={heroRef}
-        className="relative pt-20 pb-28 px-6 overflow-hidden border-b border-border bg-gradient-to-b from-background via-surface/60 to-background"
+        className="relative pt-35 pb-28 px-6 overflow-hidden border-b border-border bg-linear-to-b from-background via-surface/90 to-background"
       >
-        {/* Ambient Grid Pattern & Radial Glow Layers */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,#f9731615,transparent_60%)] pointer-events-none" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800e_1px,transparent_1px),linear-gradient(to_bottom,#8080800e_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
+        {/* Background Image */}
+        <div className="absolute inset-0 pointer-events-none">
+          <img
+            src={bg_img_companies}
+            alt="Enterprise Talent Operations Background"
+            className="w-full h-100vh object-cover"
+          />
+        </div>
 
         {/* Floating Parallax Badges (Left & Right) */}
         <motion.div
           animate={{ y: [0, -14, 0], rotate: [0, 2, 0] }}
           transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-24 left-8 hidden lg:flex items-center gap-3.5 p-4 rounded-2xl bg-card/75 border border-border/80 shadow-2xl backdrop-blur-xl max-w-xs"
+          className="absolute top-25 left-8 hidden lg:flex items-center gap-3.5 p-4 rounded-2xl bg-card/75 border border-border/80 shadow-2xl backdrop-blur-xl max-w-xs"
         >
           <div className="p-2.5 rounded-xl bg-ember/15 text-ember shadow-inner">
             <Linkedin className="size-5" />
@@ -317,6 +315,25 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onSignIn, onSe
             </div>
             <p className="text-[10px] text-ember font-mono mt-0.5">+14 Candidates Syncing</p>
             <p className="text-[10px] text-muted-foreground mt-1">Direct Recruiter Import Active</p>
+          </div>
+        </motion.div>
+        <motion.div
+          animate={{ y: [10, -20, 10], rotate: [0, 2, 0] }}
+          transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-124 right-8 hidden lg:flex items-center gap-3.5 p-4 rounded-2xl bg-card/75 border border-border/80 shadow-2xl backdrop-blur-xl max-w-xs"
+        >
+          <div className="p-2.5 rounded-xl bg-success/15 text-success shadow-inner">
+            <FileSpreadsheet className="size-5" />
+          </div>
+          <div className="text-xs">
+            <div className="flex items-center gap-1.5 font-semibold text-foreground">
+              <span>Google Sheets Connector</span>
+              <span className="size-2 rounded-full bg-success animate-ping" />
+            </div>
+            <p className="text-[10px] text-success font-mono mt-0.5">+100 Rows Synced</p>
+            <p className="text-[10px] text-muted-foreground mt-1">
+              Intelligent Field Mapping Active
+            </p>
           </div>
         </motion.div>
 
@@ -353,10 +370,10 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onSignIn, onSe
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="font-display text-5xl md:text-7xl lg:text-8xl font-bold leading-[1.05] text-foreground max-w-5xl mx-auto tracking-tight"
+            className="font-display text-5xl md:text-7xl lg:text-7xl font-bold leading-[1.05] text-foreground max-w-5xl mx-auto tracking-tight"
           >
             The Candidate Operating System Built For{" "}
-            <span className="bg-gradient-to-r from-ember via-amber-500 to-orange-400 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-ember via-amber-500 to-orange-400 bg-clip-text text-transparent">
               Modern Enterprise Companies.
             </span>
           </motion.h1>

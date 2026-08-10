@@ -13,8 +13,14 @@
     "skipLibCheck": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@": ["./src"],
+      "@api/*": ["./src/*"],
+      "@api": ["./src/index.ts"],
+      "@talent-flow/api/*": ["./src/*"],
+      "@talent-flow/api": ["./src/index.ts"]
     }
   },
   "include": ["src/**/*"]

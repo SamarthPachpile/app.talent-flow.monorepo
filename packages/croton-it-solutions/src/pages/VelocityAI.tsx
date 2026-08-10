@@ -83,7 +83,12 @@ export default function VelocityAI() {
       <Header />
 
       {/* HERO */}
-      <section className="relative pt-32 sm:pt-40 pb-20 bg-gradient-to-br from-[#ffe5d4] via-[#ffd4b8] to-[#ffb892] overflow-hidden">
+      <section
+        id="velocity-hero"
+        data-section="velocity-hero"
+        data-label="Hero"
+        className="relative pt-32 sm:pt-40 pb-20 bg-gradient-to-br from-[#ffe5d4] via-[#ffd4b8] to-[#ffb892] overflow-hidden"
+      >
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 relative z-10">
           <p className="text-sm text-foreground/70 mb-6">Croton VelocityAI</p>
           <h1 className="text-5xl sm:text-7xl md:text-8xl font-medium leading-[0.95] tracking-tight text-foreground max-w-5xl">
@@ -96,7 +101,12 @@ export default function VelocityAI() {
       </section>
 
       {/* INTRO */}
-      <section className="py-20 sm:py-24 bg-background">
+      <section
+        id="velocity-intro"
+        data-section="velocity-intro"
+        data-label="Overview"
+        className="py-20 sm:py-24 bg-background"
+      >
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
           <p className="text-xs uppercase tracking-[0.25em] text-foreground/60 mb-8">
             Reimagining business with VelocityAI
@@ -112,7 +122,12 @@ export default function VelocityAI() {
       </section>
 
       {/* CAPABILITIES */}
-      <section className="py-16 bg-muted/40">
+      <section
+        id="velocity-capabilities"
+        data-section="velocity-capabilities"
+        data-label="Capabilities"
+        className="py-16 bg-muted/40"
+      >
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 grid grid-cols-1 md:grid-cols-3 gap-6">
           {CAPABILITIES.map((c) => (
             <div
@@ -134,7 +149,12 @@ export default function VelocityAI() {
       </section>
 
       {/* METRICS */}
-      <section className="py-20 bg-background">
+      <section
+        id="velocity-metrics"
+        data-section="velocity-metrics"
+        data-label="Impact"
+        className="py-20 bg-background"
+      >
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
           <p className="text-sm text-foreground/60 mb-10">
             <span className="text-primary font-medium">VelocityAI</span> can deliver
@@ -153,7 +173,12 @@ export default function VelocityAI() {
       </section>
 
       {/* STORIES */}
-      <section className="py-16 bg-muted/40">
+      <section
+        id="velocity-stories"
+        data-section="velocity-stories"
+        data-label="Stories"
+        className="py-16 bg-muted/40"
+      >
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
           <p className="text-sm text-foreground/60 mb-8">Stories</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -184,7 +209,12 @@ export default function VelocityAI() {
       </section>
 
       {/* CONCEPT TO REALITY BANNER */}
-      <section className="relative py-32 bg-gradient-to-br from-[#ffd4b8] to-[#ff8855] overflow-hidden">
+      <section
+        id="velocity-banner"
+        data-section="velocity-banner"
+        data-label="Concept"
+        className="relative py-32 bg-gradient-to-br from-[#ffd4b8] to-[#ff8855] overflow-hidden"
+      >
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 relative z-10">
           <p className="text-sm text-foreground/70 mb-4">From Concept</p>
           <h2 className="text-5xl sm:text-7xl md:text-8xl font-medium text-foreground leading-[0.95] tracking-tight">
@@ -205,7 +235,12 @@ export default function VelocityAI() {
       </section>
 
       {/* INDUSTRIES TRANSFORMED */}
-      <section className="py-20 bg-background">
+      <section
+        id="velocity-industries"
+        data-section="velocity-industries"
+        data-label="Industries"
+        className="py-20 bg-background"
+      >
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div>
             <h2 className="text-4xl sm:text-5xl font-medium text-foreground leading-tight tracking-tight mb-6">
@@ -235,7 +270,12 @@ export default function VelocityAI() {
       </section>
 
       {/* ITERATIVE PROGRESS */}
-      <section className="py-20 bg-muted/30">
+      <section
+        id="velocity-progress"
+        data-section="velocity-progress"
+        data-label="Process"
+        className="py-20 bg-muted/30"
+      >
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="aspect-[4/3] rounded-2xl overflow-hidden order-2 lg:order-1">
             <img
@@ -262,7 +302,12 @@ export default function VelocityAI() {
       </section>
 
       {/* OUTCOMES NOT FEATURES */}
-      <section className="py-20 bg-background">
+      <section
+        id="velocity-outcomes"
+        data-section="velocity-outcomes"
+        data-label="Outcomes"
+        className="py-20 bg-background"
+      >
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div>
             <h2 className="text-4xl sm:text-5xl font-medium text-foreground leading-tight tracking-tight mb-6">
@@ -287,7 +332,12 @@ export default function VelocityAI() {
       </section>
 
       {/* PLATFORM */}
-      <section className="py-20 bg-muted/30">
+      <section
+        id="velocity-platform"
+        data-section="velocity-platform"
+        data-label="Platform"
+        className="py-20 bg-muted/30"
+      >
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-10">
             <h2 className="text-4xl sm:text-5xl font-medium text-foreground leading-tight tracking-tight">
@@ -309,7 +359,12 @@ export default function VelocityAI() {
       </section>
 
       {/* FAQ */}
-      <section className="py-20 bg-background">
+      <section
+        id="velocity-faq"
+        data-section="velocity-faq"
+        data-label="FAQ"
+        className="py-20 bg-background"
+      >
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-3 gap-12">
           <div>
             <h2 className="text-3xl sm:text-4xl font-medium text-foreground leading-tight tracking-tight">
@@ -334,7 +389,12 @@ export default function VelocityAI() {
       </section>
 
       {/* GET MOVING BANNER */}
-      <section className="bg-[#3f4b6b] py-20 sm:py-28">
+      <section
+        id="velocity-get-started"
+        data-section="velocity-get-started"
+        data-label="Get Started"
+        className="bg-[#3f4b6b] py-20 sm:py-28"
+      >
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
           <h2 className="text-5xl sm:text-7xl md:text-8xl font-medium text-white leading-[0.95] tracking-tight">
             Get moving with Croton{" "}

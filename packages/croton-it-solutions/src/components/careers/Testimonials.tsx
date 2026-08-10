@@ -84,7 +84,12 @@ export default function Testimonials() {
   };
 
   return (
-    <section className="py-20 px-6 sm:px-12">
+    <section
+      id="testimonials"
+      data-section="testimonials"
+      data-label="Stories"
+      className="py-20 px-6 sm:px-12 bg-background"
+    >
       <div className="max-w-[1400px] mx-auto">
         {/* Header */}
         <div className="flex items-end justify-between mb-16 gap-8 flex-wrap">

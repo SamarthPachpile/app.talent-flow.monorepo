@@ -5,6 +5,7 @@
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
+    "types": ["vite/client"],
 
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -19,11 +20,43 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
+      "@": ["./src"],
+      "@company-onboarding/*": ["./src/*"],
+      "@company-onboarding": ["./src"],
+      "@onboarding/*": ["./src/*"],
+      "@onboarding": ["./src"],
+      "@talent-flow/company-onboarding/*": ["./src/*"],
+      "@talent-flow/company-onboarding": ["./src/App.tsx", "./src"],
+
       "@talent-flow/api": ["../api/src/index.ts"],
-      "@talent-flow/api/*": ["../api/src/*"]
+      "@talent-flow/api/*": ["../api/src/*"],
+      "@api": ["../api/src/index.ts"],
+      "@api/*": ["../api/src/*"],
+
+      "@talent-flow/admin-panel": ["../admin-panel/src/components/AdminPanelContainer.tsx"],
+      "@talent-flow/admin-panel/*": ["../admin-panel/src/*"],
+      "@admin-panel/*": ["../admin-panel/src/*"],
+      "@admin-panel": ["../admin-panel/src"],
+      "@admin/*": ["../admin-panel/src/*"],
+      "@admin": ["../admin-panel/src"],
+
+      "@talent-flow/candidate-portal": ["../candidate-portal/src/App.tsx"],
+      "@talent-flow/candidate-portal/*": ["../candidate-portal/src/*"],
+      "@candidate-portal/*": ["../candidate-portal/src/*"],
+      "@candidate-portal": ["../candidate-portal/src"],
+      "@candidate/*": ["../candidate-portal/src/*"],
+      "@candidate": ["../candidate-portal/src"],
+
+      "@talent-flow/croton-it-solutions": ["../croton-it-solutions/src/App.tsx"],
+      "@talent-flow/croton-it-solutions/*": ["../croton-it-solutions/src/*"],
+      "@croton-it-solutions/*": ["../croton-it-solutions/src/*"],
+      "@croton-it-solutions": ["../croton-it-solutions/src"],
+      "@croton/*": ["../croton-it-solutions/src/*"],
+      "@croton": ["../croton-it-solutions/src"]
     }
   },
-  "include": ["src", "../candidate-portal/src", "../api/src"]
+  "include": ["src/**/*", "vite.config.ts", "../../tailwind.config.ts"]
 }

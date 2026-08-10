@@ -46,9 +46,22 @@ export const CandidateHero: React.FC<CandidateHeroProps> = ({
 
   return (
     <div className="border-b border-border bg-gradient-to-b from-background via-surface/60 to-background relative overflow-hidden">
-      {/* Company Custom Cover Banner Image (If present in database document) */}
-      {company?.coverImageUrl ? (
-        <div className="relative h-44 sm:h-52 w-full overflow-hidden border-b border-border/80">
+      {/* Hero Background Image */}
+      <div className="absolute inset-0 pointer-events-none">
+        <img
+          src="/assets/hero-bg.jpg"
+          alt="Candidate Hero Background"
+          className="w-full h-full object-cover opacity-60"
+        />
+        <div
+          className="absolute top-0 right-10 size-72 rounded-full blur-3xl pointer-events-none"
+          style={{ backgroundColor: `${compColor}20` }}
+        />
+      </div>
+
+      {/* Optional Company Custom Cover Banner Image */}
+      {company?.coverImageUrl && (
+        <div className="relative h-44 sm:h-52 w-full overflow-hidden border-b border-border/80 z-10">
           <img
             src={company.coverImageUrl}
             alt={`${compName} cover`}
@@ -62,11 +75,6 @@ export const CandidateHero: React.FC<CandidateHeroProps> = ({
             </span>
           </div>
         </div>
-      ) : (
-        <div
-          className="absolute top-0 right-10 size-72 rounded-full blur-3xl pointer-events-none"
-          style={{ backgroundColor: `${compColor}20` }}
-        />
       )}
 
       <div className="px-6 py-8 max-w-7xl mx-auto relative z-10">

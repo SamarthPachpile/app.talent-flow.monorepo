@@ -2,8 +2,6 @@ import { App as CompanyOnboardingApp } from "@talent-flow/company-onboarding";
 import { App as CandidatePortalApp } from "@talent-flow/candidate-portal";
 
 interface EcosystemPortalWrapperProps {
-  title?: string;
-  defaultPort?: number;
   routePath?: string;
 }
 

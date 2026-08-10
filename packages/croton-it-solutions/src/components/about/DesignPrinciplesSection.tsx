@@ -21,27 +21,30 @@ export default function DesignPrinciplesSection() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section ref={ref} className="pb-20 ">
-      <div className="max-w-[1800px] mx-auto pl-25">
-        <div className="grid grid-cols-1 lg:grid-cols-2 items-start">
-          {/* LEFT TEXT */}
+    <section ref={ref} className="pb-20 w-full">
+      <div className="w-full sm:px-12 lg:px-16 xl:px-20">
+        {/* FLEX CONTAINER FOR LEFT AND RIGHT SECTIONS */}
+        <div className="flex flex-row items-stretch justify-between gap-8 md:gap-16 w-full ">
+          {/* LEFT TEXT SECTION */}
           <motion.div
             initial={{ opacity: 0, x: -40 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.7 }}
+            className="w-1/3 max-w-162.5 shrink-0 "
           >
-            <p className="text-xl text-black max-w-[420px] leading-relaxed">
+            <p className="text-xl sm:text-2xl text-black leading-relaxed">
               Croton provides unique experience and expertise at the intersection of data, design,
               and Customer Relations
             </p>
           </motion.div>
 
-          {/* RIGHT CONTENT */}
-          <div className="flex gap-10">
-            {/* VERTICAL LINE */}
-            <div className="hidden lg:block w-[3px] bg-gray-300 self-stretch" />
-            {/* PRINCIPLES */}
-            <div className="space-y-10">
+          {/* RIGHT GROUP (DIVIDER + PRINCIPLES ALIGNED AT END) */}
+          <div className="flex flex-row items-stretch gap-8 sm:gap-10 lg:gap-14 ml-auto flex-1 max-w-172.5 justify-end">
+            {/* VERTICAL DIVIDER */}
+            <div className="w-0.75 bg-primary self-stretch shrink-0 rounded-full" />
+
+            {/* RIGHT SECTION (STACKED VERTICALLY) */}
+            <div className="space-y-12 flex-1">
               {principles.map((p, i) => (
                 <motion.div
                   key={p.title}
@@ -50,7 +53,7 @@ export default function DesignPrinciplesSection() {
                   transition={{ duration: 0.5, delay: 0.2 * i }}
                 >
                   <h3 className="text-3xl sm:text-5xl text-muted-foreground mb-3">{p.title}</h3>
-                  <p className="text-base text-muted-foreground leading-relaxed max-w-[520px]">
+                  <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-[600px]">
                     {p.desc}
                   </p>
                 </motion.div>

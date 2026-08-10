@@ -99,7 +99,7 @@ export default function HeroSection() {
       className="relative h-screen w-full flex items-end pb-12 sm:pb-8 overflow-hidden"
     >
       {/* Background Image */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 pointer-events-none">
         <img
           src={heroBg}
           alt="Croton CRM consulting"
@@ -107,8 +107,6 @@ export default function HeroSection() {
           width={1920}
           height={1080}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-background/10 to-background/30" />
-        <div className="absolute bottom-0 left-0 right-0 h-40 sm:h-56 bg-gradient-to-t from-background via-background/70 to-transparent" />
       </div>
 
       {/* Floating brand icons */}

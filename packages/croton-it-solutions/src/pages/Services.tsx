@@ -1,5 +1,6 @@
 import Header from "@croton/components/Header";
 import Footer from "@croton/components/Footer";
+import CTASection from "@croton/components/CTASection";
 import { usePageMeta } from "@croton/lib/use-page-meta";
 
 const services = [
@@ -48,8 +49,8 @@ export default function Services() {
       <section
         id="services"
         data-section="services"
-        data-label="Services"
-        className="py-16 sm:py-20 max-w-[1400px] mx-auto px-4 sm:px-6"
+        data-label="Our Services"
+        className="pt-32 sm:pt-40 pb-16 sm:pb-20 max-w-[1400px] mx-auto px-4 sm:px-6"
       >
         <p className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-primary mb-3">
           What we do
@@ -63,17 +64,22 @@ export default function Services() {
           {services.map((s) => (
             <div
               key={s.title}
-              className="border border-border rounded-xl p-5 sm:p-6 hover:border-primary/40 hover:shadow-md transition"
+              className="group border border-border rounded-xl p-5 sm:p-6 hover:bg-[#ff5a1f] hover:border-[#ff5a1f] hover:shadow-md transition-colors duration-300 cursor-pointer"
             >
-              <div className="w-8 h-8 rounded bg-primary/10 mb-4 flex items-center justify-center">
-                <div className="w-3 h-3 rounded-sm bg-primary" />
+              <div className="w-8 h-8 rounded bg-primary/10 group-hover:bg-white/20 mb-4 flex items-center justify-center transition-colors">
+                <div className="w-3 h-3 rounded-sm bg-primary group-hover:bg-white transition-colors" />
               </div>
-              <h3 className="text-base sm:text-lg font-semibold mb-2">{s.title}</h3>
-              <p className="text-sm text-muted-foreground">{s.desc}</p>
+              <h3 className="text-base sm:text-lg font-semibold mb-2 group-hover:text-white transition-colors">
+                {s.title}
+              </h3>
+              <p className="text-sm text-muted-foreground group-hover:text-white/90 transition-colors">
+                {s.desc}
+              </p>
             </div>
           ))}
         </div>
       </section>
+      <CTASection />
       <Footer />
     </div>
   );

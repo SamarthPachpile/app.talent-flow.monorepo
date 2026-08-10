@@ -239,7 +239,7 @@ export default function ZeroDistance() {
     <section
       id="locations"
       data-section="locations"
-      data-label="Global"
+      data-label="Locations"
       className="relative bg-[#f0f1f5] overflow-hidden py-32"
     >
       {/* BIG BACKGROUND TEXT */}

@@ -281,6 +281,15 @@ export const CandidateHomePage: React.FC<CandidateHomePageProps> = ({
         ref={heroRef}
         className="relative pt-20 pb-28 px-6 overflow-hidden border-b border-border bg-gradient-to-b from-background via-surface/60 to-background"
       >
+        {/* Background Image */}
+        <div className="absolute inset-0 pointer-events-none">
+          <img
+            src="/assets/hero-bg.jpg"
+            alt="Candidate Portal Hero Background"
+            className="w-full h-full object-cover opacity-75"
+          />
+        </div>
+
         {/* Ambient Grid Pattern & Radial Glow Layers */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,#f9731615,transparent_60%)] pointer-events-none" />
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800e_1px,transparent_1px),linear-gradient(to_bottom,#8080800e_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />

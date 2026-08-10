@@ -111,23 +111,23 @@ export default function ServicesSection() {
               key={i}
               whileHover={{ y: -8 }}
               transition={{ duration: 0.35 }}
-              className="group w-[360px] sm:w-[420px] h-[460px] sm:h-[520px] bg-[#efeff1] p-8 sm:p-10 flex flex-col justify-between shrink-0 clip-service"
+              className="group w-[360px] sm:w-[420px] h-[460px] sm:h-[520px] bg-[#efeff1] hover:bg-[#ff5a1f] p-8 sm:p-10 flex flex-col justify-between shrink-0 clip-service transition-colors duration-300 cursor-pointer"
             >
               <div>
-                <h3 className="text-[#111625] text-[2rem] sm:text-[2.6rem] leading-[1.05] tracking-[-0.04em] font-light">
+                <h3 className="text-[#111625] group-hover:text-white transition-colors duration-300 text-[2rem] sm:text-[2.6rem] leading-[1.05] tracking-[-0.04em] font-light">
                   {service.title}
                   <br />
                   {service.subtitle}
                 </h3>
 
-                <p className="mt-8 text-[#33456b] text-lg sm:text-xl leading-[1.35] max-w-[300px]">
+                <p className="mt-8 text-[#33456b] group-hover:text-white/90 transition-colors duration-300 text-lg sm:text-xl leading-[1.35] max-w-[300px]">
                   {service.description}
                 </p>
               </div>
 
-              <div className="flex items-center gap-4 text-[#111625] text-2xl sm:text-3xl font-medium">
+              <div className="flex items-center gap-4 text-[#111625] group-hover:text-white transition-colors duration-300 text-2xl sm:text-3xl font-medium">
                 Learn More
-                <ArrowRight className="w-8 h-8 text-[#ff5a1f] transition-transform duration-300 group-hover:translate-x-2" />
+                <ArrowRight className="w-8 h-8 text-[#ff5a1f] group-hover:text-white transition-all duration-300 group-hover:translate-x-2" />
               </div>
             </motion.div>
           ))}

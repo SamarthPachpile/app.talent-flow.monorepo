@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Manrope:wght@200..800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap");
 @import "tailwindcss" source(none);
+@config "../../../tailwind.config.ts";
 @source "../src";
 @import "tw-animate-css";
 
@@ -10,6 +11,11 @@
  */
 
 @theme inline {
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);

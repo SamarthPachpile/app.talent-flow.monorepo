@@ -1,6 +1,7 @@
 import * as React from "react";
+import { SCREEN_VALUES } from "../../../../tailwind.config.ts";
 
-const MOBILE_BREAKPOINT = 768;
+const MOBILE_BREAKPOINT = SCREEN_VALUES.md;
 
 export function useIsMobile() {
   const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined);
