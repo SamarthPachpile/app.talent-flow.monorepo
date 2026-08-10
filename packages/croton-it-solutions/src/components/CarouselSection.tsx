@@ -116,7 +116,7 @@ export default function CarouselSection() {
 
       {/* Mobile */}
       <div className="hidden max-md:flex flex-1 items-center">
-        <div className="relative rounded-2xl overflow-hidden w-full h-[70vh]">
+        <div className="relative rounded-2xl overflow-hidden w-full h-70vh">
           <img
             src={slides[current].img}
             alt={slides[current].caption}

@@ -94,14 +94,14 @@ export default function Testimonials() {
         {/* Header */}
         <div className="flex items-end justify-between mb-16 gap-8 flex-wrap">
           <div>
-            <p className="text-[11px] tracking-[0.28em] uppercase text-orange-500 font-medium mb-3">
+            <p className="text-11px tracking-[0.28em] uppercase text-orange-500 font-medium mb-3">
               Employee testimonials
             </p>
             <h2 className="text-[clamp(36px,5vw,58px)] leading-[1.1] text-[#2f3a4a] font-semibold">
               Hear from <span className="text-orange-500">our people</span>
             </h2>
           </div>
-          <p className="text-sm text-gray-500 max-w-[260px] leading-relaxed text-right">
+          <p className="text-sm text-gray-500 max-w-260px leading-relaxed text-right">
             Explore why people joined Croton—{" "}
             <a href="#" className="text-orange-500 font-medium hover:underline">
               and what keeps them here
@@ -124,7 +124,7 @@ export default function Testimonials() {
                 {/* Left: Quote */}
                 <div className="px-10 py-16 md:px-16 md:py-20 flex flex-col justify-center">
                   <div
-                    className="text-[100px] leading-[0.6] text-orange-500 opacity-15 mb-4 select-none"
+                    className="text-100px leading-[0.6] text-orange-500 opacity-15 mb-4 select-none"
                     style={{ fontFamily: "Georgia, serif" }}
                   >
                     "
@@ -136,18 +136,18 @@ export default function Testimonials() {
                     {item.quote} <span className="text-orange-500 italic">{item.highlight}</span>
                   </blockquote>
                   <div className="flex items-center gap-4 mt-auto">
-                    <div className="w-8 h-[2px] bg-orange-500 flex-shrink-0" />
+                    <div className="w-8 h-2px bg-orange-500 flex-shrink-0" />
                     <div>
-                      <div className="text-[15px] font-semibold text-[#2f3a4a]">{item.name}</div>
-                      <div className="text-[13px] text-gray-400 mt-0.5">{item.role}</div>
+                      <div className="text-15px font-semibold text-[#2f3a4a]">{item.name}</div>
+                      <div className="text-13px text-gray-400 mt-0.5">{item.role}</div>
                     </div>
                   </div>
                 </div>
 
                 {/* Right: Photo */}
-                <div className="relative bg-[#dfe3ea] min-h-[400px] md:min-h-[520px] flex items-center justify-center overflow-hidden">
+                <div className="relative bg-[#dfe3ea] min-h-400px md:min-h-520px flex items-center justify-center overflow-hidden">
                   <div
-                    className="w-28 h-28 rounded-full flex items-center justify-center text-[36px] text-[#2f3a4a] opacity-40"
+                    className="w-28 h-28 rounded-full flex items-center justify-center text-36px text-[#2f3a4a] opacity-40"
                     style={{
                       background: "linear-gradient(135deg, #e8e2db 0%, #d4cdc4 100%)",
                       fontFamily: "Georgia, serif",

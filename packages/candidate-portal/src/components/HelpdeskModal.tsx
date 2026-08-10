@@ -75,7 +75,7 @@ export const HelpdeskModal: React.FC<HelpdeskModalProps> = ({ candidate, onClose
               <div className="text-xs font-semibold text-foreground">
                 {adminName} · {compName} HR
               </div>
-              <div className="text-[11px] text-ember flex items-center gap-1">
+              <div className="text-11px text-ember flex items-center gap-1">
                 <Building2 className="size-3" />
                 <span>{company?.admin?.workEmail || candidate.recruiter.role}</span>
               </div>
@@ -106,7 +106,7 @@ export const HelpdeskModal: React.FC<HelpdeskModalProps> = ({ candidate, onClose
               >
                 <p>{m.text}</p>
               </div>
-              <span className="text-[9px] text-muted-foreground mt-0.5 px-1">
+              <span className="text-9px text-muted-foreground mt-0.5 px-1">
                 {m.name} · {m.time}
               </span>
             </div>

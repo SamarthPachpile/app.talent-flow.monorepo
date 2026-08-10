@@ -84,13 +84,13 @@ export default function ServicesSection() {
               What we offer
             </p>
 
-            <h2 className="text-[#111625] font-light leading-[0.95] tracking-[-0.05em] text-[3rem] sm:text-[5rem] lg:text-[4.5rem]">
+            <h2 className="text-[#111625] font-light leading-[0.95] tracking-[-0.05em] text-[50px]">
               Explore our services
             </h2>
           </div>
 
           <div className="lg:pt-10 lg:pl-10">
-            <p className="text-[#33456b] text-lg sm:text-2xl leading-[1.35] max-w-[700px]">
+            <p className="text-[#33456b] text-lg sm:text-xl leading-[1.35] max-w-700px">
               Unlock the power of data, design, and engineering to fuel innovation and drive
               meaningful outcomes for your business.
             </p>
@@ -111,21 +111,21 @@ export default function ServicesSection() {
               key={i}
               whileHover={{ y: -8 }}
               transition={{ duration: 0.35 }}
-              className="group w-[360px] sm:w-[420px] h-[460px] sm:h-[520px] bg-[#efeff1] hover:bg-[#ff5a1f] p-8 sm:p-10 flex flex-col justify-between shrink-0 clip-service transition-colors duration-300 cursor-pointer"
+              className="group w-360px sm:w-420px h-115 p-30px sm:h-520px bg-[#efeff1] hover:bg-[#ff5a1f] flex flex-col justify-between shrink-0 clip-service transition-colors duration-300 cursor-pointer"
             >
               <div>
-                <h3 className="text-[#111625] group-hover:text-white transition-colors duration-300 text-[2rem] sm:text-[2.6rem] leading-[1.05] tracking-[-0.04em] font-light">
+                <h3 className="text-[#111625] group-hover:text-white transition-colors duration-300 text-[35px] leading-[1.05] tracking-[-0.04em] font-light">
                   {service.title}
                   <br />
                   {service.subtitle}
                 </h3>
 
-                <p className="mt-8 text-[#33456b] group-hover:text-white/90 transition-colors duration-300 text-lg sm:text-xl leading-[1.35] max-w-[300px]">
+                <p className="mt-8 text-[#33456b] group-hover:text-white/90 transition-colors duration-300 text-[18px] leading-[1.35] max-w-300px">
                   {service.description}
                 </p>
               </div>
 
-              <div className="flex items-center gap-4 text-[#111625] group-hover:text-white transition-colors duration-300 text-2xl sm:text-3xl font-medium">
+              <div className="flex items-center gap-4 text-[#111625] group-hover:text-white transition-colors duration-300 text-[20px]">
                 Learn More
                 <ArrowRight className="w-8 h-8 text-[#ff5a1f] group-hover:text-white transition-all duration-300 group-hover:translate-x-2" />
               </div>

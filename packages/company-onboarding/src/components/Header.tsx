@@ -108,14 +108,14 @@ export const Header: React.FC<HeaderProps> = ({
           </span>
           <div className="min-w-0">
             <div className="flex items-center gap-1.5 min-w-0">
-              <h1 className="font-display text-sm text-foreground font-bold leading-tight group-hover:text-ember transition-colors truncate max-w-[140px] sm:max-w-[180px]">
+              <h1 className="font-display text-sm text-foreground font-bold leading-tight group-hover:text-ember transition-colors truncate max-w-140px sm:max-w-[180px]">
                 {companyName || "Company Workspace"}
               </h1>
-              <span className="bg-success/15 text-success border border-success/30 text-[9px] px-1.5 py-0.5 rounded-full font-semibold shrink-0">
+              <span className="bg-success/15 text-success border border-success/30 text-9px px-1.5 py-0.5 rounded-full font-semibold shrink-0">
                 {isCompleted ? "Active" : `${progressPercent}%`}
               </span>
             </div>
-            <p className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-1 truncate max-w-[180px] sm:max-w-[240px]">
+            <p className="text-10px text-muted-foreground mt-0.5 flex items-center gap-1 truncate max-w-[180px] sm:max-w-240px">
               <span className="font-mono text-ember font-medium truncate">
                 {subdomain || companySlug}.talentflow.hub
               </span>
@@ -157,11 +157,11 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Right Section: Admin Account Info & Sign Out Button */}
         <div className="flex items-center gap-3 shrink-0">
           {adminEmail && (
-            <div className="text-right hidden xl:block text-[11px] leading-tight">
-              <p className="text-muted-foreground text-[9px] uppercase font-semibold tracking-wider">
+            <div className="text-right hidden xl:block text-11px leading-tight">
+              <p className="text-muted-foreground text-9px uppercase font-semibold tracking-wider">
                 Admin Account
               </p>
-              <p className="font-medium text-foreground font-mono text-[10px] truncate max-w-[160px]">
+              <p className="font-medium text-foreground font-mono text-10px truncate max-w-160px">
                 {adminEmail}
               </p>
             </div>
@@ -174,7 +174,7 @@ export const Header: React.FC<HeaderProps> = ({
             title="Sign Out Company Session"
           >
             <LogOut className="size-3.5 text-ember" />
-            <span className="text-[11px] font-medium hidden sm:inline">Sign Out</span>
+            <span className="text-11px font-medium hidden sm:inline">Sign Out</span>
           </button>
         </div>
       </div>

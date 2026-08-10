@@ -156,7 +156,7 @@ export function OnboardedCompaniesPage() {
                       </span>
                       <Badge
                         variant="outline"
-                        className={`text-[10px] ${
+                        className={`text-10px ${
                           c.plan === "Enterprise"
                             ? "border-ember text-ember bg-ember/10"
                             : "border-success text-success bg-success/10"
@@ -179,7 +179,7 @@ export function OnboardedCompaniesPage() {
                     <div className="mt-4 pt-3 border-t border-border space-y-1.5 text-xs text-muted-foreground">
                       <div className="flex justify-between">
                         <span>Admin:</span>
-                        <span className="font-medium text-foreground truncate max-w-[140px]">
+                        <span className="font-medium text-foreground truncate max-w-140px">
                           {c.adminEmail || "admin@company.com"}
                         </span>
                       </div>
@@ -213,7 +213,7 @@ export function OnboardedCompaniesPage() {
                     </div>
 
                     <span
-                      className={`text-[11px] font-semibold flex items-center gap-1 ${isSelected ? "text-ember" : "text-muted-foreground"}`}
+                      className={`text-11px font-semibold flex items-center gap-1 ${isSelected ? "text-ember" : "text-muted-foreground"}`}
                     >
                       {isSelected ? "Active Board Below" : "Select Board →"}
                     </span>
@@ -235,7 +235,7 @@ export function OnboardedCompaniesPage() {
                   <h2 className="text-2xl font-display font-bold text-foreground">
                     {activeCompany.name}
                   </h2>
-                  <span className="bg-success/15 text-success border border-success/30 text-[11px] px-2.5 py-0.5 rounded-full font-semibold">
+                  <span className="bg-success/15 text-success border border-success/30 text-11px px-2.5 py-0.5 rounded-full font-semibold">
                     {activeCompany.plan} Plan · Active
                   </span>
                 </div>
@@ -345,11 +345,11 @@ export function OnboardedCompaniesPage() {
                             <h3 className="text-sm font-display font-semibold leading-none">
                               {phase.label}
                             </h3>
-                            <Badge variant="secondary" className="tabular-nums text-[11px]">
+                            <Badge variant="secondary" className="tabular-nums text-11px">
                               {items.length}
                             </Badge>
                           </div>
-                          <p className="mt-1 text-[11px] text-muted-foreground">{phase.hint}</p>
+                          <p className="mt-1 text-11px text-muted-foreground">{phase.hint}</p>
                         </div>
                         <div className="stage-rail h-px bg-border" />
                         <div className="flex flex-1 flex-col gap-3 rounded-b-lg border border-t-0 border-border bg-surface/40 p-3">
@@ -387,7 +387,7 @@ export function OnboardedCompaniesPage() {
 
               <div className="overflow-x-auto border border-border rounded-lg">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-surface border-b border-border text-muted-foreground font-semibold uppercase text-[10px]">
+                  <thead className="bg-surface border-b border-border text-muted-foreground font-semibold uppercase text-10px">
                     <tr>
                       <th className="p-3">Timestamp</th>
                       <th className="p-3">Candidate</th>
@@ -406,7 +406,7 @@ export function OnboardedCompaniesPage() {
                     ) : (
                       companyAudit.map((entry) => (
                         <tr key={entry.id} className="hover:bg-surface/50 transition-colors">
-                          <td className="p-3 text-muted-foreground font-mono text-[11px]">
+                          <td className="p-3 text-muted-foreground font-mono text-11px">
                             {entry.at}
                           </td>
                           <td className="p-3 font-semibold text-foreground">
@@ -417,7 +417,7 @@ export function OnboardedCompaniesPage() {
                             {entry.action} {entry.detail ? `— ${entry.detail}` : ""}
                           </td>
                           <td className="p-3">
-                            <span className="bg-accent text-accent-foreground px-2 py-0.5 rounded text-[10px] font-medium">
+                            <span className="bg-accent text-accent-foreground px-2 py-0.5 rounded text-10px font-medium">
                               {entry.channel}
                             </span>
                           </td>

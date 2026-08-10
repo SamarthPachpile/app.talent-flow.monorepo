@@ -23,7 +23,7 @@ export default function AboutHeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-primary mb-3 sm:mb-4"
+          className="text-10px sm:text-xs uppercase tracking-[0.3em] text-primary mb-3 sm:mb-4"
         >
           About Croton
         </motion.p>

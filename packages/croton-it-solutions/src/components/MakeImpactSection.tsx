@@ -8,7 +8,7 @@ export default function MakeImpactSection() {
       id="our-story"
       data-section="our-story"
       data-label="Story"
-      className="relative h-[100vh] min-h-[700px] overflow-hidden"
+      className="relative h-[100vh] min-h-700px overflow-hidden"
     >
       {/* BACKGROUND */}
       <div className="absolute inset-0">
@@ -43,7 +43,7 @@ export default function MakeImpactSection() {
           whileInView={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.8 }}
         >
-          <p className="text-[10px] sm:text-xs uppercase tracking-[0.35em] text-[#fcfcfc]">
+          <p className="text-10px sm:text-xs uppercase tracking-[0.35em] text-[#fcfcfc]">
             The Tapasys Group Company
           </p>
 
@@ -57,7 +57,7 @@ export default function MakeImpactSection() {
           initial={{ y: 40, opacity: 0 }}
           whileInView={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.4 }}
-          className="absolute bottom-[140px] left-6"
+          className="absolute bottom-[100px] left-8"
         >
           <button className="flex items-center gap-4 bg-white rounded-full px-6 py-3 shadow-lg hover:scale-105 transition">
             <span className="text-[#111625] text-2xl">Join our team</span>

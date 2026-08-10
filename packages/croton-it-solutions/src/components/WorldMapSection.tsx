@@ -6,12 +6,12 @@ export default function WorldMapSection() {
       id="global"
       data-section="global"
       data-label="Global"
-      className="py-16 sm:py-20 bg-gl-navy"
+      className="py-16 sm:py-20 bg-[#020D1F]"
     >
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-center">
           <div>
-            <p className="text-[10px] sm:text-xs uppercase tracking-widest text-primary-foreground/60 mb-3 sm:mb-4">
+            <p className="text-10px sm:text-xs uppercase tracking-widest text-primary-foreground/60 mb-3 sm:mb-4">
               Global delivery
             </p>
             <h2 className="text-3xl sm:text-4xl md:text-5xl text-primary-foreground mb-3 sm:mb-4">

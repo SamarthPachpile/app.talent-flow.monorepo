@@ -77,7 +77,7 @@ export const LiveWorkspacePreview: React.FC<PreviewProps> = ({ state }) => {
 
           {/* Hero Banner */}
           <div className="rounded-lg p-6 bg-surface border border-border space-y-2">
-            <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-md uppercase tracking-wider text-foreground bg-card border border-border inline-block">
+            <span className="text-11px font-semibold px-2.5 py-0.5 rounded-md uppercase tracking-wider text-foreground bg-card border border-border inline-block">
               Now Hiring Across All Departments
             </span>
             <h2 className="text-3xl font-display text-foreground">
@@ -118,10 +118,8 @@ export const LiveWorkspacePreview: React.FC<PreviewProps> = ({ state }) => {
               ].map((job, idx) => (
                 <div key={idx} className="p-4 rounded-lg bg-surface border border-border space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-[11px] text-muted-foreground font-medium">
-                      {job.dept}
-                    </span>
-                    <span className="text-[10px] bg-card border border-border text-foreground px-2 py-0.5 rounded-md">
+                    <span className="text-11px text-muted-foreground font-medium">{job.dept}</span>
+                    <span className="text-10px bg-card border border-border text-foreground px-2 py-0.5 rounded-md">
                       {job.type}
                     </span>
                   </div>

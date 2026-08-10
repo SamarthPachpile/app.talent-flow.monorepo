@@ -101,11 +101,11 @@ export const CandidateCompanySelector: React.FC<CandidateCompanySelectorProps> =
             <div>
               <h1 className="text-sm font-semibold tracking-tight text-foreground flex items-center gap-2">
                 TalentFlow Hub
-                <span className="bg-ember/10 text-ember border border-ember/20 text-[10px] px-2 py-0.5 rounded-full font-semibold">
+                <span className="bg-ember/10 text-ember border border-ember/20 text-10px px-2 py-0.5 rounded-full font-semibold">
                   Candidates Portal
                 </span>
               </h1>
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-11px text-muted-foreground">
                 Select your company to log in to your candidate dashboard
               </p>
             </div>
@@ -186,7 +186,7 @@ export const CandidateCompanySelector: React.FC<CandidateCompanySelectorProps> =
             {/* Industry Filter Pills */}
             {industries.length > 1 && (
               <div className="flex items-center justify-center gap-1.5 flex-wrap">
-                <span className="text-[11px] text-muted-foreground mr-1 flex items-center gap-1">
+                <span className="text-11px text-muted-foreground mr-1 flex items-center gap-1">
                   <Filter className="size-3" /> Filter:
                 </span>
                 {industries.map((ind) => (
@@ -377,7 +377,7 @@ export const CandidateCompanySelector: React.FC<CandidateCompanySelectorProps> =
                           </div>
                         </div>
 
-                        <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-success bg-success/10 border border-success/20 px-2 py-0.5 rounded-full shrink-0">
+                        <span className="inline-flex items-center gap-1 text-10px font-semibold text-success bg-success/10 border border-success/20 px-2 py-0.5 rounded-full shrink-0">
                           <CheckCircle2 className="size-3" /> Enabled
                         </span>
                       </div>
@@ -387,7 +387,7 @@ export const CandidateCompanySelector: React.FC<CandidateCompanySelectorProps> =
                           `Official candidate onboarding & application portal for ${c.name}. Log in to track progress.`}
                       </p>
 
-                      <div className="pt-2 flex flex-wrap gap-2 text-[11px] text-muted-foreground border-t border-border/50">
+                      <div className="pt-2 flex flex-wrap gap-2 text-11px text-muted-foreground border-t border-border/50">
                         <span className="inline-flex items-center gap-1 bg-surface px-2 py-1 rounded-md border border-border">
                           <Briefcase className="size-3 text-ember" />
                           {c.industry || "Technology"}
@@ -431,7 +431,7 @@ export const CandidateCompanySelector: React.FC<CandidateCompanySelectorProps> =
             </span>
           </div>
           <div className="flex items-center gap-4">
-            <span className="font-mono text-[11px]">
+            <span className="font-mono text-11px">
               Route: /candidates-portal/&lt;company_name&gt;/login
             </span>
           </div>

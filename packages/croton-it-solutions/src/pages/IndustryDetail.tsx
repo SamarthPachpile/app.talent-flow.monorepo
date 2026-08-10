@@ -76,7 +76,7 @@ export default function IndustryDetail() {
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6">
           {/* TOP LARGE TEXT */}
           <div className="max-w-[1250px]">
-            <h2 className="text-[48px] sm:text-[64px] md:text-[52px] leading-[0.95] tracking-[-0.04em] font-medium text-[#40486b]">
+            <h2 className="text-48px sm:text-64px md:text-52px leading-[0.95] tracking-[-0.04em] font-medium text-[#40486b]">
               We partner with {industry.name} sponsors across the deal lifecycle, delivering
               strategic support from
               <span className="text-[#4a46ff]"> {industry.feature.title} </span> during the hold
@@ -86,8 +86,8 @@ export default function IndustryDetail() {
 
           {/* BOTTOM RIGHT TEXT */}
           <div className="flex justify-end mt-20">
-            <div className="max-w-[520px]">
-              <p className="text-[18px] leading-[1.65] text-[#40486b]/85 text-left">
+            <div className="max-w-520px">
+              <p className="text-18px leading-[1.65] text-[#40486b]/85 text-left">
                 {industry.intro}
               </p>
             </div>
@@ -172,7 +172,7 @@ export default function IndustryDetail() {
       >
         <div className="max-w-[1280px] mx-auto px-6 sm:px-8">
           {/* QUOTE */}
-          <h2 className="text-white text-[42px] sm:text-[58px] md:text-[52px] leading-[1.25] tracking-tight font-medium max-w-[1280px]">
+          <h2 className="text-white text-42px sm:text-58px md:text-52px leading-[1.25] tracking-tight font-medium max-w-[1280px]">
             “The goal was to find a group of people that could contribute to the very strategy of
             the company... It was important to find a partner that not only had experience, but also
             the flexibility and the willingness to grow with us.”
@@ -341,7 +341,7 @@ export default function IndustryDetail() {
         data-label="FAQ"
         className="py-20 bg-background"
       >
-        <div className="max-w-[1100px] mx-auto px-4 sm:px-6">
+        <div className="max-w-1100px mx-auto px-4 sm:px-6">
           <h2 className="text-3xl sm:text-4xl font-medium text-foreground mb-10">
             Your {industry.name.toLowerCase()} solutions questions, answered
           </h2>

@@ -99,7 +99,7 @@ export function AdminLoginPage({ onSuccess }: AdminLoginPageProps = {}) {
           </div>
           <div>
             <p className="font-display text-xl font-bold text-foreground">TalentFlow Admin Suite</p>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold">
+            <p className="text-10px text-muted-foreground uppercase tracking-widest font-semibold">
               Strict Environment Security Portal
             </p>
           </div>
@@ -139,7 +139,7 @@ export function AdminLoginPage({ onSuccess }: AdminLoginPageProps = {}) {
                 <span>Environment Auth (.env)</span>
               </span>
               <span
-                className={`px-2 py-0.5 rounded text-[10px] font-semibold border ${
+                className={`px-2 py-0.5 rounded text-10px font-semibold border ${
                   envUsername && envPassword
                     ? "bg-success/15 text-success border-success/30"
                     : "bg-destructive/15 text-destructive border-destructive/30"
@@ -148,7 +148,7 @@ export function AdminLoginPage({ onSuccess }: AdminLoginPageProps = {}) {
                 {envUsername && envPassword ? "ENV LOADED" : "ENV UNCONFIGURED"}
               </span>
             </div>
-            <p className="text-[11px] text-muted-foreground leading-relaxed">
+            <p className="text-11px text-muted-foreground leading-relaxed">
               Strict verification enabled against{" "}
               <code className="font-mono text-ember font-semibold">VITE_ADMIN_USERNAME</code> &{" "}
               <code className="font-mono text-ember font-semibold">VITE_ADMIN_PASSWORD</code>.
@@ -157,9 +157,9 @@ export function AdminLoginPage({ onSuccess }: AdminLoginPageProps = {}) {
 
           {/* Quick Demo Autofill Box */}
           <div className="bg-surface/60 p-3 rounded-xl border border-border text-xs space-y-1.5">
-            <div className="flex items-center justify-between text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+            <div className="flex items-center justify-between text-10px font-semibold text-muted-foreground uppercase tracking-wider">
               <span>Environment Configuration</span>
-              <span className="text-ember font-mono text-[9px] flex items-center gap-1">
+              <span className="text-ember font-mono text-9px flex items-center gap-1">
                 <Sparkles className="size-3" /> .env Strictly Enforced
               </span>
             </div>
@@ -169,7 +169,7 @@ export function AdminLoginPage({ onSuccess }: AdminLoginPageProps = {}) {
               className="w-full py-2 px-3 rounded-lg bg-card hover:bg-accent border border-border text-foreground font-medium text-xs flex items-center justify-between transition-all cursor-pointer shadow-xs hover:border-ember/40"
             >
               <span className="text-xs font-semibold">Fill from .env</span>
-              <span className="text-[10px] font-mono text-ember font-bold">
+              <span className="text-10px font-mono text-ember font-bold">
                 {envUsername ? `${envUsername} / ••••••••` : "Not Configured"}
               </span>
             </button>
@@ -234,14 +234,14 @@ export function AdminLoginPage({ onSuccess }: AdminLoginPageProps = {}) {
             </button>
           </form>
 
-          <div className="pt-2 text-center text-[11px] text-muted-foreground flex items-center justify-center gap-1">
+          <div className="pt-2 text-center text-11px text-muted-foreground flex items-center justify-center gap-1">
             <ShieldAlert className="size-3.5 text-ember" />
             <span>Strict .env Authentication Active</span>
           </div>
         </div>
       </main>
 
-      <footer className="text-center text-[11px] text-muted-foreground max-w-7xl mx-auto w-full py-2 relative z-10">
+      <footer className="text-center text-11px text-muted-foreground max-w-7xl mx-auto w-full py-2 relative z-10">
         TalentFlow Admin Panel · Credentials Verified Exclusively via Environment Variables
       </footer>
     </div>

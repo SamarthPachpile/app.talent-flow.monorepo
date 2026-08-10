@@ -71,7 +71,7 @@ export const CompanyDashboard: React.FC<CompanyDashboardProps> = ({
 
             <div className="overflow-x-auto mt-4 border border-border rounded-lg">
               <table className="w-full text-left text-xs">
-                <thead className="bg-surface border-b border-border text-muted-foreground font-semibold uppercase text-[10px]">
+                <thead className="bg-surface border-b border-border text-muted-foreground font-semibold uppercase text-10px">
                   <tr>
                     <th className="p-3">Timestamp</th>
                     <th className="p-3">Actor / Recruiter</th>
@@ -82,11 +82,11 @@ export const CompanyDashboard: React.FC<CompanyDashboardProps> = ({
                 <tbody className="divide-y divide-border">
                   {interactionsLog.map((log) => (
                     <tr key={log.id} className="hover:bg-surface/50 transition-colors">
-                      <td className="p-3 text-muted-foreground font-mono text-[11px]">{log.at}</td>
+                      <td className="p-3 text-muted-foreground font-mono text-11px">{log.at}</td>
                       <td className="p-3 font-medium text-foreground">{log.actor}</td>
                       <td className="p-3 text-foreground">{log.action}</td>
                       <td className="p-3">
-                        <span className="bg-accent text-accent-foreground px-2 py-0.5 rounded text-[10px] font-medium">
+                        <span className="bg-accent text-accent-foreground px-2 py-0.5 rounded text-10px font-medium">
                           {log.channel}
                         </span>
                       </td>

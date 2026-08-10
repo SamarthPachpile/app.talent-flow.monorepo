@@ -37,7 +37,7 @@ export function CandidateCard({
         </div>
       </div>
 
-      <p className="mt-3 flex items-center gap-1.5 text-[11px] text-muted-foreground">
+      <p className="mt-3 flex items-center gap-1.5 text-11px text-muted-foreground">
         <MapPin className="size-3" />
         <span className="truncate">{candidate.location}</span>
       </p>
@@ -61,7 +61,7 @@ export function CandidateCard({
       </div>
 
       {candidate.blocked && (
-        <p className="mt-2 flex items-start gap-1.5 rounded-md bg-destructive/8 px-2 py-1.5 text-[11px] text-destructive">
+        <p className="mt-2 flex items-start gap-1.5 rounded-md bg-destructive/8 px-2 py-1.5 text-11px text-destructive">
           <AlertTriangle className="mt-px size-3 shrink-0" />
           <span>{candidate.blocked}</span>
         </p>
@@ -71,7 +71,7 @@ export function CandidateCard({
         <div className="h-1 flex-1 overflow-hidden rounded-full bg-muted">
           <div className="h-full rounded-full bg-ember" style={{ width: `${progress}%` }} />
         </div>
-        <span className="text-[10px] tabular-nums text-muted-foreground">
+        <span className="text-10px tabular-nums text-muted-foreground">
           {stageIndex(candidate.stage) + 1}/{STAGES.length}
         </span>
       </div>

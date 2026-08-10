@@ -75,11 +75,11 @@ export function AppNav({ onLogout }: AppNavProps) {
           <div className="leading-tight">
             <div className="flex items-center gap-2">
               <p className="text-sm font-semibold text-foreground">{OPERATOR.name}</p>
-              <span className="text-[10px] font-semibold px-1.5 py-0.2 rounded bg-ember/15 text-ember border border-ember/30 flex items-center gap-1">
+              <span className="text-10px font-semibold px-1.5 py-0.2 rounded bg-ember/15 text-ember border border-ember/30 flex items-center gap-1">
                 <Lock className="size-3" /> ADMIN ATS
               </span>
             </div>
-            <p className="text-[11px] text-muted-foreground">{OPERATOR.tagline}</p>
+            <p className="text-11px text-muted-foreground">{OPERATOR.tagline}</p>
           </div>
         </div>
 

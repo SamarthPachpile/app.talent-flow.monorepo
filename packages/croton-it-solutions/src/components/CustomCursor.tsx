@@ -15,8 +15,6 @@ export default function CustomCursor() {
     if (!mounted) return;
     if (typeof window === "undefined") return;
 
-    if (window.matchMedia("(pointer: coarse)").matches) return;
-
     const dot = dotRef.current;
     const ring = ringRef.current;
     if (!dot || !ring) return;
@@ -58,7 +56,7 @@ export default function CustomCursor() {
       document.documentElement.classList.add("custom-cursor-active");
     };
 
-    const onMove = (e: MouseEvent) => {
+    const updatePosition = (clientX: number, clientY: number) => {
       if (isEmbeddedRoute()) {
         document.documentElement.classList.remove("custom-cursor-active");
         if (isVisible) {
@@ -68,8 +66,8 @@ export default function CustomCursor() {
         return;
       }
 
-      pos.x = e.clientX;
-      pos.y = e.clientY;
+      pos.x = clientX;
+      pos.y = clientY;
 
       if (!isVisible) {
         isVisible = true;
@@ -83,12 +81,13 @@ export default function CustomCursor() {
       yRingTo(pos.y);
     };
 
-    const onOver = (e: MouseEvent) => {
+    const checkHoverState = (target: HTMLElement | null) => {
       if (isEmbeddedRoute()) return;
-      const t = e.target as HTMLElement;
       if (
-        t &&
-        t.closest("a, button, [role=button], input, textarea, select, .cursor-hover, [data-cursor]")
+        target &&
+        target.closest(
+          "a, button, [role=button], input, textarea, select, .cursor-hover, [data-cursor]",
+        )
       ) {
         gsap.to(ring, {
           scale: 1.6,
@@ -97,16 +96,7 @@ export default function CustomCursor() {
           duration: 0.2,
         });
         gsap.to(dot, { scale: 0.5, duration: 0.2 });
-      }
-    };
-
-    const onOut = (e: MouseEvent) => {
-      if (isEmbeddedRoute()) return;
-      const t = e.target as HTMLElement;
-      if (
-        t &&
-        t.closest("a, button, [role=button], input, textarea, select, .cursor-hover, [data-cursor]")
-      ) {
+      } else {
         gsap.to(ring, {
           scale: 1,
           borderColor: "rgba(245, 158, 11, 0.7)",
@@ -114,6 +104,40 @@ export default function CustomCursor() {
           duration: 0.2,
         });
         gsap.to(dot, { scale: 1, duration: 0.2 });
+      }
+    };
+
+    const onMove = (e: MouseEvent) => {
+      updatePosition(e.clientX, e.clientY);
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      if (e.touches && e.touches.length > 0) {
+        const touch = e.touches[0];
+        updatePosition(touch.clientX, touch.clientY);
+        const target = document.elementFromPoint(touch.clientX, touch.clientY) as HTMLElement;
+        checkHoverState(target);
+      }
+    };
+
+    const onTouchEnd = () => {
+      if (isVisible) {
+        isVisible = false;
+        gsap.to([dot, ring], { opacity: 0, duration: 0.3 });
+      }
+    };
+
+    const onOver = (e: MouseEvent) => {
+      checkHoverState(e.target as HTMLElement);
+    };
+
+    const onOut = (e: MouseEvent) => {
+      const t = e.target as HTMLElement;
+      if (
+        t &&
+        t.closest("a, button, [role=button], input, textarea, select, .cursor-hover, [data-cursor]")
+      ) {
+        checkHoverState(null);
       }
     };
 
@@ -129,9 +153,13 @@ export default function CustomCursor() {
       }
     };
 
-    window.addEventListener("mousemove", onMove);
-    window.addEventListener("mouseover", onOver);
-    window.addEventListener("mouseout", onOut);
+    window.addEventListener("mousemove", onMove, { passive: true });
+    window.addEventListener("touchstart", onTouchMove, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: true });
+    window.addEventListener("touchend", onTouchEnd, { passive: true });
+    window.addEventListener("touchcancel", onTouchEnd, { passive: true });
+    window.addEventListener("mouseover", onOver, { passive: true });
+    window.addEventListener("mouseout", onOut, { passive: true });
     document.addEventListener("mouseleave", onMouseLeave);
     document.addEventListener("mouseenter", onMouseEnter);
 
@@ -139,6 +167,10 @@ export default function CustomCursor() {
 
     return () => {
       window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("touchstart", onTouchMove);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("touchend", onTouchEnd);
+      window.removeEventListener("touchcancel", onTouchEnd);
       window.removeEventListener("mouseover", onOver);
       window.removeEventListener("mouseout", onOut);
       document.removeEventListener("mouseleave", onMouseLeave);

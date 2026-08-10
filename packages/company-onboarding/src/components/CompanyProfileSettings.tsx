@@ -166,7 +166,7 @@ export const CompanyProfileSettings: React.FC<SettingsProps> = ({ state, setStat
                     <span>Remove</span>
                   </button>
                 )}
-                <p className="text-[10px] text-muted-foreground">
+                <p className="text-10px text-muted-foreground">
                   Select image file from your device's internal storage
                 </p>
               </div>
@@ -216,7 +216,7 @@ export const CompanyProfileSettings: React.FC<SettingsProps> = ({ state, setStat
                     <span>Remove</span>
                   </button>
                 )}
-                <p className="text-[10px] text-muted-foreground">
+                <p className="text-10px text-muted-foreground">
                   Select banner image file from your device's internal storage
                 </p>
               </div>

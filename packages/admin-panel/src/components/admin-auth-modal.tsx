@@ -90,7 +90,7 @@ export function AdminAuthModal({ onAuthenticated }: AdminAuthModalProps) {
           <button
             type="button"
             onClick={handleAutofillCredentials}
-            className="text-[10px] font-mono text-ember font-semibold hover:underline cursor-pointer"
+            className="text-10px font-mono text-ember font-semibold hover:underline cursor-pointer"
           >
             Autofill .env
           </button>
@@ -151,7 +151,7 @@ export function AdminAuthModal({ onAuthenticated }: AdminAuthModalProps) {
           </button>
         </form>
 
-        <div className="pt-1 text-[10px] text-muted-foreground text-center">
+        <div className="pt-1 text-10px text-muted-foreground text-center">
           TalentFlow Security Module · Credentials verified strictly from .env
         </div>
       </div>

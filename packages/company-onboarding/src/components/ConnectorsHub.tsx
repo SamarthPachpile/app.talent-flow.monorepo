@@ -141,7 +141,7 @@ export const ConnectorsHub: React.FC<ConnectorsHubProps> = ({
           </div>
 
           <div className="mt-6 pt-4 border-t border-border flex items-center justify-between gap-3">
-            <span className="text-[11px] text-muted-foreground">
+            <span className="text-11px text-muted-foreground">
               Static Connector (Future API Integration Ready)
             </span>
             <button
@@ -192,19 +192,19 @@ export const ConnectorsHub: React.FC<ConnectorsHubProps> = ({
 
             <div className="mt-4 space-y-2 bg-surface p-3 rounded-lg border border-border text-xs">
               <div>
-                <label className="block text-[11px] text-muted-foreground mb-1">
+                <label className="block text-11px text-muted-foreground mb-1">
                   Target Google Sheet URL:
                 </label>
                 <input
                   type="text"
                   value={sheetUrl}
                   onChange={(e) => setSheetUrl(e.target.value)}
-                  className="w-full bg-card border border-input rounded px-2.5 py-1 text-[11px] font-mono text-foreground focus:outline-none"
+                  className="w-full bg-card border border-input rounded px-2.5 py-1 text-11px font-mono text-foreground focus:outline-none"
                 />
               </div>
               <div className="flex justify-between pt-1">
                 <span className="text-muted-foreground">Column Mapping:</span>
-                <span className="font-mono text-foreground text-[11px]">
+                <span className="font-mono text-foreground text-11px">
                   Col A: Name | Col B: Email | Col C: Role
                 </span>
               </div>
@@ -216,7 +216,7 @@ export const ConnectorsHub: React.FC<ConnectorsHubProps> = ({
           </div>
 
           <div className="mt-6 pt-4 border-t border-border flex items-center justify-between gap-3">
-            <span className="text-[11px] text-muted-foreground">
+            <span className="text-11px text-muted-foreground">
               Static Connector (Future API Integration Ready)
             </span>
             <button

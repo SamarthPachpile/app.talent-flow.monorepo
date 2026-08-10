@@ -165,7 +165,7 @@ export function InterviewsPage() {
                       <p className="text-xs text-muted-foreground">
                         {i.role} · {i.date} at {i.time} ({i.timezone}) · {i.durationMins} min
                       </p>
-                      <p className="mt-1 text-[11px] text-muted-foreground">
+                      <p className="mt-1 text-11px text-muted-foreground">
                         Panel: {i.panel.join(", ")}
                         {i.calendarEventId ? ` · event ${i.calendarEventId}` : ""}
                       </p>

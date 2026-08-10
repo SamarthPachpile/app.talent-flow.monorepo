@@ -316,10 +316,10 @@ export const CompanyPipelineBoard: React.FC<CompanyPipelineBoardProps> = ({
                       {items.length}
                     </span>
                   </div>
-                  <p className="mt-1 text-[11px] text-muted-foreground truncate">
+                  <p className="mt-1 text-11px text-muted-foreground truncate">
                     {stageItem.description || "Pipeline stage"}
                   </p>
-                  <div className="mt-2 flex items-center justify-between text-[10px]">
+                  <div className="mt-2 flex items-center justify-between text-10px">
                     <span className="text-muted-foreground font-mono">
                       Stage {stageIdx + 1} of {activeStages.length}
                     </span>
@@ -329,7 +329,7 @@ export const CompanyPipelineBoard: React.FC<CompanyPipelineBoardProps> = ({
                   </div>
                 </div>
                 <div className="stage-rail h-px bg-border" />
-                <div className="flex flex-1 flex-col gap-3 rounded-b-lg border border-t-0 border-border bg-surface/40 p-3 min-h-[380px]">
+                <div className="flex flex-1 flex-col gap-3 rounded-b-lg border border-t-0 border-border bg-surface/40 p-3 min-h-380px">
                   {items.length === 0 ? (
                     <p className="rounded-md border border-dashed border-border px-3 py-6 text-center text-xs text-muted-foreground">
                       No candidates in {stageItem.name}
@@ -376,7 +376,7 @@ export const CompanyPipelineBoard: React.FC<CompanyPipelineBoardProps> = ({
                       </p>
                       <div className="mt-2 flex flex-wrap gap-1.5">
                         <span
-                          className="border border-ember/30 bg-ember/10 text-ember px-2.5 py-0.5 rounded text-[11px] font-semibold flex items-center gap-1.5"
+                          className="border border-ember/30 bg-ember/10 text-ember px-2.5 py-0.5 rounded text-11px font-semibold flex items-center gap-1.5"
                           style={{
                             color: currentStageObj.color,
                             borderColor: `${currentStageObj.color}40`,
@@ -468,7 +468,7 @@ export const CompanyPipelineBoard: React.FC<CompanyPipelineBoardProps> = ({
                               >
                                 {stageItem.name}
                               </p>
-                              <p className="text-[11px] text-muted-foreground">
+                              <p className="text-11px text-muted-foreground">
                                 {stageItem.description} ·{" "}
                                 {event
                                   ? `${event.at} · ${event.actor}`
@@ -549,18 +549,18 @@ function CandidateCard({
         </div>
       </div>
 
-      <p className="mt-3 flex items-center gap-1.5 text-[11px] text-muted-foreground">
+      <p className="mt-3 flex items-center gap-1.5 text-11px text-muted-foreground">
         <MapPin className="size-3" />
         <span className="truncate">{candidate.location}</span>
       </p>
 
       <div className="mt-3 flex flex-wrap items-center gap-1.5">
-        <span className="border border-border bg-surface font-normal text-[11px] px-2 py-0.5 rounded text-foreground">
+        <span className="border border-border bg-surface font-normal text-11px px-2 py-0.5 rounded text-foreground">
           {candidate.stage}
         </span>
         {candidate.priority !== "standard" && (
           <span
-            className={`font-normal text-[10px] px-1.5 py-0.5 rounded font-semibold ${
+            className={`font-normal text-10px px-1.5 py-0.5 rounded font-semibold ${
               candidate.priority === "urgent"
                 ? "bg-ember text-ember-foreground"
                 : "bg-warning text-warning-foreground"
@@ -572,7 +572,7 @@ function CandidateCard({
       </div>
 
       {candidate.blocked && (
-        <p className="mt-2 flex items-start gap-1.5 rounded-md bg-destructive/10 px-2 py-1.5 text-[11px] text-destructive">
+        <p className="mt-2 flex items-start gap-1.5 rounded-md bg-destructive/10 px-2 py-1.5 text-11px text-destructive">
           <AlertTriangle className="mt-px size-3 shrink-0" />
           <span>{candidate.blocked}</span>
         </p>
@@ -585,7 +585,7 @@ function CandidateCard({
             style={{ width: `${progress}%` }}
           />
         </div>
-        <span className="text-[10px] tabular-nums text-muted-foreground">
+        <span className="text-10px tabular-nums text-muted-foreground">
           {stageIndex + 1}/{stagesCount}
         </span>
       </div>

@@ -53,7 +53,7 @@ export default function DesignPrinciplesSection() {
                   transition={{ duration: 0.5, delay: 0.2 * i }}
                 >
                   <h3 className="text-3xl sm:text-5xl text-muted-foreground mb-3">{p.title}</h3>
-                  <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-[600px]">
+                  <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-600px">
                     {p.desc}
                   </p>
                 </motion.div>

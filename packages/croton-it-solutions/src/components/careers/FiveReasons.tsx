@@ -59,12 +59,12 @@ export default function FiveReasons() {
           {REASONS.map((r) => (
             <div
               key={r.title}
-              className="bg-muted/60 rounded-2xl p-6 sm:p-7 min-h-[340px] flex flex-col"
+              className="bg-muted/60 rounded-2xl p-6 sm:p-7 min-h-340px flex flex-col"
             >
               <h3 className="text-xl sm:text-2xl font-medium text-foreground mb-6 leading-snug">
                 {r.title}
               </h3>
-              <p className="text-sm sm:text-[15px] text-foreground/70 leading-relaxed">{r.desc}</p>
+              <p className="text-sm sm:text-15px text-foreground/70 leading-relaxed">{r.desc}</p>
             </div>
           ))}
         </div>

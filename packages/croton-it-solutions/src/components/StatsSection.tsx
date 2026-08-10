@@ -36,6 +36,8 @@ const item = {
 };
 
 export default function StatsSection() {
+  const duplicatedStats = [...stats, ...stats, ...stats, ...stats, ...stats, ...stats];
+
   return (
     <section
       id="stats"
@@ -61,8 +63,8 @@ export default function StatsSection() {
         />
       </motion.div>
 
-      {/* Card Wrapper */}
-      <div className="relative z-10 w-full min-h-screen flex items-center justify-end px-4 sm:px-8 lg:px-16">
+      {/* ================= DESKTOP VIEW (EXACT ORIGINAL LAYOUT) ================= */}
+      <div className="hidden sm:flex relative z-10 w-full min-h-screen items-center justify-end px-4 sm:px-8 lg:px-16 py-12">
         <motion.div
           initial={{ opacity: 0, x: 120, scale: 0.96 }}
           whileInView={{ opacity: 1, x: 0, scale: 1 }}
@@ -105,7 +107,7 @@ export default function StatsSection() {
                     delay: i * 0.15 + 0.45,
                     duration: 0.7,
                   }}
-                  className="mt-4 text-[#33456b] text-lg sm:text-2xl leading-tight tracking-[-0.02em] max-w-[320px]"
+                  className="mt-4 text-[#33456b] text-lg sm:text-2xl leading-tight tracking-[-0.02em] max-w-320px"
                 >
                   {stat.label}
                 </motion.p>
@@ -113,6 +115,50 @@ export default function StatsSection() {
             ))}
           </motion.div>
         </motion.div>
+      </div>
+
+      {/* ================= MOBILE VIEW (NO BG CONTAINER, LARGE HEADING & INFINITE CAROUSEL) ================= */}
+      <div className="flex sm:hidden relative z-10 w-full min-h-screen flex-col justify-center py-12 gap-8">
+        {/* Large Heading at Top */}
+        <div className="px-6">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            className="text-6xl font-light text-[#111625] tracking-[-0.03em] leading-tight"
+          >
+            Key Impact Metrics
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+            className="mt-2 text-15px text-[#33456b]"
+          >
+            Driving digital transformation and measurable outcomes globally.
+          </motion.p>
+        </div>
+
+        {/* Full Viewport Infinite Scrolling Carousel Slider */}
+        <div className="relative w-full overflow-hidden py-4">
+          <div className="flex gap-4 animate-stats-slide">
+            {duplicatedStats.map((stat, i) => (
+              <div
+                key={`mobile-stat-${i}`}
+                className="w-260px flex-shrink-0 p-6 rounded-20px bg-white/85 backdrop-blur-md border border-white/90 shadow-lg flex flex-col justify-between"
+              >
+                <h3 className="text-[#111625] text-42px font-light tracking-[-0.05em] leading-none">
+                  {stat.number}
+                </h3>
+                <p className="mt-4 text-[#33456b] text-15px leading-snug tracking-[-0.01em]">
+                  {stat.label}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );

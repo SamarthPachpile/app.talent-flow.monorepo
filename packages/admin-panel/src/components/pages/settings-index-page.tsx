@@ -77,7 +77,7 @@ export function AdminSettingsPage() {
               <h2 className="font-display font-semibold text-foreground text-base">
                 Backend & Firebase Connection
               </h2>
-              <span className="inline-flex items-center gap-1 bg-success/15 text-success border border-success/30 text-[11px] px-2.5 py-0.5 rounded-full font-semibold">
+              <span className="inline-flex items-center gap-1 bg-success/15 text-success border border-success/30 text-11px px-2.5 py-0.5 rounded-full font-semibold">
                 <CheckCircle2 className="size-3" /> Connected · {backendStatus.projectId}
               </span>
             </div>
@@ -226,18 +226,18 @@ export function AdminSettingsPage() {
                   </div>
                   <div>
                     <p className="font-semibold text-foreground">{item.service}</p>
-                    <p className="text-[11px] text-muted-foreground">
+                    <p className="text-11px text-muted-foreground">
                       Uptime: {item.uptime} · Checked: {item.lastChecked}
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <span className="font-mono text-muted-foreground text-[11px]">
+                  <span className="font-mono text-muted-foreground text-11px">
                     {item.latencyMs} ms
                   </span>
                   <span
-                    className={`px-2 py-0.5 rounded text-[10px] font-semibold uppercase ${
+                    className={`px-2 py-0.5 rounded text-10px font-semibold uppercase ${
                       item.status === "healthy"
                         ? "bg-success/15 text-success border border-success/30"
                         : "bg-warning/15 text-warning-foreground border border-warning/30"
@@ -264,7 +264,7 @@ export function AdminSettingsPage() {
                 <p className="font-semibold text-foreground">
                   Require Multi-Factor Authentication (MFA)
                 </p>
-                <p className="text-[11px] text-muted-foreground">
+                <p className="text-11px text-muted-foreground">
                   Force all admin and recruiter accounts to setup 2FA.
                 </p>
               </div>
@@ -392,7 +392,7 @@ export function AdminSettingsPage() {
         >
           <div className="overflow-x-auto border border-border rounded-lg">
             <table className="w-full text-left text-xs">
-              <thead className="bg-surface border-b border-border text-muted-foreground font-semibold uppercase text-[10px]">
+              <thead className="bg-surface border-b border-border text-muted-foreground font-semibold uppercase text-10px">
                 <tr>
                   <th className="p-3">Timestamp</th>
                   <th className="p-3">Actor / Role</th>
@@ -404,7 +404,7 @@ export function AdminSettingsPage() {
               <tbody className="divide-y divide-border">
                 {auditLogs.map((log) => (
                   <tr key={log.id} className="hover:bg-surface/50">
-                    <td className="p-3 text-muted-foreground font-mono text-[11px]">
+                    <td className="p-3 text-muted-foreground font-mono text-11px">
                       {log.timestamp}
                     </td>
                     <td className="p-3 font-semibold text-foreground">
@@ -413,7 +413,7 @@ export function AdminSettingsPage() {
                     <td className="p-3 text-foreground">{log.action}</td>
                     <td className="p-3 text-muted-foreground">{log.target}</td>
                     <td className="p-3">
-                      <span className="bg-success/15 text-success border border-success/30 px-2 py-0.5 rounded text-[10px] font-semibold">
+                      <span className="bg-success/15 text-success border border-success/30 px-2 py-0.5 rounded text-10px font-semibold">
                         {log.status}
                       </span>
                     </td>

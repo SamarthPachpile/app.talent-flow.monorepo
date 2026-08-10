@@ -152,7 +152,7 @@ export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state
       {/* Header Banner */}
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-4">
         <div>
-          <span className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
+          <span className="text-11px font-semibold tracking-wider text-muted-foreground uppercase">
             Setup Wizard & Company Management
           </span>
           <h1 className="text-3xl font-display font-bold text-foreground mt-1">
@@ -779,7 +779,7 @@ export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state
               <label className="flex items-center justify-between p-3 rounded-lg border border-border bg-surface cursor-pointer">
                 <div>
                   <p className="font-semibold text-foreground">Allow Remote Hiring Worldwide</p>
-                  <p className="text-[11px] text-muted-foreground">
+                  <p className="text-11px text-muted-foreground">
                     Enable candidate applications for remote work roles.
                   </p>
                 </div>
@@ -987,7 +987,7 @@ export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state
                       <p className="font-semibold text-foreground">
                         {idx + 1}. {stage.name}
                       </p>
-                      <p className="text-muted-foreground text-[11px]">
+                      <p className="text-muted-foreground text-11px">
                         {stage.description || "Pipeline stage"} · SLA: {stage.slaHours ?? 24} hours
                       </p>
                     </div>
@@ -1083,7 +1083,7 @@ export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state
 
             <div className="overflow-x-auto border border-border rounded-lg">
               <table className="w-full text-left text-xs">
-                <thead className="bg-surface border-b border-border text-muted-foreground font-semibold uppercase text-[10px]">
+                <thead className="bg-surface border-b border-border text-muted-foreground font-semibold uppercase text-10px">
                   <tr>
                     <th className="p-3">Document Type</th>
                     <th className="p-3">Enable Verification</th>
@@ -1363,7 +1363,7 @@ export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state
                       careerPortal: { ...prev.careerPortal, url: e.target.value },
                     }))
                   }
-                  className="w-full bg-surface border border-border rounded-md px-3 py-2 text-foreground font-mono text-[11px] focus:outline-none focus:border-ember"
+                  className="w-full bg-surface border border-border rounded-md px-3 py-2 text-foreground font-mono text-11px focus:outline-none focus:border-ember"
                 />
               </div>
 

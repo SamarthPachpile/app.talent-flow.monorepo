@@ -131,7 +131,7 @@ export default function SectionNavigator() {
             className="group relative flex items-center justify-end gap-3 py-1 cursor-pointer transition-all duration-300 outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-full"
           >
             <span
-              className={`text-[10px] uppercase tracking-[0.22em] font-semibold whitespace-nowrap px-2 py-0.5 rounded transition-all duration-300 ${
+              className={`text-10px uppercase tracking-[0.22em] font-semibold whitespace-nowrap px-2 py-0.5 rounded transition-all duration-300 ${
                 isActive
                   ? "opacity-100 translate-x-0 text-primary bg-background/80 backdrop-blur-sm shadow-sm"
                   : "opacity-0 translate-x-3 text-muted-foreground group-hover:opacity-100 group-hover:translate-x-0 bg-background/60 backdrop-blur-sm"

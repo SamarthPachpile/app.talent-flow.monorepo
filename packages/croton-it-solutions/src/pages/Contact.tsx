@@ -115,7 +115,7 @@ export default function Contact() {
         id="contact-form"
         data-section="contact-form"
         data-label="Contact Form"
-        className="relative w-full min-h-[800px] flex items-start py-24"
+        className="relative w-full min-h-800px flex items-start py-24"
       >
         <div
           className="absolute inset-0 bg-cover bg-center"

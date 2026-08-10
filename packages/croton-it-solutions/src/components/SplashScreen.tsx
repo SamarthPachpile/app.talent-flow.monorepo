@@ -111,11 +111,11 @@ export default function SplashScreen({ children }: { children: React.ReactNode }
 
           {/* Orbits */}
           <div ref={orbitRef} className="absolute inset-0 flex items-center justify-center">
-            <div className="orbit absolute w-[300px] h-[300px] md:w-[520px] md:h-[520px] rounded-full border border-primary/30" />
-            <div className="orbit absolute w-[220px] h-[220px] md:w-[380px] md:h-[380px] rounded-full border border-primary/20">
+            <div className="orbit absolute w-300px h-300px md:w-520px md:h-520px rounded-full border border-primary/30" />
+            <div className="orbit absolute w-[220px] h-[220px] md:w-380px md:h-380px rounded-full border border-primary/20">
               <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-primary shadow-[0_0_20px_var(--gl-orange)]" />
             </div>
-            <div className="orbit absolute w-[140px] h-[140px] md:w-[240px] md:h-[240px] rounded-full border border-primary-foreground/20">
+            <div className="orbit absolute w-140px h-140px md:w-240px md:h-240px rounded-full border border-primary-foreground/20">
               <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-primary-foreground" />
             </div>
           </div>
@@ -133,36 +133,36 @@ export default function SplashScreen({ children }: { children: React.ReactNode }
             </div>
             <p
               ref={subRef}
-              className="mt-3 text-[10px] sm:text-xs uppercase tracking-[0.4em] text-primary-foreground/60"
+              className="mt-3 text-10px sm:text-xs uppercase tracking-[0.4em] text-primary-foreground/60"
             >
               A Tapasys Group Company
             </p>
 
             {/* Loader */}
-            <div className="mt-12 w-[260px] sm:w-[360px]">
-              <div className="flex items-end justify-between mb-2 text-[10px] uppercase tracking-widest text-primary-foreground/50">
+            <div className="mt-12 w-260px sm:w-360px">
+              <div className="flex items-end justify-between mb-2 text-10px uppercase tracking-widest text-primary-foreground/50">
                 <span>Initializing CRM Intelligence</span>
                 <span ref={counterRef} className="text-primary-foreground tabular-nums">
                   000
                 </span>
               </div>
-              <div className="h-[2px] bg-primary-foreground/10 overflow-hidden">
+              <div className="h-2px bg-primary-foreground/10 overflow-hidden">
                 <div ref={barRef} className="h-full bg-primary" style={{ width: "0%" }} />
               </div>
             </div>
           </div>
 
           {/* Corner marks */}
-          <div className="absolute top-6 left-6 text-[10px] uppercase tracking-widest text-primary-foreground/40">
+          <div className="absolute top-6 left-6 text-10px uppercase tracking-widest text-primary-foreground/40">
             GR / 2026
           </div>
-          <div className="absolute top-6 right-6 text-[10px] uppercase tracking-widest text-primary-foreground/40">
+          <div className="absolute top-6 right-6 text-10px uppercase tracking-widest text-primary-foreground/40">
             CRM × AI
           </div>
-          <div className="absolute bottom-6 left-6 text-[10px] uppercase tracking-widest text-primary-foreground/40">
+          <div className="absolute bottom-6 left-6 text-10px uppercase tracking-widest text-primary-foreground/40">
             Tapasys Group
           </div>
-          <div className="absolute bottom-6 right-6 text-[10px] uppercase tracking-widest text-primary-foreground/40">
+          <div className="absolute bottom-6 right-6 text-10px uppercase tracking-widest text-primary-foreground/40">
             Engineering Relationships
           </div>
         </div>

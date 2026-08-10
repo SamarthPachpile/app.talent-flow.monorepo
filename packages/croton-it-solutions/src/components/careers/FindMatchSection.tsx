@@ -11,7 +11,7 @@ export default function CareersHero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <p className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-primary mb-4">
+          <p className="text-10px sm:text-xs uppercase tracking-[0.3em] text-primary mb-4">
             Careers at Croton
           </p>
 

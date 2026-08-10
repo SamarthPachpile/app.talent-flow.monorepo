@@ -96,7 +96,7 @@ export const OfferStageView: React.FC<OfferStageViewProps> = ({
           <div className="text-2xl font-display font-normal text-foreground">
             ${offer.baseSalaryYearly.toLocaleString()}
           </div>
-          <div className="text-[11px] text-success font-medium mt-0.5">Paid Bi-Weekly</div>
+          <div className="text-11px text-success font-medium mt-0.5">Paid Bi-Weekly</div>
         </div>
 
         <div className="bg-card border border-border rounded-lg p-4 shadow-card">
@@ -109,7 +109,7 @@ export const OfferStageView: React.FC<OfferStageViewProps> = ({
           <div className="text-2xl font-display font-normal text-success">
             ${offer.signOnBonus.toLocaleString()}
           </div>
-          <div className="text-[11px] text-muted-foreground mt-0.5">First Paycheck Lump-sum</div>
+          <div className="text-11px text-muted-foreground mt-0.5">First Paycheck Lump-sum</div>
         </div>
 
         <div className="bg-card border border-border rounded-lg p-4 shadow-card">
@@ -122,7 +122,7 @@ export const OfferStageView: React.FC<OfferStageViewProps> = ({
           <div className="text-2xl font-display font-normal text-foreground">
             {offer.equityShares.toLocaleString()} Options
           </div>
-          <div className="text-[11px] text-muted-foreground mt-0.5">{offer.equityVesting}</div>
+          <div className="text-11px text-muted-foreground mt-0.5">{offer.equityVesting}</div>
         </div>
 
         <div className="bg-card border border-border rounded-lg p-4 shadow-card">
@@ -135,7 +135,7 @@ export const OfferStageView: React.FC<OfferStageViewProps> = ({
           <div className="text-2xl font-display font-normal text-foreground">
             ${offer.remoteStipend}
           </div>
-          <div className="text-[11px] text-muted-foreground mt-0.5">
+          <div className="text-11px text-muted-foreground mt-0.5">
             + ${offer.remoteStipend / 3} Monthly Tech Allowance
           </div>
         </div>
@@ -182,7 +182,7 @@ export const OfferStageView: React.FC<OfferStageViewProps> = ({
             and background, and we believe your skills will be a massive asset to our team.
           </p>
 
-          <div className="bg-card p-3.5 rounded-md border border-border space-y-1 font-mono text-[11px]">
+          <div className="bg-card p-3.5 rounded-md border border-border space-y-1 font-mono text-11px">
             <div>• Position: {offer.positionTitle}</div>
             <div>• Department: {offer.department}</div>
             <div>• Annual Base Compensation: ${offer.baseSalaryYearly.toLocaleString()} USD</div>
@@ -206,13 +206,13 @@ export const OfferStageView: React.FC<OfferStageViewProps> = ({
                 <CheckCircle2 className="size-5 text-success" />
                 <div>
                   <div className="text-xs font-bold text-success">Digitally Signed & Validated</div>
-                  <div className="text-[10px] text-muted-foreground">
+                  <div className="text-10px text-muted-foreground">
                     Signed by: {offer.signedName} on{" "}
                     {new Date(offer.signedAt || "").toLocaleString()}
                   </div>
                 </div>
               </div>
-              <span className="px-2.5 py-0.5 bg-success text-success-foreground font-bold text-[10px] rounded-full uppercase">
+              <span className="px-2.5 py-0.5 bg-success text-success-foreground font-bold text-10px rounded-full uppercase">
                 VERIFIED E-SIGN
               </span>
             </div>
@@ -254,13 +254,13 @@ export const OfferStageView: React.FC<OfferStageViewProps> = ({
               {/* Signature Visual Preview */}
               {typedName && (
                 <div className="p-3 bg-surface rounded-md border border-dashed border-border text-center">
-                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-0.5">
+                  <div className="text-10px uppercase tracking-wider text-muted-foreground mb-0.5">
                     E-Signature Preview
                   </div>
                   <div className="font-display italic text-2xl text-ember tracking-wide">
                     {typedName}
                   </div>
-                  <div className="text-[9px] text-muted-foreground mt-0.5 font-mono">
+                  <div className="text-9px text-muted-foreground mt-0.5 font-mono">
                     Timestamp: {new Date().toISOString()}
                   </div>
                 </div>

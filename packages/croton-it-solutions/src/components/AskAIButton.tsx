@@ -72,7 +72,7 @@ export default function AskAIButton() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.6, type: "spring", stiffness: 200, damping: 18 }}
         onClick={() => setOpen(true)}
-        className="fixed bottom-5 right-5 sm:bottom-7 sm:right-7 z-[60] flex items-center gap-2.5 pl-2 pr-5 py-2 rounded-full bg-background border-2 border-primary shadow-[0_8px_30px_-6px_rgba(229,90,40,0.4)] hover:shadow-[0_8px_40px_-4px_rgba(229,90,40,0.55)] transition-shadow"
+        className="fixed bottom-5 right-5 sm:bottom-7 sm:right-7 z-60 flex items-center gap-2.5 pl-2 pr-5 py-2 rounded-full bg-background border-2 border-primary shadow-[0_8px_30px_-6px_rgba(229,90,40,0.4)] hover:shadow-[0_8px_40px_-4px_rgba(229,90,40,0.55)] transition-shadow"
         aria-label="Open Ask AI"
       >
         <span className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-orange-400 flex items-center justify-center text-primary-foreground">
@@ -96,7 +96,7 @@ export default function AskAIButton() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: "spring", stiffness: 260, damping: 24 }}
-              className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[80] w-[calc(100vw-2rem)] sm:w-[440px] h-[80vh] sm:h-[600px] max-h-[85vh] flex flex-col rounded-2xl overflow-hidden shadow-2xl border border-primary/40"
+              className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[80] w-[calc(100vw-2rem)] sm:w-440px h-[80vh] sm:h-600px max-h-[85vh] flex flex-col rounded-2xl overflow-hidden shadow-2xl border border-primary/40"
               style={{
                 background: "linear-gradient(180deg, #fff7f1 0%, #fffaf6 40%, #ffffff 100%)",
                 boxShadow: "0 20px 60px -10px rgba(0,0,0,0.3), 0 0 0 2px rgba(229,90,40,0.5)",
@@ -110,9 +110,7 @@ export default function AskAIButton() {
                   </span>
                   <div className="flex flex-col leading-tight">
                     <span className="text-sm font-semibold text-foreground">Croton AI</span>
-                    <span className="text-[10px] text-muted-foreground">
-                      CRM &amp; AI assistant
-                    </span>
+                    <span className="text-10px text-muted-foreground">CRM &amp; AI assistant</span>
                   </div>
                 </div>
                 <button
@@ -168,7 +166,7 @@ export default function AskAIButton() {
                       </span>
                     )}
                     <div
-                      className={`max-w-[80%] text-sm px-4 py-2.5 rounded-2xl prose prose-sm prose-p:my-1 prose-ul:my-1 ${
+                      className={`max-w-80% text-sm px-4 py-2.5 rounded-2xl prose prose-sm prose-p:my-1 prose-ul:my-1 ${
                         m.role === "user"
                           ? "bg-primary text-primary-foreground rounded-tr-sm prose-invert"
                           : "bg-white/80 text-foreground rounded-tl-sm border border-primary/10"
@@ -245,7 +243,7 @@ export default function AskAIButton() {
                     <Send className="w-4 h-4" />
                   </button>
                 </form>
-                <p className="text-[10px] text-muted-foreground text-center mt-2 leading-relaxed">
+                <p className="text-10px text-muted-foreground text-center mt-2 leading-relaxed">
                   Answers come from Croton's own knowledge base — no external AI.
                 </p>
               </div>

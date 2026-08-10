@@ -119,7 +119,7 @@ export default function ChatbotTest() {
         data-label="Tests"
         className="pt-32 pb-16 sm:pt-36 max-w-[1200px] mx-auto px-4 sm:px-6"
       >
-        <p className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-primary mb-3">
+        <p className="text-10px sm:text-xs uppercase tracking-[0.3em] text-primary mb-3">
           Internal · Diagnostic
         </p>
         <h1 className="text-3xl sm:text-5xl font-bold mb-3">Chatbot Test Suite</h1>

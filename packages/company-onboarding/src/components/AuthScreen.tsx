@@ -523,9 +523,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
                     <label className="block text-xs font-semibold text-foreground">
                       Mobile Number <span className="text-ember">*</span>
                     </label>
-                    <span className="text-[10px] text-muted-foreground">
-                      Primary contact number
-                    </span>
+                    <span className="text-10px text-muted-foreground">Primary contact number</span>
                   </div>
                   <div className="relative">
                     <Phone className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
@@ -565,7 +563,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
                     <label className="block text-xs font-semibold text-foreground">
                       Confirm Password <span className="text-ember">*</span>
                     </label>
-                    <span className="text-[10px] text-muted-foreground">Must match password</span>
+                    <span className="text-10px text-muted-foreground">Must match password</span>
                   </div>
                   <div className="relative">
                     <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
@@ -583,7 +581,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
                     />
                   </div>
                   {confirmPassword && confirmPassword !== password && (
-                    <p className="text-[10px] text-destructive mt-1">Passwords do not match</p>
+                    <p className="text-10px text-destructive mt-1">Passwords do not match</p>
                   )}
                 </div>
               </div>
@@ -658,11 +656,9 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
                   <label className="block text-xs font-semibold text-foreground">
                     Referral Source
                   </label>
-                  <span className="text-[10px] text-muted-foreground font-medium">Optional</span>
+                  <span className="text-10px text-muted-foreground font-medium">Optional</span>
                 </div>
-                <p className="text-[11px] text-muted-foreground mb-1.5">
-                  How did you hear about us?
-                </p>
+                <p className="text-11px text-muted-foreground mb-1.5">How did you hear about us?</p>
                 <select
                   value={referralSource}
                   onChange={(e) => setReferralSource(e.target.value)}
@@ -693,12 +689,12 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
                   </button>
                   <div className="text-left">
                     <p className="text-xs font-semibold text-foreground">I'm not a robot</p>
-                    <p className="text-[10px] text-muted-foreground">
+                    <p className="text-10px text-muted-foreground">
                       Protected by Cloudflare Turnstile / reCAPTCHA
                     </p>
                   </div>
                 </div>
-                <div className="flex flex-col items-end text-[9px] text-muted-foreground font-mono">
+                <div className="flex flex-col items-end text-9px text-muted-foreground font-mono">
                   <div className="flex items-center gap-1">
                     <ShieldCheck className="size-3.5 text-ember" />
                     <span className="font-semibold text-foreground">Turnstile</span>
@@ -784,7 +780,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
           </button>
         </form>
 
-        <div className="mt-5 pt-3 border-t border-border flex items-center justify-between text-[11px] text-muted-foreground">
+        <div className="mt-5 pt-3 border-t border-border flex items-center justify-between text-11px text-muted-foreground">
           <span className="flex items-center gap-1">
             <Lock className="size-3 text-muted-foreground" />
             <span>Firebase Auth & Firestore Active</span>
@@ -830,7 +826,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
 
             <div className="space-y-3">
               {/* Notice Banner */}
-              <div className="bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400 p-2.5 rounded-xl text-[11px] font-medium flex items-center gap-2">
+              <div className="bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400 p-2.5 rounded-xl text-11px font-medium flex items-center gap-2">
                 <Lock className="size-4 shrink-0" />
                 <span>
                   Company data will be stored in the <strong>companies</strong> collection only
@@ -864,13 +860,13 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
                     <p className="font-mono text-ember font-semibold text-sm break-all">
                       {createdUserEmail || email}
                     </p>
-                    <span className="text-[10px] text-amber-500 font-semibold bg-amber-500/15 px-2 py-0.5 rounded border border-amber-500/30 shrink-0">
+                    <span className="text-10px text-amber-500 font-semibold bg-amber-500/15 px-2 py-0.5 rounded border border-amber-500/30 shrink-0">
                       PENDING VERIFICATION
                     </span>
                   </div>
                 ) : (
                   <div className="space-y-2 bg-card p-3 rounded-lg border border-ember/50">
-                    <label className="block text-[11px] font-semibold text-foreground">
+                    <label className="block text-11px font-semibold text-foreground">
                       Correction: Enter correct work email address
                     </label>
                     <div className="flex gap-2">
@@ -900,7 +896,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
                   </div>
                 )}
 
-                <p className="text-muted-foreground text-[11px] leading-relaxed">
+                <p className="text-muted-foreground text-11px leading-relaxed">
                   Please check your inbox and click the verification link. If you entered an
                   incorrect email address, click <strong>"Edit Email"</strong> or{" "}
                   <strong>"Go Back to Edit Email"</strong> below to change it.
@@ -915,12 +911,12 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
                     <p className="text-xs font-semibold text-foreground">
                       Waiting for email link verification...
                     </p>
-                    <p className="text-[10px] text-muted-foreground">
+                    <p className="text-10px text-muted-foreground">
                       Click the link in your email inbox. Page will auto-proceed once clicked.
                     </p>
                   </div>
                 </div>
-                <span className="text-[10px] text-amber-500 font-semibold bg-amber-500/15 px-2 py-0.5 rounded border border-amber-500/30 shrink-0">
+                <span className="text-10px text-amber-500 font-semibold bg-amber-500/15 px-2 py-0.5 rounded border border-amber-500/30 shrink-0">
                   LISTENING
                 </span>
               </div>

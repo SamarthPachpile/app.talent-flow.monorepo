@@ -26,7 +26,7 @@ export function AutomationSettings() {
           <div className="flex items-center justify-between p-3.5 rounded-lg border border-border bg-surface">
             <div>
               <p className="font-semibold text-foreground">Auto-Send Google Calendar Invites</p>
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-11px text-muted-foreground">
                 Automatically trigger Google Meet calendar invites upon interview scheduling.
               </p>
             </div>
@@ -36,7 +36,7 @@ export function AutomationSettings() {
           <div className="flex items-center justify-between p-3.5 rounded-lg border border-border bg-surface">
             <div>
               <p className="font-semibold text-foreground">Interview Reminder Ping Engine</p>
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-11px text-muted-foreground">
                 Send automated email & SMS reminders 24h before scheduled interviews.
               </p>
             </div>
@@ -46,7 +46,7 @@ export function AutomationSettings() {
           <div className="flex items-center justify-between p-3.5 rounded-lg border border-border bg-surface">
             <div>
               <p className="font-semibold text-foreground">Duplicate Candidate Detector</p>
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-11px text-muted-foreground">
                 Flag matching candidate emails or phone numbers across company workspaces.
               </p>
             </div>
@@ -56,7 +56,7 @@ export function AutomationSettings() {
           <div className="flex items-center justify-between p-3.5 rounded-lg border border-border bg-surface">
             <div>
               <p className="font-semibold text-foreground">Stage Transition Email Notifications</p>
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-11px text-muted-foreground">
                 Notify candidate via email when advanced to Offer, IT Hardware, or Day One.
               </p>
             </div>

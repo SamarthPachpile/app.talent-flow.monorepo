@@ -71,11 +71,11 @@ export default function TransformSection() {
       <div className="w-full h-full max-w-[1920px] mx-auto px-6 sm:px-10 lg:px-16 py-10 sm:py-14 lg:py-16 flex flex-col justify-between">
         {/* Top */}
         <div>
-          <p className="text-[10px] sm:text-xs uppercase tracking-[0.35em] text-[#7b8196] mb-5">
+          <p className="text-10px sm:text-xs uppercase tracking-[0.35em] text-[#7b8196] mb-5">
             The Tapasys Group Company
           </p>
 
-          <p className="max-w-[720px] text-[#33456b] text-[16px] sm:text-[22px] lg:text-[30px] leading-[1.22] tracking-[-0.02em]">
+          <p className="max-w-720px text-[#33456b] text-16px sm:text-22px lg:text-30px leading-[1.22] tracking-[-0.02em]">
             Croton is a trusted digital transformation partner helping ambitious businesses
             modernize customer relationships and scale smarter.
           </p>

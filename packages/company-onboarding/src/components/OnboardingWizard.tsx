@@ -619,7 +619,7 @@ export const OnboardingWizard: React.FC<WizardProps> = ({ state, setState, onCom
                       <h3 className="font-display font-bold text-sm text-foreground">
                         {state.profile.name}
                       </h3>
-                      <span className="text-[10px] bg-ember/15 text-ember font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                      <span className="text-10px bg-ember/15 text-ember font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
                         <CheckCircle2 className="size-3" /> Pre-filled from Signup
                       </span>
                     </div>
@@ -646,9 +646,7 @@ export const OnboardingWizard: React.FC<WizardProps> = ({ state, setState, onCom
                 <div className="space-y-2">
                   <label className="block text-xs font-bold text-foreground uppercase tracking-wider flex items-center justify-between">
                     <span>Company Logo (From Device Storage)</span>
-                    <span className="text-[10px] text-ember font-semibold">
-                      Device Storage Only
-                    </span>
+                    <span className="text-10px text-ember font-semibold">Device Storage Only</span>
                   </label>
                   <div className="flex items-center gap-3">
                     {state.profile.logoUrl ? (
@@ -683,7 +681,7 @@ export const OnboardingWizard: React.FC<WizardProps> = ({ state, setState, onCom
                           <span>Remove</span>
                         </button>
                       )}
-                      <p className="text-[10px] text-muted-foreground">
+                      <p className="text-10px text-muted-foreground">
                         Select PNG, JPG, SVG, or WebP from your device's internal storage
                       </p>
                     </div>
@@ -694,9 +692,7 @@ export const OnboardingWizard: React.FC<WizardProps> = ({ state, setState, onCom
                 <div className="space-y-2">
                   <label className="block text-xs font-bold text-foreground uppercase tracking-wider flex items-center justify-between">
                     <span>Company Cover Image (From Device Storage)</span>
-                    <span className="text-[10px] text-ember font-semibold">
-                      Device Storage Only
-                    </span>
+                    <span className="text-10px text-ember font-semibold">Device Storage Only</span>
                   </label>
                   <div className="flex items-center gap-3">
                     {state.profile.coverImageUrl ? (
@@ -731,7 +727,7 @@ export const OnboardingWizard: React.FC<WizardProps> = ({ state, setState, onCom
                           <span>Remove</span>
                         </button>
                       )}
-                      <p className="text-[10px] text-muted-foreground">
+                      <p className="text-10px text-muted-foreground">
                         Select banner image file from your device's internal storage
                       </p>
                     </div>
@@ -746,7 +742,7 @@ export const OnboardingWizard: React.FC<WizardProps> = ({ state, setState, onCom
                     <label className="block text-xs font-semibold text-foreground uppercase tracking-wider">
                       Company Brand Name *
                     </label>
-                    <span className="text-[10px] text-ember font-bold">From Signup</span>
+                    <span className="text-10px text-ember font-bold">From Signup</span>
                   </div>
                   <input
                     type="text"
@@ -894,13 +890,13 @@ export const OnboardingWizard: React.FC<WizardProps> = ({ state, setState, onCom
                       <span className="font-bold text-foreground block">
                         Head Office Address & Branch Locations
                       </span>
-                      <span className="text-muted-foreground text-[11px]">
+                      <span className="text-muted-foreground text-11px">
                         Physical building address, city, state, country, timezones, and branch
                         offices are cleanly managed in <strong>Step 2: Office Locations</strong>.
                       </span>
                     </div>
                   </div>
-                  <span className="text-[11px] bg-ember/15 text-ember font-bold px-3 py-1 rounded-lg shrink-0 border border-ember/20">
+                  <span className="text-11px bg-ember/15 text-ember font-bold px-3 py-1 rounded-lg shrink-0 border border-ember/20">
                     Configured in Step 2 →
                   </span>
                 </div>
@@ -941,7 +937,7 @@ export const OnboardingWizard: React.FC<WizardProps> = ({ state, setState, onCom
                       {state.profile.name || "Main Company"} Headquarters
                     </span>
                   </div>
-                  <span className="text-[11px] text-muted-foreground font-mono">
+                  <span className="text-11px text-muted-foreground font-mono">
                     Primary Corporate Location
                   </span>
                 </div>
@@ -1064,7 +1060,7 @@ export const OnboardingWizard: React.FC<WizardProps> = ({ state, setState, onCom
                         <div className="space-y-1.5 pr-2">
                           <div className="flex items-center gap-2">
                             <span className="font-bold text-sm text-foreground">{b.name}</span>
-                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-ember/10 text-ember font-bold">
+                            <span className="text-10px px-2 py-0.5 rounded-full bg-ember/10 text-ember font-bold">
                               {b.capacity ? `${b.capacity} Desks` : "Flexible"}
                             </span>
                           </div>
@@ -1320,7 +1316,7 @@ export const OnboardingWizard: React.FC<WizardProps> = ({ state, setState, onCom
 
                       {/* Quick Country Presets */}
                       <div className="pt-2">
-                        <span className="text-[10px] text-muted-foreground font-semibold block mb-1.5 uppercase tracking-wider">
+                        <span className="text-10px text-muted-foreground font-semibold block mb-1.5 uppercase tracking-wider">
                           Quick Add Top Regions:
                         </span>
                         <div className="flex flex-wrap gap-1">
@@ -1361,7 +1357,7 @@ export const OnboardingWizard: React.FC<WizardProps> = ({ state, setState, onCom
                                     }));
                                   }
                                 }}
-                                className={`text-[10px] px-2 py-0.5 rounded-md border transition-colors cursor-pointer ${
+                                className={`text-10px px-2 py-0.5 rounded-md border transition-colors cursor-pointer ${
                                   isAdded
                                     ? "bg-accent/40 text-muted-foreground border-border opacity-50 cursor-default"
                                     : "bg-card text-foreground border-border hover:border-ember"
@@ -1430,7 +1426,7 @@ export const OnboardingWizard: React.FC<WizardProps> = ({ state, setState, onCom
                                 },
                               }))
                             }
-                            className="text-[10px] px-2 py-0.5 rounded bg-card text-muted-foreground border border-border hover:text-foreground hover:border-ember transition-colors cursor-pointer"
+                            className="text-10px px-2 py-0.5 rounded bg-card text-muted-foreground border border-border hover:text-foreground hover:border-ember transition-colors cursor-pointer"
                           >
                             {preset}
                           </button>
@@ -1494,14 +1490,14 @@ export const OnboardingWizard: React.FC<WizardProps> = ({ state, setState, onCom
                     <span className="font-bold text-foreground block">
                       Automated Access Email Dispatch Cron Job
                     </span>
-                    <span className="text-muted-foreground text-[11px]">
+                    <span className="text-muted-foreground text-11px">
                       Dashboard invitation emails with custom links will be scheduled & dispatched
                       to all added team member emails automatically once the setup wizard is
                       completely submitted.
                     </span>
                   </div>
                 </div>
-                <span className="text-[10px] bg-ember/15 text-ember font-bold px-2.5 py-1 rounded-md shrink-0 border border-ember/20 flex items-center gap-1">
+                <span className="text-10px bg-ember/15 text-ember font-bold px-2.5 py-1 rounded-md shrink-0 border border-ember/20 flex items-center gap-1">
                   <Clock className="size-3" /> Cron Dispatched on Completion
                 </span>
               </div>
@@ -1562,7 +1558,7 @@ export const OnboardingWizard: React.FC<WizardProps> = ({ state, setState, onCom
                   <h3 className="font-display font-bold text-sm text-foreground">
                     Configured HR Team ({state.hrTeam.length})
                   </h3>
-                  <span className="text-[11px] text-muted-foreground">
+                  <span className="text-11px text-muted-foreground">
                     Dashboard access will be granted to {state.hrTeam.length} user(s)
                   </span>
                 </div>
@@ -1578,11 +1574,11 @@ export const OnboardingWizard: React.FC<WizardProps> = ({ state, setState, onCom
                         <div className="space-y-1.5">
                           <div className="flex items-center gap-2 flex-wrap">
                             <span className="font-bold text-sm text-foreground">{m.name}</span>
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-ember/15 text-ember border border-ember/20">
+                            <span className="text-10px font-bold px-2 py-0.5 rounded-md bg-ember/15 text-ember border border-ember/20">
                               {m.role}
                             </span>
                             {isPrimaryAdmin && (
-                              <span className="text-[10px] bg-ember text-ember-foreground font-bold px-2 py-0.5 rounded-full">
+                              <span className="text-10px bg-ember text-ember-foreground font-bold px-2 py-0.5 rounded-full">
                                 Primary Admin
                               </span>
                             )}
@@ -1590,14 +1586,14 @@ export const OnboardingWizard: React.FC<WizardProps> = ({ state, setState, onCom
                           <span className="text-xs text-muted-foreground block font-mono">
                             {m.email}
                           </span>
-                          <span className="text-[11px] text-muted-foreground block">
+                          <span className="text-11px text-muted-foreground block">
                             {m.designation} · {m.department}
                           </span>
                           <div className="flex flex-wrap gap-1 pt-1">
                             {m.permissions.map((p, idx) => (
                               <span
                                 key={idx}
-                                className="text-[9px] px-1.5 py-0.5 rounded bg-card text-muted-foreground border border-border/60"
+                                className="text-9px px-1.5 py-0.5 rounded bg-card text-muted-foreground border border-border/60"
                               >
                                 {p}
                               </span>
@@ -1830,7 +1826,7 @@ export const OnboardingWizard: React.FC<WizardProps> = ({ state, setState, onCom
                           }}
                           className="bg-card border border-input rounded-lg px-2.5 py-1 text-xs text-foreground font-semibold focus:outline-none focus:border-ember"
                         />
-                        <span className="text-[10px] text-muted-foreground">
+                        <span className="text-10px text-muted-foreground">
                           SLA: {stage.slaHours || 24}h
                         </span>
                       </div>
@@ -2628,7 +2624,7 @@ export const OnboardingWizard: React.FC<WizardProps> = ({ state, setState, onCom
                     >
                       <span className="font-bold text-sm text-foreground block">{item.label}</span>
                       <div className="space-y-1.5 text-xs">
-                        <label className="text-[10px] text-muted-foreground uppercase block font-semibold">
+                        <label className="text-10px text-muted-foreground uppercase block font-semibold">
                           Approver Role
                         </label>
                         <select
@@ -2697,7 +2693,7 @@ export const OnboardingWizard: React.FC<WizardProps> = ({ state, setState, onCom
                   >
                     <div>
                       <span className="font-bold text-sm text-foreground block">{tool.name}</span>
-                      <span className="text-[10px] px-2 py-0.5 rounded bg-card text-muted-foreground border border-border/60">
+                      <span className="text-10px px-2 py-0.5 rounded bg-card text-muted-foreground border border-border/60">
                         {tool.category}
                       </span>
                     </div>
@@ -2800,7 +2796,7 @@ export const OnboardingWizard: React.FC<WizardProps> = ({ state, setState, onCom
                   <span className="text-xs font-bold text-foreground block">
                     Drop CSV File Here or Click to Upload
                   </span>
-                  <span className="text-[11px] text-muted-foreground block">
+                  <span className="text-11px text-muted-foreground block">
                     Supports .csv files with headers: Name, Email, Role, Department
                   </span>
                 </div>
@@ -2922,35 +2918,35 @@ export const OnboardingWizard: React.FC<WizardProps> = ({ state, setState, onCom
                     <Shield className="size-4 text-amber-500" /> Automatically Stored Metadata
                   </h3>
                   <div className="space-y-1.5 text-xs font-mono">
-                    <div className="flex justify-between text-[11px]">
+                    <div className="flex justify-between text-11px">
                       <span className="text-muted-foreground">Company ID:</span>
                       <span className="text-foreground">
                         {state.systemMetadata?.companyId || "comp-uuid-1234"}
                       </span>
                     </div>
-                    <div className="flex justify-between text-[11px]">
+                    <div className="flex justify-between text-11px">
                       <span className="text-muted-foreground">Workspace ID:</span>
                       <span className="text-foreground">
                         {state.systemMetadata?.workspaceId || "ws-uuid-5678"}
                       </span>
                     </div>
-                    <div className="flex justify-between text-[11px]">
+                    <div className="flex justify-between text-11px">
                       <span className="text-muted-foreground">Tenant ID:</span>
                       <span className="text-foreground">{state.systemMetadata?.tenantId}</span>
                     </div>
-                    <div className="flex justify-between text-[11px]">
+                    <div className="flex justify-between text-11px">
                       <span className="text-muted-foreground">Account Status:</span>
                       <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500 font-bold">
                         {state.systemMetadata?.accountStatus}
                       </span>
                     </div>
-                    <div className="flex justify-between text-[11px]">
+                    <div className="flex justify-between text-11px">
                       <span className="text-muted-foreground">Trial Period:</span>
                       <span className="text-foreground">14 Days Active</span>
                     </div>
-                    <div className="flex justify-between text-[11px]">
+                    <div className="flex justify-between text-11px">
                       <span className="text-muted-foreground">API Key:</span>
-                      <span className="text-ember truncate max-w-[160px]">
+                      <span className="text-ember truncate max-w-160px">
                         {state.systemMetadata?.apiKey}
                       </span>
                     </div>

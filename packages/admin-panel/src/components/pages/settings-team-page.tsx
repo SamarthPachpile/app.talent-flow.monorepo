@@ -78,13 +78,13 @@ export function TeamSettings() {
               <div key={m.id} className="p-3.5 bg-surface flex items-center justify-between">
                 <div>
                   <p className="font-semibold text-foreground">{m.name}</p>
-                  <p className="text-[11px] text-muted-foreground">{m.email}</p>
+                  <p className="text-11px text-muted-foreground">{m.email}</p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="text-[10px]">
+                  <Badge variant="outline" className="text-10px">
                     {m.role}
                   </Badge>
-                  <Badge className="bg-success/15 text-success border border-success/30 text-[10px]">
+                  <Badge className="bg-success/15 text-success border border-success/30 text-10px">
                     {m.status}
                   </Badge>
                 </div>

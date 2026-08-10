@@ -61,7 +61,7 @@ export default function InsightsSection() {
                   {item.tag}
                 </span>
               </div>
-              <p className="text-xs text-muted-foreground mb-1">{item.author}</p>
+              <p className="text-xs text-primary mb-1">{item.author}</p>
               <h3 className="text-sm font-medium text-foreground group-hover:text-primary transition-colors leading-snug">
                 {item.title}
               </h3>

@@ -21,10 +21,10 @@ export default function PlanetSection() {
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.7 }}
           >
-            <p className="text-[12px] sm:text-[14px] md:text-base lg:text-lg tracking-widest text-muted-foreground mb-3 sm:mb-4 uppercase">
+            <p className="text-12px sm:text-14px md:text-base lg:text-lg tracking-widest text-muted-foreground mb-3 sm:mb-4 uppercase">
               Responsible Business
             </p>
-            <h2 className="text-[28px] sm:text-[40px] md:text-6xl lg:text-7xl xl:text-7xl leading-[1.1] mb-4 sm:mb-6 font-semibold">
+            <h2 className="text-28px sm:text-40px md:text-6xl lg:text-7xl xl:text-7xl leading-[1.1] mb-4 sm:mb-6 font-semibold">
               Responsible <span className="text-primary">AI</span>, responsible data
             </h2>
             <p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-md">

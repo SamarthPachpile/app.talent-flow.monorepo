@@ -59,10 +59,10 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
               >
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold text-foreground">{n.title}</span>
-                  <span className="text-[10px] text-muted-foreground">{n.timestamp}</span>
+                  <span className="text-10px text-muted-foreground">{n.timestamp}</span>
                 </div>
                 <p className="text-xs text-muted-foreground">{n.message}</p>
-                <div className="text-[10px] text-ember font-medium pt-0.5 flex items-center gap-1">
+                <div className="text-10px text-ember font-medium pt-0.5 flex items-center gap-1">
                   <span>Jump to stage details</span>
                   <ExternalLink className="size-3" />
                 </div>
