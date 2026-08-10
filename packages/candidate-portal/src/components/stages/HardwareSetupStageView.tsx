@@ -143,7 +143,7 @@ export const HardwareSetupStageView: React.FC<HardwareSetupStageViewProps> = ({
                   >
                     <div>
                       {laptop.badge && (
-                        <span className="absolute top-3.5 right-3.5 px-2 py-0.5 rounded-full bg-ember/10 text-ember text-[10px] font-semibold border border-ember/20">
+                        <span className="absolute top-3.5 right-3.5 px-2 py-0.5 rounded-full bg-ember/10 text-ember text-10px font-semibold border border-ember/20">
                           {laptop.badge}
                         </span>
                       )}
@@ -176,7 +176,7 @@ export const HardwareSetupStageView: React.FC<HardwareSetupStageViewProps> = ({
                     </div>
 
                     <div className="flex items-center justify-between pt-2 border-t border-border">
-                      <span className="text-[11px] text-muted-foreground">{laptop.specs}</span>
+                      <span className="text-11px text-muted-foreground">{laptop.specs}</span>
                       <div
                         className={`size-4 rounded-full border flex items-center justify-center ${
                           isSelected
@@ -219,11 +219,11 @@ export const HardwareSetupStageView: React.FC<HardwareSetupStageViewProps> = ({
                         alt={acc.name}
                         className="w-full h-20 object-cover rounded-md mb-2 border border-border"
                       />
-                      <div className="text-[10px] font-semibold text-ember uppercase tracking-wider">
+                      <div className="text-10px font-semibold text-ember uppercase tracking-wider">
                         {acc.category}
                       </div>
                       <div className="text-xs font-semibold text-foreground mt-0.5">{acc.name}</div>
-                      <p className="text-[11px] text-muted-foreground mt-1 line-clamp-2">
+                      <p className="text-11px text-muted-foreground mt-1 line-clamp-2">
                         {acc.description}
                       </p>
                     </div>
@@ -396,7 +396,7 @@ export const HardwareSetupStageView: React.FC<HardwareSetupStageViewProps> = ({
                     <div className="text-xs font-bold text-foreground">
                       Order Confirmed by IT Department
                     </div>
-                    <div className="text-[10px] text-muted-foreground">Jul 29, 2026 · 09:30 AM</div>
+                    <div className="text-10px text-muted-foreground">Jul 29, 2026 · 09:30 AM</div>
                     <p className="text-xs text-muted-foreground mt-0.5">
                       Hardware specs approved: {selectedLaptop?.name || "Equipment Pending"}
                     </p>
@@ -412,7 +412,7 @@ export const HardwareSetupStageView: React.FC<HardwareSetupStageViewProps> = ({
                     <div className="text-xs font-bold text-foreground">
                       Device Security Provisioning & Pre-Image
                     </div>
-                    <div className="text-[10px] text-muted-foreground">Jul 30, 2026 · 02:15 PM</div>
+                    <div className="text-10px text-muted-foreground">Jul 30, 2026 · 02:15 PM</div>
                     <p className="text-xs text-muted-foreground mt-0.5">
                       IT team installed corporate security profiles, file encryption, and test
                       certificates.
@@ -428,11 +428,11 @@ export const HardwareSetupStageView: React.FC<HardwareSetupStageViewProps> = ({
                   <div>
                     <div className="text-xs font-bold text-ember flex items-center gap-2">
                       <span>Shipped & In Transit via FedEx</span>
-                      <span className="px-1.5 py-0.5 bg-ember/10 text-ember text-[9px] rounded-xs font-semibold">
+                      <span className="px-1.5 py-0.5 bg-ember/10 text-ember text-9px rounded-xs font-semibold">
                         ACTIVE
                       </span>
                     </div>
-                    <div className="text-[10px] text-muted-foreground">Jul 31, 2026 · 08:00 AM</div>
+                    <div className="text-10px text-muted-foreground">Jul 31, 2026 · 08:00 AM</div>
                     <p className="text-xs text-muted-foreground mt-0.5">
                       Package departed Oakland Sorting Hub. Direct signature required upon delivery.
                     </p>
@@ -448,7 +448,7 @@ export const HardwareSetupStageView: React.FC<HardwareSetupStageViewProps> = ({
                     <div className="text-xs font-semibold text-muted-foreground">
                       Out for Local Delivery
                     </div>
-                    <div className="text-[10px] text-muted-foreground">Expected Aug 4, 2026</div>
+                    <div className="text-10px text-muted-foreground">Expected Aug 4, 2026</div>
                   </div>
                 </div>
 
@@ -461,7 +461,7 @@ export const HardwareSetupStageView: React.FC<HardwareSetupStageViewProps> = ({
                     <div className="text-xs font-semibold text-muted-foreground">
                       Delivered & Ready for Setup
                     </div>
-                    <div className="text-[10px] text-muted-foreground">
+                    <div className="text-10px text-muted-foreground">
                       Destination: {hardware.shippingAddress.city}, {hardware.shippingAddress.state}
                     </div>
                   </div>

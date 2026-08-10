@@ -159,7 +159,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onSignIn, onSe
                 <span className="text-base sm:text-lg font-bold text-foreground tracking-tight">
                   TalentFlow Hub
                 </span>
-                <span className="text-[10px] text-muted-foreground mt-0.5 font-medium">
+                <span className="text-10px text-muted-foreground mt-0.5 font-medium">
                   Enterprise Candidate OS
                 </span>
               </div>
@@ -313,8 +313,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onSignIn, onSe
               <span>LinkedIn Sourcing Connector</span>
               <span className="size-2 rounded-full bg-success animate-ping" />
             </div>
-            <p className="text-[10px] text-ember font-mono mt-0.5">+14 Candidates Syncing</p>
-            <p className="text-[10px] text-muted-foreground mt-1">Direct Recruiter Import Active</p>
+            <p className="text-10px text-ember font-mono mt-0.5">+14 Candidates Syncing</p>
+            <p className="text-10px text-muted-foreground mt-1">Direct Recruiter Import Active</p>
           </div>
         </motion.div>
         <motion.div
@@ -330,10 +330,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onSignIn, onSe
               <span>Google Sheets Connector</span>
               <span className="size-2 rounded-full bg-success animate-ping" />
             </div>
-            <p className="text-[10px] text-success font-mono mt-0.5">+100 Rows Synced</p>
-            <p className="text-[10px] text-muted-foreground mt-1">
-              Intelligent Field Mapping Active
-            </p>
+            <p className="text-10px text-success font-mono mt-0.5">+100 Rows Synced</p>
+            <p className="text-10px text-muted-foreground mt-1">Intelligent Field Mapping Active</p>
           </div>
         </motion.div>
 
@@ -347,8 +345,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onSignIn, onSe
           </div>
           <div className="text-xs">
             <p className="font-semibold text-foreground">Google Sheets Importer</p>
-            <p className="text-[10px] text-success font-semibold mt-0.5">Row 42 Auto-Mapped</p>
-            <p className="text-[10px] text-muted-foreground mt-1">Intelligent Field Auto-Detect</p>
+            <p className="text-10px text-success font-semibold mt-0.5">Row 42 Auto-Mapped</p>
+            <p className="text-10px text-muted-foreground mt-1">Intelligent Field Auto-Detect</p>
           </div>
         </motion.div>
 
@@ -432,7 +430,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onSignIn, onSe
                 <p className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2">
                   {s.value}
                 </p>
-                <span className="inline-block mt-2 text-[11px] text-success font-medium bg-success/10 px-2 py-0.5 rounded">
+                <span className="inline-block mt-2 text-11px text-success font-medium bg-success/10 px-2 py-0.5 rounded">
                   {s.change}
                 </span>
               </div>
@@ -466,21 +464,21 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onSignIn, onSe
               <div className="bg-surface/80 rounded-xl p-4 border border-border/60">
                 <div className="flex items-center justify-between text-xs font-semibold text-foreground mb-3">
                   <span>Intake & Screening</span>
-                  <span className="bg-accent px-2 py-0.5 rounded text-[10px]">6 Candidates</span>
+                  <span className="bg-accent px-2 py-0.5 rounded text-10px">6 Candidates</span>
                 </div>
                 <div className="space-y-2.5">
                   <div className="bg-card p-3 rounded-md border border-border shadow-xs">
                     <p className="text-xs font-medium">Amara Okonkwo</p>
-                    <p className="text-[11px] text-muted-foreground">Senior Backend Engineer</p>
-                    <div className="mt-2 flex items-center justify-between text-[10px]">
+                    <p className="text-11px text-muted-foreground">Senior Backend Engineer</p>
+                    <div className="mt-2 flex items-center justify-between text-10px">
                       <span className="text-ember font-semibold">Stage 4: Resume Parsed</span>
                       <span className="bg-ember/15 text-ember px-1.5 py-0.5 rounded">High</span>
                     </div>
                   </div>
                   <div className="bg-card p-3 rounded-md border border-border shadow-xs">
                     <p className="text-xs font-medium font-sans">Julien Barre</p>
-                    <p className="text-[11px] text-muted-foreground">Product Designer</p>
-                    <div className="mt-2 flex items-center justify-between text-[10px]">
+                    <p className="text-11px text-muted-foreground">Product Designer</p>
+                    <div className="mt-2 flex items-center justify-between text-10px">
                       <span className="text-muted-foreground">Stage 7: Screening</span>
                       <span className="text-muted-foreground">Standard</span>
                     </div>
@@ -491,13 +489,13 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onSignIn, onSe
               <div className="bg-surface/80 rounded-xl p-4 border border-border/60">
                 <div className="flex items-center justify-between text-xs font-semibold text-foreground mb-3">
                   <span>Interview & Approvals</span>
-                  <span className="bg-accent px-2 py-0.5 rounded text-[10px]">4 Candidates</span>
+                  <span className="bg-accent px-2 py-0.5 rounded text-10px">4 Candidates</span>
                 </div>
                 <div className="space-y-2.5">
                   <div className="bg-card p-3 rounded-md border border-border shadow-xs">
                     <p className="text-xs font-medium">Hana Kobayashi</p>
-                    <p className="text-[11px] text-muted-foreground">Engineering Manager</p>
-                    <div className="mt-2 flex items-center justify-between text-[10px]">
+                    <p className="text-11px text-muted-foreground">Engineering Manager</p>
+                    <div className="mt-2 flex items-center justify-between text-10px">
                       <span className="text-success font-semibold">Stage 15: Invite Sent</span>
                       <span className="bg-success/10 text-success px-1.5 py-0.5 rounded">
                         Scheduled
@@ -510,13 +508,13 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onSignIn, onSe
               <div className="bg-surface/80 rounded-xl p-4 border border-border/60">
                 <div className="flex items-center justify-between text-xs font-semibold text-foreground mb-3">
                   <span>Offers & Onboarding</span>
-                  <span className="bg-accent px-2 py-0.5 rounded text-[10px]">5 Candidates</span>
+                  <span className="bg-accent px-2 py-0.5 rounded text-10px">5 Candidates</span>
                 </div>
                 <div className="space-y-2.5">
                   <div className="bg-card p-3 rounded-md border border-border shadow-xs">
                     <p className="text-xs font-medium">Wei Zhang</p>
-                    <p className="text-[11px] text-muted-foreground">Staff Architect</p>
-                    <div className="mt-2 flex items-center justify-between text-[10px]">
+                    <p className="text-11px text-muted-foreground">Staff Architect</p>
+                    <div className="mt-2 flex items-center justify-between text-10px">
                       <span className="text-success font-semibold">Stage 24: Offer Signed</span>
                       <span className="bg-success/15 text-success px-1.5 py-0.5 rounded">
                         E-Signed
@@ -557,7 +555,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onSignIn, onSe
                   <ShieldCheck className="size-5 text-ember shrink-0 mt-0.5" />
                   <div>
                     <h4 className="text-xs font-semibold text-foreground">Isolated Workspaces</h4>
-                    <p className="text-[11px] text-muted-foreground mt-0.5">
+                    <p className="text-11px text-muted-foreground mt-0.5">
                       Strict data boundary per company account.
                     </p>
                   </div>
@@ -567,7 +565,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onSignIn, onSe
                   <Workflow className="size-5 text-ember shrink-0 mt-0.5" />
                   <div>
                     <h4 className="text-xs font-semibold text-foreground">Connector Engine</h4>
-                    <p className="text-[11px] text-muted-foreground mt-0.5">
+                    <p className="text-11px text-muted-foreground mt-0.5">
                       Fetch candidates from LinkedIn & Sheets.
                     </p>
                   </div>
@@ -798,7 +796,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onSignIn, onSe
                 <p className="font-display text-4xl font-bold text-success">
                   ${annualSavingsDollars.toLocaleString()}
                 </p>
-                <span className="text-[10px] bg-success/15 text-success border border-success/30 px-2 py-0.5 rounded font-medium inline-block">
+                <span className="text-10px bg-success/15 text-success border border-success/30 px-2 py-0.5 rounded font-medium inline-block">
                   Recruiter Overhead
                 </span>
               </motion.div>
@@ -815,7 +813,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onSignIn, onSe
                 <p className="font-display text-4xl font-bold text-ember">
                   {hoursSavedPerMonth} hrs
                 </p>
-                <span className="text-[10px] bg-ember/15 text-ember border border-ember/30 px-2 py-0.5 rounded font-medium inline-block">
+                <span className="text-10px bg-ember/15 text-ember border border-ember/30 px-2 py-0.5 rounded font-medium inline-block">
                   -{daysSavedInTime2Fill} Days Time-to-Fill
                 </span>
               </motion.div>
@@ -845,7 +843,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onSignIn, onSe
                   {c.logo}
                 </span>
                 <p className="text-xs font-semibold text-foreground truncate w-full">{c.name}</p>
-                <p className="text-[10px] text-muted-foreground truncate w-full">{c.industry}</p>
+                <p className="text-10px text-muted-foreground truncate w-full">{c.industry}</p>
               </motion.div>
             ))}
           </div>
@@ -871,7 +869,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onSignIn, onSe
               </div>
               <div>
                 <p className="text-xs font-semibold text-foreground">Sarah Jenkins</p>
-                <p className="text-[11px] text-muted-foreground">
+                <p className="text-11px text-muted-foreground">
                   VP of People & HR, Acme Corporation
                 </p>
               </div>
@@ -913,7 +911,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onSignIn, onSe
               }`}
             >
               <span>Annually</span>
-              <span className="bg-success/15 text-success text-[10px] px-1.5 py-0.5 rounded font-semibold">
+              <span className="bg-success/15 text-success text-10px px-1.5 py-0.5 rounded font-semibold">
                 Save 20%
               </span>
             </button>
@@ -970,7 +968,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onSignIn, onSe
               whileHover={{ y: -5 }}
               className="bg-card p-6 rounded-xl border-2 border-ember shadow-lifted flex flex-col justify-between relative"
             >
-              <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-ember text-ember-foreground text-[10px] font-bold px-3 py-0.5 rounded-full uppercase tracking-wider">
+              <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-ember text-ember-foreground text-10px font-bold px-3 py-0.5 rounded-full uppercase tracking-wider">
                 Most Popular
               </span>
               <div>

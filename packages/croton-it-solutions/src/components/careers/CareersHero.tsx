@@ -23,11 +23,11 @@ export default function CareersHero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <p className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-primary mb-4">
+          <p className="text-10px sm:text-xs uppercase tracking-[0.3em] text-primary mb-4">
             Careers at Croton
           </p>
 
-          <h1 className="sm:text-7xl md:text-[130px] font-semibold text-white leading-[0.95] tracking-tight">
+          <h1 className="sm:text-7xl md:text-130px font-semibold text-white leading-[0.95] tracking-tight">
             Make your <br />
             <span className="text-primary">impact.</span>
           </h1>

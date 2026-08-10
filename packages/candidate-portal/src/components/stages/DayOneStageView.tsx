@@ -143,7 +143,7 @@ export const DayOneStageView: React.FC<DayOneStageViewProps> = ({ dayOne, candid
                       >
                         {task.title}
                       </div>
-                      <div className="text-[10px] text-muted-foreground">
+                      <div className="text-10px text-muted-foreground">
                         {task.category} · ~{task.duration}
                       </div>
                     </div>
@@ -168,17 +168,17 @@ export const DayOneStageView: React.FC<DayOneStageViewProps> = ({ dayOne, candid
                   key={slot.id}
                   className="p-3 bg-surface rounded-md border border-border space-y-1"
                 >
-                  <div className="flex items-center justify-between text-[11px]">
+                  <div className="flex items-center justify-between text-11px">
                     <span className="font-semibold text-ember flex items-center gap-1">
                       <Clock className="size-3" />
                       <span>{slot.time}</span>
                     </span>
-                    <span className="px-1.5 py-0.5 rounded bg-card text-muted-foreground font-medium border border-border text-[10px]">
+                    <span className="px-1.5 py-0.5 rounded bg-card text-muted-foreground font-medium border border-border text-10px">
                       {slot.meetingType}
                     </span>
                   </div>
                   <div className="text-xs font-semibold text-foreground">{slot.title}</div>
-                  <div className="text-[10px] text-muted-foreground">
+                  <div className="text-10px text-muted-foreground">
                     Host: {slot.hostName} ({slot.hostRole})
                   </div>
                 </div>

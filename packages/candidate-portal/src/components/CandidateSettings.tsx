@@ -54,7 +54,7 @@ export const CandidateSettingsComponent: React.FC<CandidateSettingsProps> = ({ o
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-4">
         <div>
-          <span className="text-[10px] font-bold tracking-wider text-ember uppercase">
+          <span className="text-10px font-bold tracking-wider text-ember uppercase">
             Candidate Portal Backend
           </span>
           <h2 className="text-2xl font-display font-bold text-foreground mt-0.5">
@@ -257,7 +257,7 @@ export const CandidateSettingsComponent: React.FC<CandidateSettingsProps> = ({ o
           <label className="flex items-center justify-between p-3.5 rounded-lg border border-border bg-surface cursor-pointer">
             <div>
               <p className="font-semibold text-foreground">Application Stage Updates</p>
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-11px text-muted-foreground">
                 Receive emails when your application advances or moves to interview stage.
               </p>
             </div>
@@ -277,7 +277,7 @@ export const CandidateSettingsComponent: React.FC<CandidateSettingsProps> = ({ o
           <label className="flex items-center justify-between p-3.5 rounded-lg border border-border bg-surface cursor-pointer">
             <div>
               <p className="font-semibold text-foreground">Interview Invitation Alerts</p>
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-11px text-muted-foreground">
                 Get notified when recruiters issue interview slot links or calendar invites.
               </p>
             </div>
@@ -297,7 +297,7 @@ export const CandidateSettingsComponent: React.FC<CandidateSettingsProps> = ({ o
           <label className="flex items-center justify-between p-3.5 rounded-lg border border-border bg-surface cursor-pointer">
             <div>
               <p className="font-semibold text-foreground">SMS Reminder Messages</p>
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-11px text-muted-foreground">
                 Receive SMS reminders 2 hours before scheduled interview sessions.
               </p>
             </div>
@@ -322,7 +322,7 @@ export const CandidateSettingsComponent: React.FC<CandidateSettingsProps> = ({ o
           <label className="flex items-center justify-between p-3.5 rounded-lg border border-border bg-surface cursor-pointer">
             <div>
               <p className="font-semibold text-foreground">"Open to Opportunities" Status</p>
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-11px text-muted-foreground">
                 Show recruiters that you are actively interviewing and open to offers.
               </p>
             </div>
@@ -342,7 +342,7 @@ export const CandidateSettingsComponent: React.FC<CandidateSettingsProps> = ({ o
           <label className="flex items-center justify-between p-3.5 rounded-lg border border-border bg-surface cursor-pointer">
             <div>
               <p className="font-semibold text-foreground">Anonymous Screening Opt-In</p>
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-11px text-muted-foreground">
                 Anonymize your name and photo during initial recruiter resume parsing.
               </p>
             </div>
@@ -406,7 +406,7 @@ export const CandidateSettingsComponent: React.FC<CandidateSettingsProps> = ({ o
           <div className="p-3.5 rounded-lg border border-border bg-surface flex items-center justify-between">
             <div>
               <p className="font-semibold text-foreground">Two-Factor Authentication (MFA)</p>
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-11px text-muted-foreground">
                 Secure your candidate portal account with an authenticator app.
               </p>
             </div>
@@ -428,7 +428,7 @@ export const CandidateSettingsComponent: React.FC<CandidateSettingsProps> = ({ o
           <div className="p-3.5 rounded-lg border border-border bg-surface flex items-center justify-between">
             <div>
               <p className="font-semibold text-foreground">Password Credentials</p>
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-11px text-muted-foreground">
                 Last updated: {settings.account.passwordLastChanged}
               </p>
             </div>

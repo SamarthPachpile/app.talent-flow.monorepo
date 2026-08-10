@@ -50,7 +50,7 @@ export const CredentialsStageView: React.FC<CredentialsStageViewProps> = ({ cred
 
             <div className="p-3.5 bg-surface rounded-md border border-border flex items-center justify-between">
               <div>
-                <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                <div className="text-11px font-semibold text-muted-foreground uppercase tracking-wider">
                   Assigned Corporate Work Email
                 </div>
                 <div className="text-sm font-bold text-foreground font-mono mt-0.5">
@@ -80,12 +80,10 @@ export const CredentialsStageView: React.FC<CredentialsStageViewProps> = ({ cred
                   </div>
                   <div>
                     <div className="text-xs font-semibold text-foreground">Google Workspace</div>
-                    <div className="text-[10px] text-success font-medium">
-                      Gmail, Calendar, Drive
-                    </div>
+                    <div className="text-10px text-success font-medium">Gmail, Calendar, Drive</div>
                   </div>
                 </div>
-                <span className="px-2 py-0.5 rounded-full bg-success/10 text-success text-[10px] font-bold">
+                <span className="px-2 py-0.5 rounded-full bg-success/10 text-success text-10px font-bold">
                   ACTIVE
                 </span>
               </div>
@@ -97,10 +95,10 @@ export const CredentialsStageView: React.FC<CredentialsStageViewProps> = ({ cred
                   </div>
                   <div>
                     <div className="text-xs font-semibold text-foreground">Slack Workspace</div>
-                    <div className="text-[10px] text-success font-medium">Team Communication</div>
+                    <div className="text-10px text-success font-medium">Team Communication</div>
                   </div>
                 </div>
-                <span className="px-2 py-0.5 rounded-full bg-success/10 text-success text-[10px] font-bold">
+                <span className="px-2 py-0.5 rounded-full bg-success/10 text-success text-10px font-bold">
                   INVITED
                 </span>
               </div>
@@ -123,7 +121,7 @@ export const CredentialsStageView: React.FC<CredentialsStageViewProps> = ({ cred
                     <div className="size-5 bg-ember rounded-xs" />
                     <div className="size-5 bg-ember rounded-xs" />
                   </div>
-                  <div className="text-[8px] font-mono text-foreground font-bold text-center">
+                  <div className="text-8px font-mono text-foreground font-bold text-center">
                     OKTA-2FA
                   </div>
                   <div className="flex justify-between">
@@ -132,7 +130,7 @@ export const CredentialsStageView: React.FC<CredentialsStageViewProps> = ({ cred
                   </div>
                 </div>
               </div>
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-11px text-muted-foreground">
                 Scan with Google Authenticator or Okta Verify
               </p>
             </div>

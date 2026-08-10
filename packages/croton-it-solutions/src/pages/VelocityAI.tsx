@@ -165,7 +165,7 @@ export default function VelocityAI() {
                 <p className="text-5xl sm:text-6xl font-medium text-primary mb-3 tracking-tight">
                   {m.value}
                 </p>
-                <p className="text-sm text-foreground/70 max-w-[240px]">{m.label}</p>
+                <p className="text-sm text-foreground/70 max-w-240px">{m.label}</p>
               </div>
             ))}
           </div>

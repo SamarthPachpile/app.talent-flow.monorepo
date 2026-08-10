@@ -39,7 +39,7 @@ export default function CTASection() {
         </div>
 
         {/* SUBTEXT */}
-        <div className="absolute bottom-2 left-8 lg:left-20 max-w-[420px]">
+        <div className="absolute bottom-2 left-8 lg:left-20 max-w-420px">
           <p className="text-[#5b6475] text-lg leading-[1.5]">
             GlobalLogic provides unique experience and expertise at the intersection of data,
             design, and engineering.

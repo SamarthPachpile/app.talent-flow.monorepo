@@ -195,7 +195,7 @@ export const CompanyOverview: React.FC<OverviewProps> = ({ state, setActiveTab }
               >
                 <span className="text-foreground font-medium">{m.name}</span>
                 <span
-                  className={`px-2 py-0.5 rounded-md font-semibold text-[11px] ${
+                  className={`px-2 py-0.5 rounded-md font-semibold text-11px ${
                     m.active
                       ? "bg-success/15 text-success border border-success/30"
                       : "bg-muted text-muted-foreground"

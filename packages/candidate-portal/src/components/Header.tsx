@@ -85,11 +85,11 @@ export const Header: React.FC<HeaderProps> = ({
                 <p className="text-sm font-semibold text-foreground group-hover:text-ember transition-colors">
                   {compName}
                 </p>
-                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-surface border border-border text-muted-foreground">
+                <span className="text-10px font-mono px-1.5 py-0.5 rounded bg-surface border border-border text-muted-foreground">
                   /{company?.subdomain || "portal"}/
                 </span>
               </div>
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-11px text-muted-foreground">
                 {candidate.name} · Candidate Operations
               </p>
             </div>
@@ -111,13 +111,13 @@ export const Header: React.FC<HeaderProps> = ({
                 className="size-4 rounded-full object-cover"
               />
               <span className="font-medium text-foreground">{candidate.name}</span>
-              <span className="text-muted-foreground text-[11px]">({candidate.companyName})</span>
+              <span className="text-muted-foreground text-11px">({candidate.companyName})</span>
               <ChevronDown className="size-3 text-muted-foreground" />
             </button>
 
             {dropdownOpen && (
               <div className="absolute right-0 mt-2 w-72 bg-card border border-border rounded-md shadow-lifted p-2 z-50 animate-in fade-in zoom-in-95 duration-150">
-                <div className="px-3 py-1.5 border-b border-border text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
+                <div className="px-3 py-1.5 border-b border-border text-10px font-semibold tracking-wider text-muted-foreground uppercase">
                   Select Candidate Persona
                 </div>
 
@@ -140,7 +140,7 @@ export const Header: React.FC<HeaderProps> = ({
                     />
                     <div>
                       <div className="text-xs font-semibold text-foreground">Alex Rivera</div>
-                      <div className="text-[10px] text-ember">Stage 5: Laptop & Hardware</div>
+                      <div className="text-10px text-ember">Stage 5: Laptop & Hardware</div>
                     </div>
                   </div>
                   {activeCandidateKey === "alex" && <CheckCircle2 className="size-4 text-ember" />}
@@ -165,9 +165,7 @@ export const Header: React.FC<HeaderProps> = ({
                     />
                     <div>
                       <div className="text-xs font-semibold text-foreground">Sarah Chen</div>
-                      <div className="text-[10px] text-warning-foreground">
-                        Stage 3: Offer Letter
-                      </div>
+                      <div className="text-10px text-warning-foreground">Stage 3: Offer Letter</div>
                     </div>
                   </div>
                   {activeCandidateKey === "sarah" && <CheckCircle2 className="size-4 text-ember" />}
@@ -202,7 +200,7 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <Bell className="size-4" />
             {unreadCount > 0 && (
-              <span className="absolute -top-1 -right-1 size-4 bg-ember text-ember-foreground rounded-full text-[10px] font-bold flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 size-4 bg-ember text-ember-foreground rounded-full text-10px font-bold flex items-center justify-center">
                 {unreadCount}
               </span>
             )}

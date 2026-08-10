@@ -40,7 +40,7 @@ export const InterviewStageView: React.FC<InterviewStageViewProps> = ({ intervie
                 <span className="text-xs font-semibold px-2 py-0.5 rounded-md bg-surface text-foreground border border-border">
                   {slot.type}
                 </span>
-                <span className="text-[11px] font-semibold text-success bg-success/10 px-2 py-0.5 rounded-full flex items-center gap-1 border border-success/20">
+                <span className="text-11px font-semibold text-success bg-success/10 px-2 py-0.5 rounded-full flex items-center gap-1 border border-success/20">
                   <CheckCircle2 className="size-3" />
                   <span>Passed</span>
                 </span>
@@ -61,7 +61,7 @@ export const InterviewStageView: React.FC<InterviewStageViewProps> = ({ intervie
                   <div className="text-xs font-semibold text-foreground">
                     {slot.interviewerName}
                   </div>
-                  <div className="text-[11px] text-muted-foreground">{slot.interviewerRole}</div>
+                  <div className="text-11px text-muted-foreground">{slot.interviewerRole}</div>
                 </div>
               </div>
 
@@ -80,7 +80,7 @@ export const InterviewStageView: React.FC<InterviewStageViewProps> = ({ intervie
               </div>
 
               {slot.notesForCandidate && (
-                <div className="p-2.5 bg-surface/60 rounded-md border border-border text-[11px] text-muted-foreground italic mb-3">
+                <div className="p-2.5 bg-surface/60 rounded-md border border-border text-11px text-muted-foreground italic mb-3">
                   "{slot.notesForCandidate}"
                 </div>
               )}

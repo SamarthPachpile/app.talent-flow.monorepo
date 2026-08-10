@@ -51,16 +51,14 @@ export const ApplicationStageView: React.FC<ApplicationStageViewProps> = ({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div className="p-3 bg-surface rounded-md border border-border">
-                <div className="text-[11px] text-muted-foreground font-medium">
-                  Applied Position
-                </div>
+                <div className="text-11px text-muted-foreground font-medium">Applied Position</div>
                 <div className="text-xs font-semibold text-foreground mt-0.5">
                   {application.jobTitle}
                 </div>
               </div>
 
               <div className="p-3 bg-surface rounded-md border border-border">
-                <div className="text-[11px] text-muted-foreground font-medium">
+                <div className="text-11px text-muted-foreground font-medium">
                   Years of Experience
                 </div>
                 <div className="text-xs font-semibold text-foreground mt-0.5">
@@ -70,9 +68,7 @@ export const ApplicationStageView: React.FC<ApplicationStageViewProps> = ({
 
               {application.portfolioUrl && (
                 <div className="p-3 bg-surface rounded-md border border-border">
-                  <div className="text-[11px] text-muted-foreground font-medium">
-                    Portfolio Site
-                  </div>
+                  <div className="text-11px text-muted-foreground font-medium">Portfolio Site</div>
                   <a
                     href={application.portfolioUrl}
                     target="_blank"
@@ -87,7 +83,7 @@ export const ApplicationStageView: React.FC<ApplicationStageViewProps> = ({
 
               {application.githubUrl && (
                 <div className="p-3 bg-surface rounded-md border border-border">
-                  <div className="text-[11px] text-muted-foreground font-medium">
+                  <div className="text-11px text-muted-foreground font-medium">
                     GitHub Repository
                   </div>
                   <a
@@ -128,7 +124,7 @@ export const ApplicationStageView: React.FC<ApplicationStageViewProps> = ({
                   <div className="absolute -left-[17px] top-0.5 size-3 rounded-full bg-ember border-2 border-card" />
                   <div>
                     <div className="text-xs font-semibold text-foreground">{item.status}</div>
-                    <div className="text-[10px] text-ember font-medium mt-0.5">{item.date}</div>
+                    <div className="text-10px text-ember font-medium mt-0.5">{item.date}</div>
                     <p className="text-xs text-muted-foreground mt-0.5">{item.note}</p>
                   </div>
                 </div>

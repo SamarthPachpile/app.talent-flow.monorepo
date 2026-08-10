@@ -685,7 +685,7 @@ export function CandidateAuthScreen({
 
           <div className="relative flex items-center justify-center my-2">
             <div className="border-t border-border w-full" />
-            <span className="bg-card px-3 text-[10px] text-muted-foreground uppercase tracking-wider font-semibold absolute">
+            <span className="bg-card px-3 text-10px text-muted-foreground uppercase tracking-wider font-semibold absolute">
               or continue with email
             </span>
           </div>
@@ -796,7 +796,7 @@ export function CandidateAuthScreen({
                     <label className="block text-xs font-semibold text-foreground">
                       Confirm Password <span className="text-ember">*</span>
                     </label>
-                    <span className="text-[10px] text-muted-foreground">Must match</span>
+                    <span className="text-10px text-muted-foreground">Must match</span>
                   </div>
                   <div className="relative">
                     <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
@@ -835,12 +835,12 @@ export function CandidateAuthScreen({
                       <ShieldCheck className="size-3.5 text-ember" />
                       <span>Security CAPTCHA Check</span>
                     </p>
-                    <p className="text-[10px] text-muted-foreground">
+                    <p className="text-10px text-muted-foreground">
                       Cloudflare Turnstile · I am human
                     </p>
                   </div>
                 </div>
-                <span className="text-[10px] font-semibold text-success bg-success/15 px-2 py-0.5 rounded border border-success/30">
+                <span className="text-10px font-semibold text-success bg-success/15 px-2 py-0.5 rounded border border-success/30">
                   VERIFIED
                 </span>
               </div>
@@ -853,7 +853,7 @@ export function CandidateAuthScreen({
                   onChange={(e) => setAcceptTerms(e.target.checked)}
                   className="rounded text-ember focus:ring-ember cursor-pointer mt-0.5"
                 />
-                <span className="text-[11px] leading-tight text-muted-foreground">
+                <span className="text-11px leading-tight text-muted-foreground">
                   I accept the{" "}
                   <a href="#" className="text-ember hover:underline font-medium">
                     Terms of Service
@@ -925,7 +925,7 @@ export function CandidateAuthScreen({
 
         {/* Demo Personas */}
         <div className="border-t border-border pt-4 space-y-2">
-          <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider text-center flex items-center justify-center gap-1.5">
+          <p className="text-11px font-semibold text-muted-foreground uppercase tracking-wider text-center flex items-center justify-center gap-1.5">
             <Sparkles className="size-3 text-ember" />
             <span>1-Click Test Login (Instant Access)</span>
           </p>
@@ -936,7 +936,7 @@ export function CandidateAuthScreen({
               className="p-2.5 rounded-xl border border-ember/30 bg-ember/10 hover:bg-ember/20 text-left transition-colors cursor-pointer"
             >
               <p className="text-xs font-bold text-ember">New Candidate</p>
-              <p className="text-[10px] text-muted-foreground">Test Candidate Setup Wizard</p>
+              <p className="text-10px text-muted-foreground">Test Candidate Setup Wizard</p>
             </button>
 
             <button
@@ -945,7 +945,7 @@ export function CandidateAuthScreen({
               className="p-2.5 rounded-xl border border-border bg-surface hover:bg-accent text-left transition-colors cursor-pointer"
             >
               <p className="text-xs font-bold text-foreground">Alex Rivera</p>
-              <p className="text-[10px] text-muted-foreground">Dashboard (Hardware Stage)</p>
+              <p className="text-10px text-muted-foreground">Dashboard (Hardware Stage)</p>
             </button>
 
             <button
@@ -954,7 +954,7 @@ export function CandidateAuthScreen({
               className="p-2.5 rounded-xl border border-border bg-surface hover:bg-accent text-left transition-colors cursor-pointer"
             >
               <p className="text-xs font-bold text-foreground">Sarah Chen</p>
-              <p className="text-[10px] text-muted-foreground">Dashboard (Offer Stage)</p>
+              <p className="text-10px text-muted-foreground">Dashboard (Offer Stage)</p>
             </button>
           </div>
         </div>
@@ -991,7 +991,7 @@ export function CandidateAuthScreen({
 
             <div className="space-y-3">
               {/* Notice Banner */}
-              <div className="bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400 p-2.5 rounded-xl text-[11px] font-medium flex items-center gap-2">
+              <div className="bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400 p-2.5 rounded-xl text-11px font-medium flex items-center gap-2">
                 <Lock className="size-4 shrink-0" />
                 <span>
                   Candidate data will be stored in the <strong>candidates</strong> collection only
@@ -1025,13 +1025,13 @@ export function CandidateAuthScreen({
                     <p className="font-mono text-ember font-semibold text-sm break-all">
                       {createdUserEmail || email}
                     </p>
-                    <span className="text-[10px] text-amber-500 font-semibold bg-amber-500/15 px-2 py-0.5 rounded border border-amber-500/30 shrink-0">
+                    <span className="text-10px text-amber-500 font-semibold bg-amber-500/15 px-2 py-0.5 rounded border border-amber-500/30 shrink-0">
                       PENDING VERIFICATION
                     </span>
                   </div>
                 ) : (
                   <div className="space-y-2 bg-card p-3 rounded-lg border border-ember/50">
-                    <label className="block text-[11px] font-semibold text-foreground">
+                    <label className="block text-11px font-semibold text-foreground">
                       Correction: Enter correct candidate email address
                     </label>
                     <div className="flex gap-2">
@@ -1061,7 +1061,7 @@ export function CandidateAuthScreen({
                   </div>
                 )}
 
-                <p className="text-muted-foreground text-[11px] leading-relaxed">
+                <p className="text-muted-foreground text-11px leading-relaxed">
                   Please check your inbox and click the verification link. If you entered an
                   incorrect email address, click <strong>"Edit Email"</strong> or{" "}
                   <strong>"Go Back to Edit Email"</strong> below to change it.
@@ -1076,12 +1076,12 @@ export function CandidateAuthScreen({
                     <p className="text-xs font-semibold text-foreground">
                       Waiting for email link verification...
                     </p>
-                    <p className="text-[10px] text-muted-foreground">
+                    <p className="text-10px text-muted-foreground">
                       Click the link in your email inbox. Page will auto-proceed once clicked.
                     </p>
                   </div>
                 </div>
-                <span className="text-[10px] text-amber-500 font-semibold bg-amber-500/15 px-2 py-0.5 rounded border border-amber-500/30 shrink-0">
+                <span className="text-10px text-amber-500 font-semibold bg-amber-500/15 px-2 py-0.5 rounded border border-amber-500/30 shrink-0">
                   LISTENING
                 </span>
               </div>

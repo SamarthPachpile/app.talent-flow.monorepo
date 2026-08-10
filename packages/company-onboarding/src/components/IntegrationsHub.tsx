@@ -79,7 +79,7 @@ export const IntegrationsHub: React.FC<IntegrationsProps> = ({ state, setState }
             <div>
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider bg-surface border border-border px-2 py-0.5 rounded-md">
+                  <span className="text-10px font-semibold text-muted-foreground uppercase tracking-wider bg-surface border border-border px-2 py-0.5 rounded-md">
                     {item.category}
                   </span>
                   <h3 className="text-2xl font-display text-foreground mt-2">{item.name}</h3>

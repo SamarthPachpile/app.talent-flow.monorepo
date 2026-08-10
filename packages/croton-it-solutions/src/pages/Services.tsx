@@ -52,7 +52,7 @@ export default function Services() {
         data-label="Our Services"
         className="pt-32 sm:pt-40 pb-16 sm:pb-20 max-w-[1400px] mx-auto px-4 sm:px-6"
       >
-        <p className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-primary mb-3">
+        <p className="text-10px sm:text-xs uppercase tracking-[0.3em] text-primary mb-3">
           What we do
         </p>
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6">Our Services</h1>

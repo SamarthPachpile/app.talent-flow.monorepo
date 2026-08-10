@@ -159,7 +159,7 @@ export const CandidateHomePage: React.FC<CandidateHomePageProps> = ({
                 <span className="text-base sm:text-lg font-bold text-foreground tracking-tight">
                   TalentFlow Candidate Hub
                 </span>
-                <span className="text-[10px] text-muted-foreground mt-0.5 font-medium">
+                <span className="text-10px text-muted-foreground mt-0.5 font-medium">
                   Candidate Portal & Experience
                 </span>
               </div>
@@ -308,10 +308,8 @@ export const CandidateHomePage: React.FC<CandidateHomePageProps> = ({
               <span>FedEx Express Shipment</span>
               <span className="size-2 rounded-full bg-success animate-ping" />
             </div>
-            <p className="text-[10px] text-success font-mono mt-0.5">Track: FX-9823419082-US</p>
-            <p className="text-[10px] text-muted-foreground mt-1">
-              Delivering Tomorrow by 10:30 AM
-            </p>
+            <p className="text-10px text-success font-mono mt-0.5">Track: FX-9823419082-US</p>
+            <p className="text-10px text-muted-foreground mt-1">Delivering Tomorrow by 10:30 AM</p>
           </div>
         </motion.div>
 
@@ -325,10 +323,8 @@ export const CandidateHomePage: React.FC<CandidateHomePageProps> = ({
           </div>
           <div className="text-xs">
             <p className="font-semibold text-foreground">Digital Offer Contract</p>
-            <p className="text-[10px] text-ember font-semibold mt-0.5">E-Signed in 20 Seconds</p>
-            <p className="text-[10px] text-muted-foreground mt-1">
-              PDF Verification Stamp Approved
-            </p>
+            <p className="text-10px text-ember font-semibold mt-0.5">E-Signed in 20 Seconds</p>
+            <p className="text-10px text-muted-foreground mt-1">PDF Verification Stamp Approved</p>
           </div>
         </motion.div>
 
@@ -401,19 +397,19 @@ export const CandidateHomePage: React.FC<CandidateHomePageProps> = ({
                     <h4 className="text-xs font-bold text-foreground">
                       Amara Okonkwo · Candidate Portal
                     </h4>
-                    <p className="text-[10px] text-muted-foreground">
+                    <p className="text-10px text-muted-foreground">
                       Senior Backend Engineer · Acme Corporation
                     </p>
                   </div>
                 </div>
-                <span className="text-[10px] bg-success/15 text-success border border-success/30 px-2.5 py-1 rounded-full font-semibold flex items-center gap-1.5">
+                <span className="text-10px bg-success/15 text-success border border-success/30 px-2.5 py-1 rounded-full font-semibold flex items-center gap-1.5">
                   <span className="size-2 rounded-full bg-success animate-ping" /> Stage 3 of 7:
                   Offer Accepted
                 </span>
               </div>
 
               <div className="space-y-2 text-xs">
-                <div className="flex items-center justify-between text-[11px]">
+                <div className="flex items-center justify-between text-11px">
                   <span className="text-muted-foreground font-medium">
                     7-Stage Roadmap Completion
                   </span>
@@ -446,7 +442,7 @@ export const CandidateHomePage: React.FC<CandidateHomePageProps> = ({
               <p className="font-display text-3xl md:text-4xl font-bold text-foreground mt-1">
                 7 Stages
               </p>
-              <p className="text-[11px] text-success font-medium mt-1">Application to Day 1</p>
+              <p className="text-11px text-success font-medium mt-1">Application to Day 1</p>
             </div>
             <div className="bg-card/50 border border-border/80 rounded-xl p-5 shadow-xs hover:border-ember/40 transition-all hover:bg-card/80">
               <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
@@ -455,7 +451,7 @@ export const CandidateHomePage: React.FC<CandidateHomePageProps> = ({
               <p className="font-display text-3xl md:text-4xl font-bold text-foreground mt-1">
                 1-Click
               </p>
-              <p className="text-[11px] text-success font-medium mt-1">Legally Binding PDF</p>
+              <p className="text-11px text-success font-medium mt-1">Legally Binding PDF</p>
             </div>
             <div className="bg-card/50 border border-border/80 rounded-xl p-5 shadow-xs hover:border-ember/40 transition-all hover:bg-card/80">
               <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
@@ -464,7 +460,7 @@ export const CandidateHomePage: React.FC<CandidateHomePageProps> = ({
               <p className="font-display text-3xl md:text-4xl font-bold text-ember mt-1">
                 FedEx Tracked
               </p>
-              <p className="text-[11px] text-muted-foreground mt-1">Laptop & accessories</p>
+              <p className="text-11px text-muted-foreground mt-1">Laptop & accessories</p>
             </div>
             <div className="bg-card/50 border border-border/80 rounded-xl p-5 shadow-xs hover:border-ember/40 transition-all hover:bg-card/80">
               <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
@@ -473,7 +469,7 @@ export const CandidateHomePage: React.FC<CandidateHomePageProps> = ({
               <p className="font-display text-3xl md:text-4xl font-bold text-foreground mt-1">
                 24/7 Helpdesk
               </p>
-              <p className="text-[11px] text-success font-medium mt-1">Direct Recruiter Chat</p>
+              <p className="text-11px text-success font-medium mt-1">Direct Recruiter Chat</p>
             </div>
           </motion.div>
         </motion.div>
@@ -519,13 +515,13 @@ export const CandidateHomePage: React.FC<CandidateHomePageProps> = ({
                   >
                     <Icon className="size-4" />
                   </div>
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block text-center">
+                  <span className="text-10px font-bold text-muted-foreground uppercase tracking-wider block text-center">
                     Stage {stg.id}
                   </span>
                   <h3 className="text-xs font-semibold text-foreground leading-tight text-center">
                     {stg.name}
                   </h3>
-                  <p className="text-[10px] text-muted-foreground leading-normal text-center">
+                  <p className="text-10px text-muted-foreground leading-normal text-center">
                     {stg.desc}
                   </p>
                 </motion.button>
@@ -544,7 +540,7 @@ export const CandidateHomePage: React.FC<CandidateHomePageProps> = ({
               className="bg-card border border-border rounded-2xl p-6 shadow-lifted max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6"
             >
               <div className="space-y-2">
-                <span className="text-[10px] font-bold bg-ember/15 text-ember border border-ember/30 px-2.5 py-0.5 rounded-full uppercase">
+                <span className="text-10px font-bold bg-ember/15 text-ember border border-ember/30 px-2.5 py-0.5 rounded-full uppercase">
                   Stage {activeStageObj.id} Deep-Dive Preview
                 </span>
                 <h3 className="text-xl font-display font-bold text-foreground">
@@ -600,7 +596,7 @@ export const CandidateHomePage: React.FC<CandidateHomePageProps> = ({
                   >
                     <Laptop className="size-5 text-ember" />
                     <p className="text-xs text-foreground">Apple MacBook Pro 16"</p>
-                    <p className="text-[10px] text-muted-foreground">M3 Max · 36GB RAM</p>
+                    <p className="text-10px text-muted-foreground">M3 Max · 36GB RAM</p>
                   </button>
 
                   <button
@@ -613,7 +609,7 @@ export const CandidateHomePage: React.FC<CandidateHomePageProps> = ({
                   >
                     <Laptop className="size-5 text-ember" />
                     <p className="text-xs text-foreground">Lenovo ThinkPad Z16</p>
-                    <p className="text-[10px] text-muted-foreground">AMD Ryzen 9 · 32GB RAM</p>
+                    <p className="text-10px text-muted-foreground">AMD Ryzen 9 · 32GB RAM</p>
                   </button>
                 </div>
               </div>
@@ -683,7 +679,7 @@ export const CandidateHomePage: React.FC<CandidateHomePageProps> = ({
                 <span className="text-xs font-semibold text-foreground uppercase tracking-wider">
                   Your IT Gear Package
                 </span>
-                <span className="text-[10px] font-bold bg-success/15 text-success border border-success/30 px-2 py-0.5 rounded">
+                <span className="text-10px font-bold bg-success/15 text-success border border-success/30 px-2 py-0.5 rounded">
                   FedEx Express Ready
                 </span>
               </div>
@@ -748,12 +744,12 @@ export const CandidateHomePage: React.FC<CandidateHomePageProps> = ({
                   <h4 className="text-sm font-bold text-foreground">
                     Employment Agreement — Acme Corp
                   </h4>
-                  <p className="text-[11px] text-muted-foreground">
+                  <p className="text-11px text-muted-foreground">
                     Position: Senior Software Engineer · Base: $185,000/yr
                   </p>
                 </div>
               </div>
-              <span className="text-[10px] font-mono bg-surface px-2.5 py-1 rounded border border-border text-muted-foreground">
+              <span className="text-10px font-mono bg-surface px-2.5 py-1 rounded border border-border text-muted-foreground">
                 REF: DOC-99214
               </span>
             </div>
@@ -904,7 +900,7 @@ export const CandidateHomePage: React.FC<CandidateHomePageProps> = ({
                 </div>
                 <div>
                   <p className="text-xs font-semibold text-foreground">Amara Okonkwo</p>
-                  <p className="text-[11px] text-muted-foreground">
+                  <p className="text-11px text-muted-foreground">
                     Senior Backend Engineer · Placed at Acme Corp
                   </p>
                 </div>
@@ -931,7 +927,7 @@ export const CandidateHomePage: React.FC<CandidateHomePageProps> = ({
                 </div>
                 <div>
                   <p className="text-xs font-semibold text-foreground">Wei Zhang</p>
-                  <p className="text-[11px] text-muted-foreground">
+                  <p className="text-11px text-muted-foreground">
                     Staff Architect · Placed at Acme Corp
                   </p>
                 </div>
@@ -1006,7 +1002,7 @@ export const CandidateHomePage: React.FC<CandidateHomePageProps> = ({
       <footer className="mt-auto border-t border-border bg-card py-8 px-6 text-xs text-muted-foreground">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <span className="grid size-6 place-items-center rounded bg-ember text-[10px] font-bold text-ember-foreground">
+            <span className="grid size-6 place-items-center rounded bg-ember text-10px font-bold text-ember-foreground">
               TF
             </span>
             <span className="font-semibold text-foreground">TalentFlow Candidate Hub</span>

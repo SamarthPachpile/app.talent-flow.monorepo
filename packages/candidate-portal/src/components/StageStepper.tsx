@@ -54,7 +54,7 @@ export const StageStepper: React.FC<StageStepperProps> = ({
             Track all 7 stages from application submission to laptop delivery & Day 1 orientation
           </p>
         </div>
-        <span className="hidden md:inline-block text-[11px] font-medium text-muted-foreground bg-surface px-2.5 py-1 rounded-md border border-border">
+        <span className="hidden md:inline-block text-11px font-medium text-muted-foreground bg-surface px-2.5 py-1 rounded-md border border-border">
           Click any stage to view details
         </span>
       </div>
@@ -121,22 +121,22 @@ export const StageStepper: React.FC<StageStepperProps> = ({
 
                 {/* Status pill badge */}
                 {isCompleted && (
-                  <span className="text-[10px] font-semibold text-success bg-success/10 px-1.5 py-0.5 rounded-xs inline-block">
+                  <span className="text-10px font-semibold text-success bg-success/10 px-1.5 py-0.5 rounded-xs inline-block">
                     Done
                   </span>
                 )}
                 {isActionRequired && (
-                  <span className="text-[10px] font-semibold text-warning-foreground bg-warning/20 px-1.5 py-0.5 rounded-xs inline-block border border-warning/30">
+                  <span className="text-10px font-semibold text-warning-foreground bg-warning/20 px-1.5 py-0.5 rounded-xs inline-block border border-warning/30">
                     Action Required
                   </span>
                 )}
                 {isInProgress && (
-                  <span className="text-[10px] font-semibold text-ember bg-ember/10 px-1.5 py-0.5 rounded-xs inline-block">
+                  <span className="text-10px font-semibold text-ember bg-ember/10 px-1.5 py-0.5 rounded-xs inline-block">
                     In Progress
                   </span>
                 )}
                 {stage.status === "pending" && (
-                  <span className="text-[10px] font-medium text-muted-foreground bg-surface px-1.5 py-0.5 rounded-xs inline-block border border-border">
+                  <span className="text-10px font-medium text-muted-foreground bg-surface px-1.5 py-0.5 rounded-xs inline-block border border-border">
                     Upcoming
                   </span>
                 )}

@@ -161,7 +161,7 @@ export function OffersPage() {
                         <p className="text-xs text-muted-foreground">
                           {o.role} · {o.salary} + {o.bonus} · starts {o.startDate}
                         </p>
-                        <p className="mt-1 text-[11px] text-muted-foreground">
+                        <p className="mt-1 text-11px text-muted-foreground">
                           Signer {o.signerEmail} · expires {o.expiresOn}
                           {o.signatureId ? ` · signature ${o.signatureId}` : ""}
                         </p>
@@ -173,7 +173,7 @@ export function OffersPage() {
                       {OFFER_FLOW.map((f, i) => (
                         <li
                           key={f.status}
-                          className={`rounded-full border px-2.5 py-1 text-[11px] ${
+                          className={`rounded-full border px-2.5 py-1 text-11px ${
                             i <= idx
                               ? "border-ember/40 bg-ember/10 text-foreground"
                               : "border-border text-muted-foreground"

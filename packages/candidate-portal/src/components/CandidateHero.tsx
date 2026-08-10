@@ -108,7 +108,7 @@ export const CandidateHero: React.FC<CandidateHeroProps> = ({
                     {compName} · Candidate Operations
                   </p>
                   <span
-                    className="border text-[10px] px-2.5 py-0.5 rounded-full font-semibold flex items-center gap-1 shrink-0"
+                    className="border text-10px px-2.5 py-0.5 rounded-full font-semibold flex items-center gap-1 shrink-0"
                     style={{
                       backgroundColor: `${compColor}15`,
                       color: compColor,
@@ -158,7 +158,7 @@ export const CandidateHero: React.FC<CandidateHeroProps> = ({
                 </span>
               )}
               {company?.subdomain && (
-                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface border border-border font-mono text-[11px]">
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface border border-border font-mono text-11px">
                   <Globe className="size-3 text-ember" />
                   /candidates-portal/{company.subdomain}
                 </span>
@@ -178,23 +178,21 @@ export const CandidateHero: React.FC<CandidateHeroProps> = ({
                   })}
                 </span>
               </p>
-              <p className="mt-1 text-[11px] text-muted-foreground font-medium">
-                Target Start Date
-              </p>
+              <p className="mt-1 text-11px text-muted-foreground font-medium">Target Start Date</p>
             </div>
 
             <div className="p-3.5 rounded-xl bg-card/75 border border-border/80 shadow-sm backdrop-blur-md">
               <p className="font-display text-2xl font-bold leading-none text-success">
                 {daysRemaining}d
               </p>
-              <p className="mt-1 text-[11px] text-muted-foreground font-medium">Days Countdown</p>
+              <p className="mt-1 text-11px text-muted-foreground font-medium">Days Countdown</p>
             </div>
 
             <div className="p-3.5 rounded-xl bg-card/75 border border-border/80 shadow-sm backdrop-blur-md">
               <p className="font-display text-2xl font-bold leading-none text-ember">
                 {progressPercent}%
               </p>
-              <p className="mt-1 text-[11px] text-muted-foreground font-medium">
+              <p className="mt-1 text-11px text-muted-foreground font-medium">
                 Onboarding Progress
               </p>
             </div>
@@ -203,7 +201,7 @@ export const CandidateHero: React.FC<CandidateHeroProps> = ({
               <p className="font-display text-2xl font-bold leading-none text-foreground">
                 {completedStages}/{stages.length}
               </p>
-              <p className="mt-1 text-[11px] text-muted-foreground font-medium">Stages Done</p>
+              <p className="mt-1 text-11px text-muted-foreground font-medium">Stages Done</p>
             </div>
           </div>
         </motion.div>
@@ -221,7 +219,7 @@ export const CandidateHero: React.FC<CandidateHeroProps> = ({
                 <Sparkles className="size-5 animate-pulse" />
               </div>
               <div>
-                <div className="text-[11px] font-bold text-ember uppercase tracking-wider">
+                <div className="text-11px font-bold text-ember uppercase tracking-wider">
                   Active Stage Requirement
                 </div>
                 <div className="text-sm font-bold text-foreground">{activeStage.title}</div>

@@ -199,7 +199,7 @@ export const CandidateOnboardingWizard: React.FC<CandidateOnboardingWizardProps>
                 <h1 className="font-display text-2xl font-bold text-foreground leading-tight">
                   Candidate Setup Wizard
                 </h1>
-                <span className="text-[10px] bg-ember/15 text-ember border border-ember/30 font-semibold px-2 py-0.5 rounded-full flex items-center gap-1 shrink-0">
+                <span className="text-10px bg-ember/15 text-ember border border-ember/30 font-semibold px-2 py-0.5 rounded-full flex items-center gap-1 shrink-0">
                   <Sparkles className="size-3" /> Step {currentStep} of {totalSteps}
                 </span>
               </div>
@@ -248,7 +248,7 @@ export const CandidateOnboardingWizard: React.FC<CandidateOnboardingWizardProps>
                 }`}
               >
                 <Icon className="size-4" />
-                <span className="text-[11px] truncate hidden sm:inline">{item.label}</span>
+                <span className="text-11px truncate hidden sm:inline">{item.label}</span>
               </button>
             );
           })}
@@ -261,7 +261,7 @@ export const CandidateOnboardingWizard: React.FC<CandidateOnboardingWizardProps>
               <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
                 <User className="size-5 text-ember" /> Personal Profile & Contact Details
               </h2>
-              <span className="text-[10px] font-semibold text-success bg-success/15 border border-success/30 px-2.5 py-1 rounded-full flex items-center gap-1">
+              <span className="text-10px font-semibold text-success bg-success/15 border border-success/30 px-2.5 py-1 rounded-full flex items-center gap-1">
                 <CheckCircle className="size-3" /> Pre-filled from Verified Registration
               </span>
             </div>
@@ -367,7 +367,7 @@ export const CandidateOnboardingWizard: React.FC<CandidateOnboardingWizardProps>
                     <p className="text-xs font-semibold text-foreground">
                       Uploaded Resume Document
                     </p>
-                    <p className="text-[11px] font-mono text-muted-foreground">{resumeFileName}</p>
+                    <p className="text-11px font-mono text-muted-foreground">{resumeFileName}</p>
                   </div>
                 </div>
                 <label className="px-3 py-1.5 rounded-lg bg-card border border-border hover:border-ember text-foreground text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition-colors shrink-0">

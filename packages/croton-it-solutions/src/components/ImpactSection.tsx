@@ -134,9 +134,9 @@ export default function ImpactSection() {
       transition={{ duration: 0.6 }}
       className="w-screen min-h-screen flex items-center justify-center overflow-hidden"
     >
-      <div className="w-full max-w-[1920px] px-6 py-10 relative">
+      <div className="w-full max-w-[1920px] px-6 pt-12 relative">
         {/* HEADER SECTION */}
-        <div className="max-w-[900px] mb-20 ml-10">
+        <div className="max-w-[900px] mb-20 ml-12 ">
           <h1
             className={`text-[2rem] sm:text-[2rem] lg:text-[4rem] leading-[60px] tracking-[-0.02em] ${
               dark ? "text-white" : "text-[#111625]"
@@ -159,7 +159,7 @@ export default function ImpactSection() {
         {/* CURVE */}
         <svg
           viewBox="0 0 1600 420"
-          className="absolute left-0 right-0 bottom-[150px] w-full h-[420px]"
+          className="absolute left-0 right-0 bottom-[150px] w-full h-420px"
           preserveAspectRatio="none"
         >
           <path d="M0 320 Q800 40 1600 320" fill="none" stroke="#ff5a1f" strokeWidth="3" />
@@ -237,7 +237,7 @@ export default function ImpactSection() {
                       stiffness: 120,
                       damping: 18,
                     }}
-                    className="absolute left-1/2 -translate-x-1/2 text-center w-[320px]"
+                    className="absolute left-1/2 -translate-x-1/2 text-center w-320px"
                   >
                     {/* TIME */}
                     <div
@@ -288,32 +288,82 @@ export default function ImpactSection() {
         </div>
 
         {/* CONTROLS */}
-        <div className="relative z-20 flex items-center justify-center gap-10">
+        <div className="relative z-20 flex items-center justify-center gap-11 -top-[100px]">
           <button
             onClick={prev}
             className={`hover:scale-110 transition ${dark ? "text-white" : "text-[#111625]"}`}
           >
-            <ArrowLeft className="w-10 h-10" />
+            <ArrowLeft className="w-12 h-auto" />
           </button>
 
-          <div className="w-[280px] h-[82px] bg-[#a8d2f2] rounded-full flex items-center justify-between px-5">
-            <div className="w-14 h-14 rounded-full bg-white flex items-center justify-center">
+          <motion.div
+            animate={{
+              backgroundColor:
+                current.phase === "night"
+                  ? "#1e293b"
+                  : current.phase === "afternoon"
+                    ? "#fcd34d"
+                    : "#a8d2f2",
+            }}
+            transition={{ duration: 0.5 }}
+            className="relative w-[280px] h-[82px] rounded-full flex items-center justify-between px-3.5 shadow-md"
+          >
+            {/* Phase click targets & dots */}
+            {[0, 1, 2].map((pIndex) => {
+              const phaseIndex =
+                current.phase === "afternoon" ? 1 : current.phase === "night" ? 2 : 0;
+              return (
+                <button
+                  key={pIndex}
+                  onClick={() => {
+                    const targetIndex = pIndex === 0 ? 0 : pIndex === 1 ? 5 : 8;
+                    setDirection(targetIndex > active ? 1 : -1);
+                    setActive(targetIndex);
+                  }}
+                  className="w-14 h-14 rounded-full flex items-center justify-center z-10 focus:outline-none cursor-pointer"
+                  aria-label={`Jump to ${pIndex === 0 ? "Morning" : pIndex === 1 ? "Afternoon" : "Night"}`}
+                >
+                  <div
+                    className={`w-4 h-4 rounded-full transition-opacity duration-300 ${
+                      dark ? "bg-white/40" : "bg-[#111625]/30"
+                    } ${phaseIndex === pIndex ? "opacity-0" : "opacity-100"}`}
+                  />
+                </button>
+              );
+            })}
+
+            {/* Sliding White Bubble */}
+            <motion.div
+              className="absolute top-[13px] w-14 h-14 rounded-full bg-white shadow-lg flex items-center justify-center z-20 pointer-events-none"
+              animate={{
+                left:
+                  (current.phase === "afternoon" ? 1 : current.phase === "night" ? 2 : 0) === 0
+                    ? "14px"
+                    : (current.phase === "afternoon" ? 1 : current.phase === "night" ? 2 : 0) === 1
+                      ? "112px"
+                      : "210px",
+              }}
+              transition={{
+                type: "spring",
+                stiffness: 300,
+                damping: 25,
+              }}
+            >
               {dark ? (
                 <Moon className="w-7 h-7 text-[#111625]" />
+              ) : current.phase === "afternoon" ? (
+                <Sun className="w-7 h-7 text-amber-600" />
               ) : (
                 <Sun className="w-7 h-7 text-[#111625]" />
               )}
-            </div>
-
-            <div className="w-5 h-5 rounded-full bg-[#f3efe7]" />
-            <div className="w-5 h-5 rounded-full bg-[#f3efe7]" />
-          </div>
+            </motion.div>
+          </motion.div>
 
           <button
             onClick={next}
             className={`hover:scale-110 transition ${dark ? "text-white" : "text-[#111625]"}`}
           >
-            <ArrowRight className="w-10 h-10" />
+            <ArrowRight className="w-12 h-auto" />
           </button>
         </div>
       </div>

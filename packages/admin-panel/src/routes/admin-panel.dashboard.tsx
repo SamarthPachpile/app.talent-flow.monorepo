@@ -82,7 +82,7 @@ export function DashboardPage() {
                 <p className="text-xs tracking-[0.18em] text-muted-foreground uppercase font-semibold">
                   {OPERATOR.name} · Global CRM Operations
                 </p>
-                <span className="bg-ember/15 text-ember border border-ember/30 text-[10px] px-2 py-0.5 rounded font-semibold flex items-center gap-1">
+                <span className="bg-ember/15 text-ember border border-ember/30 text-10px px-2 py-0.5 rounded font-semibold flex items-center gap-1">
                   <Globe2 className="size-3" /> Route: /admin-panel/dashboard
                 </span>
               </div>
@@ -181,8 +181,8 @@ export function DashboardPage() {
                       {items.length}
                     </Badge>
                   </div>
-                  <p className="mt-1 text-[11px] text-muted-foreground">{phase.hint}</p>
-                  <p className="mt-2 text-[10px] tracking-wide text-muted-foreground uppercase font-semibold">
+                  <p className="mt-1 text-11px text-muted-foreground">{phase.hint}</p>
+                  <p className="mt-2 text-10px tracking-wide text-muted-foreground uppercase font-semibold">
                     {phase.stages.length} stages
                   </p>
                 </div>
@@ -199,10 +199,10 @@ export function DashboardPage() {
                         <div key={c.id} className="relative">
                           {companyObj && (
                             <div className="mb-1 flex items-center justify-between px-1">
-                              <span className="text-[10px] font-mono text-ember font-semibold truncate">
+                              <span className="text-10px font-mono text-ember font-semibold truncate">
                                 {companyObj.name}
                               </span>
-                              <span className="text-[9px] bg-accent px-1.5 py-0.2 rounded text-muted-foreground">
+                              <span className="text-9px bg-accent px-1.5 py-0.2 rounded text-muted-foreground">
                                 {companyObj.short}
                               </span>
                             </div>

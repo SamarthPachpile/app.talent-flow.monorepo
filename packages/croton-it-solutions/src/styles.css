@@ -166,27 +166,25 @@
   }
 
   /* Custom cursor - strictly active inside croton-scope, never bleeding into other portals */
-  @media (min-width: 768px) and (pointer: fine) {
-    html.custom-cursor-active .croton-scope,
-    html.custom-cursor-active .croton-scope a,
-    html.custom-cursor-active .croton-scope button,
-    html.custom-cursor-active .croton-scope input,
-    html.custom-cursor-active .croton-scope textarea,
-    html.custom-cursor-active .croton-scope select,
-    html.custom-cursor-active .croton-scope [role="button"] {
-      cursor: none !important;
-    }
+  html.custom-cursor-active .croton-scope,
+  html.custom-cursor-active .croton-scope a,
+  html.custom-cursor-active .croton-scope button,
+  html.custom-cursor-active .croton-scope input,
+  html.custom-cursor-active .croton-scope textarea,
+  html.custom-cursor-active .croton-scope select,
+  html.custom-cursor-active .croton-scope [role="button"] {
+    cursor: none !important;
+  }
 
-    /* Embedded portal subnets and external components retain native cursor */
-    html.custom-cursor-active iframe,
-    html.custom-cursor-active .talentflow-admin-panel-scope,
-    html.custom-cursor-active .talentflow-admin-panel-scope *,
-    html.custom-cursor-active .talentflow-company-onboarding-scope,
-    html.custom-cursor-active .talentflow-company-onboarding-scope *,
-    html.custom-cursor-active .talentflow-candidate-portal-scope,
-    html.custom-cursor-active .talentflow-candidate-portal-scope * {
-      cursor: auto !important;
-    }
+  /* Embedded portal subnets and external components retain native cursor */
+  html.custom-cursor-active iframe,
+  html.custom-cursor-active .talentflow-admin-panel-scope,
+  html.custom-cursor-active .talentflow-admin-panel-scope *,
+  html.custom-cursor-active .talentflow-company-onboarding-scope,
+  html.custom-cursor-active .talentflow-company-onboarding-scope *,
+  html.custom-cursor-active .talentflow-candidate-portal-scope,
+  html.custom-cursor-active .talentflow-candidate-portal-scope * {
+    cursor: auto !important;
   }
 
   /* Lenis required */
@@ -318,4 +316,25 @@
 
 .croton-scope .scrollable::-webkit-scrollbar {
   display: none;
+}
+
+@keyframes stats-marquee {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.croton-scope .animate-stats-slide {
+  display: flex;
+  width: max-content;
+  animation: stats-marquee 16s linear infinite;
+  will-change: transform;
+}
+
+.croton-scope .animate-stats-slide:hover,
+.croton-scope .animate-stats-slide:active {
+  animation-play-state: paused;
 }

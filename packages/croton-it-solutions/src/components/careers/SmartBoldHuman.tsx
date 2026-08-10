@@ -8,7 +8,7 @@ export default function SmartBoldHuman() {
       id="our-story"
       data-section="our-story"
       data-label="Story"
-      className="relative h-[100vh] min-h-[700px] overflow-hidden"
+      className="relative h-[100vh] min-h-700px overflow-hidden"
     >
       {/* BACKGROUND */}
       <div className="absolute inset-0">
@@ -43,7 +43,7 @@ export default function SmartBoldHuman() {
           whileInView={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.8 }}
         >
-          <p className="text-[10px] sm:text-xs uppercase tracking-[0.35em] text-[#fcfcfc]">
+          <p className="text-10px sm:text-xs uppercase tracking-[0.35em] text-[#fcfcfc]">
             The Tapasys Group Company
           </p>
 

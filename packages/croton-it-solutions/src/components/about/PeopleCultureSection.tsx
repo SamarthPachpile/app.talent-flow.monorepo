@@ -35,10 +35,10 @@ export default function PeopleCultureSection() {
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.2 }}
           >
-            <p className="text-[12px] sm:text-[14px] md:text-base lg:text-lg tracking-widest text-muted-foreground mb-3 sm:mb-4 uppercase">
+            <p className="text-12px sm:text-14px md:text-base lg:text-lg tracking-widest text-muted-foreground mb-3 sm:mb-4 uppercase">
               People & Culture
             </p>
-            <h2 className="text-[28px] sm:text-[40px] md:text-6xl lg:text-7xl xl:text-7xl leading-[1.1] mb-4 sm:mb-6 font-semibold">
+            <h2 className="text-28px sm:text-40px md:text-6xl lg:text-7xl xl:text-7xl leading-[1.1] mb-4 sm:mb-6 font-semibold">
               A <span className="text-primary">people-first</span> consultancy
             </h2>
             <p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-2xl">

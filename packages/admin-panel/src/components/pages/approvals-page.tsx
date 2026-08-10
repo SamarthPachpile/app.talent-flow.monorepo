@@ -150,7 +150,7 @@ export function ApprovalsPage() {
                             {a.candidateName} · {a.role}
                           </p>
                           <p className="mt-1 max-w-xl text-xs text-muted-foreground">{a.summary}</p>
-                          <p className="mt-1 text-[11px] text-muted-foreground">
+                          <p className="mt-1 text-11px text-muted-foreground">
                             Approver {a.approver} · requested {a.requestedOn} · unlocks{" "}
                             {a.nextStage}
                           </p>

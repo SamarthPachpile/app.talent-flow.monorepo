@@ -47,7 +47,7 @@ export default function InfiniteSlider({ items }: { items: SliderItem[] }) {
       <div className="overflow-hidden relative">
         {/* SLIDER TRACK */}
         <motion.div
-          className="flex gap-[4px] px-[15vw]" // Exactly 4px gap
+          className="flex gap-4px px-[15vw]" // Exactly 4px gap
           style={{ willChange: "transform" }}
           animate={{
             x: `calc(-${index} * (70vw + 4px))`, // Important: match gap here
@@ -84,7 +84,7 @@ export default function InfiniteSlider({ items }: { items: SliderItem[] }) {
                 transition={isTransitioning ? { duration: 0.4 } : { duration: 0 }}
               >
                 <div className="relative overflow-hidden">
-                  <img src={item.img} alt="" className="w-full h-[600px] object-cover" />
+                  <img src={item.img} alt="" className="w-full h-600px object-cover" />
 
                   {/* Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />

@@ -245,7 +245,7 @@ export default function ZeroDistance() {
       {/* BIG BACKGROUND TEXT */}
       <h2
         className="absolute top-10 left-1/2 -translate-x-1/2
-        text-[120px] sm:text-[180px] md:text-[240px]
+        text-120px sm:text-[180px] md:text-240px
         font-semibold text-[#2f3a4a] opacity-20 leading-none whitespace-nowrap pointer-events-none"
       >
         'zero distance'

@@ -88,7 +88,7 @@ export default function ClientImpactSection() {
                 <img
                   src={c.img}
                   alt={c.title}
-                  className="w-full h-[320px] object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="w-full h-320px object-cover transition-transform duration-500 group-hover:scale-105"
                 />
               </div>
 

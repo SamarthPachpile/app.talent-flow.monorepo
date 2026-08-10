@@ -178,7 +178,7 @@ export default function Insights() {
                 {article.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="text-[10px] px-2 py-0.5 border rounded-full text-primary border-primary"
+                    className="text-10px px-2 py-0.5 border rounded-full text-primary border-primary"
                   >
                     {tag}
                   </span>

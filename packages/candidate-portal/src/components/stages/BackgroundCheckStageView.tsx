@@ -90,7 +90,7 @@ export const BackgroundCheckStageView: React.FC<BackgroundCheckStageViewProps> =
                     </div>
                     <div>
                       <div className="text-xs font-semibold text-foreground">{doc.name}</div>
-                      <div className="text-[10px] text-muted-foreground">{doc.type}</div>
+                      <div className="text-10px text-muted-foreground">{doc.type}</div>
                     </div>
                   </div>
 
@@ -155,7 +155,7 @@ export const BackgroundCheckStageView: React.FC<BackgroundCheckStageViewProps> =
               )}
             </form>
 
-            <div className="pt-2 border-t border-border text-[11px] text-muted-foreground space-y-1">
+            <div className="pt-2 border-t border-border text-11px text-muted-foreground space-y-1">
               <div className="font-semibold text-foreground">Privacy Notice:</div>
               <p>
                 Your SSN and documents are encrypted using AES-256 and transmitted directly to

@@ -82,7 +82,7 @@ export default function PurposeHero() {
       {/* Hero */}
       <section className="flex items-center justify-center text-center px-4">
         <div className="max-w-5xl">
-          <h1 className="text-[34px] sm:text-[48px] md:text-[64px] lg:text-[72px] leading-tight font-medium text-[#4a5166] tracking-tight">
+          <h1 className="text-34px sm:text-48px md:text-64px lg:text-72px leading-tight font-medium text-[#4a5166] tracking-tight">
             Our purpose is to create a positive impact for society and the planet
           </h1>
 

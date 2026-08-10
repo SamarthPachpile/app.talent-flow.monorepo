@@ -72,9 +72,9 @@ export default function Header() {
             {/* LOGO */}
             <Link to="/" className="flex flex-col leading-none">
               <span className="text-lg sm:text-xl font-bold tracking-[0.8px] text-foreground">
-                Croton<sup className="text-[25px] top-0 ml-0.5">®</sup>
+                Croton<sup className="text-25px top-0 ml-0.5">®</sup>
               </span>
-              <span className="text-[9px] sm:text-[10px] text-muted-foreground mt-0.5">
+              <span className="text-9px sm:text-10px text-muted-foreground mt-0.5">
                 A Tapasys Group Company
               </span>
             </Link>
@@ -169,7 +169,7 @@ export default function Header() {
                             className="text-sm text-muted-foreground hover:text-primary font-medium transition flex items-center justify-between"
                           >
                             <span>{sub.label}</span>
-                            <span className="text-[10px] px-2 py-0.5 rounded bg-primary/10 text-primary font-semibold">
+                            <span className="text-10px px-2 py-0.5 rounded bg-primary/10 text-primary font-semibold">
                               Open
                             </span>
                           </a>
@@ -187,12 +187,12 @@ export default function Header() {
                 </div>
 
                 {/* MIDDLE */}
-                <div className="bg-[#18181b] border border-white/10 rounded-xl h-[160px] flex items-center justify-center text-sm text-muted-foreground">
+                <div className="bg-[#18181b] border border-white/10 rounded-xl h-160px flex items-center justify-center text-sm text-muted-foreground">
                   Featured Content
                 </div>
 
                 {/* RIGHT */}
-                <div className="bg-[#18181b] border border-white/10 rounded-xl h-[160px] flex items-center justify-center text-sm text-muted-foreground">
+                <div className="bg-[#18181b] border border-white/10 rounded-xl h-160px flex items-center justify-center text-sm text-muted-foreground">
                   Blogs / Case Studies
                 </div>
               </div>

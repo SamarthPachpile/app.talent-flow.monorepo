@@ -113,7 +113,7 @@ export const TeamManagement: React.FC<TeamProps> = ({ state, setState }) => {
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs text-foreground">
-            <thead className="bg-surface text-muted-foreground uppercase text-[11px] tracking-wider border-b border-border font-semibold">
+            <thead className="bg-surface text-muted-foreground uppercase text-11px tracking-wider border-b border-border font-semibold">
               <tr>
                 <th className="px-6 py-3">Email Address</th>
                 <th className="px-6 py-3">Assigned Role</th>
@@ -127,13 +127,13 @@ export const TeamManagement: React.FC<TeamProps> = ({ state, setState }) => {
                 <tr key={invite.id} className="hover:bg-accent/40">
                   <td className="px-6 py-3.5 font-medium text-foreground">{invite.email}</td>
                   <td className="px-6 py-3.5">
-                    <span className="px-2 py-0.5 rounded-md bg-surface border border-border text-foreground font-medium text-[11px]">
+                    <span className="px-2 py-0.5 rounded-md bg-surface border border-border text-foreground font-medium text-11px">
                       {invite.role}
                     </span>
                   </td>
                   <td className="px-6 py-3.5 text-muted-foreground">{invite.department}</td>
                   <td className="px-6 py-3.5">
-                    <span className="px-2 py-0.5 rounded-md bg-success/15 text-success border border-success/30 text-[11px] font-semibold">
+                    <span className="px-2 py-0.5 rounded-md bg-success/15 text-success border border-success/30 text-11px font-semibold">
                       {invite.status}
                     </span>
                   </td>

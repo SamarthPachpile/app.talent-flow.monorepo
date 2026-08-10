@@ -56,7 +56,7 @@ export default function WhatSetsUsApartSection() {
           {[0, 1, 2].map((col) => (
             <div
               key={col}
-              className={`border-[2px] transition-colors duration-300 ${
+              className={`border-2px transition-colors duration-300 ${
                 topHover !== null && getColumn(topHover) === col
                   ? "border-orange-500"
                   : "border-gray-300"
@@ -93,7 +93,7 @@ export default function WhatSetsUsApartSection() {
                 {card.title}
               </h3>
 
-              <p className="text-sm text-gray-600 leading-relaxed max-w-[90%]">{card.desc}</p>
+              <p className="text-sm text-gray-600 leading-relaxed max-w-90%">{card.desc}</p>
             </motion.div>
           ))}
         </div>
@@ -103,7 +103,7 @@ export default function WhatSetsUsApartSection() {
           {[0, 1, 2].map((col) => (
             <div
               key={col}
-              className={`border-[2px] transition-colors duration-300 ${
+              className={`border-2px transition-colors duration-300 ${
                 bottomHover !== null && getColumn(bottomHover) === col
                   ? "border-orange-500"
                   : "border-gray-300"
