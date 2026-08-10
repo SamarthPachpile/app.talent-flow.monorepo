@@ -68,29 +68,7 @@ npm install
 
 ### 2. Run Applications
 
-To start the **Startup Admin Panel**:
-
-```sh
-npm run dev:admin
-```
-
-_(Runs at `http://localhost:3000` via VITE_PORT/PORT env variable)_
-
-To start the **Company Onboarding Portal**:
-
-```sh
-npm run dev:onboarding
-```
-
-_(Runs at `http://localhost:3000` via VITE_PORT/PORT env variable)_
-
-To start the **Candidate Portal**:
-
-```sh
-npm run dev:candidates
-```
-
-_(Runs at `http://localhost:3000` via VITE_PORT/PORT env variable)_
+> Note: `npm run dev` at the root is disabled. Use `npm run dev:all` or individual package scripts.
 
 To run **all applications concurrently**:
 
@@ -98,22 +76,35 @@ To run **all applications concurrently**:
 npm run dev:all
 ```
 
+To start individual packages:
+
+```sh
+npm run dev:admin-panel           # Start Admin Panel
+npm run dev:candidate-portal      # Start Candidate Portal
+npm run dev:company-onboarding    # Start Company Onboarding Portal
+npm run dev:croton-it-solutions   # Start Croton IT Solutions
+```
+
 ---
 
 ## Build Commands
 
+> Note: `npm run build` at the root is disabled. Use `npm run build:all` or individual package scripts.
+
 Build all packages for production:
 
 ```sh
-npm run build
+npm run build:all
 ```
 
 Build individual packages:
 
 ```sh
-npm run build:admin        # Build Admin Panel
-npm run build:onboarding   # Build Company Onboarding Portal
-npm run build:candidates   # Build Candidate Portal
+npm run build:admin-panel           # Build Admin Panel
+npm run build:candidate-portal      # Build Candidate Portal
+npm run build:company-onboarding    # Build Company Onboarding Portal
+npm run build:croton-it-solutions   # Build Croton IT Solutions
+npm run build:api                   # Build API package
 ```
 
 ---

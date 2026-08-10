@@ -1,4 +1,41 @@
 {
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@admin-panel/*": ["packages/admin-panel/src/*"],
+      "@admin-panel": ["packages/admin-panel/src"],
+      "@admin/*": ["packages/admin-panel/src/*"],
+      "@admin": ["packages/admin-panel/src"],
+      "@talent-flow/admin-panel/*": ["packages/admin-panel/src/*"],
+      "@talent-flow/admin-panel": ["packages/admin-panel/src/components/AdminPanelContainer.tsx"],
+
+      "@api/*": ["packages/api/src/*"],
+      "@api": ["packages/api/src/index.ts"],
+      "@talent-flow/api/*": ["packages/api/src/*"],
+      "@talent-flow/api": ["packages/api/src/index.ts"],
+
+      "@candidate-portal/*": ["packages/candidate-portal/src/*"],
+      "@candidate-portal": ["packages/candidate-portal/src"],
+      "@candidate/*": ["packages/candidate-portal/src/*"],
+      "@candidate": ["packages/candidate-portal/src"],
+      "@talent-flow/candidate-portal/*": ["packages/candidate-portal/src/*"],
+      "@talent-flow/candidate-portal": ["packages/candidate-portal/src/App.tsx"],
+
+      "@company-onboarding/*": ["packages/company-onboarding/src/*"],
+      "@company-onboarding": ["packages/company-onboarding/src"],
+      "@onboarding/*": ["packages/company-onboarding/src/*"],
+      "@onboarding": ["packages/company-onboarding/src"],
+      "@talent-flow/company-onboarding/*": ["packages/company-onboarding/src/*"],
+      "@talent-flow/company-onboarding": ["packages/company-onboarding/src/App.tsx"],
+
+      "@croton-it-solutions/*": ["packages/croton-it-solutions/src/*"],
+      "@croton-it-solutions": ["packages/croton-it-solutions/src"],
+      "@croton/*": ["packages/croton-it-solutions/src/*"],
+      "@croton": ["packages/croton-it-solutions/src"],
+      "@talent-flow/croton-it-solutions/*": ["packages/croton-it-solutions/src/*"],
+      "@talent-flow/croton-it-solutions": ["packages/croton-it-solutions/src"]
+    }
+  },
   "files": [],
   "references": [
     { "path": "./packages/api" },

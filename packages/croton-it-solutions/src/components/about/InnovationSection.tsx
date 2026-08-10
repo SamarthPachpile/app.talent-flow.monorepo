@@ -33,11 +33,11 @@ export default function InnovationSection() {
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="text-2xl sm:text-3xl md:text-6xl text-center mb-2 sm:mb-5"
+          className="sm:text-3xl text-center text-primary tracking-[2.6px] mb-2 sm:mb-5"
         >
           A decade of CRM craftsmanship
         </motion.h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 sm:gap-20">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 py-5 px-10 sm:gap-20">
           {columns.map((col, i) => (
             <motion.div
               key={col.label}

@@ -20,15 +20,43 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
+      "@": ["./src"],
+      "@croton-it-solutions/*": ["./src/*"],
+      "@croton-it-solutions": ["./src"],
       "@croton/*": ["./src/*"],
+      "@croton": ["./src"],
+      "@talent-flow/croton-it-solutions/*": ["./src/*"],
+      "@talent-flow/croton-it-solutions": ["./src"],
+
       "@talent-flow/api": ["../api/src/index.ts"],
       "@talent-flow/api/*": ["../api/src/*"],
+      "@api": ["../api/src/index.ts"],
+      "@api/*": ["../api/src/*"],
+
+      "@talent-flow/admin-panel": ["../admin-panel/src/components/AdminPanelContainer.tsx"],
+      "@talent-flow/admin-panel/*": ["../admin-panel/src/*"],
+      "@admin-panel/*": ["../admin-panel/src/*"],
+      "@admin-panel": ["../admin-panel/src"],
+      "@admin/*": ["../admin-panel/src/*"],
+      "@admin": ["../admin-panel/src"],
+
       "@talent-flow/candidate-portal": ["../candidate-portal/src/App.tsx"],
+      "@talent-flow/candidate-portal/*": ["../candidate-portal/src/*"],
+      "@candidate-portal/*": ["../candidate-portal/src/*"],
+      "@candidate-portal": ["../candidate-portal/src"],
+      "@candidate/*": ["../candidate-portal/src/*"],
+      "@candidate": ["../candidate-portal/src"],
+
       "@talent-flow/company-onboarding": ["../company-onboarding/src/App.tsx"],
-      "@talent-flow/admin-panel": ["../admin-panel/src/components/AdminPanelContainer.tsx"]
+      "@talent-flow/company-onboarding/*": ["../company-onboarding/src/*"],
+      "@company-onboarding/*": ["../company-onboarding/src/*"],
+      "@company-onboarding": ["../company-onboarding/src"],
+      "@onboarding/*": ["../company-onboarding/src/*"],
+      "@onboarding": ["../company-onboarding/src"]
     }
   },
-  "include": ["src"]
+  "include": ["src/**/*", "vite.config.ts", "../../tailwind.config.ts"]
 }

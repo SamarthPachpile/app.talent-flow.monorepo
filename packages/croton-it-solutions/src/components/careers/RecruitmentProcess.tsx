@@ -204,6 +204,9 @@ export default function RecruitmentProcess() {
   return (
     <section
       ref={sectionRef}
+      id="recruitment-process"
+      data-section="recruitment-process"
+      data-label="Process"
       style={{
         height: "100vh",
         overflow: "hidden",

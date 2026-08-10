@@ -8,9 +8,11 @@ import { CompanyDashboard } from "./components/CompanyDashboard";
 import { OnboardingState } from "./types/onboarding";
 import { Candidate } from "./components/CompanyPipelineBoard";
 import { Toaster, toast } from "sonner";
-import { AlertTriangle, Building2, ArrowLeft, Plus } from "lucide-react";
+import { Building2, ArrowLeft, Plus } from "lucide-react";
 import { getDefaultOnboardingState } from "./lib/defaultOnboardingState";
 import { CompanyApiService, FirebaseAuthService, CompanyDocument } from "@talent-flow/api";
+
+import SmoothScrollProvider from "./components/SmoothScrollProvider";
 
 export const App: React.FC = () => {
   const [currentPath, setCurrentPath] = useState<string>(() => {
@@ -699,140 +701,142 @@ export const App: React.FC = () => {
   const progressPercent = Math.round((state.currentStep / totalSteps) * 100);
 
   return (
-    <div className="talentflow-company-onboarding-scope min-h-screen bg-background text-foreground flex flex-col font-sans">
-      <Toaster position="top-right" richColors />
+    <SmoothScrollProvider>
+      <div className="talentflow-company-onboarding-scope min-h-screen bg-background text-foreground flex flex-col font-sans">
+        <Toaster position="top-right" richColors />
 
-      {/* Header Navigation for Company Portal */}
-      {activeTab !== "home" && activeTab !== "auth" && (
-        <Header
-          activeTab={activeTab}
-          setActiveTab={(tab) => {
-            if (!state.isCompleted && tab === "dashboard") {
-              toast.warning(
-                "Mandatory Step: Complete company setup before accessing the dashboard.",
-              );
-              setActiveTab("wizard");
-            } else {
-              setActiveTab(tab);
-            }
-          }}
-          companyName={state.profile.name}
-          subdomain={state.profile.subdomain}
-          industry={state.profile.industry}
-          size={state.profile.size}
-          adminEmail={state.admin.workEmail}
-          progressPercent={progressPercent}
-          isCompleted={state.isCompleted}
-          activeSubTab={dashboardSubTab}
-          onSelectSubTab={(subTab) => setDashboardSubTab(subTab)}
-          onNavigateRoute={navigateTo}
-          onLogout={handleLogout}
-        />
-      )}
+        {/* Header Navigation for Company Portal */}
+        {activeTab !== "home" && activeTab !== "auth" && (
+          <Header
+            activeTab={activeTab}
+            setActiveTab={(tab) => {
+              if (!state.isCompleted && tab === "dashboard") {
+                toast.warning(
+                  "Mandatory Step: Complete company setup before accessing the dashboard.",
+                );
+                setActiveTab("wizard");
+              } else {
+                setActiveTab(tab);
+              }
+            }}
+            companyName={state.profile.name}
+            subdomain={state.profile.subdomain}
+            industry={state.profile.industry}
+            size={state.profile.size}
+            adminEmail={state.admin.workEmail}
+            progressPercent={progressPercent}
+            isCompleted={state.isCompleted}
+            activeSubTab={dashboardSubTab}
+            onSelectSubTab={(subTab) => setDashboardSubTab(subTab)}
+            onNavigateRoute={navigateTo}
+            onLogout={handleLogout}
+          />
+        )}
 
-      {/* Main View Router */}
-      <main className="flex-1">
-        {companyNotFound ? (
-          <div className="talentflow-company-onboarding-scope min-h-screen bg-background font-sans text-foreground flex flex-col items-center justify-center p-6 text-center animate-fadeIn">
-            <div className="max-w-md w-full bg-card border border-border/80 rounded-2xl p-8 shadow-xl space-y-6">
-              <div className="size-16 rounded-2xl bg-destructive/10 text-destructive flex items-center justify-center mx-auto ring-8 ring-destructive/5">
-                <Building2 className="size-8" />
-              </div>
+        {/* Main View Router */}
+        <main className="flex-1">
+          {companyNotFound ? (
+            <div className="talentflow-company-onboarding-scope min-h-screen bg-background font-sans text-foreground flex flex-col items-center justify-center p-6 text-center animate-fadeIn">
+              <div className="max-w-md w-full bg-card border border-border/80 rounded-2xl p-8 shadow-xl space-y-6">
+                <div className="size-16 rounded-2xl bg-destructive/10 text-destructive flex items-center justify-center mx-auto ring-8 ring-destructive/5">
+                  <Building2 className="size-8" />
+                </div>
 
-              <div className="space-y-2">
-                <span className="inline-block px-3 py-1 bg-muted text-muted-foreground text-xs font-mono font-semibold rounded-full uppercase tracking-wider">
-                  404 — Page Not Found
-                </span>
-                <h1 className="text-3xl font-display font-bold text-foreground">
-                  Company Workspace Not Found
-                </h1>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  No company workspace matching{" "}
-                  <code className="text-ember font-mono bg-ember/10 px-1.5 py-0.5 rounded font-semibold">
-                    "{companyNotFoundName}"
-                  </code>{" "}
-                  was found in the database.
-                </p>
-              </div>
+                <div className="space-y-2">
+                  <span className="inline-block px-3 py-1 bg-muted text-muted-foreground text-xs font-mono font-semibold rounded-full uppercase tracking-wider">
+                    404 — Page Not Found
+                  </span>
+                  <h1 className="text-3xl font-display font-bold text-foreground">
+                    Company Workspace Not Found
+                  </h1>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    No company workspace matching{" "}
+                    <code className="text-ember font-mono bg-ember/10 px-1.5 py-0.5 rounded font-semibold">
+                      "{companyNotFoundName}"
+                    </code>{" "}
+                    was found in the database.
+                  </p>
+                </div>
 
-              <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                <button
-                  onClick={() => {
-                    setCompanyNotFound(false);
-                    navigateTo("/companies", "home");
-                  }}
-                  className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-ember text-ember-foreground hover:bg-ember/90 font-semibold text-xs shadow-xs transition-colors cursor-pointer"
-                >
-                  <ArrowLeft className="size-4" />
-                  <span>Companies Home</span>
-                </button>
-                <button
-                  onClick={() => {
-                    setCompanyNotFound(false);
-                    navigateTo("/companies/register", "auth");
-                  }}
-                  className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-surface border border-border hover:bg-accent text-foreground font-semibold text-xs transition-colors cursor-pointer"
-                >
-                  <Plus className="size-4 text-ember" />
-                  <span>Register Company</span>
-                </button>
+                <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                  <button
+                    onClick={() => {
+                      setCompanyNotFound(false);
+                      navigateTo("/companies", "home");
+                    }}
+                    className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-ember text-ember-foreground hover:bg-ember/90 font-semibold text-xs shadow-xs transition-colors cursor-pointer"
+                  >
+                    <ArrowLeft className="size-4" />
+                    <span>Companies Home</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setCompanyNotFound(false);
+                      navigateTo("/companies/register", "auth");
+                    }}
+                    className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-surface border border-border hover:bg-accent text-foreground font-semibold text-xs transition-colors cursor-pointer"
+                  >
+                    <Plus className="size-4 text-ember" />
+                    <span>Register Company</span>
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        ) : (
-          <>
-            {activeTab === "home" && (
-              <HomePage
-                onGetStarted={() => {
-                  navigateTo("/companies/register", "auth");
-                }}
-                onSignIn={() => {
-                  navigateTo("/companies/login", "auth");
-                }}
-                onSelectPlan={() => {
-                  navigateTo("/companies/register", "auth");
-                }}
-              />
-            )}
+          ) : (
+            <>
+              {activeTab === "home" && (
+                <HomePage
+                  onGetStarted={() => {
+                    navigateTo("/companies/register", "auth");
+                  }}
+                  onSignIn={() => {
+                    navigateTo("/companies/login", "auth");
+                  }}
+                  onSelectPlan={() => {
+                    navigateTo("/companies/register", "auth");
+                  }}
+                />
+              )}
 
-            {activeTab === "auth" && (
-              <AuthScreen
-                initialIsSignUp={authMode === "register"}
-                onSuccess={handleAuthSuccess}
-                onBackToHome={() => {
-                  navigateTo("/companies", "home");
-                }}
-              />
-            )}
+              {activeTab === "auth" && (
+                <AuthScreen
+                  initialIsSignUp={authMode === "register"}
+                  onSuccess={handleAuthSuccess}
+                  onBackToHome={() => {
+                    navigateTo("/companies", "home");
+                  }}
+                />
+              )}
 
-            {activeTab === "wizard" && !state.isCompleted && (
-              <OnboardingWizard
-                state={state}
-                setState={setState}
-                onComplete={handleWizardCompleted}
-              />
-            )}
+              {activeTab === "wizard" && !state.isCompleted && (
+                <OnboardingWizard
+                  state={state}
+                  setState={setState}
+                  onComplete={handleWizardCompleted}
+                />
+              )}
 
-            {activeTab === "dashboard" && state.isCompleted && (
-              <CompanyDashboard
-                state={state}
-                setState={setState}
-                candidates={candidates}
-                onAdvanceCandidate={(id) => {
-                  const cand = candidates.find((c) => c.id === id);
-                  if (cand) toast.success(`Advanced ${cand.name}`);
-                }}
-                onFetchConnectorCandidates={() => {
-                  toast.info("Connector synced new candidates");
-                }}
-                interactionsLog={interactionsLog}
-                activeSubTab={dashboardSubTab}
-                onSelectSubTab={(subTab) => setDashboardSubTab(subTab)}
-              />
-            )}
-          </>
-        )}
-      </main>
-    </div>
+              {activeTab === "dashboard" && state.isCompleted && (
+                <CompanyDashboard
+                  state={state}
+                  setState={setState}
+                  candidates={candidates}
+                  onAdvanceCandidate={(id) => {
+                    const cand = candidates.find((c) => c.id === id);
+                    if (cand) toast.success(`Advanced ${cand.name}`);
+                  }}
+                  onFetchConnectorCandidates={() => {
+                    toast.info("Connector synced new candidates");
+                  }}
+                  interactionsLog={interactionsLog}
+                  activeSubTab={dashboardSubTab}
+                  onSelectSubTab={(subTab) => setDashboardSubTab(subTab)}
+                />
+              )}
+            </>
+          )}
+        </main>
+      </div>
+    </SmoothScrollProvider>
   );
 };

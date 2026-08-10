@@ -114,7 +114,7 @@ export function AdminLoginPage({ onSuccess }: AdminLoginPageProps = {}) {
         </a>
       </header>
 
-      <main className="flex items-center justify-center py-8">
+      <main className="flex items-center justify-center py-8 relative z-10">
         <div className="w-full max-w-md bg-card border border-border rounded-2xl p-6 sm:p-8 shadow-lifted space-y-6">
           {/* Header section */}
           <div className="flex items-center gap-3 border-b border-border pb-4">
@@ -241,7 +241,7 @@ export function AdminLoginPage({ onSuccess }: AdminLoginPageProps = {}) {
         </div>
       </main>
 
-      <footer className="text-center text-[11px] text-muted-foreground max-w-7xl mx-auto w-full py-2">
+      <footer className="text-center text-[11px] text-muted-foreground max-w-7xl mx-auto w-full py-2 relative z-10">
         TalentFlow Admin Panel · Credentials Verified Exclusively via Environment Variables
       </footer>
     </div>

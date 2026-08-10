@@ -28,19 +28,25 @@ export default function ClientImpactSection() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section ref={ref} className="py-20">
+    <section
+      ref={ref}
+      id="client-impact"
+      data-section="client-impact"
+      data-label="Case Studies"
+      className="py-20 bg-background"
+    >
       <div className="max-w-[1600px] mx-auto px-6">
         {/* Top Label */}
         <p className="text-md text-gray-500 mb-6">Our case studies</p>
 
         {/* Header Row */}
-        <div className="grid md:grid-cols-2 gap-90 mb-16 items-start">
+        <div className="grid md:grid-cols-2 gap-90 mb-8 items-start">
           {/* Left Big Heading */}
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6 }}
-            className="text-4xl md:text-6xl leading-tight"
+            className="text-4xl md:text-4xl leading-tight"
           >
             Discover how we’re engineering impact with clients around the world
           </motion.h2>

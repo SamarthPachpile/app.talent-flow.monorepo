@@ -114,7 +114,7 @@ export default function Contact() {
       <section
         id="contact-form"
         data-section="contact-form"
-        data-label="Form"
+        data-label="Contact Form"
         className="relative w-full min-h-[800px] flex items-start py-24"
       >
         <div
@@ -262,7 +262,7 @@ export default function Contact() {
       <section
         id="contact-info"
         data-section="contact-info"
-        data-label="Office"
+        data-label="Office Info"
         className="bg-[#f1f3f6] py-20"
       >
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 items-start">

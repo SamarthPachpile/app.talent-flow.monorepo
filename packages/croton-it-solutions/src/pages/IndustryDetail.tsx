@@ -30,8 +30,12 @@ export default function IndustryDetail() {
       <Header />
 
       {/* HERO */}
-      {/* HERO */}
-      <section className="bg-background min-h-screen">
+      <section
+        id="industry-hero"
+        data-section="industry-hero"
+        data-label="Overview"
+        className="bg-background min-h-screen"
+      >
         <div className="h-screen mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 h-full">
             {/* LEFT CONTENT */}
@@ -63,7 +67,12 @@ export default function IndustryDetail() {
         </div>
       </section>
       {/* BELOW HERO SECTION */}
-      <section className="bg-[#f5f5f6] py-20">
+      <section
+        id="industry-lifecycle"
+        data-section="industry-lifecycle"
+        data-label="Lifecycle"
+        className="bg-[#f5f5f6] py-20"
+      >
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6">
           {/* TOP LARGE TEXT */}
           <div className="max-w-[1250px]">
@@ -87,7 +96,12 @@ export default function IndustryDetail() {
       </section>
 
       {/* FEATURE CARD */}
-      <section className="py-12">
+      <section
+        id="industry-feature"
+        data-section="industry-feature"
+        data-label="Feature"
+        className="py-12"
+      >
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
           <div className="aspect-[4/3] rounded-2xl overflow-hidden">
             <img
@@ -118,7 +132,12 @@ export default function IndustryDetail() {
       </section>
 
       {/* TRANSFORMATION BLOCK */}
-      <section className="py-20 bg-background">
+      <section
+        id="industry-transform"
+        data-section="industry-transform"
+        data-label="Transformation"
+        className="py-20 bg-background"
+      >
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div>
             <h2 className="text-4xl sm:text-5xl md:text-6xl font-medium leading-[1.05] tracking-tight text-foreground">
@@ -145,7 +164,12 @@ export default function IndustryDetail() {
         </div>
       </section>
       {/* TESTIMONIAL QUOTE SECTION */}
-      <section className="bg-[#4d5678] py-28 sm:py-36">
+      <section
+        id="industry-quote"
+        data-section="industry-quote"
+        data-label="Quote"
+        className="bg-[#4d5678] py-28 sm:py-36"
+      >
         <div className="max-w-[1280px] mx-auto px-6 sm:px-8">
           {/* QUOTE */}
           <h2 className="text-white text-[42px] sm:text-[58px] md:text-[52px] leading-[1.25] tracking-tight font-medium max-w-[1280px]">
@@ -162,7 +186,12 @@ export default function IndustryDetail() {
         </div>
       </section>
       {/* CAPABILITIES */}
-      <section className="py-20 bg-background border-t border-border/50">
+      <section
+        id="industry-capabilities"
+        data-section="industry-capabilities"
+        data-label="Capabilities"
+        className="py-20 bg-background border-t border-border/50"
+      >
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-3 gap-12">
           <div>
             <p className="text-xs uppercase tracking-wider text-foreground/60 mb-4">Capabilities</p>
@@ -182,7 +211,12 @@ export default function IndustryDetail() {
       </section>
 
       {/* STATS */}
-      <section className="py-20 bg-background">
+      <section
+        id="industry-stats"
+        data-section="industry-stats"
+        data-label="Stats"
+        className="py-20 bg-background"
+      >
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
           <h2 className="text-2xl sm:text-3xl font-medium text-foreground mb-10">
             Accelerate the {industry.name.toLowerCase()} digital product lifecycle
@@ -204,7 +238,12 @@ export default function IndustryDetail() {
       </section>
 
       {/* CASE STUDIES */}
-      <section className="py-20 bg-background">
+      <section
+        id="industry-case-studies"
+        data-section="industry-case-studies"
+        data-label="Case Studies"
+        className="py-20 bg-background"
+      >
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6">
           <div className="flex items-end justify-between mb-10">
             <h2 className="text-3xl sm:text-4xl font-medium text-foreground">Case studies</h2>
@@ -238,7 +277,12 @@ export default function IndustryDetail() {
       </section>
 
       {/* FEATURED INSIGHTS */}
-      <section className="py-16 bg-background">
+      <section
+        id="industry-insights"
+        data-section="industry-insights"
+        data-label="Insights"
+        className="py-16 bg-background"
+      >
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6">
           <h2 className="text-3xl sm:text-4xl font-medium text-foreground mb-10">
             Featured Insights
@@ -266,7 +310,12 @@ export default function IndustryDetail() {
       </section>
 
       {/* WHY CROTON */}
-      <section className="py-20 bg-background border-t border-border/50">
+      <section
+        id="industry-why"
+        data-section="industry-why"
+        data-label="Why Us"
+        className="py-20 bg-background border-t border-border/50"
+      >
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-3 gap-10">
           <div>
             <p className="text-xs uppercase tracking-wider text-foreground/60 mb-4">Why Croton?</p>
@@ -286,7 +335,12 @@ export default function IndustryDetail() {
       </section>
 
       {/* FAQ */}
-      <section className="py-20 bg-background">
+      <section
+        id="industry-faq"
+        data-section="industry-faq"
+        data-label="FAQ"
+        className="py-20 bg-background"
+      >
         <div className="max-w-[1100px] mx-auto px-4 sm:px-6">
           <h2 className="text-3xl sm:text-4xl font-medium text-foreground mb-10">
             Your {industry.name.toLowerCase()} solutions questions, answered
@@ -307,7 +361,12 @@ export default function IndustryDetail() {
       </section>
 
       {/* OTHER INDUSTRIES */}
-      <section className="py-16 bg-[#f3f3f3]">
+      <section
+        id="other-industries"
+        data-section="other-industries"
+        data-label="Explore More"
+        className="py-16 bg-[#f3f3f3]"
+      >
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6">
           <h2 className="text-2xl sm:text-3xl font-medium text-foreground mb-8">
             Explore other industries

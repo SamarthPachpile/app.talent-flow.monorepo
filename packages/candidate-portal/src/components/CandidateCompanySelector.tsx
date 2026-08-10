@@ -127,6 +127,14 @@ export const CandidateCompanySelector: React.FC<CandidateCompanySelectorProps> =
 
       {/* Hero Section */}
       <section className="relative py-14 px-6 overflow-hidden border-b border-border/60 bg-gradient-to-b from-card via-background to-background">
+        {/* Background Image */}
+        <div className="absolute inset-0 pointer-events-none">
+          <img
+            src="/assets/hero-bg.jpg"
+            alt="Candidate Portal Hero Background"
+            className="w-full h-full object-cover opacity-60"
+          />
+        </div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(99,102,241,0.06),transparent_50%)] pointer-events-none" />
         <div className="max-w-4xl mx-auto text-center space-y-6 relative z-10">
           <motion.div

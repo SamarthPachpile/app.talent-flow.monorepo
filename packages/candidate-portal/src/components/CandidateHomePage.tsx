@@ -23,6 +23,8 @@ import {
   ChevronDown,
   Info,
   PackageCheck,
+  Menu,
+  X,
 } from "lucide-react";
 
 interface CandidateHomePageProps {
@@ -36,6 +38,7 @@ export const CandidateHomePage: React.FC<CandidateHomePageProps> = ({
   onExploreDashboard,
   isAuthenticated = false,
 }) => {
+  const [mobileNavOpen, setMobileNavOpen] = useState<boolean>(false);
   const [selectedRoadmapStage, setSelectedRoadmapStage] = useState<string>("3");
   const [selectedLaptop, setSelectedLaptop] = useState<"macbook" | "thinkpad">("macbook");
   const [selectedAccessories, setSelectedAccessories] = useState<string[]>(["monitor", "keyboard"]);
@@ -140,62 +143,153 @@ export const CandidateHomePage: React.FC<CandidateHomePageProps> = ({
         style={{ scaleX }}
       />
 
-      {/* Top Header Navigation */}
-      <header className="sticky top-0 z-50 backdrop-blur-md bg-card/95 border-b border-border">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <motion.span
-              whileHover={{ rotate: 5, scale: 1.05 }}
-              className="grid size-9 place-items-center rounded-lg bg-ember text-ember-foreground font-bold shadow-xs text-sm cursor-pointer"
-            >
-              TF
-            </motion.span>
-            <div className="leading-tight">
-              <span className="font-display text-xl font-bold text-foreground tracking-tight">
-                TalentFlow Candidate Hub
-              </span>
-              <span className="text-[10px] block text-muted-foreground uppercase tracking-widest font-semibold">
-                Candidate Portal
-              </span>
+      {/* Top Header Navigation (Croton Capsule Style) */}
+      <header className="fixed top-3 sm:top-5 left-1/2 -translate-x-1/2 z-[9999] w-[calc(100%-1.5rem)] sm:w-[calc(100%-2.5rem)] max-w-[1400px]">
+        <div className="clip-path-nav-sm bg-background/95 backdrop-blur-xl shadow-[0_8px_32px_-12px_rgba(0,0,0,0.15)] border border-border/60">
+          <div className="flex items-center justify-between pl-5 pr-2 sm:pl-7 sm:pr-3 py-2.5">
+            {/* Brand Logo */}
+            <div className="flex items-center gap-3 cursor-pointer">
+              <motion.span
+                whileHover={{ rotate: 5, scale: 1.05 }}
+                className="grid size-9 place-items-center rounded-xl bg-ember text-ember-foreground font-bold shadow-xs text-xs shrink-0"
+              >
+                TF
+              </motion.span>
+              <div className="flex flex-col leading-none">
+                <span className="text-base sm:text-lg font-bold text-foreground tracking-tight">
+                  TalentFlow Candidate Hub
+                </span>
+                <span className="text-[10px] text-muted-foreground mt-0.5 font-medium">
+                  Candidate Portal & Experience
+                </span>
+              </div>
             </div>
-          </div>
 
-          <nav className="hidden md:flex items-center gap-8 text-xs font-medium text-muted-foreground">
-            <a href="#roadmap" className="hover:text-foreground transition-colors">
-              7-Stage Roadmap
-            </a>
-            <a href="#interactive-gear" className="hover:text-foreground transition-colors">
-              Hardware Configurator
-            </a>
-            <a href="#esign-demo" className="hover:text-foreground transition-colors">
-              E-Sign Demo
-            </a>
-            <a href="#features" className="hover:text-foreground transition-colors">
-              Candidate Features
-            </a>
-            <a href="#testimonials" className="hover:text-foreground transition-colors">
-              Placed Candidates
-            </a>
-          </nav>
+            {/* Desktop Navigation Links */}
+            <nav className="hidden lg:flex items-center gap-6 text-xs font-medium text-muted-foreground">
+              <a href="#roadmap" className="hover:text-ember transition-colors">
+                7-Stage Roadmap
+              </a>
+              <a href="#interactive-gear" className="hover:text-ember transition-colors">
+                Hardware Configurator
+              </a>
+              <a href="#esign-demo" className="hover:text-ember transition-colors">
+                E-Sign Demo
+              </a>
+              <a href="#features" className="hover:text-ember transition-colors">
+                Features
+              </a>
+              <a href="#testimonials" className="hover:text-ember transition-colors">
+                Placed Candidates
+              </a>
+            </nav>
 
-          <div className="flex items-center gap-3">
+            {/* CTA Button */}
+            <div className="hidden lg:flex items-center gap-3">
+              <button
+                onClick={isAuthenticated ? onExploreDashboard || onSignIn : onSignIn}
+                className="clip-path-button-sm bg-ember text-ember-foreground px-6 py-2.5 text-xs font-semibold hover:bg-ember/90 transition-colors flex items-center gap-2 cursor-pointer"
+              >
+                <UserCheck className="size-3.5" />
+                <span>{isAuthenticated ? "Open Dashboard" : "Candidate Sign In"}</span>
+                <ArrowRight className="size-3.5" />
+              </button>
+            </div>
+
+            {/* Mobile Menu Toggle Button */}
             <button
-              onClick={isAuthenticated ? onExploreDashboard || onSignIn : onSignIn}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold bg-ember text-ember-foreground hover:bg-ember/90 shadow-card transition-all cursor-pointer hover:scale-105 active:scale-95"
+              className="hidden max-lg:flex w-10 h-10 items-center justify-center text-foreground hover:text-ember transition-colors cursor-pointer"
+              onClick={() => setMobileNavOpen(!mobileNavOpen)}
+              aria-label="Toggle Navigation Menu"
             >
-              <UserCheck className="size-3.5" />
-              <span>{isAuthenticated ? "Open Candidate Dashboard" : "Candidate Sign In"}</span>
-              <ArrowRight className="size-3.5" />
+              {mobileNavOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
       </header>
+
+      {/* Mobile Navigation Dropdown Overlay */}
+      <AnimatePresence>
+        {mobileNavOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="hidden max-lg:block fixed top-[70px] left-3 right-3 z-[9999] border border-border/60 bg-background/95 backdrop-blur-xl rounded-xl shadow-xl p-4 space-y-3"
+          >
+            <div className="flex flex-col gap-2.5 text-xs font-medium">
+              <a
+                href="#roadmap"
+                onClick={() => setMobileNavOpen(false)}
+                className="p-2 rounded-lg hover:bg-accent text-foreground"
+              >
+                7-Stage Roadmap
+              </a>
+              <a
+                href="#interactive-gear"
+                onClick={() => setMobileNavOpen(false)}
+                className="p-2 rounded-lg hover:bg-accent text-foreground"
+              >
+                Hardware Configurator
+              </a>
+              <a
+                href="#esign-demo"
+                onClick={() => setMobileNavOpen(false)}
+                className="p-2 rounded-lg hover:bg-accent text-foreground"
+              >
+                E-Sign Demo
+              </a>
+              <a
+                href="#features"
+                onClick={() => setMobileNavOpen(false)}
+                className="p-2 rounded-lg hover:bg-accent text-foreground"
+              >
+                Features
+              </a>
+              <a
+                href="#testimonials"
+                onClick={() => setMobileNavOpen(false)}
+                className="p-2 rounded-lg hover:bg-accent text-foreground"
+              >
+                Placed Candidates
+              </a>
+            </div>
+
+            <div className="pt-2 border-t border-border/50">
+              <button
+                onClick={() => {
+                  setMobileNavOpen(false);
+                  if (isAuthenticated) {
+                    if (onExploreDashboard) onExploreDashboard();
+                    else onSignIn();
+                  } else {
+                    onSignIn();
+                  }
+                }}
+                className="clip-path-button-sm bg-ember text-ember-foreground w-full py-2.5 text-xs font-semibold flex items-center justify-center gap-2"
+              >
+                <UserCheck className="size-3.5" />
+                <span>{isAuthenticated ? "Open Dashboard" : "Candidate Sign In"}</span>
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Hero Section with Parallax Background & Glass Cards */}
       <section
         ref={heroRef}
         className="relative pt-20 pb-28 px-6 overflow-hidden border-b border-border bg-gradient-to-b from-background via-surface/60 to-background"
       >
+        {/* Background Image */}
+        <div className="absolute inset-0 pointer-events-none">
+          <img
+            src="/assets/hero-bg.jpg"
+            alt="Candidate Portal Hero Background"
+            className="w-full h-full object-cover opacity-75"
+          />
+        </div>
+
         {/* Ambient Grid Pattern & Radial Glow Layers */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,#f9731615,transparent_60%)] pointer-events-none" />
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800e_1px,transparent_1px),linear-gradient(to_bottom,#8080800e_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />

@@ -86,7 +86,12 @@ export default function Industries() {
       <Header />
 
       {/* HERO */}
-      <section className="pt-32 sm:pt-50 pb-16 sm:pb-40 bg-background">
+      <section
+        id="industries-hero"
+        data-section="industries-hero"
+        data-label="Overview"
+        className="pt-32 sm:pt-50 pb-16 sm:pb-40 bg-background"
+      >
         <div className="max-w-[1600px] mx-auto px-4 sm:px-20">
           <p className="text-sm text-foreground/60 mb-6">Industries</p>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-medium leading-[1.05] tracking-tight max-w-6xl text-foreground">
@@ -96,7 +101,12 @@ export default function Industries() {
       </section>
 
       {/* INDUSTRIES GRID ON DARK */}
-      <section className="bg-[#3f4b6b] py-16 sm:py-24">
+      <section
+        id="industries-grid"
+        data-section="industries-grid"
+        data-label="Industries"
+        className="bg-[#3f4b6b] py-16 sm:py-24"
+      >
         <div className="max-w-[1600px] mx-auto px-4 sm:px-2 grid grid-cols-1 lg:grid-cols-3 gap-30">
           <div className="lg:col-span-1">
             <h2 className="text-3xl sm:text-5xl font-medium text-white mb-6 leading-tight">
@@ -139,7 +149,12 @@ export default function Industries() {
       </section>
 
       {/* TAILORED SOLUTIONS */}
-      <section className="py-20 sm:py-28 bg-background">
+      <section
+        id="tailored-solutions"
+        data-section="tailored-solutions"
+        data-label="Solutions"
+        className="py-20 sm:py-28 bg-background"
+      >
         <div className="max-w-[1500px] mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-2 gap-40 items-center">
           <div>
             <p className="text-md text-foreground/60 mb-6">Industry Smart</p>
@@ -162,7 +177,12 @@ export default function Industries() {
       </section>
 
       {/* FEATURED INSIGHTS */}
-      <section className="py-16 sm:py-20 bg-background">
+      <section
+        id="featured-insights"
+        data-section="featured-insights"
+        data-label="Insights"
+        className="py-16 sm:py-20 bg-background"
+      >
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-40 mb-12">
             <h2 className="text-3xl sm:text-6xl font-medium text-foreground">Featured Insights</h2>

@@ -127,6 +127,9 @@ export default function ImpactSection() {
 
   return (
     <motion.section
+      id="impact"
+      data-section="impact"
+      data-label="Daily Impact"
       animate={{ backgroundColor: current.bg }}
       transition={{ duration: 0.6 }}
       className="w-screen min-h-screen flex items-center justify-center overflow-hidden"

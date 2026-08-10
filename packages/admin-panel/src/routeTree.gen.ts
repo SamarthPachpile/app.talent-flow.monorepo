@@ -12,10 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AdminPanelRouteImport } from './routes/admin-panel'
-import { Route as CandidatePortalRouteImport } from './routes/candidate-portal'
-import { Route as CandidatesRouteImport } from './routes/candidates'
-import { Route as CandidatesPortalRouteImport } from './routes/candidates-portal'
-import { Route as CompaniesRouteImport } from './routes/companies'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as AdminPanelIndexRouteImport } from './routes/admin-panel.index'
 import { Route as AdminPanelApprovalsRouteImport } from './routes/admin-panel.approvals'
@@ -26,34 +22,11 @@ import { Route as AdminPanelLoginRouteImport } from './routes/admin-panel.login'
 import { Route as AdminPanelOffersRouteImport } from './routes/admin-panel.offers'
 import { Route as AdminPanelSettingsRouteImport } from './routes/admin-panel.settings'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
-import { Route as CandidatePortalIndexRouteImport } from './routes/candidate-portal.index'
-import { Route as CandidatePortalSplatRouteImport } from './routes/candidate-portal.$'
-import { Route as CandidatePortalDashboardRouteImport } from './routes/candidate-portal.dashboard'
-import { Route as CandidatePortalLoginRouteImport } from './routes/candidate-portal.login'
-import { Route as CandidatePortalWizardRouteImport } from './routes/candidate-portal.wizard'
-import { Route as CandidatesPortalIndexRouteImport } from './routes/candidates-portal.index'
-import { Route as CandidatesPortalSplatRouteImport } from './routes/candidates-portal.$'
-import { Route as CandidatesPortalDashboardRouteImport } from './routes/candidates-portal.dashboard'
-import { Route as CandidatesPortalLoginRouteImport } from './routes/candidates-portal.login'
-import { Route as CandidatesPortalWizardRouteImport } from './routes/candidates-portal.wizard'
-import { Route as CandidatesIndexRouteImport } from './routes/candidates.index'
-import { Route as CandidatesSplatRouteImport } from './routes/candidates.$'
-import { Route as CandidatesDashboardRouteImport } from './routes/candidates.dashboard'
-import { Route as CandidatesLoginRouteImport } from './routes/candidates.login'
-import { Route as CandidatesWizardRouteImport } from './routes/candidates.wizard'
-import { Route as CompaniesIndexRouteImport } from './routes/companies.index'
-import { Route as CompaniesSplatRouteImport } from './routes/companies.$'
-import { Route as CompaniesDashboardRouteImport } from './routes/companies.dashboard'
-import { Route as CompaniesLoginRouteImport } from './routes/companies.login'
-import { Route as CompaniesWizardRouteImport } from './routes/companies.wizard'
 import { Route as AdminPanelSettingsIndexRouteImport } from './routes/admin-panel.settings.index'
 import { Route as AdminPanelSettingsAutomationRouteImport } from './routes/admin-panel.settings.automation'
 import { Route as AdminPanelSettingsGuidelinesRouteImport } from './routes/admin-panel.settings.guidelines'
 import { Route as AdminPanelSettingsTeamRouteImport } from './routes/admin-panel.settings.team'
 import { Route as AdminPanelSettingsTemplatesRouteImport } from './routes/admin-panel.settings.templates'
-import { Route as CompaniesCompanyNameDashboardRouteImport } from './routes/companies.$companyName.dashboard'
-import { Route as CompaniesCompanyNameLoginRouteImport } from './routes/companies.$companyName.login'
-import { Route as CompaniesCompanyNameWizardRouteImport } from './routes/companies.$companyName.wizard'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -68,26 +41,6 @@ const AdminRoute = AdminRouteImport.update({
 const AdminPanelRoute = AdminPanelRouteImport.update({
   id: '/admin-panel',
   path: '/admin-panel',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CandidatePortalRoute = CandidatePortalRouteImport.update({
-  id: '/candidate-portal',
-  path: '/candidate-portal',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CandidatesRoute = CandidatesRouteImport.update({
-  id: '/candidates',
-  path: '/candidates',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CandidatesPortalRoute = CandidatesPortalRouteImport.update({
-  id: '/candidates-portal',
-  path: '/candidates-portal',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CompaniesRoute = CompaniesRouteImport.update({
-  id: '/companies',
-  path: '/companies',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -140,108 +93,6 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AdminRoute,
 } as any)
-const CandidatePortalIndexRoute = CandidatePortalIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => CandidatePortalRoute,
-} as any)
-const CandidatePortalSplatRoute = CandidatePortalSplatRouteImport.update({
-  id: '/$',
-  path: '/$',
-  getParentRoute: () => CandidatePortalRoute,
-} as any)
-const CandidatePortalDashboardRoute =
-  CandidatePortalDashboardRouteImport.update({
-    id: '/dashboard',
-    path: '/dashboard',
-    getParentRoute: () => CandidatePortalRoute,
-  } as any)
-const CandidatePortalLoginRoute = CandidatePortalLoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => CandidatePortalRoute,
-} as any)
-const CandidatePortalWizardRoute = CandidatePortalWizardRouteImport.update({
-  id: '/wizard',
-  path: '/wizard',
-  getParentRoute: () => CandidatePortalRoute,
-} as any)
-const CandidatesPortalIndexRoute = CandidatesPortalIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => CandidatesPortalRoute,
-} as any)
-const CandidatesPortalSplatRoute = CandidatesPortalSplatRouteImport.update({
-  id: '/$',
-  path: '/$',
-  getParentRoute: () => CandidatesPortalRoute,
-} as any)
-const CandidatesPortalDashboardRoute =
-  CandidatesPortalDashboardRouteImport.update({
-    id: '/dashboard',
-    path: '/dashboard',
-    getParentRoute: () => CandidatesPortalRoute,
-  } as any)
-const CandidatesPortalLoginRoute = CandidatesPortalLoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => CandidatesPortalRoute,
-} as any)
-const CandidatesPortalWizardRoute = CandidatesPortalWizardRouteImport.update({
-  id: '/wizard',
-  path: '/wizard',
-  getParentRoute: () => CandidatesPortalRoute,
-} as any)
-const CandidatesIndexRoute = CandidatesIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => CandidatesRoute,
-} as any)
-const CandidatesSplatRoute = CandidatesSplatRouteImport.update({
-  id: '/$',
-  path: '/$',
-  getParentRoute: () => CandidatesRoute,
-} as any)
-const CandidatesDashboardRoute = CandidatesDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => CandidatesRoute,
-} as any)
-const CandidatesLoginRoute = CandidatesLoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => CandidatesRoute,
-} as any)
-const CandidatesWizardRoute = CandidatesWizardRouteImport.update({
-  id: '/wizard',
-  path: '/wizard',
-  getParentRoute: () => CandidatesRoute,
-} as any)
-const CompaniesIndexRoute = CompaniesIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => CompaniesRoute,
-} as any)
-const CompaniesSplatRoute = CompaniesSplatRouteImport.update({
-  id: '/$',
-  path: '/$',
-  getParentRoute: () => CompaniesRoute,
-} as any)
-const CompaniesDashboardRoute = CompaniesDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => CompaniesRoute,
-} as any)
-const CompaniesLoginRoute = CompaniesLoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => CompaniesRoute,
-} as any)
-const CompaniesWizardRoute = CompaniesWizardRouteImport.update({
-  id: '/wizard',
-  path: '/wizard',
-  getParentRoute: () => CompaniesRoute,
-} as any)
 const AdminPanelSettingsIndexRoute = AdminPanelSettingsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -270,33 +121,11 @@ const AdminPanelSettingsTemplatesRoute =
     path: '/templates',
     getParentRoute: () => AdminPanelSettingsRoute,
   } as any)
-const CompaniesCompanyNameDashboardRoute =
-  CompaniesCompanyNameDashboardRouteImport.update({
-    id: '/$companyName/dashboard',
-    path: '/$companyName/dashboard',
-    getParentRoute: () => CompaniesRoute,
-  } as any)
-const CompaniesCompanyNameLoginRoute =
-  CompaniesCompanyNameLoginRouteImport.update({
-    id: '/$companyName/login',
-    path: '/$companyName/login',
-    getParentRoute: () => CompaniesRoute,
-  } as any)
-const CompaniesCompanyNameWizardRoute =
-  CompaniesCompanyNameWizardRouteImport.update({
-    id: '/$companyName/wizard',
-    path: '/$companyName/wizard',
-    getParentRoute: () => CompaniesRoute,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/admin-panel': typeof AdminPanelRouteWithChildren
-  '/candidate-portal': typeof CandidatePortalRouteWithChildren
-  '/candidates': typeof CandidatesRouteWithChildren
-  '/candidates-portal': typeof CandidatesPortalRouteWithChildren
-  '/companies': typeof CompaniesRouteWithChildren
   '/dashboard': typeof DashboardRoute
   '/admin-panel/approvals': typeof AdminPanelApprovalsRoute
   '/admin-panel/companies': typeof AdminPanelCompaniesRoute
@@ -306,34 +135,11 @@ export interface FileRoutesByFullPath {
   '/admin-panel/offers': typeof AdminPanelOffersRoute
   '/admin-panel/settings': typeof AdminPanelSettingsRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
-  '/candidate-portal/$': typeof CandidatePortalSplatRoute
-  '/candidate-portal/dashboard': typeof CandidatePortalDashboardRoute
-  '/candidate-portal/login': typeof CandidatePortalLoginRoute
-  '/candidate-portal/wizard': typeof CandidatePortalWizardRoute
-  '/candidates-portal/$': typeof CandidatesPortalSplatRoute
-  '/candidates-portal/dashboard': typeof CandidatesPortalDashboardRoute
-  '/candidates-portal/login': typeof CandidatesPortalLoginRoute
-  '/candidates-portal/wizard': typeof CandidatesPortalWizardRoute
-  '/candidates/$': typeof CandidatesSplatRoute
-  '/candidates/dashboard': typeof CandidatesDashboardRoute
-  '/candidates/login': typeof CandidatesLoginRoute
-  '/candidates/wizard': typeof CandidatesWizardRoute
-  '/companies/$': typeof CompaniesSplatRoute
-  '/companies/dashboard': typeof CompaniesDashboardRoute
-  '/companies/login': typeof CompaniesLoginRoute
-  '/companies/wizard': typeof CompaniesWizardRoute
   '/admin-panel/': typeof AdminPanelIndexRoute
-  '/candidate-portal/': typeof CandidatePortalIndexRoute
-  '/candidates-portal/': typeof CandidatesPortalIndexRoute
-  '/candidates/': typeof CandidatesIndexRoute
-  '/companies/': typeof CompaniesIndexRoute
   '/admin-panel/settings/automation': typeof AdminPanelSettingsAutomationRoute
   '/admin-panel/settings/guidelines': typeof AdminPanelSettingsGuidelinesRoute
   '/admin-panel/settings/team': typeof AdminPanelSettingsTeamRoute
   '/admin-panel/settings/templates': typeof AdminPanelSettingsTemplatesRoute
-  '/companies/$companyName/dashboard': typeof CompaniesCompanyNameDashboardRoute
-  '/companies/$companyName/login': typeof CompaniesCompanyNameLoginRoute
-  '/companies/$companyName/wizard': typeof CompaniesCompanyNameWizardRoute
   '/admin-panel/settings/': typeof AdminPanelSettingsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -347,34 +153,11 @@ export interface FileRoutesByTo {
   '/admin-panel/login': typeof AdminPanelLoginRoute
   '/admin-panel/offers': typeof AdminPanelOffersRoute
   '/admin/login': typeof AdminLoginRoute
-  '/candidate-portal/$': typeof CandidatePortalSplatRoute
-  '/candidate-portal/dashboard': typeof CandidatePortalDashboardRoute
-  '/candidate-portal/login': typeof CandidatePortalLoginRoute
-  '/candidate-portal/wizard': typeof CandidatePortalWizardRoute
-  '/candidates-portal/$': typeof CandidatesPortalSplatRoute
-  '/candidates-portal/dashboard': typeof CandidatesPortalDashboardRoute
-  '/candidates-portal/login': typeof CandidatesPortalLoginRoute
-  '/candidates-portal/wizard': typeof CandidatesPortalWizardRoute
-  '/candidates/$': typeof CandidatesSplatRoute
-  '/candidates/dashboard': typeof CandidatesDashboardRoute
-  '/candidates/login': typeof CandidatesLoginRoute
-  '/candidates/wizard': typeof CandidatesWizardRoute
-  '/companies/$': typeof CompaniesSplatRoute
-  '/companies/dashboard': typeof CompaniesDashboardRoute
-  '/companies/login': typeof CompaniesLoginRoute
-  '/companies/wizard': typeof CompaniesWizardRoute
   '/admin-panel': typeof AdminPanelIndexRoute
-  '/candidate-portal': typeof CandidatePortalIndexRoute
-  '/candidates-portal': typeof CandidatesPortalIndexRoute
-  '/candidates': typeof CandidatesIndexRoute
-  '/companies': typeof CompaniesIndexRoute
   '/admin-panel/settings/automation': typeof AdminPanelSettingsAutomationRoute
   '/admin-panel/settings/guidelines': typeof AdminPanelSettingsGuidelinesRoute
   '/admin-panel/settings/team': typeof AdminPanelSettingsTeamRoute
   '/admin-panel/settings/templates': typeof AdminPanelSettingsTemplatesRoute
-  '/companies/$companyName/dashboard': typeof CompaniesCompanyNameDashboardRoute
-  '/companies/$companyName/login': typeof CompaniesCompanyNameLoginRoute
-  '/companies/$companyName/wizard': typeof CompaniesCompanyNameWizardRoute
   '/admin-panel/settings': typeof AdminPanelSettingsIndexRoute
 }
 export interface FileRoutesById {
@@ -382,10 +165,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/admin-panel': typeof AdminPanelRouteWithChildren
-  '/candidate-portal': typeof CandidatePortalRouteWithChildren
-  '/candidates': typeof CandidatesRouteWithChildren
-  '/candidates-portal': typeof CandidatesPortalRouteWithChildren
-  '/companies': typeof CompaniesRouteWithChildren
   '/dashboard': typeof DashboardRoute
   '/admin-panel/approvals': typeof AdminPanelApprovalsRoute
   '/admin-panel/companies': typeof AdminPanelCompaniesRoute
@@ -395,34 +174,11 @@ export interface FileRoutesById {
   '/admin-panel/offers': typeof AdminPanelOffersRoute
   '/admin-panel/settings': typeof AdminPanelSettingsRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
-  '/candidate-portal/$': typeof CandidatePortalSplatRoute
-  '/candidate-portal/dashboard': typeof CandidatePortalDashboardRoute
-  '/candidate-portal/login': typeof CandidatePortalLoginRoute
-  '/candidate-portal/wizard': typeof CandidatePortalWizardRoute
-  '/candidates-portal/$': typeof CandidatesPortalSplatRoute
-  '/candidates-portal/dashboard': typeof CandidatesPortalDashboardRoute
-  '/candidates-portal/login': typeof CandidatesPortalLoginRoute
-  '/candidates-portal/wizard': typeof CandidatesPortalWizardRoute
-  '/candidates/$': typeof CandidatesSplatRoute
-  '/candidates/dashboard': typeof CandidatesDashboardRoute
-  '/candidates/login': typeof CandidatesLoginRoute
-  '/candidates/wizard': typeof CandidatesWizardRoute
-  '/companies/$': typeof CompaniesSplatRoute
-  '/companies/dashboard': typeof CompaniesDashboardRoute
-  '/companies/login': typeof CompaniesLoginRoute
-  '/companies/wizard': typeof CompaniesWizardRoute
   '/admin-panel/': typeof AdminPanelIndexRoute
-  '/candidate-portal/': typeof CandidatePortalIndexRoute
-  '/candidates-portal/': typeof CandidatesPortalIndexRoute
-  '/candidates/': typeof CandidatesIndexRoute
-  '/companies/': typeof CompaniesIndexRoute
   '/admin-panel/settings/automation': typeof AdminPanelSettingsAutomationRoute
   '/admin-panel/settings/guidelines': typeof AdminPanelSettingsGuidelinesRoute
   '/admin-panel/settings/team': typeof AdminPanelSettingsTeamRoute
   '/admin-panel/settings/templates': typeof AdminPanelSettingsTemplatesRoute
-  '/companies/$companyName/dashboard': typeof CompaniesCompanyNameDashboardRoute
-  '/companies/$companyName/login': typeof CompaniesCompanyNameLoginRoute
-  '/companies/$companyName/wizard': typeof CompaniesCompanyNameWizardRoute
   '/admin-panel/settings/': typeof AdminPanelSettingsIndexRoute
 }
 export interface FileRouteTypes {
@@ -431,10 +187,6 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/admin-panel'
-    | '/candidate-portal'
-    | '/candidates'
-    | '/candidates-portal'
-    | '/companies'
     | '/dashboard'
     | '/admin-panel/approvals'
     | '/admin-panel/companies'
@@ -444,34 +196,11 @@ export interface FileRouteTypes {
     | '/admin-panel/offers'
     | '/admin-panel/settings'
     | '/admin/login'
-    | '/candidate-portal/$'
-    | '/candidate-portal/dashboard'
-    | '/candidate-portal/login'
-    | '/candidate-portal/wizard'
-    | '/candidates-portal/$'
-    | '/candidates-portal/dashboard'
-    | '/candidates-portal/login'
-    | '/candidates-portal/wizard'
-    | '/candidates/$'
-    | '/candidates/dashboard'
-    | '/candidates/login'
-    | '/candidates/wizard'
-    | '/companies/$'
-    | '/companies/dashboard'
-    | '/companies/login'
-    | '/companies/wizard'
     | '/admin-panel/'
-    | '/candidate-portal/'
-    | '/candidates-portal/'
-    | '/candidates/'
-    | '/companies/'
     | '/admin-panel/settings/automation'
     | '/admin-panel/settings/guidelines'
     | '/admin-panel/settings/team'
     | '/admin-panel/settings/templates'
-    | '/companies/$companyName/dashboard'
-    | '/companies/$companyName/login'
-    | '/companies/$companyName/wizard'
     | '/admin-panel/settings/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -485,44 +214,17 @@ export interface FileRouteTypes {
     | '/admin-panel/login'
     | '/admin-panel/offers'
     | '/admin/login'
-    | '/candidate-portal/$'
-    | '/candidate-portal/dashboard'
-    | '/candidate-portal/login'
-    | '/candidate-portal/wizard'
-    | '/candidates-portal/$'
-    | '/candidates-portal/dashboard'
-    | '/candidates-portal/login'
-    | '/candidates-portal/wizard'
-    | '/candidates/$'
-    | '/candidates/dashboard'
-    | '/candidates/login'
-    | '/candidates/wizard'
-    | '/companies/$'
-    | '/companies/dashboard'
-    | '/companies/login'
-    | '/companies/wizard'
     | '/admin-panel'
-    | '/candidate-portal'
-    | '/candidates-portal'
-    | '/candidates'
-    | '/companies'
     | '/admin-panel/settings/automation'
     | '/admin-panel/settings/guidelines'
     | '/admin-panel/settings/team'
     | '/admin-panel/settings/templates'
-    | '/companies/$companyName/dashboard'
-    | '/companies/$companyName/login'
-    | '/companies/$companyName/wizard'
     | '/admin-panel/settings'
   id:
     | '__root__'
     | '/'
     | '/admin'
     | '/admin-panel'
-    | '/candidate-portal'
-    | '/candidates'
-    | '/candidates-portal'
-    | '/companies'
     | '/dashboard'
     | '/admin-panel/approvals'
     | '/admin-panel/companies'
@@ -532,34 +234,11 @@ export interface FileRouteTypes {
     | '/admin-panel/offers'
     | '/admin-panel/settings'
     | '/admin/login'
-    | '/candidate-portal/$'
-    | '/candidate-portal/dashboard'
-    | '/candidate-portal/login'
-    | '/candidate-portal/wizard'
-    | '/candidates-portal/$'
-    | '/candidates-portal/dashboard'
-    | '/candidates-portal/login'
-    | '/candidates-portal/wizard'
-    | '/candidates/$'
-    | '/candidates/dashboard'
-    | '/candidates/login'
-    | '/candidates/wizard'
-    | '/companies/$'
-    | '/companies/dashboard'
-    | '/companies/login'
-    | '/companies/wizard'
     | '/admin-panel/'
-    | '/candidate-portal/'
-    | '/candidates-portal/'
-    | '/candidates/'
-    | '/companies/'
     | '/admin-panel/settings/automation'
     | '/admin-panel/settings/guidelines'
     | '/admin-panel/settings/team'
     | '/admin-panel/settings/templates'
-    | '/companies/$companyName/dashboard'
-    | '/companies/$companyName/login'
-    | '/companies/$companyName/wizard'
     | '/admin-panel/settings/'
   fileRoutesById: FileRoutesById
 }
@@ -567,10 +246,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
   AdminPanelRoute: typeof AdminPanelRouteWithChildren
-  CandidatePortalRoute: typeof CandidatePortalRouteWithChildren
-  CandidatesRoute: typeof CandidatesRouteWithChildren
-  CandidatesPortalRoute: typeof CandidatesPortalRouteWithChildren
-  CompaniesRoute: typeof CompaniesRouteWithChildren
   DashboardRoute: typeof DashboardRoute
 }
 
@@ -595,34 +270,6 @@ declare module '@tanstack/react-router' {
       path: '/admin-panel'
       fullPath: '/admin-panel'
       preLoaderRoute: typeof AdminPanelRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/candidate-portal': {
-      id: '/candidate-portal'
-      path: '/candidate-portal'
-      fullPath: '/candidate-portal'
-      preLoaderRoute: typeof CandidatePortalRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/candidates': {
-      id: '/candidates'
-      path: '/candidates'
-      fullPath: '/candidates'
-      preLoaderRoute: typeof CandidatesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/candidates-portal': {
-      id: '/candidates-portal'
-      path: '/candidates-portal'
-      fullPath: '/candidates-portal'
-      preLoaderRoute: typeof CandidatesPortalRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/companies': {
-      id: '/companies'
-      path: '/companies'
-      fullPath: '/companies'
-      preLoaderRoute: typeof CompaniesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -695,146 +342,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/candidate-portal/': {
-      id: '/candidate-portal/'
-      path: '/'
-      fullPath: '/candidate-portal/'
-      preLoaderRoute: typeof CandidatePortalIndexRouteImport
-      parentRoute: typeof CandidatePortalRoute
-    }
-    '/candidate-portal/$': {
-      id: '/candidate-portal/$'
-      path: '/$'
-      fullPath: '/candidate-portal/$'
-      preLoaderRoute: typeof CandidatePortalSplatRouteImport
-      parentRoute: typeof CandidatePortalRoute
-    }
-    '/candidate-portal/dashboard': {
-      id: '/candidate-portal/dashboard'
-      path: '/dashboard'
-      fullPath: '/candidate-portal/dashboard'
-      preLoaderRoute: typeof CandidatePortalDashboardRouteImport
-      parentRoute: typeof CandidatePortalRoute
-    }
-    '/candidate-portal/login': {
-      id: '/candidate-portal/login'
-      path: '/login'
-      fullPath: '/candidate-portal/login'
-      preLoaderRoute: typeof CandidatePortalLoginRouteImport
-      parentRoute: typeof CandidatePortalRoute
-    }
-    '/candidate-portal/wizard': {
-      id: '/candidate-portal/wizard'
-      path: '/wizard'
-      fullPath: '/candidate-portal/wizard'
-      preLoaderRoute: typeof CandidatePortalWizardRouteImport
-      parentRoute: typeof CandidatePortalRoute
-    }
-    '/candidates-portal/': {
-      id: '/candidates-portal/'
-      path: '/'
-      fullPath: '/candidates-portal/'
-      preLoaderRoute: typeof CandidatesPortalIndexRouteImport
-      parentRoute: typeof CandidatesPortalRoute
-    }
-    '/candidates-portal/$': {
-      id: '/candidates-portal/$'
-      path: '/$'
-      fullPath: '/candidates-portal/$'
-      preLoaderRoute: typeof CandidatesPortalSplatRouteImport
-      parentRoute: typeof CandidatesPortalRoute
-    }
-    '/candidates-portal/dashboard': {
-      id: '/candidates-portal/dashboard'
-      path: '/dashboard'
-      fullPath: '/candidates-portal/dashboard'
-      preLoaderRoute: typeof CandidatesPortalDashboardRouteImport
-      parentRoute: typeof CandidatesPortalRoute
-    }
-    '/candidates-portal/login': {
-      id: '/candidates-portal/login'
-      path: '/login'
-      fullPath: '/candidates-portal/login'
-      preLoaderRoute: typeof CandidatesPortalLoginRouteImport
-      parentRoute: typeof CandidatesPortalRoute
-    }
-    '/candidates-portal/wizard': {
-      id: '/candidates-portal/wizard'
-      path: '/wizard'
-      fullPath: '/candidates-portal/wizard'
-      preLoaderRoute: typeof CandidatesPortalWizardRouteImport
-      parentRoute: typeof CandidatesPortalRoute
-    }
-    '/candidates/': {
-      id: '/candidates/'
-      path: '/'
-      fullPath: '/candidates/'
-      preLoaderRoute: typeof CandidatesIndexRouteImport
-      parentRoute: typeof CandidatesRoute
-    }
-    '/candidates/$': {
-      id: '/candidates/$'
-      path: '/$'
-      fullPath: '/candidates/$'
-      preLoaderRoute: typeof CandidatesSplatRouteImport
-      parentRoute: typeof CandidatesRoute
-    }
-    '/candidates/dashboard': {
-      id: '/candidates/dashboard'
-      path: '/dashboard'
-      fullPath: '/candidates/dashboard'
-      preLoaderRoute: typeof CandidatesDashboardRouteImport
-      parentRoute: typeof CandidatesRoute
-    }
-    '/candidates/login': {
-      id: '/candidates/login'
-      path: '/login'
-      fullPath: '/candidates/login'
-      preLoaderRoute: typeof CandidatesLoginRouteImport
-      parentRoute: typeof CandidatesRoute
-    }
-    '/candidates/wizard': {
-      id: '/candidates/wizard'
-      path: '/wizard'
-      fullPath: '/candidates/wizard'
-      preLoaderRoute: typeof CandidatesWizardRouteImport
-      parentRoute: typeof CandidatesRoute
-    }
-    '/companies/': {
-      id: '/companies/'
-      path: '/'
-      fullPath: '/companies/'
-      preLoaderRoute: typeof CompaniesIndexRouteImport
-      parentRoute: typeof CompaniesRoute
-    }
-    '/companies/$': {
-      id: '/companies/$'
-      path: '/$'
-      fullPath: '/companies/$'
-      preLoaderRoute: typeof CompaniesSplatRouteImport
-      parentRoute: typeof CompaniesRoute
-    }
-    '/companies/dashboard': {
-      id: '/companies/dashboard'
-      path: '/dashboard'
-      fullPath: '/companies/dashboard'
-      preLoaderRoute: typeof CompaniesDashboardRouteImport
-      parentRoute: typeof CompaniesRoute
-    }
-    '/companies/login': {
-      id: '/companies/login'
-      path: '/login'
-      fullPath: '/companies/login'
-      preLoaderRoute: typeof CompaniesLoginRouteImport
-      parentRoute: typeof CompaniesRoute
-    }
-    '/companies/wizard': {
-      id: '/companies/wizard'
-      path: '/wizard'
-      fullPath: '/companies/wizard'
-      preLoaderRoute: typeof CompaniesWizardRouteImport
-      parentRoute: typeof CompaniesRoute
-    }
     '/admin-panel/settings/': {
       id: '/admin-panel/settings/'
       path: '/'
@@ -869,27 +376,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin-panel/settings/templates'
       preLoaderRoute: typeof AdminPanelSettingsTemplatesRouteImport
       parentRoute: typeof AdminPanelSettingsRoute
-    }
-    '/companies/$companyName/dashboard': {
-      id: '/companies/$companyName/dashboard'
-      path: '/$companyName/dashboard'
-      fullPath: '/companies/$companyName/dashboard'
-      preLoaderRoute: typeof CompaniesCompanyNameDashboardRouteImport
-      parentRoute: typeof CompaniesRoute
-    }
-    '/companies/$companyName/login': {
-      id: '/companies/$companyName/login'
-      path: '/$companyName/login'
-      fullPath: '/companies/$companyName/login'
-      preLoaderRoute: typeof CompaniesCompanyNameLoginRouteImport
-      parentRoute: typeof CompaniesRoute
-    }
-    '/companies/$companyName/wizard': {
-      id: '/companies/$companyName/wizard'
-      path: '/$companyName/wizard'
-      fullPath: '/companies/$companyName/wizard'
-      preLoaderRoute: typeof CompaniesCompanyNameWizardRouteImport
-      parentRoute: typeof CompaniesRoute
     }
   }
 }
@@ -949,99 +435,10 @@ const AdminPanelRouteWithChildren = AdminPanelRoute._addFileChildren(
   AdminPanelRouteChildren,
 )
 
-interface CandidatePortalRouteChildren {
-  CandidatePortalSplatRoute: typeof CandidatePortalSplatRoute
-  CandidatePortalDashboardRoute: typeof CandidatePortalDashboardRoute
-  CandidatePortalLoginRoute: typeof CandidatePortalLoginRoute
-  CandidatePortalWizardRoute: typeof CandidatePortalWizardRoute
-  CandidatePortalIndexRoute: typeof CandidatePortalIndexRoute
-}
-
-const CandidatePortalRouteChildren: CandidatePortalRouteChildren = {
-  CandidatePortalSplatRoute: CandidatePortalSplatRoute,
-  CandidatePortalDashboardRoute: CandidatePortalDashboardRoute,
-  CandidatePortalLoginRoute: CandidatePortalLoginRoute,
-  CandidatePortalWizardRoute: CandidatePortalWizardRoute,
-  CandidatePortalIndexRoute: CandidatePortalIndexRoute,
-}
-
-const CandidatePortalRouteWithChildren = CandidatePortalRoute._addFileChildren(
-  CandidatePortalRouteChildren,
-)
-
-interface CandidatesRouteChildren {
-  CandidatesSplatRoute: typeof CandidatesSplatRoute
-  CandidatesDashboardRoute: typeof CandidatesDashboardRoute
-  CandidatesLoginRoute: typeof CandidatesLoginRoute
-  CandidatesWizardRoute: typeof CandidatesWizardRoute
-  CandidatesIndexRoute: typeof CandidatesIndexRoute
-}
-
-const CandidatesRouteChildren: CandidatesRouteChildren = {
-  CandidatesSplatRoute: CandidatesSplatRoute,
-  CandidatesDashboardRoute: CandidatesDashboardRoute,
-  CandidatesLoginRoute: CandidatesLoginRoute,
-  CandidatesWizardRoute: CandidatesWizardRoute,
-  CandidatesIndexRoute: CandidatesIndexRoute,
-}
-
-const CandidatesRouteWithChildren = CandidatesRoute._addFileChildren(
-  CandidatesRouteChildren,
-)
-
-interface CandidatesPortalRouteChildren {
-  CandidatesPortalSplatRoute: typeof CandidatesPortalSplatRoute
-  CandidatesPortalDashboardRoute: typeof CandidatesPortalDashboardRoute
-  CandidatesPortalLoginRoute: typeof CandidatesPortalLoginRoute
-  CandidatesPortalWizardRoute: typeof CandidatesPortalWizardRoute
-  CandidatesPortalIndexRoute: typeof CandidatesPortalIndexRoute
-}
-
-const CandidatesPortalRouteChildren: CandidatesPortalRouteChildren = {
-  CandidatesPortalSplatRoute: CandidatesPortalSplatRoute,
-  CandidatesPortalDashboardRoute: CandidatesPortalDashboardRoute,
-  CandidatesPortalLoginRoute: CandidatesPortalLoginRoute,
-  CandidatesPortalWizardRoute: CandidatesPortalWizardRoute,
-  CandidatesPortalIndexRoute: CandidatesPortalIndexRoute,
-}
-
-const CandidatesPortalRouteWithChildren =
-  CandidatesPortalRoute._addFileChildren(CandidatesPortalRouteChildren)
-
-interface CompaniesRouteChildren {
-  CompaniesSplatRoute: typeof CompaniesSplatRoute
-  CompaniesDashboardRoute: typeof CompaniesDashboardRoute
-  CompaniesLoginRoute: typeof CompaniesLoginRoute
-  CompaniesWizardRoute: typeof CompaniesWizardRoute
-  CompaniesIndexRoute: typeof CompaniesIndexRoute
-  CompaniesCompanyNameDashboardRoute: typeof CompaniesCompanyNameDashboardRoute
-  CompaniesCompanyNameLoginRoute: typeof CompaniesCompanyNameLoginRoute
-  CompaniesCompanyNameWizardRoute: typeof CompaniesCompanyNameWizardRoute
-}
-
-const CompaniesRouteChildren: CompaniesRouteChildren = {
-  CompaniesSplatRoute: CompaniesSplatRoute,
-  CompaniesDashboardRoute: CompaniesDashboardRoute,
-  CompaniesLoginRoute: CompaniesLoginRoute,
-  CompaniesWizardRoute: CompaniesWizardRoute,
-  CompaniesIndexRoute: CompaniesIndexRoute,
-  CompaniesCompanyNameDashboardRoute: CompaniesCompanyNameDashboardRoute,
-  CompaniesCompanyNameLoginRoute: CompaniesCompanyNameLoginRoute,
-  CompaniesCompanyNameWizardRoute: CompaniesCompanyNameWizardRoute,
-}
-
-const CompaniesRouteWithChildren = CompaniesRoute._addFileChildren(
-  CompaniesRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   AdminPanelRoute: AdminPanelRouteWithChildren,
-  CandidatePortalRoute: CandidatePortalRouteWithChildren,
-  CandidatesRoute: CandidatesRouteWithChildren,
-  CandidatesPortalRoute: CandidatesPortalRouteWithChildren,
-  CompaniesRoute: CompaniesRouteWithChildren,
   DashboardRoute: DashboardRoute,
 }
 export const routeTree = rootRouteImport

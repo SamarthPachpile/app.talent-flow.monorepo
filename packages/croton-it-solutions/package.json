@@ -5,7 +5,7 @@
   "type": "module",
   "main": "src/App.tsx",
   "scripts": {
-    "dev": "vite --port 3000",
+    "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview --port 3000",
     "lint": "eslint .",
@@ -15,9 +15,6 @@
   },
   "dependencies": {
     "@talent-flow/api": "*",
-    "@talent-flow/candidate-portal": "*",
-    "@talent-flow/company-onboarding": "*",
-    "@talent-flow/admin-panel": "*",
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-alert-dialog": "^1.1.15",

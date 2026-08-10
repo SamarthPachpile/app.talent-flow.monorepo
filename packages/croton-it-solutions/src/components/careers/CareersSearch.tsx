@@ -1,6 +1,11 @@
 export default function CareersSearch() {
   return (
-    <section className=" py-16 px-4">
+    <section
+      id="careers-search"
+      data-section="careers-search"
+      data-label="Search Jobs"
+      className="py-16 px-4 bg-background"
+    >
       <div className="clip-path-card max-w-7xl mx-auto bg-[#f1f2f4] rounded-3xl p-10 relative">
         {/* Badge */}
         <div className="absolute top-8 right-8 bg-[#e6ea9c] text-sm px-5 py-2 rounded-full font-medium">

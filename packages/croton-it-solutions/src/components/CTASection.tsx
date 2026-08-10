@@ -17,7 +17,7 @@ export default function CTASection() {
             className="flex items-center gap-4 bg-[#ff5a1f] text-white px-7 py-4 rounded-full text-lg font-medium hover:scale-105 transition"
           >
             Get in touch
-            <span className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
+            <span className="w-50px h-50px rounded-full bg-white flex items-center justify-center">
               <ArrowRight className="text-[#111625] w-5 h-5" />
             </span>
           </Link>
@@ -33,7 +33,7 @@ export default function CTASection() {
             engineering impact
           </h2>
 
-          <h2 className="text-[#111625]  leading-[0.9] tracking-[-0.04em] text-[4.5rem] sm:text-[6rem] lg:text-[10rem] xl:text-[10rem] text-right">
+          <h2 className="text-primary  leading-[0.9] tracking-[-0.04em] text-[4.5rem] sm:text-[6rem] lg:text-[10rem] xl:text-[10rem] text-right">
             together.
           </h2>
         </div>

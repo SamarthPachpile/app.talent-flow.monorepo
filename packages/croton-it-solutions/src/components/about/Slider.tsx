@@ -35,7 +35,7 @@ function LogoRow({ reverse = false }: { reverse?: boolean }) {
           <img
             key={i}
             src={logo}
-            className="h-10 w-auto object-contain opacity-50 hover:opacity-100 transition shrink-0"
+            className="h-40px w-auto object-contain opacity-50 hover:opacity-100 transition shrink-0"
             alt=""
           />
         ))}
@@ -68,7 +68,12 @@ function LogoRow({ reverse = false }: { reverse?: boolean }) {
 
 export default function PurposeHero() {
   return (
-    <div className="min-h-screen flex flex-col justify-center gap-6">
+    <section
+      id="about-partners"
+      data-section="about-partners"
+      data-label="Partners"
+      className="min-h-screen flex flex-col justify-center gap-6 bg-background py-10"
+    >
       {/* 🔼 Top Slider */}
       <div className="pt-4">
         <LogoRow />
@@ -84,7 +89,7 @@ export default function PurposeHero() {
           <div className="mt-6">
             <button className="group inline-flex items-center gap-6 bg-orange-500 text-white px-8 py-4 rounded-full text-lg font-medium hover:bg-orange-600 transition">
               Play Video
-              <span className="bg-white text-black rounded-full w-10 h-10 flex items-center justify-center">
+              <span className="bg-white text-black rounded-full w-50px h-50px flex items-center justify-center">
                 <ArrowRight className="w-5 h-5" />
               </span>
             </button>
@@ -106,6 +111,6 @@ export default function PurposeHero() {
           <span className="text-sm text-gray-700">How can I help you?</span>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

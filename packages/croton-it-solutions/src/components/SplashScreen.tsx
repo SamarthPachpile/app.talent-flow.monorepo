@@ -91,7 +91,8 @@ export default function SplashScreen({ children }: { children: React.ReactNode }
       {!done && (
         <div
           ref={overlayRef}
-          className="fixed inset-0 z-[9999] overflow-hidden"
+          data-splash="active"
+          className="fixed inset-0 z-[100000] overflow-hidden"
           style={{
             background:
               "radial-gradient(ellipse at 30% 20%, #2a1340 0%, #140628 40%, #08020f 100%)",

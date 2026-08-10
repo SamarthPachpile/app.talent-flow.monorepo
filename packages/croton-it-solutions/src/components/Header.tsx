@@ -1,4 +1,5 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { Link } from "react-router-dom";
 import { ChevronDown, Globe, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -28,6 +29,19 @@ const navItems = [
       { label: "Professional Services", href: "/industries/professional-services" },
     ],
   },
+  {
+    label: "Portals",
+    href: "#",
+    dropdown: [
+      { label: "Startup Admin Panel (Port 3001)", href: "http://localhost:3001", external: true },
+      {
+        label: "Company Onboarding Portal (Port 3002)",
+        href: "http://localhost:3002",
+        external: true,
+      },
+      { label: "Candidate Portal (Port 3003)", href: "http://localhost:3003", external: true },
+    ],
+  },
   { label: "Croton AI", href: "/velocity-ai", highlight: true },
   { label: "Insights", href: "/insights" },
   { label: "About Us", href: "/about" },
@@ -38,8 +52,13 @@ export default function Header() {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const navRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const [mounted, setMounted] = useState(false);
 
-  return (
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const content = (
     <>
       {/* ✅ HEADER (always on top) */}
       <header className="fixed top-3 sm:top-5 left-1/2 -translate-x-1/2 z-[9999] w-[calc(100%-1.5rem)] sm:w-[calc(100%-2.5rem)] max-w-[1400px]">
@@ -141,6 +160,19 @@ export default function Header() {
                           >
                             {sub}
                           </Link>
+                        ) : "external" in sub && sub.external ? (
+                          <a
+                            key={sub.label}
+                            href={sub.href}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-sm text-muted-foreground hover:text-primary font-medium transition flex items-center justify-between"
+                          >
+                            <span>{sub.label}</span>
+                            <span className="text-[10px] px-2 py-0.5 rounded bg-primary/10 text-primary font-semibold">
+                              Open
+                            </span>
+                          </a>
                         ) : (
                           <Link
                             key={sub.label}
@@ -155,12 +187,12 @@ export default function Header() {
                 </div>
 
                 {/* MIDDLE */}
-                <div className="bg-muted rounded-xl h-[160px] flex items-center justify-center text-sm text-muted-foreground">
+                <div className="bg-[#18181b] border border-white/10 rounded-xl h-[160px] flex items-center justify-center text-sm text-muted-foreground">
                   Featured Content
                 </div>
 
                 {/* RIGHT */}
-                <div className="bg-muted rounded-xl h-[160px] flex items-center justify-center text-sm text-muted-foreground">
+                <div className="bg-[#18181b] border border-white/10 rounded-xl h-[160px] flex items-center justify-center text-sm text-muted-foreground">
                   Blogs / Case Studies
                 </div>
               </div>
@@ -193,4 +225,9 @@ export default function Header() {
       </AnimatePresence>
     </>
   );
+
+  if (!mounted) return content;
+
+  const targetEl = document.querySelector(".croton-scope") || document.body;
+  return createPortal(content, targetEl);
 }

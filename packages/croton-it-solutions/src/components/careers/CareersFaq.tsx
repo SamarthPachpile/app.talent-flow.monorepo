@@ -92,7 +92,7 @@ export default function CareersFAQ() {
       id="faq"
       data-section="faq"
       data-label="FAQ"
-      className="max-w-[1500px] mx-auto px-6 py-24"
+      className="py-16 sm:py-24 max-w-[1000px] mx-auto px-4 sm:px-6"
     >
       {/* Top Section */}
       <div className="flex flex-col md:flex-row justify-between gap-10 mb-16">

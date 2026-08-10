@@ -48,7 +48,7 @@ export default function CareersIntro() {
       ref={ref}
       id="intro"
       data-section="intro"
-      data-label="About"
+      data-label="Life at Croton"
       className="bg-[#f3efea] py-24 overflow-hidden"
     >
       <div className="max-w-[1400px] mx-auto px-6">
