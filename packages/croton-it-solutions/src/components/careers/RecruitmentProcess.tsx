@@ -2,7 +2,6 @@
 
 import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
-import Lenis from "@studio-freight/lenis";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -94,43 +93,19 @@ export default function RecruitmentProcess() {
   const buttonRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const lenis = new Lenis({
-      duration: 1.5,
-      smoothWheel: true,
-    });
+    if (!sectionRef.current) return;
 
-    function raf(time: number) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-
-    requestAnimationFrame(raf);
-
-    ScrollTrigger.scrollerProxy(document.body, {
-      scrollTop(value) {
-        return value !== undefined ? lenis.scrollTo(value, { immediate: true }) : window.scrollY;
-      },
-      getBoundingClientRect() {
-        return {
-          top: 0,
-          left: 0,
-          width: window.innerWidth,
-          height: window.innerHeight,
-        };
-      },
-      pinType: "transform",
-    });
-
-    ScrollTrigger.defaults({ scroller: document.body });
-
-    const stickyHeight = window.innerHeight * PROCESS.length;
+    const stickyHeight = window.innerHeight * (PROCESS.length * 0.75);
 
     const trigger = ScrollTrigger.create({
       trigger: sectionRef.current,
       start: "top top",
       end: `+=${stickyHeight}`,
       pin: true,
-      scrub: false,
+      pinType: "fixed",
+      pinSpacing: true,
+      anticipatePin: 1,
+      invalidateOnRefresh: true,
 
       onUpdate: (self) => {
         const progress = self.progress;
@@ -144,6 +119,7 @@ export default function RecruitmentProcess() {
 
         // Cards animation — one unique path per card
         cardsRef.current.forEach((card, index) => {
+          if (!card) return;
           // Stagger each card's animation start
           const delay = index * 0.08;
           // Each card's individual 0→1 progress, clamped
@@ -193,11 +169,13 @@ export default function RecruitmentProcess() {
       },
     });
 
-    ScrollTrigger.refresh();
+    const refreshTimer = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 100);
 
     return () => {
+      clearTimeout(refreshTimer);
       trigger.kill();
-      lenis.destroy();
     };
   }, []);
 
@@ -209,8 +187,12 @@ export default function RecruitmentProcess() {
       data-label="Process"
       style={{
         height: "100vh",
+        width: "100%",
         overflow: "hidden",
-        background: "#f3f3f3",
+        backgroundImage: "url('/assets/Yellow_background.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
         position: "relative",
       }}
     >
@@ -262,7 +244,7 @@ export default function RecruitmentProcess() {
             width: "380px",
             padding: "28px",
             background: p.bg,
-            boxShadow: "0 20px 60px rgba(0,0,0,0.08)",
+            boxShadow: "0 20px 60px rgba(0,0,0,0.12)",
             zIndex: 10 + index,
             opacity: 0,
           }}
@@ -322,7 +304,7 @@ export default function RecruitmentProcess() {
         style={{
           position: "absolute",
           right: "20vw",
-          top: "70%",
+          top: "50%",
           transform: "translateY(-50%)",
           zIndex: 100,
           opacity: 0,
@@ -339,7 +321,7 @@ export default function RecruitmentProcess() {
             fontWeight: 700,
             letterSpacing: "0.22em",
             textTransform: "uppercase",
-            color: "rgba(23,26,42,0.45)",
+            color: "rgba(23,26,42,0.6)",
             margin: 0,
           }}
         >
