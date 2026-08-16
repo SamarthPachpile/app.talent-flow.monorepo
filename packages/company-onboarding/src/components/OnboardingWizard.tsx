@@ -142,7 +142,7 @@ export const OnboardingWizard: React.FC<WizardProps> = ({ state, setState, onCom
         profile: newProfile,
         careerPortal: {
           ...prev.careerPortal,
-          url: `https://crotonitsolutions.com/candidates-portal/${slug}`,
+          url: `https://gravitonitsolutions.com/candidates-portal/${slug}`,
         },
       };
     });
@@ -633,7 +633,7 @@ export const OnboardingWizard: React.FC<WizardProps> = ({ state, setState, onCom
                 <span className="text-xs font-mono text-muted-foreground hidden sm:inline-block">
                   Portal URL:{" "}
                   <strong className="text-ember">
-                    crotonitsolutions.com/candidates-portal/
+                    gravitonitsolutions.com/candidates-portal/
                     {state.profile.subdomain ||
                       state.profile.name.toLowerCase().replace(/[^a-z0-9]/g, "")}
                   </strong>
@@ -2223,7 +2223,7 @@ export const OnboardingWizard: React.FC<WizardProps> = ({ state, setState, onCom
               {(() => {
                 const careerUrl = state.careerPortal?.url
                   ? state.careerPortal.url.replace("/companies/", "/candidates-portal/")
-                  : `https://crotonitsolutions.com/candidates-portal/${state.profile.subdomain || state.profile.name.toLowerCase().replace(/[^a-z0-9]/g, "")}`;
+                  : `https://gravitonitsolutions.com/candidates-portal/${state.profile.subdomain || state.profile.name.toLowerCase().replace(/[^a-z0-9]/g, "")}`;
                 return (
                   <div className="p-4 rounded-2xl bg-surface/70 border border-border flex items-center justify-between">
                     <div>
@@ -2906,7 +2906,7 @@ export const OnboardingWizard: React.FC<WizardProps> = ({ state, setState, onCom
                       <span className="font-bold text-ember font-mono">
                         {state.careerPortal?.url
                           ? state.careerPortal.url.replace("/companies/", "/candidates-portal/")
-                          : `https://crotonitsolutions.com/candidates-portal/${state.profile.subdomain || state.profile.name.toLowerCase().replace(/[^a-z0-9]/g, "")}`}
+                          : `https://gravitonitsolutions.com/candidates-portal/${state.profile.subdomain || state.profile.name.toLowerCase().replace(/[^a-z0-9]/g, "")}`}
                       </span>
                     </div>
                   </div>

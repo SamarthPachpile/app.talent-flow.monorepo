@@ -1,5 +1,5 @@
 import React from "react";
-import CrotonLandingWebsite from "@croton/pages/Index";
+import GravitonLandingWebsite from "@graviton/pages/Index";
 import { Link } from "@tanstack/react-router";
 import { ShieldCheck, ArrowRight } from "lucide-react";
 
@@ -11,7 +11,7 @@ export function AdminHomePage() {
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
           <span className="font-semibold text-white">
-            Root Landing Page &bull; Croton IT Solutions
+            Root Landing Page &bull; Graviton IT Solutions
           </span>
         </div>
         <div className="flex items-center gap-3">
@@ -26,9 +26,9 @@ export function AdminHomePage() {
         </div>
       </div>
 
-      {/* Main Croton IT Solutions Website */}
-      <div className="croton-scope">
-        <CrotonLandingWebsite />
+      {/* Main Graviton IT Solutions Website */}
+      <div className="graviton-scope">
+        <GravitonLandingWebsite />
       </div>
     </div>
   );

@@ -1,21 +1,68 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Manrope:wght@200..800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap");
-@import "tailwindcss" source(none);
+@import "tailwindcss";
 @config "../../../tailwind.config.ts";
 @source "../src";
+@source "../../..";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Design system matched 1:1 with croton-it-solutions.
+ * Design system & Sizing System mapped from tailwind.config.ts
  */
 
 @theme inline {
+  /* Screen Breakpoints */
+  --breakpoint-xs-480px: 480px;
+  --breakpoint-xs-560px: 560px;
+  --breakpoint-xs-600px: 600px;
   --breakpoint-sm: 640px;
   --breakpoint-md: 768px;
+  --breakpoint-lg-1000px: 1000px;
+  --breakpoint-lg-1022px: 1022px;
   --breakpoint-lg: 1024px;
   --breakpoint-xl: 1280px;
   --breakpoint-2xl: 1536px;
+
+  /* Standard Spacing & Sizing Scale */
+  --spacing-0: 0px;
+  --spacing-0\.5: 0.125rem;
+  --spacing-1: 0.25rem;
+  --spacing-1\.5: 0.375rem;
+  --spacing-2: 0.5rem;
+  --spacing-2\.5: 0.625rem;
+  --spacing-3: 0.75rem;
+  --spacing-3\.5: 0.875rem;
+  --spacing-4: 1rem;
+  --spacing-4\.5: 1.125rem;
+  --spacing-5: 1.25rem;
+  --spacing-5\.5: 1.375rem;
+  --spacing-6: 1.5rem;
+  --spacing-7: 1.75rem;
+  --spacing-8: 2rem;
+  --spacing-9: 2.25rem;
+  --spacing-10: 2.5rem;
+  --spacing-11: 2.75rem;
+  --spacing-12: 3rem;
+  --spacing-14: 3.5rem;
+  --spacing-16: 4rem;
+  --spacing-18: 4.5rem;
+  --spacing-20: 5rem;
+  --spacing-24: 6rem;
+  --spacing-28: 7rem;
+  --spacing-32: 8rem;
+  --spacing-36: 9rem;
+  --spacing-40: 10rem;
+  --spacing-44: 11rem;
+  --spacing-48: 12rem;
+  --spacing-52: 13rem;
+  --spacing-56: 14rem;
+  --spacing-60: 15rem;
+  --spacing-64: 16rem;
+  --spacing-72: 18rem;
+  --spacing-80: 20rem;
+  --spacing-96: 24rem;
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -201,7 +248,7 @@
   }
 }
 
-/* Croton glowing effects and background grid */
+/* Graviton glowing effects and background grid */
 .talentflow-company-onboarding-scope .bg-grid-pattern {
   background-size: 40px 40px;
   background-image:
@@ -225,7 +272,7 @@
   );
 }
 
-/* Glass & Panel utilities aligned to Croton design tokens */
+/* Glass & Panel utilities aligned to Graviton design tokens */
 .talentflow-company-onboarding-scope .glass-panel,
 .talentflow-company-onboarding-scope .glass-card {
   background: rgba(15, 23, 42, 0.65);
@@ -245,6 +292,13 @@
   box-shadow: 0 12px 30px -10px rgba(249, 115, 22, 0.25);
 }
 
+/* Graviton Chamfered Corner Clip Paths with Smooth 8-Sided Border Tracing */
+:root {
+  --clip-border-color: rgba(226, 232, 240, 0.95);
+  --clip-border-dark: rgba(51, 65, 85, 0.9);
+}
+
+.clip-path-card,
 .talentflow-company-onboarding-scope .clip-path-card {
   clip-path: polygon(
     28px 0,
@@ -256,8 +310,17 @@
     0 calc(100% - 28px),
     0 28px
   );
+  filter: drop-shadow(0 0 1px rgba(148, 163, 184, 0.4))
+    drop-shadow(0 1px 2px rgba(15, 23, 42, 0.04));
+  border: none !important;
 }
 
+.dark .clip-path-card,
+.dark .talentflow-company-onboarding-scope .clip-path-card {
+  filter: drop-shadow(0 0 1px rgba(71, 85, 105, 0.8)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.clip-service,
 .talentflow-company-onboarding-scope .clip-service {
   clip-path: polygon(
     20px 0,
@@ -269,8 +332,23 @@
     0 calc(100% - 20px),
     0 20px
   );
+  filter: drop-shadow(0 0 1px rgba(148, 163, 184, 0.45))
+    drop-shadow(0 1px 2px rgba(15, 23, 42, 0.03));
+  border: none !important;
 }
 
+.dark .clip-service,
+.dark .talentflow-company-onboarding-scope .clip-service {
+  filter: drop-shadow(0 0 1px rgba(71, 85, 105, 0.85)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.clip-service:hover,
+.talentflow-company-onboarding-scope .clip-service:hover {
+  filter: drop-shadow(0 0 1.5px rgba(249, 115, 22, 0.85))
+    drop-shadow(0 4px 12px rgba(249, 115, 22, 0.12));
+}
+
+.clip-path-nav-sm,
 .talentflow-company-onboarding-scope .clip-path-nav-sm {
   clip-path: polygon(
     18px 0,
@@ -282,9 +360,17 @@
     0 calc(100% - 18px),
     0 18px
   );
+  filter: drop-shadow(0 0 1px rgba(148, 163, 184, 0.4));
+  border: none !important;
   border-radius: 0;
 }
 
+.dark .clip-path-nav-sm,
+.dark .talentflow-company-onboarding-scope .clip-path-nav-sm {
+  filter: drop-shadow(0 0 1px rgba(71, 85, 105, 0.8));
+}
+
+.clip-path-button-sm,
 .talentflow-company-onboarding-scope .clip-path-button-sm {
   clip-path: polygon(
     10px 0,
@@ -296,7 +382,24 @@
     0 calc(100% - 10px),
     0 10px
   );
+  border: none !important;
   border-radius: 0;
+}
+
+@media (max-width: 768px) {
+  .clip-path-card,
+  .talentflow-company-onboarding-scope .clip-path-card {
+    clip-path: polygon(
+      16px 0,
+      calc(100% - 16px) 0,
+      100% 16px,
+      100% calc(100% - 16px),
+      calc(100% - 16px) 100%,
+      16px 100%,
+      0 calc(100% - 16px),
+      0 16px
+    );
+  }
 }
 
 .talentflow-company-onboarding-scope .form-input {

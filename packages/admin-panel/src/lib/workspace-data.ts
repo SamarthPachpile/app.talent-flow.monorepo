@@ -1,13 +1,13 @@
-// Mock data for the CROTON IT SOLUTIONS recruitment operations dashboard.
+// Mock data for the GRAVITON IT SOLUTIONS recruitment operations dashboard.
 // Multi-tenant: every record is scoped to a client company. No backend yet —
 // this mirrors the shape the real database tables will follow.
 
 import { CANDIDATES, type Candidate, type Stage } from "./ats-data";
 
 export const OPERATOR = {
-  name: "CROTON IT SOLUTIONS",
+  name: "GRAVITON IT SOLUTIONS",
   tagline: "Recruitment operations platform",
-  supportEmail: "operations@crotonitsolutions.com",
+  supportEmail: "operations@gravitonitsolutions.com",
 };
 
 export type Company = {

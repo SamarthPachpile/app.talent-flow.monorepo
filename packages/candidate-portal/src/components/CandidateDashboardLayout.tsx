@@ -1,0 +1,596 @@
+import React, { useState } from "react";
+import {
+  Gauge,
+  Search,
+  User,
+  ShieldCheck,
+  Briefcase,
+  Menu,
+  X,
+  Zap,
+  ChevronRight,
+  LogOut,
+  Settings,
+  Bell,
+  Sun,
+  Moon,
+  HelpCircle,
+  Building2,
+  CheckCircle2,
+  Users,
+  Layers,
+  FileCheck,
+} from "lucide-react";
+import {
+  CandidatePortalState,
+  StageId,
+  HardwareSelection,
+  AppliedJob,
+  AvailableJob,
+} from "../types/candidate";
+import { OPEN_POSITIONS_CATALOG } from "../data/mockCandidateData";
+import { CompanyDocument } from "@talent-flow/api";
+import { DashboardJobListView } from "./views/DashboardJobListView";
+import { SearchJobsView } from "./views/SearchJobsView";
+import { CandidateProfileView } from "./views/CandidateProfileView";
+import { GdprStatusView } from "./views/GdprStatusView";
+import { MyApplicationRoadmapView } from "./views/MyApplicationRoadmapView";
+import { JobDescriptionFullPageView } from "./views/JobDescriptionFullPageView";
+import { NotificationCenter } from "./NotificationCenter";
+import { HelpdeskModal } from "./HelpdeskModal";
+import { CandidateSettingsComponent } from "./CandidateSettings";
+import { toast } from "sonner";
+
+export type SidebarTab = "search_jobs" | "my_applications" | "profile" | "gdpr" | "my_application";
+
+interface CandidateDashboardLayoutProps {
+  portalState: CandidatePortalState;
+  setPortalState: React.Dispatch<React.SetStateAction<CandidatePortalState>>;
+  company: CompanyDocument | null;
+  activeCandidateKey: string;
+  onSelectCandidate: (key: string) => void;
+  activeStageId: StageId;
+  setActiveStageId: (id: StageId) => void;
+  darkMode: boolean;
+  onToggleDarkMode: () => void;
+  onLogout: () => void;
+  onAcceptOffer: (signedName: string) => void;
+  onUpdateHardware: (updated: Partial<HardwareSelection>) => void;
+}
+
+export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> = ({
+  portalState,
+  setPortalState,
+  company,
+  activeCandidateKey,
+  onSelectCandidate,
+  activeStageId,
+  setActiveStageId,
+  darkMode,
+  onToggleDarkMode,
+  onLogout,
+  onAcceptOffer,
+  onUpdateHardware,
+}) => {
+  const [activeTab, setActiveTab] = useState<SidebarTab>("search_jobs");
+  const [selectedJobForFullPage, setSelectedJobForFullPage] = useState<
+    AppliedJob | AvailableJob | null
+  >(null);
+  const [fullPageSourceTab, setFullPageSourceTab] = useState<"search_jobs" | "my_applications">(
+    "search_jobs",
+  );
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState<boolean>(false);
+  const [showProfileMenu, setShowProfileMenu] = useState<boolean>(false);
+  const [showNotifications, setShowNotifications] = useState<boolean>(false);
+  const [showHelpdesk, setShowHelpdesk] = useState<boolean>(false);
+  const [showSettings, setShowSettings] = useState<boolean>(false);
+
+  const brandName = company?.name || portalState.candidate.companyName || "Graviton";
+
+  const appliedJobsList = portalState.appliedJobs || [];
+
+  const handleApplyNewJob = (availJob: AvailableJob) => {
+    const newAppliedJob: AppliedJob = {
+      id: `applied-${Date.now()}`,
+      jobCode: availJob.id,
+      jobTitle: availJob.title,
+      location: availJob.location,
+      country: availJob.country,
+      appliedDate: new Date().toLocaleDateString("en-GB"),
+      status: "Active Job",
+      interviewDate: "-",
+      department: availJob.department,
+      employmentType: availJob.type,
+      salaryRange: availJob.salaryRange,
+      companyName: brandName,
+      description: availJob.description,
+      requirements: availJob.requirements,
+      recruiterNotes: "Application received and under review by talent acquisition team.",
+    };
+
+    setPortalState((prev) => ({
+      ...prev,
+      appliedJobs: [newAppliedJob, ...(prev.appliedJobs || [])],
+    }));
+  };
+
+  const navItems = [
+    {
+      id: "search_jobs" as SidebarTab,
+      label: "Search Jobs",
+      icon: Search,
+    },
+    {
+      id: "my_applications" as SidebarTab,
+      label: "My Applications",
+      icon: Briefcase,
+    },
+    {
+      id: "profile" as SidebarTab,
+      label: "Profile",
+      icon: User,
+    },
+    {
+      id: "gdpr" as SidebarTab,
+      label: "GDPR Status",
+      icon: ShieldCheck,
+    },
+    {
+      id: "my_application" as SidebarTab,
+      label: "My Application",
+      icon: ChevronRight,
+    },
+  ];
+
+  const unreadCount = portalState.notifications.filter((n) => !n.read).length;
+
+  return (
+    <div className="flex h-screen w-full bg-[#f4f6f9] dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-sans overflow-hidden">
+      {/* Mobile Backdrop */}
+      {mobileSidebarOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-slate-900/60 backdrop-blur-xs lg:hidden"
+          onClick={() => setMobileSidebarOpen(false)}
+        />
+      )}
+
+      {/* 1. LEFT SIDEBAR (Matched to #545C78 Slate-Purple with Orange Icons) */}
+      <aside
+        className={`fixed lg:static inset-y-0 left-0 z-50 flex flex-col bg-[#545C78] text-white transition-all duration-300 ease-in-out shrink-0 select-none shadow-xl ${
+          sidebarOpen ? "w-52 min-w-[208px]" : "w-14 min-w-[56px]"
+        } ${mobileSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
+      >
+        {/* Sidebar Brand Header */}
+        <div className="h-12 min-h-[48px] flex items-center justify-between px-3.5 border-b border-white/10 bg-[#464D67]">
+          <div className="flex items-center gap-2 overflow-hidden">
+            <div className="w-6 h-6 rounded-md bg-orange-500/20 text-orange-400 flex items-center justify-center shrink-0">
+              <Zap className="w-3.5 h-3.5 fill-orange-400 text-orange-400" />
+            </div>
+            {sidebarOpen && (
+              <span className="font-bold text-sm text-white tracking-tight truncate">
+                {brandName}
+              </span>
+            )}
+          </div>
+
+          <button
+            onClick={() => setMobileSidebarOpen(false)}
+            className="lg:hidden text-white/70 hover:text-white p-1 cursor-pointer"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* Sidebar User Profile Badge */}
+        <div className="p-3 border-b border-white/10 bg-[#4D5570]/50 flex items-center gap-2.5">
+          <div className="relative w-9 h-9 min-w-[36px] min-h-[36px] rounded-full overflow-hidden ring-2 ring-orange-400/50 bg-orange-950/30 shrink-0 flex items-center justify-center">
+            {portalState.candidate.avatarUrl ? (
+              <img
+                src={portalState.candidate.avatarUrl}
+                alt={portalState.candidate.name}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  (e.target as HTMLElement).style.display = "none";
+                }}
+              />
+            ) : (
+              <div className="w-full h-full bg-orange-500 text-white flex items-center justify-center font-bold text-xs">
+                {portalState.candidate.name ? portalState.candidate.name.charAt(0) : "U"}
+              </div>
+            )}
+          </div>
+
+          {sidebarOpen && (
+            <div className="min-w-0 flex-1">
+              <div className="text-xs font-semibold text-white truncate leading-tight">
+                {portalState.candidate.name}
+              </div>
+              <div className="text-[10px] text-[#e6ea9c] truncate leading-tight mt-0.5 font-medium">
+                {portalState.candidate.roleTitle || "Candidate"}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Sidebar Navigation Items */}
+        <nav className="flex-1 px-2.5 py-3 space-y-1.5 overflow-y-auto">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeTab === item.id;
+
+            return (
+              <button
+                key={item.id}
+                onClick={() => {
+                  setSelectedJobForFullPage(null);
+                  setActiveTab(item.id);
+                  setMobileSidebarOpen(false);
+                }}
+                className={`clip-path-button-sm w-full flex items-center gap-2.5 px-3 py-2.5 text-xs font-semibold transition-all cursor-pointer group ${
+                  isActive
+                    ? "bg-[#ff5f2e] text-white shadow-md font-bold scale-[1.02]"
+                    : "text-white/85 hover:bg-[#5B6381] hover:text-white"
+                } ${!sidebarOpen ? "justify-center px-0" : ""}`}
+                title={item.label}
+              >
+                <Icon
+                  className={`w-4 h-4 shrink-0 transition-colors ${
+                    isActive
+                      ? "text-white fill-white/20"
+                      : "text-orange-400 group-hover:text-orange-300"
+                  }`}
+                />
+                {sidebarOpen && <span className="truncate">{item.label}</span>}
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* Sidebar Footer */}
+        <div className="p-2.5 border-t border-white/10 bg-[#464D67]">
+          <button
+            onClick={onLogout}
+            className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[11px] text-rose-200 hover:bg-rose-500/20 hover:text-rose-100 transition-colors cursor-pointer ${
+              !sidebarOpen ? "justify-center px-0" : ""
+            }`}
+            title="Sign Out"
+          >
+            <LogOut className="w-3.5 h-3.5 shrink-0 text-rose-300" />
+            {sidebarOpen && <span>Sign Out</span>}
+          </button>
+        </div>
+      </aside>
+
+      {/* 2. MAIN CONTENT AREA */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        {/* Top Header Bar */}
+        <header className="h-12 min-h-[48px] bg-white dark:bg-slate-850 border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between px-4 sm:px-6 shrink-0 z-30">
+          {/* Left: Sidebar Toggle Button & Current View Breadcrumbs */}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => {
+                if (window.innerWidth < 1024) {
+                  setMobileSidebarOpen(!mobileSidebarOpen);
+                } else {
+                  setSidebarOpen(!sidebarOpen);
+                }
+              }}
+              className="p-1.5 rounded-md text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+              aria-label="Toggle navigation"
+            >
+              <Menu className="w-4 h-4" />
+            </button>
+
+            {/* Breadcrumb Title */}
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-slate-800 dark:text-slate-100">
+                {activeTab === "search_jobs" &&
+                  (selectedJobForFullPage ? "Job Details & Overview" : "Explore Vacancies")}
+                {activeTab === "my_applications" &&
+                  (selectedJobForFullPage
+                    ? `Application Details: ${
+                        "jobTitle" in selectedJobForFullPage
+                          ? selectedJobForFullPage.jobTitle
+                          : selectedJobForFullPage.title
+                      }`
+                    : "My Applications")}
+                {activeTab === "my_application" && "7-Stage Onboarding Roadmap"}
+                {activeTab === "profile" && "Candidate Profile"}
+                {activeTab === "gdpr" && "GDPR & Privacy"}
+              </span>
+              {company && (
+                <span className="hidden md:inline-flex items-center gap-1 px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded-full text-[10.5px] font-semibold text-slate-600 dark:text-slate-300">
+                  <Building2 className="w-3 h-3 text-[#00c0ef]" />
+                  <span>{company.name}</span>
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Right: Notifications, Dark mode & User Avatar Menu */}
+          <div className="flex items-center gap-2">
+            {/* Dark Mode Toggle */}
+            <button
+              onClick={onToggleDarkMode}
+              className="w-7.5 h-7.5 rounded-full flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+              title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+            >
+              {darkMode ? (
+                <Sun className="w-3.5 h-3.5 text-amber-400" />
+              ) : (
+                <Moon className="w-3.5 h-3.5" />
+              )}
+            </button>
+
+            {/* Notification Bell */}
+            <button
+              onClick={() => setShowNotifications(!showNotifications)}
+              className="relative w-7.5 h-7.5 rounded-full flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+              title="Notifications"
+            >
+              <Bell className="w-3.5 h-3.5" />
+              {unreadCount > 0 && (
+                <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-[#00c0ef] rounded-full ring-2 ring-white dark:ring-slate-850" />
+              )}
+            </button>
+
+            {/* User Profile Avatar Trigger */}
+            <div className="relative">
+              <button
+                onClick={() => setShowProfileMenu(!showProfileMenu)}
+                className="w-7.5 h-7.5 min-w-[30px] min-h-[30px] rounded-full ring-2 ring-sky-200 dark:ring-sky-900 overflow-hidden bg-sky-50 dark:bg-sky-950 flex items-center justify-center cursor-pointer hover:ring-sky-400 transition-all"
+                title="Account Menu"
+              >
+                {portalState.candidate.avatarUrl ? (
+                  <img
+                    src={portalState.candidate.avatarUrl}
+                    alt={portalState.candidate.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <User className="w-4 h-4 text-sky-600 dark:text-sky-400" />
+                )}
+              </button>
+
+              {/* Profile Dropdown */}
+              {showProfileMenu && (
+                <div
+                  className="absolute right-0 mt-1.5 w-56 bg-white dark:bg-slate-850 rounded-lg shadow-xl border border-slate-200 dark:border-slate-800 py-1.5 z-50 animate-fadeIn"
+                  onClick={() => setShowProfileMenu(false)}
+                >
+                  <div className="px-3.5 py-2 border-b border-slate-100 dark:border-slate-800">
+                    <div className="font-bold text-xs text-slate-900 dark:text-slate-100 truncate">
+                      {portalState.candidate.name}
+                    </div>
+                    <div className="text-[10px] text-slate-500 truncate">
+                      {portalState.candidate.email}
+                    </div>
+                  </div>
+
+                  {/* Switch Candidate Profiles for Demo */}
+                  <div className="px-2.5 py-1.5 border-b border-slate-100 dark:border-slate-800">
+                    <div className="text-[9.5px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-1">
+                      Switch Demo Profile
+                    </div>
+                    <button
+                      onClick={() => onSelectCandidate("alex")}
+                      className={`w-full text-left px-2 py-1 rounded text-xs font-medium flex items-center justify-between cursor-pointer ${
+                        activeCandidateKey === "alex"
+                          ? "bg-sky-50 dark:bg-sky-950/60 text-[#00c0ef] font-semibold"
+                          : "text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
+                      }`}
+                    >
+                      <span>Alex Rivera (Applied Jobs)</span>
+                      {activeCandidateKey === "alex" && (
+                        <CheckCircle2 className="w-3 h-3 text-[#00c0ef]" />
+                      )}
+                    </button>
+                    <button
+                      onClick={() => onSelectCandidate("sarah")}
+                      className={`w-full text-left px-2 py-1 rounded text-xs font-medium flex items-center justify-between cursor-pointer ${
+                        activeCandidateKey === "sarah"
+                          ? "bg-sky-50 dark:bg-sky-950/60 text-[#00c0ef] font-semibold"
+                          : "text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
+                      }`}
+                    >
+                      <span>Sarah Chen (Lead UX)</span>
+                      {activeCandidateKey === "sarah" && (
+                        <CheckCircle2 className="w-3 h-3 text-[#00c0ef]" />
+                      )}
+                    </button>
+                    <button
+                      onClick={() => onSelectCandidate("empty")}
+                      className={`w-full text-left px-2 py-1 rounded text-xs font-medium flex items-center justify-between cursor-pointer ${
+                        activeCandidateKey === "empty"
+                          ? "bg-sky-50 dark:bg-sky-950/60 text-[#00c0ef] font-semibold"
+                          : "text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
+                      }`}
+                    >
+                      <span>Empty (0 Applied Jobs)</span>
+                      {activeCandidateKey === "empty" && (
+                        <CheckCircle2 className="w-3 h-3 text-[#00c0ef]" />
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Action Links */}
+                  <div className="py-1">
+                    <button
+                      onClick={() => {
+                        setSelectedJobForFullPage(null);
+                        setActiveTab("profile");
+                      }}
+                      className="w-full text-left px-3.5 py-1.5 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2 cursor-pointer"
+                    >
+                      <User className="w-3.5 h-3.5 text-slate-400" />
+                      <span>Candidate Profile</span>
+                    </button>
+                    <button
+                      onClick={() => setShowSettings(true)}
+                      className="w-full text-left px-3.5 py-1.5 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2 cursor-pointer"
+                    >
+                      <Settings className="w-3.5 h-3.5 text-slate-400" />
+                      <span>Preferences & Settings</span>
+                    </button>
+                    <button
+                      onClick={() => setShowHelpdesk(true)}
+                      className="w-full text-left px-3.5 py-1.5 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2 cursor-pointer"
+                    >
+                      <HelpCircle className="w-3.5 h-3.5 text-slate-400" />
+                      <span>HR Helpdesk & Support</span>
+                    </button>
+                    <button
+                      onClick={onLogout}
+                      className="w-full text-left px-3.5 py-1.5 text-xs text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 flex items-center gap-2 cursor-pointer border-t border-slate-100 dark:border-slate-800 mt-1"
+                    >
+                      <LogOut className="w-3.5 h-3.5" />
+                      <span>Sign Out</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </header>
+
+        {/* Main Content Viewport */}
+        <main className="flex-1 overflow-y-auto p-3.5 sm:p-4.5 lg:p-5">
+          <div className="max-w-[1400px] mx-auto">
+            {showSettings ? (
+              <CandidateSettingsComponent onClose={() => setShowSettings(false)} />
+            ) : selectedJobForFullPage ? (
+              /* Dedicated Full-Page Job Description View */
+              <JobDescriptionFullPageView
+                job={selectedJobForFullPage}
+                candidate={portalState.candidate}
+                sourceTab={fullPageSourceTab}
+                isApplied={appliedJobsList.some(
+                  (j) =>
+                    (j.jobCode || j.id) ===
+                    (("jobCode" in selectedJobForFullPage && selectedJobForFullPage.jobCode) ||
+                      selectedJobForFullPage.id),
+                )}
+                onApply={(job) => {
+                  handleApplyNewJob(job);
+                  const newlyApplied: AppliedJob = {
+                    id: `applied-${Date.now()}`,
+                    jobCode: job.id,
+                    jobTitle: job.title,
+                    location: job.location,
+                    country: job.country,
+                    appliedDate: new Date().toLocaleDateString("en-GB"),
+                    status: "Active Job",
+                    interviewDate: "-",
+                    department: job.department,
+                    employmentType: job.type,
+                    salaryRange: job.salaryRange,
+                    companyName: brandName,
+                    description: job.description,
+                    requirements: job.requirements,
+                    recruiterNotes:
+                      "Application received and under review by talent acquisition team.",
+                  };
+                  setSelectedJobForFullPage(newlyApplied);
+                }}
+                onBack={() => setSelectedJobForFullPage(null)}
+                onNavigateToRoadmap={(stageId) => {
+                  if (stageId) setActiveStageId(stageId);
+                  setSelectedJobForFullPage(null);
+                  setActiveTab("my_application");
+                }}
+              />
+            ) : (
+              <>
+                {/* 1. Search Jobs View (Default / Main Tab) */}
+                {activeTab === "search_jobs" && (
+                  <SearchJobsView
+                    availableJobs={OPEN_POSITIONS_CATALOG}
+                    appliedJobIds={appliedJobsList.map((j) => j.jobCode || j.id)}
+                    onApplyJob={handleApplyNewJob}
+                    onGoToMyApplications={() => {
+                      setSelectedJobForFullPage(null);
+                      setActiveTab("my_applications");
+                    }}
+                    onSelectJobForFullPage={(job) => {
+                      setSelectedJobForFullPage(job);
+                      setFullPageSourceTab("search_jobs");
+                    }}
+                    brandName={brandName}
+                  />
+                )}
+
+                {/* 2. My Applications View */}
+                {activeTab === "my_applications" && (
+                  <DashboardJobListView
+                    appliedJobs={appliedJobsList}
+                    onBrowseJobs={() => setActiveTab("search_jobs")}
+                    onNavigateToStage={(stageId) => {
+                      setActiveStageId(stageId);
+                      setActiveTab("my_application");
+                    }}
+                    onSelectJobForFullPage={(job) => {
+                      setSelectedJobForFullPage(job);
+                      setFullPageSourceTab("my_applications");
+                    }}
+                  />
+                )}
+
+                {/* 3. Candidate Profile View */}
+                {activeTab === "profile" && (
+                  <CandidateProfileView
+                    candidate={portalState.candidate}
+                    onUpdateProfile={(updated) => {
+                      setPortalState((prev) => ({
+                        ...prev,
+                        candidate: { ...prev.candidate, ...updated },
+                      }));
+                    }}
+                  />
+                )}
+
+                {/* 4. GDPR Status View */}
+                {activeTab === "gdpr" && <GdprStatusView candidate={portalState.candidate} />}
+
+                {/* 5. My Application Roadmap View */}
+                {activeTab === "my_application" && (
+                  <MyApplicationRoadmapView
+                    portalState={portalState}
+                    company={company}
+                    activeStageId={activeStageId}
+                    onSelectStage={setActiveStageId}
+                    onAcceptOffer={onAcceptOffer}
+                    onUpdateHardware={onUpdateHardware}
+                  />
+                )}
+              </>
+            )}
+          </div>
+        </main>
+      </div>
+
+      {/* Notifications Drawer */}
+      {showNotifications && (
+        <NotificationCenter
+          notifications={portalState.notifications}
+          onClose={() => setShowNotifications(false)}
+          onSelectStage={(stageId) => {
+            setActiveStageId(stageId);
+            setSelectedJobForFullPage(null);
+            setActiveTab("my_application");
+            setShowNotifications(false);
+          }}
+        />
+      )}
+
+      {/* Helpdesk Modal */}
+      {showHelpdesk && (
+        <HelpdeskModal
+          candidate={portalState.candidate}
+          company={company}
+          onClose={() => setShowHelpdesk(false)}
+        />
+      )}
+    </div>
+  );
+};

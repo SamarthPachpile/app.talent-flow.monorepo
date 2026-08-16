@@ -62,7 +62,7 @@ export const App: React.FC = () => {
               },
               careerPortal: {
                 ...baseState.careerPortal,
-                url: `https://crotonitsolutions.com/candidates-portal/${slug}`,
+                url: `https://gravitonitsolutions.com/candidates-portal/${slug}`,
               },
               admin: {
                 ...baseState.admin,
@@ -128,7 +128,7 @@ export const App: React.FC = () => {
           careerPortal: {
             ...baseState.careerPortal,
             ...(fullDocState.careerPortal || {}),
-            url: `https://crotonitsolutions.com/candidates-portal/${slug}`,
+            url: `https://gravitonitsolutions.com/candidates-portal/${slug}`,
           },
           admin: {
             ...baseState.admin,
@@ -702,11 +702,15 @@ export const App: React.FC = () => {
 
   return (
     <SmoothScrollProvider>
-      <div className="talentflow-company-onboarding-scope min-h-screen bg-background text-foreground flex flex-col font-sans">
+      <div
+        className={`talentflow-company-onboarding-scope ${
+          activeTab === "dashboard" ? "h-screen overflow-hidden" : "min-h-screen"
+        } bg-background text-foreground flex flex-col font-sans`}
+      >
         <Toaster position="top-right" richColors />
 
         {/* Header Navigation for Company Portal */}
-        {activeTab !== "home" && activeTab !== "auth" && (
+        {activeTab !== "home" && activeTab !== "auth" && activeTab !== "dashboard" && (
           <Header
             activeTab={activeTab}
             setActiveTab={(tab) => {
@@ -734,7 +738,7 @@ export const App: React.FC = () => {
         )}
 
         {/* Main View Router */}
-        <main className="flex-1">
+        <main className={`flex-1 ${activeTab === "dashboard" ? "h-full overflow-hidden" : ""}`}>
           {companyNotFound ? (
             <div className="talentflow-company-onboarding-scope min-h-screen bg-background font-sans text-foreground flex flex-col items-center justify-center p-6 text-center animate-fadeIn">
               <div className="max-w-md w-full bg-card border border-border/80 rounded-2xl p-8 shadow-xl space-y-6">
@@ -831,6 +835,7 @@ export const App: React.FC = () => {
                   interactionsLog={interactionsLog}
                   activeSubTab={dashboardSubTab}
                   onSelectSubTab={(subTab) => setDashboardSubTab(subTab)}
+                  onLogout={handleLogout}
                 />
               )}
             </>

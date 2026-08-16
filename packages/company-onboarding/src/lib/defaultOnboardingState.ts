@@ -303,7 +303,7 @@ export function getDefaultOnboardingState(
     },
 
     careerPortal: {
-      url: `https://crotonitsolutions.com/candidates-portal/${cleanSlug}`,
+      url: `https://gravitonitsolutions.com/candidates-portal/${cleanSlug}`,
       logoUrl:
         "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=300&q=80",
       primaryColor: "#6366f1",

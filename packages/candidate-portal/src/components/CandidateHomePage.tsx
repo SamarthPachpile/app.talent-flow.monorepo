@@ -143,7 +143,7 @@ export const CandidateHomePage: React.FC<CandidateHomePageProps> = ({
         style={{ scaleX }}
       />
 
-      {/* Top Header Navigation (Croton Capsule Style) */}
+      {/* Top Header Navigation (Graviton Capsule Style) */}
       <header className="fixed top-3 sm:top-5 left-1/2 -translate-x-1/2 z-[9999] w-[calc(100%-1.5rem)] sm:w-[calc(100%-2.5rem)] max-w-[1400px]">
         <div className="clip-path-nav-sm bg-background/95 backdrop-blur-xl shadow-[0_8px_32px_-12px_rgba(0,0,0,0.15)] border border-border/60">
           <div className="flex items-center justify-between pl-5 pr-2 sm:pl-7 sm:pr-3 py-2.5">

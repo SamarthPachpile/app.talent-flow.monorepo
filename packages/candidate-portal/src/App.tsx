@@ -22,6 +22,7 @@ import { CandidateAuthScreen, CandidateAuthSuccessData } from "./components/Cand
 import { CandidateOnboardingWizard } from "./components/CandidateOnboardingWizard";
 import { CandidateSettingsComponent } from "./components/CandidateSettings";
 import { CandidateCompanySelector } from "./components/CandidateCompanySelector";
+import { CandidateDashboardLayout } from "./components/CandidateDashboardLayout";
 import { Toaster, toast } from "sonner";
 import { Building2, ArrowLeft, Plus } from "lucide-react";
 import SmoothScrollProvider from "./components/SmoothScrollProvider";
@@ -99,7 +100,7 @@ export function App() {
 
   const [activeCompany, setActiveCompany] = useState<CompanyDocument | null>(null);
 
-  const [activeCandidateKey, setActiveCandidateKey] = useState<"alex" | "sarah">("alex");
+  const [activeCandidateKey, setActiveCandidateKey] = useState<string>("alex");
   const [portalState, setPortalState] = useState<CandidatePortalState>(
     MOCK_CANDIDATES["alex"] || emptyCandidatePortalState,
   );
@@ -364,9 +365,9 @@ export function App() {
   };
 
   const handleSelectCandidate = (key: string) => {
-    if (key === "alex" || key === "sarah") {
+    if (MOCK_CANDIDATES[key]) {
       setActiveCandidateKey(key);
-      const newCandidateState = MOCK_CANDIDATES[key] || emptyCandidatePortalState;
+      const newCandidateState = MOCK_CANDIDATES[key];
       setPortalState(newCandidateState);
       setActiveStageId(newCandidateState.candidate.currentStageId || "application");
       if (newCandidateState.candidate.name) {
@@ -555,112 +556,22 @@ export function App() {
 
   // 4. Candidate Dashboard View (/candidates-portal/<company_name>/dashboard or /candidates-portal/<company_name>/)
   return (
-    <SmoothScrollProvider>
-      <div className="talentflow-candidate-portal-scope min-h-screen bg-background font-sans text-foreground">
-        <Toaster position="top-right" theme={darkMode ? "dark" : "light"} />
-
-        {/* Top AppNav Header */}
-        <Header
-          candidate={portalState.candidate}
-          company={activeCompany}
-          activeCandidateKey={activeCandidateKey}
-          onSelectCandidate={handleSelectCandidate}
-          unreadCount={unreadNotifCount}
-          onToggleNotifications={() => setShowNotifications(!showNotifications)}
-          onOpenHelpdesk={() => setShowHelpdesk(true)}
-          onOpenSettings={() => setShowSettings(true)}
-          darkMode={darkMode}
-          onToggleDarkMode={() => setDarkMode(!darkMode)}
-          onLogout={handleLogout}
-        />
-
-        {showSettings ? (
-          <main className="px-6 py-6 max-w-7xl mx-auto">
-            <CandidateSettingsComponent onClose={() => setShowSettings(false)} />
-          </main>
-        ) : (
-          <>
-            {/* Page Title & Stats Header Banner */}
-            <CandidateHero
-              candidate={portalState.candidate}
-              company={activeCompany}
-              stages={portalState.stages}
-              onOpenStage={(stageId) => setActiveStageId(stageId as StageId)}
-            />
-
-            <main className="px-6 py-8 max-w-7xl mx-auto space-y-8">
-              {/* 7-Stage Roadmap Stepper */}
-              <StageStepper
-                stages={portalState.stages}
-                activeStageId={activeStageId}
-                onSelectStage={(stageId) => setActiveStageId(stageId)}
-              />
-
-              {/* Active Stage Details View */}
-              <div className="bg-card border border-border rounded-xl p-6 shadow-lifted">
-                {activeStageId === "application" && (
-                  <ApplicationStageView
-                    application={portalState.application}
-                    candidate={portalState.candidate}
-                  />
-                )}
-
-                {activeStageId === "interview" && (
-                  <InterviewStageView interviews={portalState.interviews} />
-                )}
-
-                {activeStageId === "offer" && (
-                  <OfferStageView
-                    offer={portalState.offer}
-                    candidate={portalState.candidate}
-                    onAcceptOffer={handleAcceptOffer}
-                  />
-                )}
-
-                {activeStageId === "background_check" && (
-                  <BackgroundCheckStageView
-                    backgroundCheck={portalState.backgroundCheck}
-                    onUploadDoc={(docId) => toast.success(`Uploaded document: ${docId}`)}
-                  />
-                )}
-
-                {activeStageId === "hardware_setup" && (
-                  <HardwareSetupStageView
-                    hardware={portalState.hardware}
-                    onUpdateHardware={handleUpdateHardware}
-                  />
-                )}
-
-                {activeStageId === "credentials" && (
-                  <CredentialsStageView credentials={portalState.credentials} />
-                )}
-
-                {activeStageId === "day_one" && (
-                  <DayOneStageView dayOne={portalState.dayOne} candidate={portalState.candidate} />
-                )}
-              </div>
-            </main>
-          </>
-        )}
-
-        {/* Notifications Drawer */}
-        {showNotifications && (
-          <NotificationCenter
-            notifications={portalState.notifications}
-            onClose={() => setShowNotifications(false)}
-            onSelectStage={(stageId) => setActiveStageId(stageId)}
-          />
-        )}
-
-        {/* Helpdesk Modal */}
-        {showHelpdesk && (
-          <HelpdeskModal
-            candidate={portalState.candidate}
-            company={activeCompany}
-            onClose={() => setShowHelpdesk(false)}
-          />
-        )}
-      </div>
-    </SmoothScrollProvider>
+    <div className="talentflow-candidate-portal-scope min-h-screen bg-background font-sans text-foreground">
+      <Toaster position="top-right" theme={darkMode ? "dark" : "light"} />
+      <CandidateDashboardLayout
+        portalState={portalState}
+        setPortalState={setPortalState}
+        company={activeCompany}
+        activeCandidateKey={activeCandidateKey}
+        onSelectCandidate={handleSelectCandidate}
+        activeStageId={activeStageId}
+        setActiveStageId={setActiveStageId}
+        darkMode={darkMode}
+        onToggleDarkMode={() => setDarkMode(!darkMode)}
+        onLogout={handleLogout}
+        onAcceptOffer={handleAcceptOffer}
+        onUpdateHardware={handleUpdateHardware}
+      />
+    </div>
   );
 }

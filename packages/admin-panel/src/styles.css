@@ -7,7 +7,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Design system matched 1:1 with croton-it-solutions.
+ * Design system matched 1:1 with graviton-it-solutions.
  */
 
 @theme inline {
@@ -201,7 +201,7 @@
   }
 }
 
-/* Croton glowing effects and background grid */
+/* Graviton glowing effects and background grid */
 .talentflow-admin-panel-scope .bg-grid-pattern {
   background-size: 40px 40px;
   background-image:
