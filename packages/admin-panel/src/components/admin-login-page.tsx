@@ -9,8 +9,12 @@ import {
   EyeOff,
   Sparkles,
   ShieldAlert,
+  Globe,
+  ChevronDown,
 } from "lucide-react";
 import { toast } from "sonner";
+import { CTASection } from "./CTASection";
+import { Footer } from "./Footer";
 
 interface AdminLoginPageProps {
   onSuccess?: () => void;
@@ -38,44 +42,43 @@ export function AdminLoginPage({ onSuccess }: AdminLoginPageProps = {}) {
     e.preventDefault();
     setIsAuthenticating(true);
 
-    const targetUsername = import.meta.env.VITE_ADMIN_USERNAME;
-    const targetPassword = import.meta.env.VITE_ADMIN_PASSWORD;
-
     setTimeout(() => {
-      if (!targetUsername || !targetPassword) {
+      const activeUser = import.meta.env.VITE_ADMIN_USERNAME;
+      const activePass = import.meta.env.VITE_ADMIN_PASSWORD;
+
+      if (!activeUser || !activePass) {
         setIsAuthenticating(false);
         toast.error(
-          "Environment credentials missing! Please configure VITE_ADMIN_USERNAME & VITE_ADMIN_PASSWORD in .env",
+          "Admin environment variables (VITE_ADMIN_USERNAME, VITE_ADMIN_PASSWORD) are not configured in .env file.",
         );
         return;
       }
 
-      const inputUsername = username.trim();
-
-      if (inputUsername === targetUsername && password === targetPassword) {
+      if (username.trim() === activeUser && password.trim() === activePass) {
+        setIsAuthenticating(false);
+        localStorage.setItem("talentflow_admin_auth", "true");
         localStorage.setItem(
-          "talentflow_admin_auth",
+          "talentflow_admin_user",
           JSON.stringify({
-            authenticated: true,
-            username: inputUsername,
+            username: activeUser,
             role: "Super Admin",
             authenticatedAt: new Date().toISOString(),
-            authMode: "env_strict",
           }),
         );
-        setIsAuthenticating(false);
-        toast.success(`Authentication successful! Welcome, ${inputUsername}.`);
+        toast.success("Security verification successful! Redirecting to Admin Suite...");
         if (onSuccess) {
           onSuccess();
-        } else {
+        } else if (typeof window !== "undefined") {
           window.history.pushState({}, "", "/admin-panel/dashboard");
           window.dispatchEvent(new PopStateEvent("popstate"));
         }
       } else {
         setIsAuthenticating(false);
-        toast.error("Invalid Admin Username or Password. Verification against .env failed.");
+        toast.error(
+          "Invalid credentials. Admin access strictly matches environment variable values.",
+        );
       }
-    }, 300);
+    }, 400);
   };
 
   const handleAutofillCredentials = () => {
@@ -91,30 +94,51 @@ export function AdminLoginPage({ onSuccess }: AdminLoginPageProps = {}) {
   };
 
   return (
-    <div className="min-h-screen bg-background font-sans text-foreground flex flex-col justify-between p-4 sm:p-6 my-4">
-      <header className="flex items-center justify-between max-w-7xl mx-auto w-full">
-        <a href="/admin-panel" onClick={handleNavigateHome} className="flex items-center gap-3">
-          <div className="grid size-9 place-items-center rounded-lg bg-ember text-sm font-bold text-ember-foreground shadow-xs">
-            TF
-          </div>
-          <div>
-            <p className="font-display text-xl font-bold text-foreground">TalentFlow Admin Suite</p>
-            <p className="text-10px text-muted-foreground uppercase tracking-widest font-semibold">
-              Strict Environment Security Portal
-            </p>
-          </div>
-        </a>
+    <div className="min-h-screen bg-background font-sans text-foreground flex flex-col justify-between p-4 sm:p-6 my-4 relative overflow-x-clip">
+      {/* Top Floating Navigation Header (Graviton Capsule Style) */}
+      <header className="fixed top-3 sm:top-5 left-1/2 -translate-x-1/2 z-[9999] w-[calc(100%-1.5rem)] sm:w-[calc(100%-2.5rem)] max-w-[1400px]">
+        <div className="clip-path-nav-sm bg-background/95 backdrop-blur-xl shadow-[0_8px_32px_-12px_rgba(0,0,0,0.15)] border border-border/60">
+          <div className="flex items-center justify-between pl-5 pr-2 sm:pl-7 sm:pr-3 py-2.5">
+            {/* Brand Logo */}
+            <a
+              href="/admin-panel"
+              onClick={handleNavigateHome}
+              className="flex items-center gap-3 cursor-pointer"
+            >
+              <span className="grid size-9 place-items-center rounded-xl bg-ember text-ember-foreground font-bold shadow-xs text-xs shrink-0">
+                TF
+              </span>
+              <div className="flex flex-col leading-none">
+                <span className="text-base sm:text-lg font-bold text-foreground tracking-tight">
+                  TalentFlow<sup className="text-[10px] top-0 ml-0.5 font-bold text-ember">®</sup>
+                </span>
+                <span className="text-10px text-muted-foreground mt-0.5 font-medium">
+                  Super Admin ATS Suite
+                </span>
+              </div>
+            </a>
 
-        <a
-          href="/admin-panel"
-          onClick={handleNavigateHome}
-          className="text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-        >
-          ← Back to Admin Home
-        </a>
+            {/* Right Side Buttons */}
+            <div className="flex items-center gap-3">
+              <div className="hidden sm:flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors px-2 py-1">
+                <Globe className="w-3.5 h-3.5" />
+                <span>EN</span>
+                <ChevronDown className="w-3 h-3" />
+              </div>
+
+              <a
+                href="/companies"
+                className="clip-path-button-sm bg-ember text-ember-foreground px-5 py-2 text-xs font-semibold hover:bg-ember/90 transition-colors flex items-center gap-1.5 cursor-pointer"
+              >
+                <span>Company Portal</span>
+                <ArrowRight className="size-3.5" />
+              </a>
+            </div>
+          </div>
+        </div>
       </header>
 
-      <main className="flex items-center justify-center py-8 relative z-10">
+      <main className="flex items-center justify-center pt-28 pb-8 relative z-10">
         <div className="w-full max-w-md bg-card border border-border rounded-2xl p-6 sm:p-8 shadow-lifted space-y-6">
           {/* Header section */}
           <div className="flex items-center gap-3 border-b border-border pb-4">
@@ -241,9 +265,36 @@ export function AdminLoginPage({ onSuccess }: AdminLoginPageProps = {}) {
         </div>
       </main>
 
-      <footer className="text-center text-11px text-muted-foreground max-w-7xl mx-auto w-full py-2 relative z-10">
-        TalentFlow Admin Panel · Credentials Verified Exclusively via Environment Variables
-      </footer>
+      {/* CTA Section */}
+      <div className="w-full -mx-4 sm:-mx-6 my-10">
+        <CTASection
+          buttonText="Admin Sign In"
+          onButtonClick={() => {
+            const btn = document.querySelector('button[type="submit"]') as HTMLButtonElement;
+            if (btn) btn.scrollIntoView({ behavior: "smooth" });
+          }}
+          headingLine1="Let's start"
+          headingLine2="engineering impact"
+          headingHighlight="together."
+          subtext="Comprehensive multi-tenant governance, candidate pipeline intelligence, and operational compliance tools."
+        />
+      </div>
+
+      {/* Footer */}
+      <div className="w-full -mx-4 sm:-mx-6 -mb-4 sm:-mb-6">
+        <Footer
+          linksCol1={[
+            { label: "Admin Pipeline", href: "/admin-panel/dashboard" },
+            { label: "Onboarded Companies", href: "/admin-panel/companies" },
+            { label: "Interviews Control", href: "/admin-panel/interviews" },
+          ]}
+          linksCol2={[
+            { label: "Company Portal", href: "/companies" },
+            { label: "Candidate Portal", href: "/candidates-portal" },
+            { label: "Admin CRM", href: "/admin-panel" },
+          ]}
+        />
+      </div>
     </div>
   );
 }

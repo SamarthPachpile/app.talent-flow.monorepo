@@ -1,21 +1,175 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Manrope:wght@200..800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap");
-@import "tailwindcss" source(none);
+@import "tailwindcss";
 @config "../../../tailwind.config.ts";
 @source "../src";
+@source "../../..";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Design system matched 1:1 with croton-it-solutions.
+ * Design system & Sizing System mapped from tailwind.config.ts
  */
 
 @theme inline {
+  /* Screen Breakpoints */
+  --breakpoint-xs-480px: 480px;
+  --breakpoint-xs-560px: 560px;
+  --breakpoint-xs-600px: 600px;
   --breakpoint-sm: 640px;
   --breakpoint-md: 768px;
+  --breakpoint-lg-1000px: 1000px;
+  --breakpoint-lg-1022px: 1022px;
   --breakpoint-lg: 1024px;
   --breakpoint-xl: 1280px;
   --breakpoint-2xl: 1536px;
+
+  /* Font Sizes */
+  --text-10px: 10px;
+  --text-11px: 11px;
+  --text-12px: 12px;
+  --text-12\.5px: 12.5px;
+  --text-13px: 13px;
+  --text-13\.3px: 13.3px;
+  --text-14px: 14px;
+  --text-14\.3px: 14.3px;
+  --text-15px: 15px;
+  --text-16px: 16px;
+  --text-17px: 17px;
+  --text-18px: 18px;
+  --text-20px: 20px;
+  --text-21px: 21px;
+  --text-22px: 22px;
+  --text-24px: 24px;
+  --text-26px: 26px;
+  --text-28px: 28px;
+  --text-30px: 30px;
+  --text-32px: 32px;
+  --text-40px: 40px;
+  --text-42px: 42px;
+  --text-46px: 46px;
+  --text-48px: 48px;
+
+  /* Standard Spacing & Sizing Scale */
+  --spacing-0: 0px;
+  --spacing-0\.5: 0.125rem;
+  --spacing-1: 0.25rem;
+  --spacing-1\.5: 0.375rem;
+  --spacing-2: 0.5rem;
+  --spacing-2\.5: 0.625rem;
+  --spacing-3: 0.75rem;
+  --spacing-3\.5: 0.875rem;
+  --spacing-4: 1rem;
+  --spacing-4\.5: 1.125rem;
+  --spacing-5: 1.25rem;
+  --spacing-5\.5: 1.375rem;
+  --spacing-6: 1.5rem;
+  --spacing-7: 1.75rem;
+  --spacing-8: 2rem;
+  --spacing-9: 2.25rem;
+  --spacing-10: 2.5rem;
+  --spacing-11: 2.75rem;
+  --spacing-12: 3rem;
+  --spacing-14: 3.5rem;
+  --spacing-16: 4rem;
+  --spacing-18: 4.5rem;
+  --spacing-20: 5rem;
+  --spacing-24: 6rem;
+  --spacing-28: 7rem;
+  --spacing-32: 8rem;
+  --spacing-36: 9rem;
+  --spacing-40: 10rem;
+  --spacing-44: 11rem;
+  --spacing-48: 12rem;
+  --spacing-52: 13rem;
+  --spacing-56: 14rem;
+  --spacing-60: 15rem;
+  --spacing-64: 16rem;
+  --spacing-72: 18rem;
+  --spacing-80: 20rem;
+  --spacing-96: 24rem;
+
+  /* Pixel Exact Spacing Values from tailwind.config.ts */
+  --spacing-0px: 0px;
+  --spacing-1px: 1px;
+  --spacing-2px: 2px;
+  --spacing-3px: 3px;
+  --spacing-4px: 4px;
+  --spacing-5px: 5px;
+  --spacing-6px: 6px;
+  --spacing-7px: 7px;
+  --spacing-8px: 8px;
+  --spacing-9px: 9px;
+  --spacing-10px: 10px;
+  --spacing-11px: 11px;
+  --spacing-12px: 12px;
+  --spacing-13px: 13px;
+  --spacing-14px: 14px;
+  --spacing-15px: 15px;
+  --spacing-16px: 16px;
+  --spacing-17px: 17px;
+  --spacing-18px: 18px;
+  --spacing-19px: 19px;
+  --spacing-20px: 20px;
+  --spacing-22px: 22px;
+  --spacing-24px: 24px;
+  --spacing-28px: 28px;
+  --spacing-30px: 30px;
+  --spacing-32px: 32px;
+  --spacing-34px: 34px;
+  --spacing-36px: 36px;
+  --spacing-38px: 38px;
+  --spacing-40px: 40px;
+  --spacing-44px: 44px;
+  --spacing-48px: 48px;
+  --spacing-50px: 50px;
+  --spacing-56px: 56px;
+  --spacing-60px: 60px;
+  --spacing-64px: 64px;
+  --spacing-68px: 68px;
+  --spacing-70px: 70px;
+  --spacing-72px: 72px;
+  --spacing-78px: 78px;
+  --spacing-80px: 80px;
+  --spacing-90px: 90px;
+  --spacing-100px: 100px;
+  --spacing-110px: 110px;
+  --spacing-120px: 120px;
+  --spacing-140px: 140px;
+  --spacing-150px: 150px;
+  --spacing-160px: 160px;
+  --spacing-175px: 175px;
+  --spacing-185px: 185px;
+  --spacing-200px: 200px;
+  --spacing-240px: 240px;
+  --spacing-250px: 250px;
+  --spacing-280px: 280px;
+  --spacing-300px: 300px;
+  --spacing-350px: 350px;
+  --spacing-400px: 400px;
+  --spacing-450px: 450px;
+  --spacing-500px: 500px;
+  --spacing-600px: 600px;
+  --spacing-700px: 700px;
+
+  /* Border Radii */
+  --radius-1px: 1px;
+  --radius-2px: 2px;
+  --radius-3px: 3px;
+  --radius-4px: 4px;
+  --radius-5px: 5px;
+  --radius-6px: 6px;
+  --radius-7px: 7px;
+  --radius-8px: 8px;
+  --radius-9px: 9px;
+  --radius-10px: 10px;
+  --radius-12px: 12px;
+  --radius-14px: 14px;
+  --radius-15px: 15px;
+  --radius-16px: 16px;
+  --radius-20px: 20px;
+  --radius-22px: 22px;
+  --radius-24px: 24px;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -23,8 +177,13 @@
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
+  --radius-full: 9999px;
+
+  /* Typography */
   --font-display: var(--font-display);
   --font-sans: var(--font-sans);
+
+  /* Colors */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -201,7 +360,7 @@
   }
 }
 
-/* Croton glowing effects and background grid */
+/* Graviton glowing effects and background grid */
 .talentflow-candidate-portal-scope .bg-grid-pattern {
   background-size: 40px 40px;
   background-image:
@@ -225,7 +384,7 @@
   );
 }
 
-/* Glass & Panel utilities aligned to Croton design tokens */
+/* Glass & Panel utilities aligned to Graviton design tokens */
 .talentflow-candidate-portal-scope .glass-panel,
 .talentflow-candidate-portal-scope .glass-card {
   background: rgba(15, 23, 42, 0.65);
@@ -245,6 +404,13 @@
   box-shadow: 0 12px 30px -10px rgba(249, 115, 22, 0.25);
 }
 
+/* Graviton Chamfered Corner Clip Paths with Smooth 8-Sided Border Tracing */
+:root {
+  --clip-border-color: rgba(226, 232, 240, 0.95);
+  --clip-border-dark: rgba(51, 65, 85, 0.9);
+}
+
+.clip-path-card,
 .talentflow-candidate-portal-scope .clip-path-card {
   clip-path: polygon(
     28px 0,
@@ -256,8 +422,17 @@
     0 calc(100% - 28px),
     0 28px
   );
+  filter: drop-shadow(0 0 1px rgba(148, 163, 184, 0.4))
+    drop-shadow(0 1px 2px rgba(15, 23, 42, 0.04));
+  border: none !important;
 }
 
+.dark .clip-path-card,
+.dark .talentflow-candidate-portal-scope .clip-path-card {
+  filter: drop-shadow(0 0 1px rgba(71, 85, 105, 0.8)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.clip-service,
 .talentflow-candidate-portal-scope .clip-service {
   clip-path: polygon(
     20px 0,
@@ -269,8 +444,23 @@
     0 calc(100% - 20px),
     0 20px
   );
+  filter: drop-shadow(0 0 1px rgba(148, 163, 184, 0.45))
+    drop-shadow(0 1px 2px rgba(15, 23, 42, 0.03));
+  border: none !important;
 }
 
+.dark .clip-service,
+.dark .talentflow-candidate-portal-scope .clip-service {
+  filter: drop-shadow(0 0 1px rgba(71, 85, 105, 0.85)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.clip-service:hover,
+.talentflow-candidate-portal-scope .clip-service:hover {
+  filter: drop-shadow(0 0 1.5px rgba(249, 115, 22, 0.85))
+    drop-shadow(0 4px 12px rgba(249, 115, 22, 0.12));
+}
+
+.clip-path-nav-sm,
 .talentflow-candidate-portal-scope .clip-path-nav-sm {
   clip-path: polygon(
     18px 0,
@@ -282,9 +472,17 @@
     0 calc(100% - 18px),
     0 18px
   );
+  filter: drop-shadow(0 0 1px rgba(148, 163, 184, 0.4));
+  border: none !important;
   border-radius: 0;
 }
 
+.dark .clip-path-nav-sm,
+.dark .talentflow-candidate-portal-scope .clip-path-nav-sm {
+  filter: drop-shadow(0 0 1px rgba(71, 85, 105, 0.8));
+}
+
+.clip-path-button-sm,
 .talentflow-candidate-portal-scope .clip-path-button-sm {
   clip-path: polygon(
     10px 0,
@@ -296,7 +494,24 @@
     0 calc(100% - 10px),
     0 10px
   );
+  border: none !important;
   border-radius: 0;
+}
+
+@media (max-width: 768px) {
+  .clip-path-card,
+  .talentflow-candidate-portal-scope .clip-path-card {
+    clip-path: polygon(
+      16px 0,
+      calc(100% - 16px) 0,
+      100% 16px,
+      100% calc(100% - 16px),
+      calc(100% - 16px) 100%,
+      16px 100%,
+      0 calc(100% - 16px),
+      0 16px
+    );
+  }
 }
 
 .talentflow-candidate-portal-scope .form-input {
@@ -337,4 +552,19 @@
 * {
   scrollbar-width: thin;
   scrollbar-color: rgba(140, 140, 150, 0.45) transparent;
+}
+
+/* Lenis Smooth Scroll Configuration */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: clip;
 }

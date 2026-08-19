@@ -11,6 +11,7 @@ import { SettingsCard } from "../settings/settings-card";
 import { AuditTrail } from "../ats/audit-trail";
 import { useWorkspace } from "../../lib/workspace-store";
 import { AdminLoginPage } from "../admin-login-page";
+import { Footer } from "../Footer";
 
 export function InterviewsPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
@@ -215,6 +216,20 @@ export function InterviewsPage() {
 
         <AuditTrail title="Scheduling audit log" entries={calendarAudit} />
       </div>
+
+      <Footer
+        linksCol1={[
+          { label: "Admin Pipeline", href: "/admin-panel/dashboard" },
+          { label: "Onboarded Companies", href: "/admin-panel/companies" },
+          { label: "Interviews Control", href: "/admin-panel/interviews" },
+          { label: "Offers Central", href: "/admin-panel/offers" },
+        ]}
+        linksCol2={[
+          { label: "Company Portal", href: "/companies" },
+          { label: "Candidate Portal", href: "/candidates-portal" },
+          { label: "Admin Settings", href: "/admin-panel/settings" },
+        ]}
+      />
     </div>
   );
 }

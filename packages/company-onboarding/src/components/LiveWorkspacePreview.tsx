@@ -28,7 +28,7 @@ export const LiveWorkspacePreview: React.FC<PreviewProps> = ({ state }) => {
         <div className="flex items-center gap-2 text-xs text-muted-foreground bg-surface border border-border px-3 py-1.5 rounded-md font-mono">
           <span className="size-2 rounded-full bg-success" />
           <span>
-            https://crotonitsolutions.com/candidates-portal/{state.profile.subdomain || "company"}
+            https://gravitonitsolutions.com/candidates-portal/{state.profile.subdomain || "company"}
           </span>
         </div>
       </div>
@@ -43,7 +43,7 @@ export const LiveWorkspacePreview: React.FC<PreviewProps> = ({ state }) => {
             <span className="size-2.5 rounded-full bg-success/60" />
           </div>
           <div className="bg-card border border-border rounded-md px-3 py-0.5 text-xs font-mono text-muted-foreground w-full max-w-md text-center truncate">
-            https://crotonitsolutions.com/candidates-portal/{state.profile.subdomain || "company"}
+            https://gravitonitsolutions.com/candidates-portal/{state.profile.subdomain || "company"}
           </div>
           <div className="w-12" />
         </div>

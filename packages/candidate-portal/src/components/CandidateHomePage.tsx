@@ -21,11 +21,14 @@ import {
   Headphones,
   Check,
   ChevronDown,
+  Globe,
   Info,
   PackageCheck,
   Menu,
   X,
 } from "lucide-react";
+import { CTASection } from "./CTASection";
+import { Footer } from "./Footer";
 
 interface CandidateHomePageProps {
   onSignIn: () => void;
@@ -143,7 +146,7 @@ export const CandidateHomePage: React.FC<CandidateHomePageProps> = ({
         style={{ scaleX }}
       />
 
-      {/* Top Header Navigation (Croton Capsule Style) */}
+      {/* Top Header Navigation (Graviton Capsule Style) */}
       <header className="fixed top-3 sm:top-5 left-1/2 -translate-x-1/2 z-[9999] w-[calc(100%-1.5rem)] sm:w-[calc(100%-2.5rem)] max-w-[1400px]">
         <div className="clip-path-nav-sm bg-background/95 backdrop-blur-xl shadow-[0_8px_32px_-12px_rgba(0,0,0,0.15)] border border-border/60">
           <div className="flex items-center justify-between pl-5 pr-2 sm:pl-7 sm:pr-3 py-2.5">
@@ -157,7 +160,7 @@ export const CandidateHomePage: React.FC<CandidateHomePageProps> = ({
               </motion.span>
               <div className="flex flex-col leading-none">
                 <span className="text-base sm:text-lg font-bold text-foreground tracking-tight">
-                  TalentFlow Candidate Hub
+                  TalentFlow<sup className="text-[10px] top-0 ml-0.5 font-bold text-ember">®</sup>
                 </span>
                 <span className="text-10px text-muted-foreground mt-0.5 font-medium">
                   Candidate Portal & Experience
@@ -184,8 +187,14 @@ export const CandidateHomePage: React.FC<CandidateHomePageProps> = ({
               </a>
             </nav>
 
-            {/* CTA Button */}
+            {/* CTA & Language Buttons */}
             <div className="hidden lg:flex items-center gap-3">
+              <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors px-2 py-1">
+                <Globe className="w-3.5 h-3.5" />
+                <span>EN</span>
+                <ChevronDown className="w-3 h-3" />
+              </button>
+
               <button
                 onClick={isAuthenticated ? onExploreDashboard || onSignIn : onSignIn}
                 className="clip-path-button-sm bg-ember text-ember-foreground px-6 py-2.5 text-xs font-semibold hover:bg-ember/90 transition-colors flex items-center gap-2 cursor-pointer"
@@ -976,58 +985,30 @@ export const CandidateHomePage: React.FC<CandidateHomePageProps> = ({
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-surface border-t border-border px-6">
-        <div className="max-w-4xl mx-auto text-center space-y-6">
-          <h2 className="font-display text-4xl font-bold text-foreground">
-            Ready to Access Your Application Status?
-          </h2>
-          <p className="text-sm text-muted-foreground max-w-xl mx-auto">
-            Log in to view your personalized application timeline, offer contract, equipment
-            delivery, and day-one checklist.
-          </p>
-          <div>
-            <button
-              onClick={onSignIn}
-              className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl bg-ember text-ember-foreground font-semibold text-sm shadow-lifted hover:bg-ember/90 transition-all cursor-pointer transform hover:-translate-y-0.5"
-            >
-              <UserCheck className="size-4" />
-              <span>Sign In to Candidate Portal</span>
-              <ArrowRight className="size-4" />
-            </button>
-          </div>
-        </div>
-      </section>
+      <CTASection
+        buttonText="Candidate Sign In"
+        onButtonClick={onSignIn}
+        headingLine1="Let's start"
+        headingLine2="engineering impact"
+        headingHighlight="together."
+        subtext="Track your complete hiring roadmap, digital offer contracts, automated background checks, and day-one IT hardware provisioning."
+      />
 
       {/* Footer */}
-      <footer className="mt-auto border-t border-border bg-card py-8 px-6 text-xs text-muted-foreground">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <span className="grid size-6 place-items-center rounded bg-ember text-10px font-bold text-ember-foreground">
-              TF
-            </span>
-            <span className="font-semibold text-foreground">TalentFlow Candidate Hub</span>
-            <span>· Transparent Onboarding Suite</span>
-          </div>
-
-          <div className="flex items-center gap-6">
-            <button
-              onClick={onSignIn}
-              className="hover:text-foreground transition-colors cursor-pointer"
-            >
-              Candidate Sign In
-            </button>
-            <a href="#roadmap" className="hover:text-foreground transition-colors">
-              Roadmap
-            </a>
-            <a href="#features" className="hover:text-foreground transition-colors">
-              Features
-            </a>
-            <a href="#hardware" className="hover:text-foreground transition-colors">
-              IT Setup
-            </a>
-          </div>
-        </div>
-      </footer>
+      <Footer
+        onContactClick={onSignIn}
+        linksCol1={[
+          { label: "Candidate Sign In", href: "#", onClick: onSignIn },
+          { label: "Hiring Roadmap", href: "#roadmap" },
+          { label: "Features", href: "#features" },
+          { label: "IT Setup", href: "#hardware" },
+        ]}
+        linksCol2={[
+          { label: "Select Company", href: "/candidates-portal" },
+          { label: "Company Workspace", href: "/companies" },
+          { label: "Admin CRM", href: "/admin-panel" },
+        ]}
+      />
     </div>
   );
 };

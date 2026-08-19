@@ -7,6 +7,7 @@ export interface CandidateDocument {
   fullName: string;
   email: string;
   phone?: string;
+  avatarUrl?: string;
   country?: string;
   timezone?: string;
   currency?: string;
@@ -60,15 +61,15 @@ const STORAGE_KEY_CANDIDATE_SETTINGS = "talentflow_candidate_settings";
 
 const defaultCandidateSettings: CandidateSettings = {
   profile: {
-    id: "cand-alex",
-    fullName: "Alex Rivera",
-    email: "alex.rivera@example.com",
-    phone: "+1 (555) 234-5678",
-    location: "San Francisco, CA · Remote",
-    linkedinUrl: "https://linkedin.com/in/alex-rivera-dev",
-    githubUrl: "https://github.com/alex-rivera-dev",
-    headline: "Senior Staff Frontend & Fullstack Engineer",
-    bio: "Passionate developer with 8+ years building scalable SaaS web platforms and cloud integrations.",
+    id: "candidate-default",
+    fullName: "Candidate",
+    email: "candidate@example.com",
+    phone: "",
+    location: "Remote",
+    linkedinUrl: "",
+    githubUrl: "",
+    headline: "Professional Candidate",
+    bio: "",
   },
   notifications: {
     emailStageUpdates: true,

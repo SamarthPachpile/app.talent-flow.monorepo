@@ -13,33 +13,52 @@ export default function SmoothScrollProvider({ children }: { children: React.Rea
   useEffect(() => {
     if (typeof window === "undefined") return;
 
+    // Reuse existing Lenis instance if already initialized by parent/root
     if (window.__lenis) {
       return;
     }
 
-    const lenis = new Lenis({
-      duration: 1.15,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
-      wheelMultiplier: 1,
-      touchMultiplier: 1.5,
-    });
+    try {
+      const lenis = new Lenis({
+        duration: 1.15,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        orientation: "vertical",
+        gestureOrientation: "vertical",
+        smoothWheel: true,
+        wheelMultiplier: 1,
+        touchMultiplier: 1.5,
+        infinite: false,
+      });
 
-    lenisRef.current = lenis;
-    window.__lenis = lenis;
+      lenisRef.current = lenis;
+      window.__lenis = lenis;
 
-    let rafId = 0;
-    const raf = (time: number) => {
-      lenis.raf(time);
+      let rafId = 0;
+      const raf = (time: number) => {
+        lenis.raf(time);
+        rafId = requestAnimationFrame(raf);
+      };
       rafId = requestAnimationFrame(raf);
-    };
-    rafId = requestAnimationFrame(raf);
 
-    return () => {
-      cancelAnimationFrame(rafId);
-      lenis.destroy();
-      window.__lenis = undefined;
-    };
+      const handleNavigation = () => {
+        setTimeout(() => {
+          lenis.resize();
+        }, 60);
+      };
+
+      window.addEventListener("popstate", handleNavigation);
+
+      return () => {
+        cancelAnimationFrame(rafId);
+        window.removeEventListener("popstate", handleNavigation);
+        lenis.destroy();
+        if (window.__lenis === lenis) {
+          window.__lenis = undefined;
+        }
+      };
+    } catch {
+      // Fallback
+    }
   }, []);
 
   return <>{children}</>;

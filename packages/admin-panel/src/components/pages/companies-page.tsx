@@ -18,6 +18,7 @@ import { CandidateDrawer } from "../ats/candidate-drawer";
 import { useWorkspace } from "../../lib/workspace-store";
 import { PHASES, RECRUITERS, ROLES, phaseOfStage } from "../../lib/ats-data";
 import { AdminLoginPage } from "../admin-login-page";
+import { Footer } from "../Footer";
 
 export function OnboardedCompaniesPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
@@ -436,6 +437,20 @@ export function OnboardedCompaniesPage() {
         candidate={selectedCandidate}
         onOpenChange={(open) => !open && setSelectedId(null)}
         onAdvance={(id) => advanceCandidate(id)}
+      />
+
+      <Footer
+        linksCol1={[
+          { label: "Admin Pipeline", href: "/admin-panel/dashboard" },
+          { label: "Onboarded Companies", href: "/admin-panel/companies" },
+          { label: "Interviews Control", href: "/admin-panel/interviews" },
+          { label: "Offers Central", href: "/admin-panel/offers" },
+        ]}
+        linksCol2={[
+          { label: "Company Portal", href: "/companies" },
+          { label: "Candidate Portal", href: "/candidates-portal" },
+          { label: "Admin Settings", href: "/admin-panel/settings" },
+        ]}
       />
     </div>
   );

@@ -50,12 +50,12 @@
       "@onboarding/*": ["../company-onboarding/src/*"],
       "@onboarding": ["../company-onboarding/src"],
 
-      "@talent-flow/croton-it-solutions": ["../croton-it-solutions/src/App.tsx"],
-      "@talent-flow/croton-it-solutions/*": ["../croton-it-solutions/src/*"],
-      "@croton-it-solutions/*": ["../croton-it-solutions/src/*"],
-      "@croton-it-solutions": ["../croton-it-solutions/src"],
-      "@croton/*": ["../croton-it-solutions/src/*"],
-      "@croton": ["../croton-it-solutions/src"]
+      "@talent-flow/graviton-it-solutions": ["../graviton-it-solutions/src/App.tsx"],
+      "@talent-flow/graviton-it-solutions/*": ["../graviton-it-solutions/src/*"],
+      "@graviton-it-solutions/*": ["../graviton-it-solutions/src/*"],
+      "@graviton-it-solutions": ["../graviton-it-solutions/src"],
+      "@graviton/*": ["../graviton-it-solutions/src/*"],
+      "@graviton": ["../graviton-it-solutions/src"]
     }
   },
   "include": ["src/**/*", "vite.config.ts", "../../tailwind.config.ts"]

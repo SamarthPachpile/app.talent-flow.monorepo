@@ -7,7 +7,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Design system matched 1:1 with croton-it-solutions.
+ * Design system matched 1:1 with graviton-it-solutions.
  */
 
 @theme inline {
@@ -201,7 +201,7 @@
   }
 }
 
-/* Croton glowing effects and background grid */
+/* Graviton glowing effects and background grid */
 .talentflow-admin-panel-scope .bg-grid-pattern {
   background-size: 40px 40px;
   background-image:
@@ -349,4 +349,19 @@
 * {
   scrollbar-width: thin;
   scrollbar-color: rgba(140, 140, 150, 0.45) transparent;
+}
+
+/* Lenis Smooth Scroll Configuration */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: clip;
 }

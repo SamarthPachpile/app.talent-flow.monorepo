@@ -198,6 +198,42 @@ export interface DayOneReadiness {
   welcomeVideoUrl?: string;
 }
 
+export interface AppliedJob {
+  id: string;
+  jobTitle: string;
+  location: string;
+  country?: string;
+  appliedDate: string;
+  status: "Active Job" | "Interviewing" | "Offer Extended" | "Under Review" | "Hired" | "Rejected";
+  interviewDate: string;
+  department?: string;
+  employmentType?: "Full-time" | "Part-time" | "Contract" | "Remote";
+  salaryRange?: string;
+  companyName?: string;
+  description?: string;
+  stageId?: StageId;
+  requirements?: string[];
+  responsibilities?: string[];
+  recruiterNotes?: string;
+  jobCode?: string;
+}
+
+export interface AvailableJob {
+  id: string;
+  title: string;
+  department: string;
+  location: string;
+  country: string;
+  type: "Full-time" | "Part-time" | "Contract" | "Remote";
+  experienceLevel: "Entry" | "Mid-level" | "Senior" | "Lead / Staff" | "Executive";
+  salaryRange: string;
+  postedDate: string;
+  description: string;
+  requirements: string[];
+  benefits: string[];
+  skills: string[];
+}
+
 export interface CandidatePortalState {
   candidate: CandidateProfile;
   stages: OnboardingStage[];
@@ -208,6 +244,7 @@ export interface CandidatePortalState {
   hardware: HardwareSelection;
   credentials: SystemCredentials;
   dayOne: DayOneReadiness;
+  appliedJobs?: AppliedJob[];
   notifications: Array<{
     id: string;
     title: string;

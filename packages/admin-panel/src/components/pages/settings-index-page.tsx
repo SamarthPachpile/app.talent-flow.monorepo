@@ -26,6 +26,7 @@ import { Switch } from "../ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { toast } from "sonner";
 import { SettingsCard } from "../settings/settings-card";
+import { Footer } from "../Footer";
 
 type TabType = "general" | "health" | "security" | "tenants" | "audit";
 
@@ -424,6 +425,20 @@ export function AdminSettingsPage() {
           </div>
         </SettingsCard>
       )}
+
+      <Footer
+        linksCol1={[
+          { label: "Admin Pipeline", href: "/admin-panel/dashboard" },
+          { label: "Onboarded Companies", href: "/admin-panel/companies" },
+          { label: "Platform Settings", href: "/admin-panel/settings" },
+          { label: "Offers Central", href: "/admin-panel/offers" },
+        ]}
+        linksCol2={[
+          { label: "Company Portal", href: "/companies" },
+          { label: "Candidate Portal", href: "/candidates-portal" },
+          { label: "System Health", href: "/admin-panel/settings" },
+        ]}
+      />
     </div>
   );
 }

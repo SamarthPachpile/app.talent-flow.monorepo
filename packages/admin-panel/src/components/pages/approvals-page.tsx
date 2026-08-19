@@ -13,6 +13,7 @@ import { AuditTrail } from "../ats/audit-trail";
 import { useWorkspace } from "../../lib/workspace-store";
 import type { ApprovalRole } from "../../lib/workspace-data";
 import { AdminLoginPage } from "../admin-login-page";
+import { Footer } from "../Footer";
 
 export function ApprovalsPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
@@ -213,6 +214,20 @@ export function ApprovalsPage() {
 
         <AuditTrail title="Approval audit log" entries={approvalAudit} />
       </div>
+
+      <Footer
+        linksCol1={[
+          { label: "Admin Pipeline", href: "/admin-panel/dashboard" },
+          { label: "Onboarded Companies", href: "/admin-panel/companies" },
+          { label: "Approvals Flow", href: "/admin-panel/approvals" },
+          { label: "Offers Central", href: "/admin-panel/offers" },
+        ]}
+        linksCol2={[
+          { label: "Company Portal", href: "/companies" },
+          { label: "Candidate Portal", href: "/candidates-portal" },
+          { label: "Admin Settings", href: "/admin-panel/settings" },
+        ]}
+      />
     </div>
   );
 }

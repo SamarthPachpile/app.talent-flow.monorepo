@@ -82,7 +82,7 @@ To start individual packages:
 npm run dev:admin-panel           # Start Admin Panel
 npm run dev:candidate-portal      # Start Candidate Portal
 npm run dev:company-onboarding    # Start Company Onboarding Portal
-npm run dev:croton-it-solutions   # Start Croton IT Solutions
+npm run dev:graviton-it-solutions   # Start Graviton IT Solutions
 ```
 
 ---
@@ -103,7 +103,7 @@ Build individual packages:
 npm run build:admin-panel           # Build Admin Panel
 npm run build:candidate-portal      # Build Candidate Portal
 npm run build:company-onboarding    # Build Company Onboarding Portal
-npm run build:croton-it-solutions   # Build Croton IT Solutions
+npm run build:graviton-it-solutions   # Build Graviton IT Solutions
 npm run build:api                   # Build API package
 ```
 

@@ -11,6 +11,7 @@ import { SettingsCard } from "../settings/settings-card";
 import { AuditTrail } from "../ats/audit-trail";
 import { useWorkspace } from "../../lib/workspace-store";
 import { OFFER_FLOW, type Offer } from "../../lib/workspace-data";
+import { Footer } from "../Footer";
 
 const statusTone: Record<Offer["status"], string> = {
   draft: "bg-muted text-muted-foreground",
@@ -231,6 +232,20 @@ export function OffersPage() {
 
         <AuditTrail title="Offer audit log" entries={offerAudit} />
       </div>
+
+      <Footer
+        linksCol1={[
+          { label: "Admin Pipeline", href: "/admin-panel/dashboard" },
+          { label: "Onboarded Companies", href: "/admin-panel/companies" },
+          { label: "Offers Central", href: "/admin-panel/offers" },
+          { label: "Approvals Flow", href: "/admin-panel/approvals" },
+        ]}
+        linksCol2={[
+          { label: "Company Portal", href: "/companies" },
+          { label: "Candidate Portal", href: "/candidates-portal" },
+          { label: "Admin Settings", href: "/admin-panel/settings" },
+        ]}
+      />
     </div>
   );
 }

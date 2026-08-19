@@ -28,12 +28,12 @@
       "@talent-flow/company-onboarding/*": ["packages/company-onboarding/src/*"],
       "@talent-flow/company-onboarding": ["packages/company-onboarding/src/App.tsx"],
 
-      "@croton-it-solutions/*": ["packages/croton-it-solutions/src/*"],
-      "@croton-it-solutions": ["packages/croton-it-solutions/src"],
-      "@croton/*": ["packages/croton-it-solutions/src/*"],
-      "@croton": ["packages/croton-it-solutions/src"],
-      "@talent-flow/croton-it-solutions/*": ["packages/croton-it-solutions/src/*"],
-      "@talent-flow/croton-it-solutions": ["packages/croton-it-solutions/src"]
+      "@graviton-it-solutions/*": ["packages/graviton-it-solutions/src/*"],
+      "@graviton-it-solutions": ["packages/graviton-it-solutions/src"],
+      "@graviton/*": ["packages/graviton-it-solutions/src/*"],
+      "@graviton": ["packages/graviton-it-solutions/src"],
+      "@talent-flow/graviton-it-solutions/*": ["packages/graviton-it-solutions/src/*"],
+      "@talent-flow/graviton-it-solutions": ["packages/graviton-it-solutions/src"]
     }
   },
   "files": [],
@@ -42,6 +42,6 @@
     { "path": "./packages/admin-panel" },
     { "path": "./packages/company-onboarding" },
     { "path": "./packages/candidate-portal" },
-    { "path": "./packages/croton-it-solutions" }
+    { "path": "./packages/graviton-it-solutions" }
   ]
 }
