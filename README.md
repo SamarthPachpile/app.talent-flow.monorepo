@@ -108,7 +108,3 @@ npm run build:api                   # Build API package
 ```
 
 ---
-
-## Lovable Integration
-
-This project is connected to [Lovable](https://lovable.dev). Pushed commits sync back automatically.
