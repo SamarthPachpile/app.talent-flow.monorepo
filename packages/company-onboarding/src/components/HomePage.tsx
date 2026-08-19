@@ -18,9 +18,12 @@ import {
   Workflow,
   Calculator,
   ChevronDown,
+  Globe,
   Menu,
   X,
 } from "lucide-react";
+import { CTASection } from "./CTASection";
+import { Footer } from "./Footer";
 
 interface HomePageProps {
   onGetStarted: () => void;
@@ -157,7 +160,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onSignIn, onSe
               </motion.span>
               <div className="flex flex-col leading-none">
                 <span className="text-base sm:text-lg font-bold text-foreground tracking-tight">
-                  TalentFlow Hub
+                  TalentFlow<sup className="text-[10px] top-0 ml-0.5 font-bold text-ember">®</sup>
                 </span>
                 <span className="text-10px text-muted-foreground mt-0.5 font-medium">
                   Enterprise Candidate OS
@@ -186,6 +189,12 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onSignIn, onSe
 
             {/* Right Side Buttons */}
             <div className="hidden lg:flex items-center gap-3">
+              <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors px-2 py-1">
+                <Globe className="w-3.5 h-3.5" />
+                <span>EN</span>
+                <ChevronDown className="w-3 h-3" />
+              </button>
+
               <button
                 onClick={onSignIn}
                 className="px-3.5 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer"
@@ -1101,41 +1110,31 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onSignIn, onSe
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-border bg-card py-12 px-6 text-xs text-muted-foreground">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-3">
-            <span className="grid size-7 place-items-center rounded bg-ember text-ember-foreground font-bold text-xs">
-              TF
-            </span>
-            <span>© {new Date().getFullYear()} TalentFlow Hub. All rights reserved.</span>
-          </div>
+      {/* CTA Section */}
+      <CTASection
+        buttonText="Get Started"
+        onButtonClick={onGetStarted}
+        headingLine1="Let's start"
+        headingLine2="engineering impact"
+        headingHighlight="together."
+        subtext="Empower your talent operations with intelligent micro-stage workflows, LinkedIn connectors, automated background checks, and end-to-end recruitment architecture."
+      />
 
-          <div className="flex flex-wrap items-center gap-6">
-            <button
-              onClick={onGetStarted}
-              className="hover:text-foreground transition-colors cursor-pointer"
-            >
-              Onboard Company
-            </button>
-            <a href="#about" className="hover:text-foreground transition-colors">
-              About Us
-            </a>
-            <a href="#features" className="hover:text-foreground transition-colors">
-              Features
-            </a>
-            <a href="#pricing" className="hover:text-foreground transition-colors">
-              Pricing
-            </a>
-            <button
-              onClick={onSignIn}
-              className="hover:text-foreground transition-colors cursor-pointer"
-            >
-              Sign In
-            </button>
-          </div>
-        </div>
-      </footer>
+      {/* Footer */}
+      <Footer
+        onContactClick={onGetStarted}
+        linksCol1={[
+          { label: "Onboard Company", href: "#", onClick: onGetStarted },
+          { label: "Features & Stages", href: "#features" },
+          { label: "ROI Calculator", href: "#calculator" },
+          { label: "Pricing Plans", href: "#pricing" },
+        ]}
+        linksCol2={[
+          { label: "Sign In", href: "#", onClick: onSignIn },
+          { label: "Candidate Portal", href: "/candidates-portal" },
+          { label: "Admin CRM", href: "/admin-panel" },
+        ]}
+      />
     </div>
   );
 };

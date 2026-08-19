@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   Gauge,
   Search,
@@ -20,6 +20,8 @@ import {
   Users,
   Layers,
   FileCheck,
+  Camera,
+  Upload,
 } from "lucide-react";
 import {
   CandidatePortalState,
@@ -29,7 +31,7 @@ import {
   AvailableJob,
 } from "../types/candidate";
 import { OPEN_POSITIONS_CATALOG } from "../data/mockCandidateData";
-import { CompanyDocument } from "@talent-flow/api";
+import { CompanyDocument, uploadCandidateFileToStorage } from "@talent-flow/api";
 import { DashboardJobListView } from "./views/DashboardJobListView";
 import { SearchJobsView } from "./views/SearchJobsView";
 import { CandidateProfileView } from "./views/CandidateProfileView";
@@ -39,6 +41,7 @@ import { JobDescriptionFullPageView } from "./views/JobDescriptionFullPageView";
 import { NotificationCenter } from "./NotificationCenter";
 import { HelpdeskModal } from "./HelpdeskModal";
 import { CandidateSettingsComponent } from "./CandidateSettings";
+import { Footer } from "./Footer";
 import { toast } from "sonner";
 
 export type SidebarTab = "search_jobs" | "my_applications" | "profile" | "gdpr" | "my_application";
@@ -47,8 +50,8 @@ interface CandidateDashboardLayoutProps {
   portalState: CandidatePortalState;
   setPortalState: React.Dispatch<React.SetStateAction<CandidatePortalState>>;
   company: CompanyDocument | null;
-  activeCandidateKey: string;
-  onSelectCandidate: (key: string) => void;
+  activeCandidateKey?: string;
+  onSelectCandidate?: (key: string) => void;
   activeStageId: StageId;
   setActiveStageId: (id: StageId) => void;
   darkMode: boolean;
@@ -56,6 +59,7 @@ interface CandidateDashboardLayoutProps {
   onLogout: () => void;
   onAcceptOffer: (signedName: string) => void;
   onUpdateHardware: (updated: Partial<HardwareSelection>) => void;
+  onUpdateAvatar?: (avatarUrl: string) => void;
 }
 
 export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> = ({
@@ -71,6 +75,7 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
   onLogout,
   onAcceptOffer,
   onUpdateHardware,
+  onUpdateAvatar,
 }) => {
   const [activeTab, setActiveTab] = useState<SidebarTab>("search_jobs");
   const [selectedJobForFullPage, setSelectedJobForFullPage] = useState<
@@ -85,6 +90,37 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
   const [showNotifications, setShowNotifications] = useState<boolean>(false);
   const [showHelpdesk, setShowHelpdesk] = useState<boolean>(false);
   const [showSettings, setShowSettings] = useState<boolean>(false);
+  const [companyLogoError, setCompanyLogoError] = useState<boolean>(false);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleAvatarFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image file size must be less than 5MB");
+      return;
+    }
+
+    try {
+      toast.loading("Uploading candidate profile photo...", { id: "avatar-upload" });
+      const path = `candidates/${portalState.candidate.id || "cand"}/avatar_${Date.now()}`;
+      const url = await uploadCandidateFileToStorage(file, path);
+      if (onUpdateAvatar) {
+        onUpdateAvatar(url);
+      } else {
+        setPortalState((prev) => ({
+          ...prev,
+          candidate: { ...prev.candidate, avatarUrl: url },
+        }));
+      }
+      toast.success("Profile photo updated successfully!", { id: "avatar-upload" });
+    } catch (err) {
+      console.error("Avatar upload failed:", err);
+      toast.error("Failed to upload avatar image", { id: "avatar-upload" });
+    }
+  };
 
   const brandName = company?.name || portalState.candidate.companyName || "Graviton";
 
@@ -146,7 +182,7 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
   const unreadCount = portalState.notifications.filter((n) => !n.read).length;
 
   return (
-    <div className="flex h-screen w-full bg-[#f4f6f9] dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-sans overflow-hidden">
+    <div className="flex min-h-screen w-full bg-[#f4f6f9] dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-sans">
       {/* Mobile Backdrop */}
       {mobileSidebarOpen && (
         <div
@@ -155,36 +191,65 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
         />
       )}
 
-      {/* 1. LEFT SIDEBAR (Matched to #545C78 Slate-Purple with Orange Icons) */}
+      {/* 1. LEFT SIDEBAR (Fixed at left: 0, dynamic responsive width, never scrolled away) */}
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-50 flex flex-col bg-[#545C78] text-white transition-all duration-300 ease-in-out shrink-0 select-none shadow-xl ${
-          sidebarOpen ? "w-52 min-w-[208px]" : "w-14 min-w-[56px]"
+        className={`fixed top-0 bottom-0 left-0 h-screen z-50 flex flex-col bg-[#545C78] text-white transition-all duration-300 ease-in-out shrink-0 select-none shadow-xl ${
+          sidebarOpen ? "w-60 xl:w-64 min-w-[240px]" : "w-16 min-w-[64px]"
         } ${mobileSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
       >
         {/* Sidebar Brand Header */}
-        <div className="h-12 min-h-[48px] flex items-center justify-between px-3.5 border-b border-white/10 bg-[#464D67]">
-          <div className="flex items-center gap-2 overflow-hidden">
-            <div className="w-6 h-6 rounded-md bg-orange-500/20 text-orange-400 flex items-center justify-center shrink-0">
-              <Zap className="w-3.5 h-3.5 fill-orange-400 text-orange-400" />
+        <div
+          className={`h-14 min-h-[56px] flex items-center border-b border-white/10 bg-[#464D67] ${
+            sidebarOpen ? "justify-between px-3.5" : "justify-center px-2"
+          }`}
+        >
+          <div className="flex items-center gap-2.5 min-w-0">
+            {/* Covered Company Logo Box */}
+            <div className="w-8.5 h-8.5 min-w-[34px] min-h-[34px] max-w-[34px] max-h-[34px] rounded-lg overflow-hidden bg-white/10 border border-white/20 shrink-0 flex items-center justify-center shadow-xs">
+              {company?.logoUrl && !companyLogoError ? (
+                <img
+                  src={company.logoUrl}
+                  alt={brandName}
+                  className="w-full h-full object-cover object-center block"
+                  onError={() => setCompanyLogoError(true)}
+                />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-br from-orange-500 to-amber-600 text-white flex items-center justify-center font-bold text-xs uppercase tracking-wider">
+                  {brandName ? brandName.substring(0, 2).toUpperCase() : "TF"}
+                </div>
+              )}
             </div>
+
             {sidebarOpen && (
-              <span className="font-bold text-sm text-white tracking-tight truncate">
-                {brandName}
-              </span>
+              <div className="min-w-0 flex-1">
+                <span className="font-bold text-sm text-white tracking-tight truncate block leading-tight">
+                  {brandName}
+                </span>
+                <span className="text-[10px] text-white/70 font-mono truncate block leading-tight">
+                  Candidate Portal
+                </span>
+              </div>
             )}
           </div>
 
-          <button
-            onClick={() => setMobileSidebarOpen(false)}
-            className="lg:hidden text-white/70 hover:text-white p-1 cursor-pointer"
-          >
-            <X className="w-4 h-4" />
-          </button>
+          {sidebarOpen && (
+            <button
+              onClick={() => setMobileSidebarOpen(false)}
+              className="lg:hidden text-white/70 hover:text-white p-1 cursor-pointer"
+              aria-label="Close mobile navigation"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
         </div>
 
-        {/* Sidebar User Profile Badge */}
+        {/* Sidebar User Profile Badge & Photo Upload */}
         <div className="p-3 border-b border-white/10 bg-[#4D5570]/50 flex items-center gap-2.5">
-          <div className="relative w-9 h-9 min-w-[36px] min-h-[36px] rounded-full overflow-hidden ring-2 ring-orange-400/50 bg-orange-950/30 shrink-0 flex items-center justify-center">
+          <div
+            onClick={() => fileInputRef.current?.click()}
+            className="relative group w-9 h-9 min-w-[36px] min-h-[36px] rounded-full overflow-hidden ring-2 ring-orange-400/50 bg-orange-950/30 shrink-0 flex items-center justify-center cursor-pointer shadow-xs"
+            title="Click to upload profile photo"
+          >
             {portalState.candidate.avatarUrl ? (
               <img
                 src={portalState.candidate.avatarUrl}
@@ -195,10 +260,15 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
                 }}
               />
             ) : (
-              <div className="w-full h-full bg-orange-500 text-white flex items-center justify-center font-bold text-xs">
-                {portalState.candidate.name ? portalState.candidate.name.charAt(0) : "U"}
+              <div className="w-full h-full bg-gradient-to-br from-orange-500 to-amber-600 text-white flex items-center justify-center font-bold text-xs">
+                {portalState.candidate.name
+                  ? portalState.candidate.name.charAt(0).toUpperCase()
+                  : "U"}
               </div>
             )}
+            <div className="absolute inset-0 bg-black/55 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+              <Camera className="w-3.5 h-3.5 text-white" />
+            </div>
           </div>
 
           {sidebarOpen && (
@@ -206,15 +276,19 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
               <div className="text-xs font-semibold text-white truncate leading-tight">
                 {portalState.candidate.name}
               </div>
-              <div className="text-[10px] text-[#e6ea9c] truncate leading-tight mt-0.5 font-medium">
-                {portalState.candidate.roleTitle || "Candidate"}
-              </div>
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className="text-[10px] text-[#e6ea9c] hover:underline truncate leading-tight mt-0.5 font-medium flex items-center gap-1 cursor-pointer"
+              >
+                <Camera className="w-2.5 h-2.5" />
+                <span>Upload Photo</span>
+              </button>
             </div>
           )}
         </div>
 
         {/* Sidebar Navigation Items */}
-        <nav className="flex-1 px-2.5 py-3 space-y-1.5 overflow-y-auto">
+        <nav data-lenis-prevent className="flex-1 px-2.5 py-3 space-y-1.5 overflow-y-auto">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
@@ -262,10 +336,14 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
         </div>
       </aside>
 
-      {/* 2. MAIN CONTENT AREA */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+      {/* 2. MAIN CONTENT AREA (Dynamic left padding to offset fixed sidebar) */}
+      <div
+        className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${
+          sidebarOpen ? "lg:pl-60 xl:lg:pl-64" : "lg:pl-16"
+        }`}
+      >
         {/* Top Header Bar */}
-        <header className="h-12 min-h-[48px] bg-white dark:bg-slate-850 border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between px-4 sm:px-6 shrink-0 z-30">
+        <header className="sticky top-0 h-12 min-h-[48px] bg-white dark:bg-slate-850 border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between px-4 sm:px-6 shrink-0 z-30">
           {/* Left: Sidebar Toggle Button & Current View Breadcrumbs */}
           <div className="flex items-center gap-3">
             <button
@@ -300,8 +378,17 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
                 {activeTab === "gdpr" && "GDPR & Privacy"}
               </span>
               {company && (
-                <span className="hidden md:inline-flex items-center gap-1 px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded-full text-[10.5px] font-semibold text-slate-600 dark:text-slate-300">
-                  <Building2 className="w-3 h-3 text-[#00c0ef]" />
+                <span className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-200 border border-slate-200/60 dark:border-slate-700/60 shadow-2xs">
+                  {company.logoUrl && !companyLogoError ? (
+                    <img
+                      src={company.logoUrl}
+                      alt={company.name}
+                      className="w-4 h-4 rounded object-cover"
+                      onError={() => setCompanyLogoError(true)}
+                    />
+                  ) : (
+                    <Building2 className="w-3.5 h-3.5 text-ember" />
+                  )}
                   <span>{company.name}</span>
                 </span>
               )}
@@ -368,54 +455,15 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
                     </div>
                   </div>
 
-                  {/* Switch Candidate Profiles for Demo */}
-                  <div className="px-2.5 py-1.5 border-b border-slate-100 dark:border-slate-800">
-                    <div className="text-[9.5px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-1">
-                      Switch Demo Profile
-                    </div>
-                    <button
-                      onClick={() => onSelectCandidate("alex")}
-                      className={`w-full text-left px-2 py-1 rounded text-xs font-medium flex items-center justify-between cursor-pointer ${
-                        activeCandidateKey === "alex"
-                          ? "bg-sky-50 dark:bg-sky-950/60 text-[#00c0ef] font-semibold"
-                          : "text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
-                      }`}
-                    >
-                      <span>Alex Rivera (Applied Jobs)</span>
-                      {activeCandidateKey === "alex" && (
-                        <CheckCircle2 className="w-3 h-3 text-[#00c0ef]" />
-                      )}
-                    </button>
-                    <button
-                      onClick={() => onSelectCandidate("sarah")}
-                      className={`w-full text-left px-2 py-1 rounded text-xs font-medium flex items-center justify-between cursor-pointer ${
-                        activeCandidateKey === "sarah"
-                          ? "bg-sky-50 dark:bg-sky-950/60 text-[#00c0ef] font-semibold"
-                          : "text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
-                      }`}
-                    >
-                      <span>Sarah Chen (Lead UX)</span>
-                      {activeCandidateKey === "sarah" && (
-                        <CheckCircle2 className="w-3 h-3 text-[#00c0ef]" />
-                      )}
-                    </button>
-                    <button
-                      onClick={() => onSelectCandidate("empty")}
-                      className={`w-full text-left px-2 py-1 rounded text-xs font-medium flex items-center justify-between cursor-pointer ${
-                        activeCandidateKey === "empty"
-                          ? "bg-sky-50 dark:bg-sky-950/60 text-[#00c0ef] font-semibold"
-                          : "text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
-                      }`}
-                    >
-                      <span>Empty (0 Applied Jobs)</span>
-                      {activeCandidateKey === "empty" && (
-                        <CheckCircle2 className="w-3 h-3 text-[#00c0ef]" />
-                      )}
-                    </button>
-                  </div>
-
                   {/* Action Links */}
                   <div className="py-1">
+                    <button
+                      onClick={() => fileInputRef.current?.click()}
+                      className="w-full text-left px-3.5 py-1.5 text-xs text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-950/40 flex items-center gap-2 cursor-pointer font-medium"
+                    >
+                      <Camera className="w-3.5 h-3.5" />
+                      <span>Upload Profile Photo</span>
+                    </button>
                     <button
                       onClick={() => {
                         setSelectedJobForFullPage(null);
@@ -455,7 +503,7 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
         </header>
 
         {/* Main Content Viewport */}
-        <main className="flex-1 overflow-y-auto p-3.5 sm:p-4.5 lg:p-5">
+        <main className="flex-1 p-3.5 sm:p-4.5 lg:p-5">
           <div className="max-w-[1400px] mx-auto">
             {showSettings ? (
               <CandidateSettingsComponent onClose={() => setShowSettings(false)} />
@@ -546,6 +594,7 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
                         candidate: { ...prev.candidate, ...updated },
                       }));
                     }}
+                    onUpdateAvatar={onUpdateAvatar}
                   />
                 )}
 
@@ -567,7 +616,51 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
             )}
           </div>
         </main>
+
+        {/* Monorepo Standard Dashboard Footer (Full-width edge-to-edge flush footer) */}
+        <Footer
+          linksCol1={[
+            {
+              label: "My Application Roadmap",
+              href: "#",
+              onClick: () => {
+                setActiveTab("my_application");
+                setSelectedJobForFullPage(null);
+              },
+            },
+            {
+              label: "Search Open Positions",
+              href: "#",
+              onClick: () => {
+                setActiveTab("search_jobs");
+                setSelectedJobForFullPage(null);
+              },
+            },
+            {
+              label: "Candidate Profile",
+              href: "#",
+              onClick: () => {
+                setActiveTab("profile");
+                setSelectedJobForFullPage(null);
+              },
+            },
+          ]}
+          linksCol2={[
+            { label: "Company Directory", href: "/candidates-portal" },
+            { label: "Company Workspace", href: "/companies" },
+            { label: "Admin CRM", href: "/admin-panel" },
+          ]}
+        />
       </div>
+
+      {/* Hidden File Input for Avatar Photo Upload */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleAvatarFileChange}
+        accept="image/*"
+        className="hidden"
+      />
 
       {/* Notifications Drawer */}
       {showNotifications && (

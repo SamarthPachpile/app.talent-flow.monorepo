@@ -271,7 +271,7 @@ export const SearchJobsView: React.FC<SearchJobsViewProps> = ({
       {/* =========================================================================
           2. "FIND YOUR MATCH" SEARCH & FILTER (WITH CLIP-PATH-CARD)
          ========================================================================= */}
-      <div className="clip-path-card bg-[#f1f2f4] dark:bg-slate-850 p-6 sm:p-10 relative border border-slate-200/80 dark:border-slate-800 shadow-sm transition-all">
+      <div className="clip-path-card bg-white dark:bg-slate-900 p-6 sm:p-10 relative border border-slate-200/80 dark:border-slate-800 shadow-sm transition-all">
         {/* Top Right Results Count Badge */}
         <div className="sm:absolute top-8 right-8 mb-4 sm:mb-0 inline-flex items-center gap-1.5 bg-[#e6ea9c] text-slate-900 text-xs sm:text-sm px-4 sm:px-5 py-1.5 sm:py-2 rounded-full font-semibold shadow-2xs">
           <Sparkles className="w-3.5 h-3.5 text-slate-800" />
@@ -297,12 +297,12 @@ export const SearchJobsView: React.FC<SearchJobsViewProps> = ({
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search by Skills, Job title, or Keyword..."
-            className="w-full bg-white dark:bg-slate-900 px-5 py-3.5 sm:py-4 pr-20 rounded-xl border border-gray-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 text-slate-800 dark:text-slate-100 placeholder-gray-400 shadow-2xs"
+            className="w-full bg-[#f1f2f4] dark:bg-slate-800 px-5 py-3.5 sm:py-4 pr-20 rounded-xl border border-gray-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 text-slate-800 dark:text-slate-100 placeholder-gray-400 shadow-2xs"
           />
           {searchTerm ? (
             <button
               onClick={() => setSearchTerm("")}
-              className="clip-path-button-sm absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer px-2.5 py-1 bg-slate-100 dark:bg-slate-800"
+              className="clip-path-button-sm absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer px-2.5 py-1 bg-white dark:bg-slate-700"
             >
               Clear
             </button>
@@ -317,7 +317,7 @@ export const SearchJobsView: React.FC<SearchJobsViewProps> = ({
           <select
             value={selectedExperience}
             onChange={(e) => setSelectedExperience(e.target.value)}
-            className="px-4 py-3 sm:py-3.5 bg-white dark:bg-slate-900 rounded-xl border border-gray-200 dark:border-slate-700 text-xs sm:text-sm text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-400 cursor-pointer"
+            className="px-4 py-3 sm:py-3.5 bg-[#f1f2f4] dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 text-xs sm:text-sm text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-400 cursor-pointer"
           >
             <option value="All">Select Experience</option>
             <option value="Entry">Entry-Level (0-2 yrs)</option>
@@ -330,7 +330,7 @@ export const SearchJobsView: React.FC<SearchJobsViewProps> = ({
           <select
             value={selectedDepartment}
             onChange={(e) => setSelectedDepartment(e.target.value)}
-            className="px-4 py-3 sm:py-3.5 bg-white dark:bg-slate-900 rounded-xl border border-gray-200 dark:border-slate-700 text-xs sm:text-sm text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-400 cursor-pointer"
+            className="px-4 py-3 sm:py-3.5 bg-[#f1f2f4] dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 text-xs sm:text-sm text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-400 cursor-pointer"
           >
             <option value="All">Select Department</option>
             {departments
@@ -346,7 +346,7 @@ export const SearchJobsView: React.FC<SearchJobsViewProps> = ({
           <select
             value={selectedLocation}
             onChange={(e) => setSelectedLocation(e.target.value)}
-            className="px-4 py-3 sm:py-3.5 bg-white dark:bg-slate-900 rounded-xl border border-gray-200 dark:border-slate-700 text-xs sm:text-sm text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-400 cursor-pointer"
+            className="px-4 py-3 sm:py-3.5 bg-[#f1f2f4] dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 text-xs sm:text-sm text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-400 cursor-pointer"
           >
             <option value="All">Select Location</option>
             {locations
@@ -406,7 +406,7 @@ export const SearchJobsView: React.FC<SearchJobsViewProps> = ({
           <div className="flex flex-wrap items-center gap-2 pt-3 mt-3 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
             <span className="text-slate-400 font-medium">Active filters:</span>
             {searchTerm && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-full font-medium">
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#f1f2f4] dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full font-medium">
                 Keyword: "{searchTerm}"
                 <button
                   onClick={() => setSearchTerm("")}
@@ -417,7 +417,7 @@ export const SearchJobsView: React.FC<SearchJobsViewProps> = ({
               </span>
             )}
             {selectedExperience !== "All" && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-full font-medium">
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#f1f2f4] dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full font-medium">
                 Exp: {selectedExperience}
                 <button
                   onClick={() => setSelectedExperience("All")}
@@ -428,7 +428,7 @@ export const SearchJobsView: React.FC<SearchJobsViewProps> = ({
               </span>
             )}
             {selectedDepartment !== "All" && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-full font-medium">
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#f1f2f4] dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full font-medium">
                 Dept: {selectedDepartment}
                 <button
                   onClick={() => setSelectedDepartment("All")}
@@ -439,7 +439,7 @@ export const SearchJobsView: React.FC<SearchJobsViewProps> = ({
               </span>
             )}
             {selectedLocation !== "All" && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-full font-medium">
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#f1f2f4] dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full font-medium">
                 Loc: {selectedLocation}
                 <button
                   onClick={() => setSelectedLocation("All")}
@@ -452,7 +452,7 @@ export const SearchJobsView: React.FC<SearchJobsViewProps> = ({
             {selectedWorkModes.map((mode) => (
               <span
                 key={mode}
-                className="inline-flex items-center gap-1 px-2.5 py-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-full font-medium"
+                className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#f1f2f4] dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full font-medium"
               >
                 {mode}
                 <button

@@ -292,7 +292,7 @@ export const CompanyPipelineBoard: React.FC<CompanyPipelineBoardProps> = ({
         </div>
       </header>
 
-      <main className="board-scroll overflow-x-auto py-6">
+      <main data-lenis-prevent className="board-scroll overflow-x-auto py-6">
         <div className="flex min-w-max gap-4">
           {activeStages.map((stageItem, stageIdx) => {
             const items = filtered.filter((c) => getCandidateStageIndex(c.stage) === stageIdx);

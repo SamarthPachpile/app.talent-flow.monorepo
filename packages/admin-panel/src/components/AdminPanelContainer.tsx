@@ -8,7 +8,7 @@ import { ApprovalsPage } from "./pages/approvals-page";
 import { OffersPage } from "./pages/offers-page";
 import { AdminSettingsPage } from "./pages/settings-index-page";
 import { AdminLoginPage } from "./admin-login-page";
-import { Toaster } from "./ui/sonner";
+import SmoothScrollProvider from "./SmoothScrollProvider";
 
 export function AdminPanelContainer() {
   const [currentPath, setCurrentPath] = useState<string>(() => {
@@ -69,12 +69,13 @@ export function AdminPanelContainer() {
   };
 
   return (
-    <WorkspaceProvider>
-      <div className="talentflow-admin-panel-scope min-h-screen bg-background text-foreground font-sans">
-        {renderCurrentView()}
-        <Toaster />
-      </div>
-    </WorkspaceProvider>
+    <SmoothScrollProvider>
+      <WorkspaceProvider>
+        <div className="talentflow-admin-panel-scope min-h-screen bg-background text-foreground font-sans">
+          {renderCurrentView()}
+        </div>
+      </WorkspaceProvider>
+    </SmoothScrollProvider>
   );
 }
 

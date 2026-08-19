@@ -52,7 +52,7 @@ import { toast } from "sonner";
 interface WizardProps {
   state: OnboardingState;
   setState: React.Dispatch<React.SetStateAction<OnboardingState>>;
-  onComplete: () => void;
+  onComplete: (completedState?: OnboardingState) => void;
 }
 
 export const OnboardingWizard: React.FC<WizardProps> = ({ state, setState, onComplete }) => {
@@ -119,7 +119,7 @@ export const OnboardingWizard: React.FC<WizardProps> = ({ state, setState, onCom
       const updatedState = { ...state, isCompleted: true };
       setState(updatedState);
       toast.success("🎉 Company Workspace Setup Complete! Welcome to your HR Platform.");
-      onComplete();
+      onComplete(updatedState);
     }
   };
 

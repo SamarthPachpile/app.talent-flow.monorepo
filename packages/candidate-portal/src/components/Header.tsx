@@ -98,80 +98,26 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Navigation Actions */}
         <div className="flex items-center gap-2">
-          {/* Candidate Persona Switcher */}
-          <div className="relative">
-            <button
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="flex items-center gap-2 rounded-md border border-border bg-surface px-3 py-1.5 text-xs text-foreground hover:bg-accent transition-colors cursor-pointer"
-            >
-              <Building2 className="size-3.5 text-muted-foreground" />
+          {/* Candidate Profile Pill */}
+          <div className="flex items-center gap-2 rounded-md border border-border bg-surface px-3 py-1.5 text-xs text-foreground">
+            {candidate.avatarUrl ? (
               <img
                 src={candidate.avatarUrl}
                 alt={candidate.name}
-                className="size-4 rounded-full object-cover"
+                className="size-4.5 rounded-full object-cover"
+                onError={(e) => {
+                  (e.target as HTMLElement).style.display = "none";
+                }}
               />
-              <span className="font-medium text-foreground">{candidate.name}</span>
-              <span className="text-muted-foreground text-11px">({candidate.companyName})</span>
-              <ChevronDown className="size-3 text-muted-foreground" />
-            </button>
-
-            {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-72 bg-card border border-border rounded-md shadow-lifted p-2 z-50 animate-in fade-in zoom-in-95 duration-150">
-                <div className="px-3 py-1.5 border-b border-border text-10px font-semibold tracking-wider text-muted-foreground uppercase">
-                  Select Candidate Persona
-                </div>
-
-                <button
-                  onClick={() => {
-                    onSelectCandidate("alex");
-                    setDropdownOpen(false);
-                  }}
-                  className={`w-full text-left p-2.5 rounded-md transition-colors flex items-center justify-between mt-1 cursor-pointer ${
-                    activeCandidateKey === "alex"
-                      ? "bg-accent font-medium text-foreground"
-                      : "hover:bg-accent/60 text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <img
-                      src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80"
-                      alt="Alex"
-                      className="size-6 rounded-full object-cover"
-                    />
-                    <div>
-                      <div className="text-xs font-semibold text-foreground">Alex Rivera</div>
-                      <div className="text-10px text-ember">Stage 5: Laptop & Hardware</div>
-                    </div>
-                  </div>
-                  {activeCandidateKey === "alex" && <CheckCircle2 className="size-4 text-ember" />}
-                </button>
-
-                <button
-                  onClick={() => {
-                    onSelectCandidate("sarah");
-                    setDropdownOpen(false);
-                  }}
-                  className={`w-full text-left p-2.5 rounded-md transition-colors flex items-center justify-between cursor-pointer ${
-                    activeCandidateKey === "sarah"
-                      ? "bg-accent font-medium text-foreground"
-                      : "hover:bg-accent/60 text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <img
-                      src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=300&q=80"
-                      alt="Sarah"
-                      className="size-6 rounded-full object-cover"
-                    />
-                    <div>
-                      <div className="text-xs font-semibold text-foreground">Sarah Chen</div>
-                      <div className="text-10px text-warning-foreground">Stage 3: Offer Letter</div>
-                    </div>
-                  </div>
-                  {activeCandidateKey === "sarah" && <CheckCircle2 className="size-4 text-ember" />}
-                </button>
+            ) : (
+              <div className="size-4.5 rounded-full bg-ember text-white text-[10px] font-bold flex items-center justify-center">
+                {candidate.name ? candidate.name.charAt(0).toUpperCase() : "U"}
               </div>
             )}
+            <span className="font-semibold text-foreground">{candidate.name}</span>
+            <span className="text-muted-foreground text-10px">
+              ({candidate.roleTitle || "Candidate"})
+            </span>
           </div>
 
           {/* HR Chat Button */}

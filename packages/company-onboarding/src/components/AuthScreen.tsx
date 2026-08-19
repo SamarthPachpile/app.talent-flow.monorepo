@@ -38,6 +38,7 @@ interface AuthSuccessData {
   companySlug?: string;
   adminName?: string;
   isNewAccount?: boolean;
+  signupPayload?: Partial<CompanyDocument>;
 }
 
 interface AuthScreenProps {
@@ -185,64 +186,74 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
       setIsSubmitting(true);
       const result = await FirebaseAuthService.signIn(email, password);
 
-      if (result.user) {
-        // Fetch company document from Firestore 'companies' collection matching signed-up credentials
-        const companyDoc = await CompanyApiService.getCompanyByEmailOrUid(email, result.user.uid);
-
-        const resolvedCompanyName = companyDoc?.name || companyName || "Company Workspace";
-        const resolvedAdminName = companyDoc?.admin?.fullName || adminName || "Admin";
-
-        const cleanDocId =
-          companyDoc?.id?.replace(/[^a-z0-9]/g, "") ||
-          companyDoc?.subdomain?.replace(/[^a-z0-9]/g, "") ||
-          resolvedCompanyName.toLowerCase().replace(/[^a-z0-9]/g, "") ||
-          "companyactive";
-
-        const sessionPayload = {
-          id: cleanDocId,
-          name: resolvedCompanyName,
-          subdomain: cleanDocId,
-          domain: companyDoc?.domain || email.split("@")[1] || "company.com",
-          industry: companyDoc?.industry || industry,
-          size: companyDoc?.size || companySize,
-          brandColor: companyDoc?.brandColor || "#6366f1",
-          headquarters: companyDoc?.headquarters || selectedCountryData.name,
-          admin: {
-            fullName: resolvedAdminName,
-            workEmail: email,
-            phone: companyDoc?.admin?.phone || mobileNumber,
-            uid: result.user.uid,
-          },
-          country: companyDoc?.country || country,
-          referralSource: companyDoc?.referralSource || referralSource,
-          termsAccepted: true,
-          captchaVerified: true,
-          emailVerified: result.user.emailVerified,
-          isCompleted: companyDoc?.isCompleted ?? false,
-          createdAt: companyDoc?.createdAt || new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        };
-
-        localStorage.setItem("talentflow_company_auth", "true");
-        localStorage.setItem("talentflow_company_profile", JSON.stringify(sessionPayload));
-
-        const derivedSlug = cleanDocId;
-
-        toast.success(`Signed in successfully! Welcome back to ${resolvedCompanyName}`);
-        setIsSubmitting(false);
-        onSuccess({
-          email: result.user.email || email,
-          companyName: resolvedCompanyName,
-          companySlug: derivedSlug,
-          adminName: resolvedAdminName,
-          isNewAccount: false,
-        });
-      } else {
+      // STRICT FIREBASE AUTHENTICATION CHECK: Password and email must be verified by Firebase Auth
+      if (!result.user) {
         toast.error(
-          result.error || "Invalid credentials. Please enter your signed-up email and password.",
+          result.error || "Invalid email or password. Please check your credentials and try again.",
         );
         setIsSubmitting(false);
+        return;
       }
+
+      // Fetch company document from Firestore 'companies' collection matching signed-up credentials
+      const companyDoc = await CompanyApiService.getCompanyByEmailOrUid(email, result.user.uid);
+
+      if (!companyDoc) {
+        setIsSubmitting(false);
+        toast.error(
+          `No company workspace found for ${email}. Please register your company workspace first.`,
+        );
+        return;
+      }
+
+      const resolvedCompanyName = companyDoc.name || companyName || "Company Workspace";
+      const resolvedAdminName = companyDoc.admin?.fullName || adminName || "Admin";
+
+      const cleanDocId =
+        companyDoc.id?.replace(/[^a-z0-9]/g, "") ||
+        companyDoc.subdomain?.replace(/[^a-z0-9]/g, "") ||
+        resolvedCompanyName.toLowerCase().replace(/[^a-z0-9]/g, "") ||
+        "companyactive";
+
+      const sessionPayload = {
+        id: cleanDocId,
+        name: resolvedCompanyName,
+        subdomain: cleanDocId,
+        domain: companyDoc.domain || email.split("@")[1] || "company.com",
+        industry: companyDoc.industry || industry,
+        size: companyDoc.size || companySize,
+        brandColor: companyDoc.brandColor || "#6366f1",
+        headquarters: companyDoc.headquarters || selectedCountryData.name,
+        admin: {
+          fullName: resolvedAdminName,
+          workEmail: email,
+          phone: companyDoc.admin?.phone || mobileNumber,
+          uid: result.user.uid,
+        },
+        country: companyDoc.country || country,
+        referralSource: companyDoc.referralSource || referralSource,
+        termsAccepted: true,
+        captchaVerified: true,
+        emailVerified: result.user.emailVerified,
+        isCompleted: companyDoc.isCompleted ?? false,
+        createdAt: companyDoc.createdAt || new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      localStorage.setItem("talentflow_company_auth", "true");
+      localStorage.setItem("talentflow_company_profile", JSON.stringify(sessionPayload));
+
+      const derivedSlug = cleanDocId;
+
+      toast.success(`Signed in successfully! Welcome back to ${resolvedCompanyName}`);
+      setIsSubmitting(false);
+      onSuccess({
+        email: result.user.email || email,
+        companyName: resolvedCompanyName,
+        companySlug: derivedSlug,
+        adminName: resolvedAdminName,
+        isNewAccount: false,
+      });
     }
   };
 
@@ -327,6 +338,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
       companySlug: activePayload.id,
       adminName: activePayload.admin?.fullName || adminName,
       isNewAccount: true,
+      signupPayload: activePayload,
     });
   }, [
     createdUserEmail,

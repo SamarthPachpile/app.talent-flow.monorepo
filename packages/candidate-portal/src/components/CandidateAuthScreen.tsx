@@ -29,7 +29,6 @@ import {
 export interface CandidateAuthSuccessData {
   email: string;
   fullName?: string;
-  candidateKey?: "alex" | "sarah";
   isNewAccount?: boolean;
 }
 
@@ -448,12 +447,22 @@ export function CandidateAuthScreen({
     } else {
       setIsSubmitting(true);
       const result = await FirebaseAuthService.signIn(email, password);
+
+      // STRICT FIREBASE AUTHENTICATION CHECK: Password and email must be verified by Firebase Auth
+      if (!result.user) {
+        setIsSubmitting(false);
+        toast.error(
+          result.error || "Invalid email or password. Please check your credentials and try again.",
+        );
+        return;
+      }
+
       const activeUser = result.user;
 
       // 1. Fetch candidate document strictly from Firestore 'candidates' collection / local storage
       let candDoc = await CandidateApiService.getCandidateByEmailOrUid(
-        activeUser?.email || email,
-        activeUser?.uid,
+        activeUser.email || email,
+        activeUser.uid,
       );
 
       // STRICT DATABASE CANDIDATE CHECK: Must exist in database
@@ -516,65 +525,6 @@ export function CandidateAuthScreen({
       onSuccess({
         email: candDoc.email || email,
         fullName: candDoc.fullName,
-        isNewAccount: false,
-      });
-    }
-  };
-
-  const handleSelectPersona = (key: "alex" | "sarah") => {
-    const personaName = key === "alex" ? "Alex Rivera" : "Sarah Chen";
-    const personaEmail = key === "alex" ? "alex.rivera@gmail.com" : "sarah.chen@designhub.io";
-
-    setEmail(personaEmail);
-    setFullName(personaName);
-    toast.info(`Selected ${personaName}. Enter your password or click 1-Click Demo Login below.`);
-  };
-
-  const handleDemoLogin = (key: "alex" | "sarah" | "new") => {
-    if (key === "new") {
-      const newDoc: CandidateDocument = {
-        id: "cand-new",
-        fullName: "Jordan Lee",
-        email: "jordan.lee@example.com",
-        phone: "+1 (555) 987-6543",
-        country: "United States",
-        isCompleted: false, // Mandatory Setup Wizard Pending
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-      localStorage.setItem(
-        "talentflow_candidate_auth",
-        JSON.stringify({ authenticated: true, email: newDoc.email }),
-      );
-      localStorage.setItem("talentflow_candidate_profile", JSON.stringify(newDoc));
-      toast.success("Demo Login as New Candidate: Redirecting to Setup Wizard...");
-      onSuccess({
-        email: newDoc.email,
-        fullName: newDoc.fullName,
-        candidateKey: "alex",
-        isNewAccount: true,
-      });
-    } else {
-      const personaName = key === "alex" ? "Alex Rivera" : "Sarah Chen";
-      const personaEmail = key === "alex" ? "alex.rivera@gmail.com" : "sarah.chen@designhub.io";
-      const existingDoc: CandidateDocument = {
-        id: key === "alex" ? "cand-alex" : "cand-sarah",
-        fullName: personaName,
-        email: personaEmail,
-        isCompleted: true,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-      localStorage.setItem(
-        "talentflow_candidate_auth",
-        JSON.stringify({ authenticated: true, email: personaEmail }),
-      );
-      localStorage.setItem("talentflow_candidate_profile", JSON.stringify(existingDoc));
-      toast.success(`Demo Login as ${personaName}: Opening Candidate Dashboard...`);
-      onSuccess({
-        email: personaEmail,
-        fullName: personaName,
-        candidateKey: key,
         isNewAccount: false,
       });
     }
@@ -745,7 +695,7 @@ export function CandidateAuthScreen({
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="alex.rivera@gmail.com"
+                      placeholder="candidate@example.com"
                       className="w-full pl-9 pr-3 py-2 rounded-lg bg-surface border border-input text-foreground text-xs focus:outline-none focus:border-ember font-mono"
                     />
                   </div>
@@ -879,7 +829,7 @@ export function CandidateAuthScreen({
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="alex.rivera@gmail.com"
+                    placeholder="candidate@example.com"
                     className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-surface border border-input text-foreground text-xs focus:outline-none focus:border-ember font-mono"
                   />
                 </div>
@@ -922,42 +872,6 @@ export function CandidateAuthScreen({
             )}
           </button>
         </form>
-
-        {/* Demo Personas */}
-        <div className="border-t border-border pt-4 space-y-2">
-          <p className="text-11px font-semibold text-muted-foreground uppercase tracking-wider text-center flex items-center justify-center gap-1.5">
-            <Sparkles className="size-3 text-ember" />
-            <span>1-Click Test Login (Instant Access)</span>
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-            <button
-              type="button"
-              onClick={() => handleDemoLogin("new")}
-              className="p-2.5 rounded-xl border border-ember/30 bg-ember/10 hover:bg-ember/20 text-left transition-colors cursor-pointer"
-            >
-              <p className="text-xs font-bold text-ember">New Candidate</p>
-              <p className="text-10px text-muted-foreground">Test Candidate Setup Wizard</p>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleDemoLogin("alex")}
-              className="p-2.5 rounded-xl border border-border bg-surface hover:bg-accent text-left transition-colors cursor-pointer"
-            >
-              <p className="text-xs font-bold text-foreground">Alex Rivera</p>
-              <p className="text-10px text-muted-foreground">Dashboard (Hardware Stage)</p>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleDemoLogin("sarah")}
-              className="p-2.5 rounded-xl border border-border bg-surface hover:bg-accent text-left transition-colors cursor-pointer"
-            >
-              <p className="text-xs font-bold text-foreground">Sarah Chen</p>
-              <p className="text-10px text-muted-foreground">Dashboard (Offer Stage)</p>
-            </button>
-          </div>
-        </div>
       </div>
 
       {/* Firebase Account Verification Link Modal - Matching Company Portal 1-to-1 */}

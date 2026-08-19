@@ -45,31 +45,42 @@ export const App: React.FC = () => {
       if (savedProfile) {
         try {
           const parsed = JSON.parse(savedProfile);
-          if (parsed.name) {
-            const baseState = getDefaultOnboardingState(
-              parsed.name,
-              parsed.email,
-              parsed.adminName,
-            );
-            const slug = parsed.subdomain || baseState.profile.subdomain;
+          if (parsed.name || parsed.profile?.name) {
+            const compName = parsed.profile?.name || parsed.name || "";
+            const compEmail = parsed.admin?.workEmail || parsed.email || "";
+            const compAdminName = parsed.admin?.fullName || parsed.adminName || "";
+            const baseState = getDefaultOnboardingState(compName, compEmail, compAdminName);
+            const fullDocState = (parsed.fullOnboardingState || parsed) as Partial<OnboardingState>;
+            const slug = parsed.subdomain || parsed.id || baseState.profile.subdomain;
             return {
               ...baseState,
+              ...fullDocState,
               profile: {
                 ...baseState.profile,
-                name: parsed.name || baseState.profile.name,
+                ...(fullDocState.profile || {}),
+                name: compName || baseState.profile.name,
                 subdomain: slug,
-                domain: parsed.domain || baseState.profile.domain,
-              },
-              careerPortal: {
-                ...baseState.careerPortal,
-                url: `https://gravitonitsolutions.com/candidates-portal/${slug}`,
+                domain: parsed.domain || fullDocState.profile?.domain || baseState.profile.domain,
+                industry:
+                  parsed.industry || fullDocState.profile?.industry || baseState.profile.industry,
+                size: parsed.size || fullDocState.profile?.size || baseState.profile.size,
+                brandColor:
+                  parsed.brandColor ||
+                  fullDocState.profile?.brandColor ||
+                  baseState.profile.brandColor,
+                headquarters:
+                  parsed.headquarters ||
+                  fullDocState.profile?.headquarters ||
+                  baseState.profile.headquarters,
               },
               admin: {
                 ...baseState.admin,
-                fullName: parsed.adminName || baseState.admin.fullName,
-                workEmail: parsed.email || baseState.admin.workEmail,
+                ...(fullDocState.admin || {}),
+                fullName: compAdminName || baseState.admin.fullName,
+                workEmail: compEmail || baseState.admin.workEmail,
+                phone: parsed.admin?.phone || fullDocState.admin?.phone || baseState.admin.phone,
               },
-              isCompleted: parsed.isCompleted ?? false,
+              isCompleted: parsed.isCompleted ?? fullDocState.isCompleted ?? false,
             };
           }
         } catch {
@@ -110,6 +121,21 @@ export const App: React.FC = () => {
         const slug = doc.subdomain || doc.id || doc.name.toLowerCase().replace(/[^a-z0-9]/g, "");
         const docRecord = doc as unknown as Record<string, unknown>;
         const fullDocState = (docRecord.fullOnboardingState || {}) as Partial<OnboardingState>;
+
+        let isLocallyCompleted = false;
+        if (typeof window !== "undefined") {
+          try {
+            const savedStr = localStorage.getItem("talentflow_company_profile");
+            if (savedStr) {
+              const parsed = JSON.parse(savedStr);
+              if (parsed.isCompleted === true) isLocallyCompleted = true;
+            }
+          } catch {
+            // ignore
+          }
+        }
+
+        const isCompleted = isLocallyCompleted || doc.isCompleted !== false;
 
         const loadedState: OnboardingState = {
           ...baseState,
@@ -198,7 +224,7 @@ export const App: React.FC = () => {
           teamInvites: doc.teamInvites
             ? (doc.teamInvites as unknown as OnboardingState["teamInvites"])
             : baseState.teamInvites,
-          isCompleted: doc.isCompleted ?? false,
+          isCompleted: isCompleted,
         };
 
         setState(loadedState);
@@ -217,14 +243,16 @@ export const App: React.FC = () => {
             headquarters: doc.headquarters,
             email: doc.admin?.workEmail,
             adminName: doc.admin?.fullName,
-            isCompleted: doc.isCompleted ?? false,
+            isCompleted: isCompleted,
           }),
         );
         localStorage.setItem("talentflow_active_company_id", doc.id || slug);
+        return loadedState;
       }
     } catch (err) {
       console.warn("Error loading authenticated company data:", err);
     }
+    return null;
   }, []);
 
   // Listen to Firebase Auth state updates
@@ -260,6 +288,19 @@ export const App: React.FC = () => {
         (typeof window !== "undefined" &&
           localStorage.getItem("talentflow_company_auth") === "true" &&
           !!localStorage.getItem("talentflow_company_profile"));
+
+      let isComp = state.isCompleted;
+      if (typeof window !== "undefined") {
+        try {
+          const saved = localStorage.getItem("talentflow_company_profile");
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            if (parsed.isCompleted !== undefined) isComp = parsed.isCompleted;
+          }
+        } catch {
+          // ignore
+        }
+      }
 
       const cleanPath = path.split("?")[0].replace(/\/+$/, "");
       const segments = cleanPath.split("/").filter(Boolean);
@@ -318,8 +359,7 @@ export const App: React.FC = () => {
               setAuthMode("signin");
               setActiveTab("auth");
             } else {
-              loadAuthenticatedCompanyData();
-              setActiveTab(state.isCompleted ? "dashboard" : "wizard");
+              setActiveTab(isComp ? "dashboard" : "wizard");
             }
           }
         });
@@ -358,13 +398,7 @@ export const App: React.FC = () => {
           setAuthMode("signin");
           setActiveTab("auth");
         } else {
-          loadAuthenticatedCompanyData();
-          if (!state.isCompleted) {
-            toast.warning("Mandatory Step: Complete company setup before accessing the dashboard.");
-            setActiveTab("wizard");
-          } else {
-            setActiveTab("dashboard");
-          }
+          setActiveTab(isComp ? "dashboard" : "wizard");
         }
       } else {
         setActiveTab("home");
@@ -374,13 +408,7 @@ export const App: React.FC = () => {
     handlePopState();
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
-  }, [
-    isAuthenticated,
-    state.isCompleted,
-    state.profile.subdomain,
-    state.profile.name,
-    loadAuthenticatedCompanyData,
-  ]);
+  }, [isAuthenticated, state.isCompleted]);
 
   const navigateTo = (path: string, targetTab?: string, isCompletedOverride?: boolean) => {
     if (path.includes("/register") || path.includes("/signup")) {
@@ -394,7 +422,19 @@ export const App: React.FC = () => {
       (typeof window !== "undefined" &&
         localStorage.getItem("talentflow_company_auth") === "true" &&
         !!localStorage.getItem("talentflow_company_profile"));
-    const isComp = isCompletedOverride !== undefined ? isCompletedOverride : state.isCompleted;
+
+    let isComp = isCompletedOverride !== undefined ? isCompletedOverride : state.isCompleted;
+    if (typeof window !== "undefined" && isCompletedOverride === undefined) {
+      try {
+        const saved = localStorage.getItem("talentflow_company_profile");
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed.isCompleted !== undefined) isComp = parsed.isCompleted;
+        }
+      } catch {
+        // ignore
+      }
+    }
 
     // Strict Auth Check for protected tabs/routes
     if (
@@ -415,7 +455,6 @@ export const App: React.FC = () => {
     // MANDATORY ONE-TIME WIZARD ENFORCEMENT:
     // Once the setup wizard is completed (isComp = true), user can NEVER navigate back to wizard.
     if (isAuth && isComp && (targetTab === "wizard" || path.includes("/wizard"))) {
-      toast.info("Setup wizard is already completed for your company workspace.");
       targetTab = "dashboard";
       const activeSlug =
         state.profile.subdomain ||
@@ -440,10 +479,6 @@ export const App: React.FC = () => {
       setCurrentPath(wizPath);
       setActiveTab("wizard");
       return;
-    }
-
-    if (isAuth && (targetTab === "dashboard" || path.includes("/dashboard"))) {
-      loadAuthenticatedCompanyData();
     }
 
     const searchParams = new URLSearchParams(path.includes("?") ? path.split("?")[1] : "");
@@ -479,6 +514,7 @@ export const App: React.FC = () => {
     companySlug?: string;
     adminName?: string;
     isNewAccount?: boolean;
+    signupPayload?: Partial<CompanyDocument>;
   }) => {
     localStorage.setItem("talentflow_company_auth", "true");
     setIsAuthenticated(true);
@@ -493,10 +529,20 @@ export const App: React.FC = () => {
     if (data.isNewAccount) {
       // New Company Account created -> Mandatory Setup Wizard (One-time after signup)
       const newCompanyName = data.companyName || "New Enterprise Co";
+      const payload = data.signupPayload || {};
       const newState: OnboardingState = getDefaultOnboardingState(
         newCompanyName,
         data.email,
         data.adminName || "Company Admin",
+        {
+          industry: payload.industry,
+          size: payload.size,
+          country: payload.country,
+          headquarters: payload.headquarters,
+          phone: payload.admin?.phone,
+          subdomain: slug,
+          referralSource: payload.referralSource,
+        },
       );
       newState.isCompleted = false; // Mandatory Setup Wizard
       newState.systemMetadata.companyId = slug;
@@ -505,10 +551,15 @@ export const App: React.FC = () => {
       localStorage.setItem(
         "talentflow_company_profile",
         JSON.stringify({
+          ...newState,
           id: slug,
           name: newCompanyName,
           subdomain: newState.profile.subdomain,
           domain: newState.profile.domain,
+          industry: newState.profile.industry,
+          size: newState.profile.size,
+          brandColor: newState.profile.brandColor,
+          headquarters: newState.profile.headquarters,
           email: data.email,
           adminName: data.adminName,
           isCompleted: false,
@@ -520,32 +571,39 @@ export const App: React.FC = () => {
       );
       navigateTo(`/companies/${slug}/dashboard`, "wizard");
     } else {
-      // Login mode -> Fetch authenticated user's company data from Firebase
-      await loadAuthenticatedCompanyData(data.email);
+      // Existing User Login mode -> Fetch authenticated user's company data from Firebase
+      const loadedDoc = await loadAuthenticatedCompanyData(data.email);
 
       const savedStr = localStorage.getItem("talentflow_company_profile");
-      let isComp = false;
-      let compSlug = slug;
+      let isComp = loadedDoc ? loadedDoc.isCompleted !== false : true;
+      let compSlug = loadedDoc?.profile?.subdomain || loadedDoc?.systemMetadata?.companyId || slug;
       if (savedStr) {
         try {
           const parsed = JSON.parse(savedStr);
-          isComp = parsed.isCompleted ?? false;
-          compSlug = parsed.subdomain || parsed.id || slug;
+          if (parsed.isCompleted !== undefined) {
+            isComp = parsed.isCompleted !== false;
+          }
+          if (parsed.subdomain || parsed.id) {
+            compSlug = parsed.subdomain || parsed.id;
+          }
         } catch {
           // ignore
         }
       }
 
       if (!isComp) {
-        toast.info("Please complete your company setup wizard.");
+        toast.warning("Mandatory Step: Complete your company setup wizard.");
         navigateTo(`/companies/${compSlug}/dashboard`, "wizard");
       } else {
+        toast.success(
+          `Welcome back to ${loadedDoc?.profile?.name || data.companyName || "Workspace"}`,
+        );
         navigateTo(`/companies/${compSlug}/dashboard`, "dashboard");
       }
     }
   };
 
-  const saveCompletedCompanyAndRedirect = async (completedState: OnboardingState) => {
+  const saveCompletedCompanyAndRedirect = (completedState: OnboardingState) => {
     const finalCompletedState: OnboardingState = {
       ...completedState,
       isCompleted: true,
@@ -577,6 +635,11 @@ export const App: React.FC = () => {
         isCompleted: true,
       }),
     );
+
+    // Direct and immediate redirect to Dashboard
+    setDashboardSubTab("pipeline");
+    navigateTo(`/companies/${activeCompanyId}/dashboard`, "dashboard", true);
+    toast.success("🎉 Setup complete! Welcome to your Company Dashboard.");
 
     const docData: CompanyDocument = {
       id: activeCompanyId,
@@ -647,38 +710,28 @@ export const App: React.FC = () => {
       updatedAt: new Date().toISOString(),
     };
 
-    const res = await CompanyApiService.saveCompanyToFirestore(docData);
-    if (res.success) {
-      toast.success(
-        `Company '${finalCompletedState.profile.name}' (${activeCompanyId}) saved in Firestore! Opening Dashboard...`,
-      );
-    }
-
-    const allMembers = [
-      ...finalCompletedState.hrTeam,
-      ...finalCompletedState.teamInvites.map((t) => ({
-        name: t.email.split("@")[0],
-        email: t.email,
-        role: t.role,
-      })),
-    ];
-    if (allMembers.length > 0) {
-      const cronRes = await CompanyApiService.scheduleDashboardAccessEmailsCron(
-        activeCompanyId,
-        allMembers,
-      );
-      toast.success(
-        `⏰ Cron Job Executed: Sent workspace dashboard access emails to ${cronRes.dispatchedCount} member(s)!`,
-      );
-    }
-
-    // Direct redirect to Dashboard after completing wizard
-    setDashboardSubTab("pipeline");
-    navigateTo(`/companies/${activeCompanyId}/dashboard`, "dashboard", true);
+    // Save in Firestore and run cron asynchronously in background
+    CompanyApiService.saveCompanyToFirestore(docData)
+      .then(() => {
+        const allMembers = [
+          ...finalCompletedState.hrTeam,
+          ...finalCompletedState.teamInvites.map((t) => ({
+            name: t.email.split("@")[0],
+            email: t.email,
+            role: t.role,
+          })),
+        ];
+        if (allMembers.length > 0) {
+          CompanyApiService.scheduleDashboardAccessEmailsCron(activeCompanyId, allMembers);
+        }
+      })
+      .catch((err) => {
+        console.warn("Error saving company in background:", err);
+      });
   };
 
-  const handleWizardCompleted = () => {
-    saveCompletedCompanyAndRedirect(state);
+  const handleWizardCompleted = (completedState?: OnboardingState) => {
+    saveCompletedCompanyAndRedirect(completedState || state);
   };
 
   const handleLogout = async () => {
@@ -702,13 +755,7 @@ export const App: React.FC = () => {
 
   return (
     <SmoothScrollProvider>
-      <div
-        className={`talentflow-company-onboarding-scope ${
-          activeTab === "dashboard" ? "h-screen overflow-hidden" : "min-h-screen"
-        } bg-background text-foreground flex flex-col font-sans`}
-      >
-        <Toaster position="top-right" richColors />
-
+      <div className="talentflow-company-onboarding-scope min-h-screen bg-background text-foreground flex flex-col font-sans">
         {/* Header Navigation for Company Portal */}
         {activeTab !== "home" && activeTab !== "auth" && activeTab !== "dashboard" && (
           <Header
@@ -812,32 +859,34 @@ export const App: React.FC = () => {
                 />
               )}
 
-              {activeTab === "wizard" && !state.isCompleted && (
-                <OnboardingWizard
-                  state={state}
-                  setState={setState}
-                  onComplete={handleWizardCompleted}
-                />
-              )}
+              {(activeTab === "wizard" || (activeTab === "dashboard" && !state.isCompleted)) &&
+                !state.isCompleted && (
+                  <OnboardingWizard
+                    state={state}
+                    setState={setState}
+                    onComplete={handleWizardCompleted}
+                  />
+                )}
 
-              {activeTab === "dashboard" && state.isCompleted && (
-                <CompanyDashboard
-                  state={state}
-                  setState={setState}
-                  candidates={candidates}
-                  onAdvanceCandidate={(id) => {
-                    const cand = candidates.find((c) => c.id === id);
-                    if (cand) toast.success(`Advanced ${cand.name}`);
-                  }}
-                  onFetchConnectorCandidates={() => {
-                    toast.info("Connector synced new candidates");
-                  }}
-                  interactionsLog={interactionsLog}
-                  activeSubTab={dashboardSubTab}
-                  onSelectSubTab={(subTab) => setDashboardSubTab(subTab)}
-                  onLogout={handleLogout}
-                />
-              )}
+              {(activeTab === "dashboard" || (activeTab === "wizard" && state.isCompleted)) &&
+                state.isCompleted && (
+                  <CompanyDashboard
+                    state={state}
+                    setState={setState}
+                    candidates={candidates}
+                    onAdvanceCandidate={(id) => {
+                      const cand = candidates.find((c) => c.id === id);
+                      if (cand) toast.success(`Advanced ${cand.name}`);
+                    }}
+                    onFetchConnectorCandidates={() => {
+                      toast.info("Connector synced new candidates");
+                    }}
+                    interactionsLog={interactionsLog}
+                    activeSubTab={dashboardSubTab}
+                    onSelectSubTab={(subTab) => setDashboardSubTab(subTab)}
+                    onLogout={handleLogout}
+                  />
+                )}
             </>
           )}
         </main>

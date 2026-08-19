@@ -17,6 +17,7 @@ import { useWorkspace } from "../lib/workspace-store";
 import { PHASES, RECRUITERS, ROLES, STAGES, phaseOfStage } from "../lib/ats-data";
 import { COMPANIES, OPERATOR } from "../lib/workspace-data";
 import { AdminLoginPage } from "../components/admin-login-page";
+import { Footer } from "../components/Footer";
 
 // @ts-expect-error TanStack router route id type sync
 export const Route = createFileRoute("/admin-panel/dashboard")({
@@ -166,7 +167,7 @@ export function DashboardPage() {
         </div>
       </header>
 
-      <main className="board-scroll overflow-x-auto px-6 py-6">
+      <main data-lenis-prevent className="board-scroll overflow-x-auto px-6 py-6">
         <div className="flex min-w-max gap-4">
           {PHASES.map((phase) => {
             const items = filtered.filter((c) => phaseOfStage(c.stage).id === phase.id);
@@ -223,6 +224,20 @@ export function DashboardPage() {
         candidate={selected}
         onOpenChange={(open) => !open && setSelectedId(null)}
         onAdvance={(id) => advanceCandidate(id)}
+      />
+
+      <Footer
+        linksCol1={[
+          { label: "Admin Pipeline", href: "/admin-panel/dashboard" },
+          { label: "Onboarded Companies", href: "/admin-panel/companies" },
+          { label: "Interviews Control", href: "/admin-panel/interviews" },
+          { label: "Offers Central", href: "/admin-panel/offers" },
+        ]}
+        linksCol2={[
+          { label: "Company Portal", href: "/companies" },
+          { label: "Candidate Portal", href: "/candidates-portal" },
+          { label: "Admin Settings", href: "/admin-panel/settings" },
+        ]}
       />
     </div>
   );

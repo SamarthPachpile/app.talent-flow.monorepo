@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   CandidateApiService,
   SettingsBackendService,
+  uploadCandidateFileToStorage,
   type CandidateSettings as CandidateSettingsType,
 } from "@talent-flow/api";
 import {
@@ -15,17 +16,38 @@ import {
   Lock,
   Eye,
   Smartphone,
+  Camera,
+  Upload,
 } from "lucide-react";
 import { toast } from "sonner";
 
 interface CandidateSettingsProps {
   onClose?: () => void;
+  onUpdateAvatar?: (avatarUrl: string) => void;
 }
 
 type TabType = "profile" | "notifications" | "privacy" | "documents" | "account";
 
-export const CandidateSettingsComponent: React.FC<CandidateSettingsProps> = ({ onClose }) => {
+export const CandidateSettingsComponent: React.FC<CandidateSettingsProps> = ({
+  onClose,
+  onUpdateAvatar,
+}) => {
   const [activeTab, setActiveTab] = useState<TabType>("profile");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [avatarUrl, setAvatarUrl] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("talentflow_candidate_profile");
+      if (stored) {
+        try {
+          return JSON.parse(stored).avatarUrl || "";
+        } catch {
+          // ignore
+        }
+      }
+    }
+    return "";
+  });
 
   const [settings, setSettings] = useState<CandidateSettingsType>(() =>
     CandidateApiService.getSettings(),
@@ -37,6 +59,30 @@ export const CandidateSettingsComponent: React.FC<CandidateSettingsProps> = ({ o
       setSettings(data);
     });
   }, []);
+
+  const handleAvatarFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image file size must be less than 5MB");
+      return;
+    }
+
+    try {
+      toast.loading("Uploading profile image...", { id: "settings-avatar-upload" });
+      const path = `candidates/${settings.profile.id || "cand"}/avatar_${Date.now()}`;
+      const url = await uploadCandidateFileToStorage(file, path);
+      setAvatarUrl(url);
+      if (onUpdateAvatar) {
+        onUpdateAvatar(url);
+      }
+      toast.success("Profile photo uploaded successfully!", { id: "settings-avatar-upload" });
+    } catch (err) {
+      console.error("Avatar upload failed:", err);
+      toast.error("Failed to upload avatar", { id: "settings-avatar-upload" });
+    }
+  };
 
   const handleSave = async () => {
     setLoading(true);
@@ -117,6 +163,67 @@ export const CandidateSettingsComponent: React.FC<CandidateSettingsProps> = ({ o
       {/* TAB 1: Profile Details */}
       {activeTab === "profile" && (
         <div className="space-y-4 text-xs">
+          {/* Candidate Avatar Photo Card */}
+          <div className="p-4 rounded-xl border border-border bg-surface/70 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3.5">
+              <div
+                onClick={() => fileInputRef.current?.click()}
+                className="relative group size-14 rounded-full overflow-hidden ring-2 ring-ember/30 bg-card shrink-0 cursor-pointer flex items-center justify-center shadow-xs"
+                title="Click to upload profile photo"
+              >
+                {avatarUrl ? (
+                  <img src={avatarUrl} alt="Avatar" className="size-full object-cover" />
+                ) : (
+                  <div className="size-full bg-gradient-to-br from-ember to-orange-600 text-white flex items-center justify-center font-bold text-lg">
+                    {settings.profile.fullName
+                      ? settings.profile.fullName.charAt(0).toUpperCase()
+                      : "U"}
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-black/55 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                  <Camera className="size-4 text-white" />
+                </div>
+              </div>
+              <div>
+                <p className="font-bold text-sm text-foreground">Profile Picture</p>
+                <p className="text-11px text-muted-foreground mt-0.5">
+                  PNG, JPG, WebP or SVG up to 5MB. Rendered in dashboard headers and badges.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleAvatarFileChange}
+                accept="image/*"
+                className="hidden"
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-ember text-ember-foreground text-xs font-semibold hover:bg-ember/90 transition-colors cursor-pointer"
+              >
+                <Upload className="size-3.5" />
+                <span>Upload New Photo</span>
+              </button>
+              {avatarUrl && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAvatarUrl("");
+                    if (onUpdateAvatar) onUpdateAvatar("");
+                    toast.info("Profile photo cleared");
+                  }}
+                  className="px-3 py-1.5 rounded-lg border border-border text-xs text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
+                >
+                  Remove
+                </button>
+              )}
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-muted-foreground font-medium mb-1">

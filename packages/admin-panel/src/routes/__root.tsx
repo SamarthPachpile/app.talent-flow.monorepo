@@ -9,7 +9,6 @@ import {
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
-import { Toaster } from "@/components/ui/sonner";
 import { WorkspaceProvider } from "@/lib/workspace-store";
 
 import appCss from "../styles.css?url";
@@ -135,7 +134,6 @@ function RootComponent() {
         <WorkspaceProvider>
           <Outlet />
         </WorkspaceProvider>
-        <Toaster />
       </QueryClientProvider>
     </SmoothScrollProvider>
   );

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef } from "react";
 import {
   User,
   Phone,
@@ -14,9 +14,14 @@ import {
   CheckCircle,
   Upload,
   Paperclip,
+  Camera,
 } from "lucide-react";
 import { toast } from "sonner";
-import { CandidateApiService, CandidateDocument } from "@talent-flow/api";
+import {
+  CandidateApiService,
+  CandidateDocument,
+  uploadCandidateFileToStorage,
+} from "@talent-flow/api";
 
 interface CandidateOnboardingWizardProps {
   candidateData: Partial<CandidateDocument>;
@@ -29,6 +34,7 @@ export const CandidateOnboardingWizard: React.FC<CandidateOnboardingWizardProps>
 }) => {
   const [currentStep, setCurrentStep] = useState<number>(1);
   const totalSteps = 4;
+  const avatarInputRef = useRef<HTMLInputElement>(null);
 
   // Retrieve fallback saved candidate details from localStorage if candidateData is partial
   const savedProfile = useMemo(() => {
@@ -50,11 +56,13 @@ export const CandidateOnboardingWizard: React.FC<CandidateOnboardingWizardProps>
   const initialPhone = candidateData.phone || savedProfile.phone || "";
   const initialEmail = candidateData.email || savedProfile.email || "";
   const initialCountry = candidateData.country || savedProfile.country || "";
+  const initialAvatar = candidateData.avatarUrl || savedProfile.avatarUrl || "";
 
   const [fullName, setFullName] = useState(initialFullName);
   const [phone, setPhone] = useState(initialPhone);
   const [email] = useState(initialEmail);
   const [country, setCountry] = useState(initialCountry);
+  const [avatarUrl, setAvatarUrl] = useState(initialAvatar);
   const [bio, setBio] = useState(candidateData.bio || savedProfile.bio || "");
 
   // Step 2: Resume Details
@@ -122,6 +130,27 @@ export const CandidateOnboardingWizard: React.FC<CandidateOnboardingWizardProps>
     }
   };
 
+  const handleAvatarFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image file size must be less than 5MB");
+      return;
+    }
+
+    try {
+      toast.loading("Uploading candidate photo...", { id: "wizard-avatar-upload" });
+      const path = `candidates/${candidateData.id || "cand"}/avatar_${Date.now()}`;
+      const url = await uploadCandidateFileToStorage(file, path);
+      setAvatarUrl(url);
+      toast.success("Profile photo uploaded successfully!", { id: "wizard-avatar-upload" });
+    } catch (err) {
+      console.error("Avatar upload failed in wizard:", err);
+      toast.error("Failed to upload photo", { id: "wizard-avatar-upload" });
+    }
+  };
+
   const handleSubmit = async () => {
     setIsSubmitting(true);
 
@@ -139,6 +168,7 @@ export const CandidateOnboardingWizard: React.FC<CandidateOnboardingWizardProps>
       fullName,
       email,
       phone,
+      avatarUrl,
       country,
       currency: candidateData.currency || savedProfile.currency || "USD ($)",
       compliance: candidateData.compliance || savedProfile.compliance || "US-SOX Compliance",
@@ -264,6 +294,50 @@ export const CandidateOnboardingWizard: React.FC<CandidateOnboardingWizardProps>
               <span className="text-10px font-semibold text-success bg-success/15 border border-success/30 px-2.5 py-1 rounded-full flex items-center gap-1">
                 <CheckCircle className="size-3" /> Pre-filled from Verified Registration
               </span>
+            </div>
+
+            {/* Candidate Profile Photo Upload */}
+            <div className="p-3.5 bg-surface rounded-xl border border-border flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div
+                  onClick={() => avatarInputRef.current?.click()}
+                  className="relative group size-12 rounded-full overflow-hidden ring-2 ring-ember/30 bg-card shrink-0 cursor-pointer flex items-center justify-center shadow-xs"
+                  title="Click to upload profile photo"
+                >
+                  {avatarUrl ? (
+                    <img src={avatarUrl} alt="Avatar" className="size-full object-cover" />
+                  ) : (
+                    <div className="size-full bg-gradient-to-br from-ember to-orange-600 text-white flex items-center justify-center font-bold text-sm">
+                      {fullName ? fullName.charAt(0).toUpperCase() : "U"}
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-black/55 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                    <Camera className="size-3.5 text-white" />
+                  </div>
+                </div>
+                <div>
+                  <p className="font-bold text-xs text-foreground">Profile Photo (Optional)</p>
+                  <p className="text-10px text-muted-foreground">
+                    Upload your picture for the company hiring team & dashboard header
+                  </p>
+                </div>
+              </div>
+
+              <input
+                type="file"
+                ref={avatarInputRef}
+                onChange={handleAvatarFileChange}
+                accept="image/*"
+                className="hidden"
+              />
+              <button
+                type="button"
+                onClick={() => avatarInputRef.current?.click()}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-card hover:bg-accent text-xs font-semibold text-foreground transition-colors cursor-pointer"
+              >
+                <Upload className="size-3" />
+                <span>{avatarUrl ? "Change Photo" : "Upload Photo"}</span>
+              </button>
             </div>
 
             {/* Verified Contact Info Box */}

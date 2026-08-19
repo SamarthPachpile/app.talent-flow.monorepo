@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   User,
   Mail,
@@ -16,19 +16,25 @@ import {
   Sparkles,
   X,
   Plus,
+  Camera,
 } from "lucide-react";
 import { CandidateProfile } from "../../types/candidate";
+import { uploadCandidateFileToStorage } from "@talent-flow/api";
 import { toast } from "sonner";
 
 interface CandidateProfileViewProps {
   candidate: CandidateProfile;
   onUpdateProfile?: (updated: Partial<CandidateProfile>) => void;
+  onUpdateAvatar?: (avatarUrl: string) => void;
 }
 
 export const CandidateProfileView: React.FC<CandidateProfileViewProps> = ({
   candidate,
   onUpdateProfile,
+  onUpdateAvatar,
 }) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [avatar, setAvatar] = useState(candidate.avatarUrl || "");
   const [name, setName] = useState(candidate.name);
   const [email, setEmail] = useState(candidate.email);
   const [phone, setPhone] = useState(candidate.phone);
@@ -62,6 +68,33 @@ export const CandidateProfileView: React.FC<CandidateProfileViewProps> = ({
     setSkills(skills.filter((s) => s !== skillToRemove));
   };
 
+  const handleAvatarFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image file size must be less than 5MB");
+      return;
+    }
+
+    try {
+      toast.loading("Uploading candidate profile photo...", { id: "avatar-upload-profile" });
+      const path = `candidates/${candidate.id || "cand"}/avatar_${Date.now()}`;
+      const url = await uploadCandidateFileToStorage(file, path);
+      setAvatar(url);
+      if (onUpdateAvatar) {
+        onUpdateAvatar(url);
+      }
+      if (onUpdateProfile) {
+        onUpdateProfile({ avatarUrl: url });
+      }
+      toast.success("Profile photo updated successfully!", { id: "avatar-upload-profile" });
+    } catch (err) {
+      console.error("Avatar upload failed:", err);
+      toast.error("Failed to upload avatar image", { id: "avatar-upload-profile" });
+    }
+  };
+
   const handleSave = () => {
     if (onUpdateProfile) {
       onUpdateProfile({
@@ -71,6 +104,7 @@ export const CandidateProfileView: React.FC<CandidateProfileViewProps> = ({
         location,
         roleTitle,
         department,
+        avatarUrl: avatar,
       });
     }
     toast.success("Candidate profile updated successfully!");
@@ -82,15 +116,28 @@ export const CandidateProfileView: React.FC<CandidateProfileViewProps> = ({
       <div className="bg-white dark:bg-slate-850 rounded-md border border-slate-200/90 dark:border-slate-800 shadow-2xs p-3.5 sm:p-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full overflow-hidden ring-2 ring-sky-100 dark:ring-sky-950 bg-slate-100 shrink-0">
-              <img
-                src={candidate.avatarUrl}
-                alt={candidate.name}
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  (e.target as HTMLElement).style.display = "none";
-                }}
-              />
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              className="relative group w-12 h-12 min-w-[48px] min-h-[48px] rounded-full overflow-hidden ring-2 ring-sky-200 dark:ring-sky-900 bg-slate-100 dark:bg-slate-800 shrink-0 cursor-pointer shadow-xs"
+              title="Click to upload profile photo"
+            >
+              {avatar ? (
+                <img
+                  src={avatar}
+                  alt={name}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    (e.target as HTMLElement).style.display = "none";
+                  }}
+                />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-br from-sky-500 to-indigo-600 text-white flex items-center justify-center font-bold text-sm">
+                  {name ? name.charAt(0).toUpperCase() : "U"}
+                </div>
+              )}
+              <div className="absolute inset-0 bg-black/55 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                <Camera className="w-4 h-4 text-white" />
+              </div>
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -101,11 +148,29 @@ export const CandidateProfileView: React.FC<CandidateProfileViewProps> = ({
                   Verified Candidate
                 </span>
               </div>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-                {roleTitle} • {department}
-              </p>
+              <div className="flex items-center gap-2 mt-0.5">
+                <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                  {roleTitle} • {department}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="text-[10.5px] text-[#00c0ef] hover:underline font-semibold flex items-center gap-1 cursor-pointer"
+                >
+                  <Camera className="w-3 h-3" />
+                  <span>Change Photo</span>
+                </button>
+              </div>
             </div>
           </div>
+
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleAvatarFileChange}
+            accept="image/*"
+            className="hidden"
+          />
 
           <button
             onClick={handleSave}

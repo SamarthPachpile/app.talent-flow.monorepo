@@ -4,6 +4,7 @@ import {
   MOCK_CANDIDATES,
   emptyCandidatePortalState,
   createDefaultCandidateState,
+  createCandidatePortalStateFromDoc,
 } from "./data/mockCandidateData";
 import { CandidatePortalState, StageId, HardwareSelection } from "./types/candidate";
 import { Header } from "./components/Header";
@@ -100,10 +101,7 @@ export function App() {
 
   const [activeCompany, setActiveCompany] = useState<CompanyDocument | null>(null);
 
-  const [activeCandidateKey, setActiveCandidateKey] = useState<string>("alex");
-  const [portalState, setPortalState] = useState<CandidatePortalState>(
-    MOCK_CANDIDATES["alex"] || emptyCandidatePortalState,
-  );
+  const [portalState, setPortalState] = useState<CandidatePortalState>(emptyCandidatePortalState);
 
   const [candidateProfile, setCandidateProfile] = useState<Partial<CandidateDocument>>(() => {
     if (typeof window !== "undefined") {
@@ -117,16 +115,13 @@ export function App() {
       }
     }
     return {
-      fullName: "Alex Rivera",
-      email: "alex.rivera@gmail.com",
+      fullName: "Candidate User",
+      email: "candidate@example.com",
       isCompleted: true,
     };
   });
 
-  const [activeStageId, setActiveStageId] = useState<StageId>(
-    (MOCK_CANDIDATES["alex"] || emptyCandidatePortalState).candidate.currentStageId ||
-      "application",
-  );
+  const [activeStageId, setActiveStageId] = useState<StageId>("application");
   const [showNotifications, setShowNotifications] = useState(false);
   const [showHelpdesk, setShowHelpdesk] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -170,7 +165,7 @@ export function App() {
     }
   }, [currentPath]);
 
-  // Helper to load candidate data from Firestore 'candidates' collection
+  // Helper to load candidate data dynamically from Firestore 'candidates' collection
   const loadAuthenticatedCandidateData = useCallback(
     async (emailToUse?: string, uidToUse?: string) => {
       let email = emailToUse;
@@ -191,23 +186,34 @@ export function App() {
       try {
         const candDoc = await CandidateApiService.getCandidateByEmailOrUid(email, uidToUse);
         if (candDoc) {
-          setCandidateProfile(candDoc);
-          localStorage.setItem("talentflow_candidate_profile", JSON.stringify(candDoc));
-          setPortalState((prev) => ({
-            ...prev,
-            candidate: {
-              ...prev.candidate,
-              name: candDoc.fullName || prev.candidate.name,
-              email: candDoc.email || prev.candidate.email,
-              phone: candDoc.phone || prev.candidate.phone,
-            },
-          }));
+          let isLocallyCompleted = false;
+          if (typeof window !== "undefined") {
+            try {
+              const savedStr = localStorage.getItem("talentflow_candidate_profile");
+              if (savedStr) {
+                const parsed = JSON.parse(savedStr);
+                if (parsed.isCompleted === true) isLocallyCompleted = true;
+              }
+            } catch {
+              // ignore
+            }
+          }
+
+          const finalCandDoc = {
+            ...candDoc,
+            isCompleted: isLocallyCompleted || candDoc.isCompleted !== false,
+          };
+          setCandidateProfile(finalCandDoc);
+          localStorage.setItem("talentflow_candidate_profile", JSON.stringify(finalCandDoc));
+          const dynamicState = createCandidatePortalStateFromDoc(finalCandDoc, activeCompany);
+          setPortalState(dynamicState);
+          setActiveStageId(dynamicState.candidate.currentStageId || "application");
         }
       } catch (err) {
         console.warn("Error fetching candidate from Firestore 'candidates' collection:", err);
       }
     },
-    [],
+    [activeCompany],
   );
 
   useEffect(() => {
@@ -215,6 +221,25 @@ export function App() {
       loadAuthenticatedCandidateData();
     }
   }, [isAuthenticated, loadAuthenticatedCandidateData]);
+
+  // Listen to Firebase Auth state updates
+  useEffect(() => {
+    const unsubscribe = FirebaseAuthService.onAuthChange(async (user) => {
+      if (user) {
+        setIsAuthenticated(true);
+        await loadAuthenticatedCandidateData(user.email || undefined, user.uid);
+      } else {
+        const storedAuth = localStorage.getItem("talentflow_candidate_auth");
+        if (!storedAuth) {
+          setIsAuthenticated(false);
+        }
+      }
+    });
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [loadAuthenticatedCandidateData]);
 
   // Handle direct visits to company routes when unauthenticated
   useEffect(() => {
@@ -270,20 +295,14 @@ export function App() {
       JSON.stringify({ authenticated: true, email: data.email }),
     );
 
-    const key =
-      data.candidateKey || (data.email.toLowerCase().includes("sarah") ? "sarah" : "alex");
-    if (MOCK_CANDIDATES[key]) {
-      setActiveCandidateKey(key as "alex" | "sarah");
-      setPortalState(MOCK_CANDIDATES[key]);
-      setActiveStageId(MOCK_CANDIDATES[key].candidate.currentStageId || "application");
-    } else {
-      const customState = createDefaultCandidateState(
-        data.fullName || "Candidate User",
-        data.email,
-      );
-      setPortalState(customState);
-      setActiveStageId(customState.candidate.currentStageId || "application");
-    }
+    const initialDoc: Partial<CandidateDocument> = {
+      fullName: data.fullName || "Candidate User",
+      email: data.email,
+      isCompleted: !data.isNewAccount,
+    };
+    const dynamicState = createCandidatePortalStateFromDoc(initialDoc, activeCompany);
+    setPortalState(dynamicState);
+    setActiveStageId(dynamicState.candidate.currentStageId || "application");
 
     const companySlug =
       activeCompany?.subdomain ||
@@ -347,31 +366,40 @@ export function App() {
       await CompanyApiService.registerCandidateToCompany(companySlug, updatedCandidate);
     }
 
-    setPortalState((prev) => ({
-      ...prev,
-      candidate: {
-        ...prev.candidate,
-        name: completedCandidate.fullName,
-        email: completedCandidate.email,
-        phone: completedCandidate.phone || prev.candidate.phone,
-        companyName: activeCompany?.name || prev.candidate.companyName,
-      },
-    }));
+    const dynamicState = createCandidatePortalStateFromDoc(updatedCandidate, activeCompany);
+    setPortalState(dynamicState);
+    setActiveStageId(dynamicState.candidate.currentStageId || "application");
 
     toast.success(
-      `Candidate profile for ${completedCandidate.fullName} saved to Firestore 'candidates' collection & registered under company!`,
+      `Candidate profile for ${completedCandidate.fullName} saved to Firestore & registered under company!`,
     );
     navigateTo(`/candidates-portal/${companySlug}/dashboard`);
   };
 
-  const handleSelectCandidate = (key: string) => {
-    if (MOCK_CANDIDATES[key]) {
-      setActiveCandidateKey(key);
-      const newCandidateState = MOCK_CANDIDATES[key];
-      setPortalState(newCandidateState);
-      setActiveStageId(newCandidateState.candidate.currentStageId || "application");
-      if (newCandidateState.candidate.name) {
-        toast.info(`Switched candidate view: ${newCandidateState.candidate.name}`);
+  const handleUpdateCandidateAvatar = async (newAvatarUrl: string) => {
+    setPortalState((prev) => ({
+      ...prev,
+      candidate: {
+        ...prev.candidate,
+        avatarUrl: newAvatarUrl,
+      },
+    }));
+
+    const updatedProfile = {
+      ...candidateProfile,
+      avatarUrl: newAvatarUrl,
+    };
+    setCandidateProfile(updatedProfile);
+
+    if (typeof window !== "undefined") {
+      localStorage.setItem("talentflow_candidate_profile", JSON.stringify(updatedProfile));
+    }
+
+    if (updatedProfile.email || updatedProfile.id) {
+      try {
+        await CandidateApiService.saveCandidateToFirestore(updatedProfile as CandidateDocument);
+      } catch (err) {
+        console.warn("Failed to persist avatar to Firestore:", err);
       }
     }
   };
@@ -452,126 +480,126 @@ export function App() {
 
   const routeInfo = getRouteInfo(currentPath);
 
-  // 0. Dedicated 404 - Company Not Found View when an invalid/non-existent company route is accessed
-  if (routeInfo.companySlug && !isCompanyLoading && isCompanyNotFound) {
-    return (
-      <div className="talentflow-candidate-portal-scope min-h-screen bg-background font-sans text-foreground flex flex-col items-center justify-center p-6 text-center animate-fadeIn">
-        <Toaster position="top-right" theme={darkMode ? "dark" : "light"} />
-        <div className="max-w-md w-full bg-card border border-border/80 rounded-2xl p-8 shadow-xl space-y-6">
-          <div className="size-16 rounded-2xl bg-destructive/10 text-destructive flex items-center justify-center mx-auto ring-8 ring-destructive/5">
-            <Building2 className="size-8" />
-          </div>
+  const renderViewContent = () => {
+    // 0. Dedicated 404 - Company Not Found View when an invalid/non-existent company route is accessed
+    if (routeInfo.companySlug && !isCompanyLoading && isCompanyNotFound) {
+      return (
+        <div className="talentflow-candidate-portal-scope min-h-screen bg-background font-sans text-foreground flex flex-col items-center justify-center p-6 text-center animate-fadeIn">
+          <div className="max-w-md w-full bg-card border border-border/80 rounded-2xl p-8 shadow-xl space-y-6">
+            <div className="size-16 rounded-2xl bg-destructive/10 text-destructive flex items-center justify-center mx-auto ring-8 ring-destructive/5">
+              <Building2 className="size-8" />
+            </div>
 
-          <div className="space-y-2">
-            <span className="inline-block px-3 py-1 bg-muted text-muted-foreground text-xs font-mono font-semibold rounded-full uppercase tracking-wider">
-              404 — Page Not Found
-            </span>
-            <h1 className="text-3xl font-display font-bold text-foreground">
-              Company Portal Not Found
-            </h1>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              No company workspace matching{" "}
-              <code className="text-ember font-mono bg-ember/10 px-1.5 py-0.5 rounded font-semibold">
-                "{routeInfo.companySlug}"
-              </code>{" "}
-              was found in the database.
-            </p>
-          </div>
+            <div className="space-y-2">
+              <span className="inline-block px-3 py-1 bg-muted text-muted-foreground text-xs font-mono font-semibold rounded-full uppercase tracking-wider">
+                404 — Page Not Found
+              </span>
+              <h1 className="text-3xl font-display font-bold text-foreground">
+                Company Portal Not Found
+              </h1>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                No company workspace matching{" "}
+                <code className="text-ember font-mono bg-ember/10 px-1.5 py-0.5 rounded font-semibold">
+                  "{routeInfo.companySlug}"
+                </code>{" "}
+                was found in the database.
+              </p>
+            </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 pt-2">
-            <button
-              onClick={() => navigateTo("/candidates-portal")}
-              className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-ember text-ember-foreground hover:bg-ember/90 font-semibold text-xs shadow-xs transition-colors cursor-pointer"
-            >
-              <ArrowLeft className="size-4" />
-              <span>Available Companies</span>
-            </button>
-            <button
-              onClick={() => {
-                if (typeof window !== "undefined") {
-                  window.location.href = "/companies/register";
-                }
-              }}
-              className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-surface border border-border hover:bg-accent text-foreground font-semibold text-xs transition-colors cursor-pointer"
-            >
-              <Plus className="size-4 text-ember" />
-              <span>Register Company</span>
-            </button>
+            <div className="flex flex-col sm:flex-row gap-3 pt-2">
+              <button
+                onClick={() => navigateTo("/candidates-portal")}
+                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-ember text-ember-foreground hover:bg-ember/90 font-semibold text-xs shadow-xs transition-colors cursor-pointer"
+              >
+                <ArrowLeft className="size-4" />
+                <span>Available Companies</span>
+              </button>
+              <button
+                onClick={() => {
+                  if (typeof window !== "undefined") {
+                    window.location.href = "/companies/register";
+                  }
+                }}
+                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-surface border border-border hover:bg-accent text-foreground font-semibold text-xs transition-colors cursor-pointer"
+              >
+                <Plus className="size-4 text-ember" />
+                <span>Register Company</span>
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    );
-  }
+      );
+    }
 
-  // 1. Companies Selection Landing View at /candidates-portal
-  if (routeInfo.targetView === "companies_list") {
+    // 1. Companies Selection Landing View at /candidates-portal
+    if (routeInfo.targetView === "companies_list") {
+      return (
+        <div className="talentflow-candidate-portal-scope min-h-screen bg-background font-sans text-foreground">
+          <CandidateCompanySelector
+            onSelectCompany={handleSelectCompanyFromList}
+            onCompanyOnboardingLink={() => {
+              if (typeof window !== "undefined") {
+                window.location.href = "/companies/register";
+              }
+            }}
+          />
+        </div>
+      );
+    }
+
+    // 2. Candidate Auth Screen View (/candidates-portal/<company_name>/login)
+    if (
+      routeInfo.targetView === "auth" ||
+      ((routeInfo.targetView === "dashboard" ||
+        routeInfo.targetView === "company_root" ||
+        routeInfo.targetView === "wizard") &&
+        !isAuthenticated)
+    ) {
+      return (
+        <div className="talentflow-candidate-portal-scope min-h-screen bg-background font-sans text-foreground">
+          <CandidateAuthScreen
+            company={activeCompany}
+            onSuccess={handleAuthSuccess}
+            onBackToCompanies={() => navigateTo("/candidates-portal")}
+            onBackToHome={() => navigateTo("/candidates-portal")}
+          />
+        </div>
+      );
+    }
+
+    // 3. Mandatory One-Time Setup Wizard View (ONLY when account has not completed setup wizard)
+    const isCandidateSetupDone = candidateProfile.isCompleted !== false;
+
+    if (isAuthenticated && !isCandidateSetupDone) {
+      return (
+        <div className="talentflow-candidate-portal-scope min-h-screen bg-background font-sans text-foreground">
+          <CandidateOnboardingWizard
+            candidateData={candidateProfile}
+            onComplete={handleWizardCompleted}
+          />
+        </div>
+      );
+    }
+
+    // 4. Candidate Dashboard View (Once setup wizard is completed)
     return (
       <div className="talentflow-candidate-portal-scope min-h-screen bg-background font-sans text-foreground">
-        <Toaster position="top-right" theme={darkMode ? "dark" : "light"} />
-        <CandidateCompanySelector
-          onSelectCompany={handleSelectCompanyFromList}
-          onCompanyOnboardingLink={() => {
-            if (typeof window !== "undefined") {
-              window.location.href = "/companies/register";
-            }
-          }}
-        />
-      </div>
-    );
-  }
-
-  // 2. Candidate Auth Screen View (/candidates-portal/<company_name>/login)
-  if (
-    routeInfo.targetView === "auth" ||
-    ((routeInfo.targetView === "dashboard" ||
-      routeInfo.targetView === "company_root" ||
-      routeInfo.targetView === "wizard") &&
-      !isAuthenticated)
-  ) {
-    return (
-      <div className="talentflow-candidate-portal-scope min-h-screen bg-background font-sans text-foreground">
-        <Toaster position="top-right" theme={darkMode ? "dark" : "light"} />
-        <CandidateAuthScreen
+        <CandidateDashboardLayout
+          portalState={portalState}
+          setPortalState={setPortalState}
           company={activeCompany}
-          onSuccess={handleAuthSuccess}
-          onBackToCompanies={() => navigateTo("/candidates-portal")}
-          onBackToHome={() => navigateTo("/candidates-portal")}
+          activeStageId={activeStageId}
+          setActiveStageId={setActiveStageId}
+          darkMode={darkMode}
+          onToggleDarkMode={() => setDarkMode(!darkMode)}
+          onLogout={handleLogout}
+          onAcceptOffer={handleAcceptOffer}
+          onUpdateHardware={handleUpdateHardware}
+          onUpdateAvatar={handleUpdateCandidateAvatar}
         />
       </div>
     );
-  }
+  };
 
-  // 3. Setup Wizard View (/candidates-portal/<company_name>/wizard)
-  if (routeInfo.targetView === "wizard" && isAuthenticated) {
-    return (
-      <div className="talentflow-candidate-portal-scope min-h-screen bg-background font-sans text-foreground">
-        <Toaster position="top-right" theme={darkMode ? "dark" : "light"} />
-        <CandidateOnboardingWizard
-          candidateData={candidateProfile}
-          onComplete={handleWizardCompleted}
-        />
-      </div>
-    );
-  }
-
-  // 4. Candidate Dashboard View (/candidates-portal/<company_name>/dashboard or /candidates-portal/<company_name>/)
-  return (
-    <div className="talentflow-candidate-portal-scope min-h-screen bg-background font-sans text-foreground">
-      <Toaster position="top-right" theme={darkMode ? "dark" : "light"} />
-      <CandidateDashboardLayout
-        portalState={portalState}
-        setPortalState={setPortalState}
-        company={activeCompany}
-        activeCandidateKey={activeCandidateKey}
-        onSelectCandidate={handleSelectCandidate}
-        activeStageId={activeStageId}
-        setActiveStageId={setActiveStageId}
-        darkMode={darkMode}
-        onToggleDarkMode={() => setDarkMode(!darkMode)}
-        onLogout={handleLogout}
-        onAcceptOffer={handleAcceptOffer}
-        onUpdateHardware={handleUpdateHardware}
-      />
-    </div>
-  );
+  return <SmoothScrollProvider>{renderViewContent()}</SmoothScrollProvider>;
 }

@@ -41,6 +41,7 @@ import { ConnectorsHub } from "./ConnectorsHub";
 import { TeamManagement } from "./TeamManagement";
 import { CompanySettingsComponent as CompanyProfileSettings } from "./CompanySettings";
 import { EmployXDashboardOverview } from "./EmployXDashboardOverview";
+import { Footer } from "./Footer";
 
 interface CompanyDashboardLayoutProps {
   state: OnboardingState;
@@ -121,13 +122,13 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
   const companyName = state?.profile?.name || "EmployX Enterprise";
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-[#f4f6fb] dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-sans">
+    <div className="flex min-h-screen w-full bg-[#f4f6fb] dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-sans">
       {/* =========================================================================
-          LEFT SIDEBAR (Matched to #545C78 Slate-Purple with Orange Icons)
+          LEFT SIDEBAR (Fixed at left: 0, dynamic responsive width, never scrolled away)
          ========================================================================= */}
       <aside
-        className={`bg-[#545C78] text-white flex flex-col justify-between shrink-0 transition-all duration-300 z-30 shadow-2xl ${
-          isSidebarOpen ? "w-56" : "w-16"
+        className={`fixed top-0 bottom-0 left-0 h-screen bg-[#545C78] text-white flex flex-col justify-between shrink-0 transition-all duration-300 z-40 shadow-2xl ${
+          isSidebarOpen ? "w-60 xl:w-64" : "w-16"
         }`}
       >
         <div className="flex flex-col h-full overflow-hidden">
@@ -489,11 +490,15 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
       </aside>
 
       {/* =========================================================================
-          MAIN CONTENT AREA & TOP HEADER BAR
+          MAIN CONTENT AREA & TOP HEADER BAR (Dynamic left padding to offset fixed sidebar)
          ========================================================================= */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden">
+      <div
+        className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${
+          isSidebarOpen ? "pl-60 xl:pl-64" : "pl-16"
+        }`}
+      >
         {/* Top Header Bar */}
-        <header className="h-14 bg-white dark:bg-slate-850 border-b border-slate-200/80 dark:border-slate-800 px-4 sm:px-6 flex items-center justify-between shrink-0 shadow-2xs z-20">
+        <header className="sticky top-0 h-14 bg-white dark:bg-slate-850 border-b border-slate-200/80 dark:border-slate-800 px-4 sm:px-6 flex items-center justify-between shrink-0 shadow-2xs z-20">
           {/* Left Controls: Hamburger + Search Input */}
           <div className="flex items-center gap-3.5 flex-1 max-w-md">
             <button
@@ -676,10 +681,7 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
         </header>
 
         {/* Viewport Content */}
-        <main
-          data-lenis-prevent
-          className="flex-1 overflow-y-auto p-3.5 sm:p-4.5 lg:p-5 overscroll-contain"
-        >
+        <main className="flex-1 p-3.5 sm:p-4.5 lg:p-5">
           <div className="max-w-[1500px] mx-auto">
             {currentTab === "dashboard" && (
               <EmployXDashboardOverview
@@ -824,6 +826,21 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
             )}
           </div>
         </main>
+
+        {/* Monorepo Standard Dashboard Footer (Full-width edge-to-edge flush footer) */}
+        <Footer
+          linksCol1={[
+            { label: "Pipeline Board", href: "#", onClick: () => handleTabChange("dashboard") },
+            { label: "Connectors Hub", href: "#", onClick: () => handleTabChange("connectors") },
+            { label: "Team Management", href: "#", onClick: () => handleTabChange("team") },
+            { label: "Company Settings", href: "#", onClick: () => handleTabChange("settings") },
+          ]}
+          linksCol2={[
+            { label: "Candidate Portal", href: "/candidates-portal" },
+            { label: "Admin CRM Panel", href: "/admin-panel" },
+            { label: "Company Home", href: "/companies" },
+          ]}
+        />
       </div>
     </div>
   );

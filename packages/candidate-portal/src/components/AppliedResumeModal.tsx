@@ -48,13 +48,13 @@ export const AppliedResumeModal: React.FC<AppliedResumeModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fadeIn">
       <div
-        className="clip-path-card bg-white dark:bg-slate-900 shadow-2xl border border-slate-200 dark:border-slate-800 w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden text-slate-800 dark:text-slate-100"
+        className="bg-white dark:bg-slate-900 shadow-2xl rounded-2xl border border-slate-200 dark:border-slate-800 w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden text-slate-800 dark:text-slate-100"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Header Bar */}
         <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-850">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[#00c0ef]/10 text-[#00c0ef] flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-orange-500/10 text-orange-500 flex items-center justify-center">
               <FileText className="w-4 h-4" />
             </div>
             <div>
@@ -73,7 +73,7 @@ export const AppliedResumeModal: React.FC<AppliedResumeModalProps> = ({
           <div className="flex items-center gap-2">
             <button
               onClick={handlePrint}
-              className="clip-path-button-sm p-1.5 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer text-xs flex items-center gap-1"
+              className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer text-xs flex items-center gap-1"
               title="Print Resume"
             >
               <Printer className="w-3.5 h-3.5" />
@@ -81,14 +81,14 @@ export const AppliedResumeModal: React.FC<AppliedResumeModalProps> = ({
             </button>
             <button
               onClick={handleDownload}
-              className="clip-path-button-sm px-3 py-1.5 bg-[#00c0ef] hover:bg-[#00abdc] text-white text-xs font-semibold shadow-2xs transition-colors cursor-pointer flex items-center gap-1.5"
+              className="px-3.5 py-1.5 rounded-lg bg-orange-500 hover:bg-orange-600 text-white text-xs font-semibold shadow-2xs transition-colors cursor-pointer flex items-center gap-1.5"
             >
               <Download className="w-3.5 h-3.5" />
               <span>Download PDF</span>
             </button>
             <button
               onClick={onClose}
-              className="clip-path-button-sm p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>

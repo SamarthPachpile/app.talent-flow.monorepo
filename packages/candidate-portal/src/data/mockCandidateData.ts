@@ -5,7 +5,9 @@ import {
   OnboardingStage,
   AppliedJob,
   AvailableJob,
+  StageId,
 } from "../types/candidate";
+import type { CandidateDocument, CompanyDocument } from "@talent-flow/api";
 
 export const DEFAULT_ONBOARDING_STAGES: OnboardingStage[] = [
   {
@@ -903,84 +905,239 @@ export function createDefaultCandidateState(
   };
 }
 
-export const emptyCandidatePortalState: CandidatePortalState = {
-  ...createDefaultCandidateState("Jordan Taylor", "jordan.taylor@example.com"),
-  candidate: {
-    ...createDefaultCandidateState("Jordan Taylor", "jordan.taylor@example.com").candidate,
-    name: "Jordan Taylor",
-    email: "jordan.taylor@example.com",
-    roleTitle: "Prospective Candidate",
-    department: "Engineering & Product",
-  },
-  appliedJobs: [],
-};
+export function createCandidatePortalStateFromDoc(
+  candDoc: Partial<CandidateDocument>,
+  company?: Partial<CompanyDocument> | null,
+): CandidatePortalState {
+  const baseName = candDoc.fullName || "Candidate";
+  const baseEmail = candDoc.email || "candidate@example.com";
+  const basePhone = candDoc.phone || "";
+  const baseAvatar = candDoc.avatarUrl || "";
+  const baseRole = candDoc.targetRole || "Software Engineer";
+  const baseCompany =
+    company?.name || candDoc.registeredCompanies?.[0]?.companyName || "TalentFlow Network";
+  const baseStageId = (candDoc.currentStageId as StageId) || "application";
 
-export const MOCK_CANDIDATES: Record<string, CandidatePortalState> = {
-  alex: createDefaultCandidateState("Alex Rivera", "alex.rivera@gmail.com"),
-  sarah: {
-    ...createDefaultCandidateState("Sarah Chen", "sarah.chen@designhub.io"),
+  return {
     candidate: {
-      ...createDefaultCandidateState("Sarah Chen", "sarah.chen@designhub.io").candidate,
-      name: "Sarah Chen",
-      email: "sarah.chen@designhub.io",
-      roleTitle: "Lead UX Product Designer",
-      department: "Product Design & Experience",
-      currentStageId: "offer",
-      avatarUrl:
-        "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=200&h=200&q=80",
-    },
-    appliedJobs: [
-      {
-        id: "job-sarah-1",
-        jobCode: "REQ-UX-701",
-        jobTitle: "Lead UX Product Designer",
-        location: "San Francisco, CA",
-        country: "United States",
-        appliedDate: "14/07/2026",
-        status: "Active Job",
-        interviewDate: "20/07/2026 15:00",
-        department: "Product Design & Experience",
-        employmentType: "Full-time",
-        salaryRange: "$165,000 - $190,000",
-        companyName: "iSmartRecruit",
-        description:
-          "Lead design systems, user research, wireframing, high-fidelity prototypes, and design-to-code design tokens.",
-        recruiterNotes: "Offer extended and awaiting e-signature.",
+      id: candDoc.id || "cand-" + baseEmail.replace(/[^a-z0-9]/g, ""),
+      name: baseName,
+      email: baseEmail,
+      phone: basePhone,
+      avatarUrl: baseAvatar,
+      roleTitle: baseRole,
+      department: candDoc.industry || "Engineering & Technology",
+      companyName: baseCompany,
+      companyLogo: "⚡",
+      location: candDoc.country ? `${candDoc.country} (Remote)` : "Remote",
+      targetStartDate: "2026-09-01",
+      currentStageId: baseStageId,
+      recruiter: {
+        name: "Talent Acquisition",
+        role: "Recruitment Specialist",
+        email: "recruiter@" + (company?.domain || "talentflow.io"),
+        avatarUrl: "",
+        phone: "+1 (555) 019-2831",
       },
+      hiringManager: {
+        name: "Engineering Lead",
+        role: "Hiring Manager",
+        email: "hiring@" + (company?.domain || "talentflow.io"),
+        avatarUrl: "",
+      },
+    },
+    stages: DEFAULT_ONBOARDING_STAGES.map((st) => {
+      if (st.id === baseStageId) {
+        return { ...st, status: "in_progress" as const };
+      }
+      return st;
+    }),
+    appliedJobs: DEFAULT_APPLIED_JOBS,
+    application: {
+      jobId: "APP-" + (candDoc.id || "001").substring(0, 8).toUpperCase(),
+      jobTitle: baseRole,
+      appliedDate: candDoc.createdAt
+        ? new Date(candDoc.createdAt).toISOString().split("T")[0]
+        : new Date().toISOString().split("T")[0],
+      resumeFileName: candDoc.resumeFileName || `${baseName.replace(/\s+/g, "_")}_Resume.pdf`,
+      resumeUrl: candDoc.resumeUrl || "#",
+      experienceYears: parseInt(candDoc.experienceYears || "4", 10) || 4,
+      portfolioUrl: candDoc.portfolioUrl || "",
+      githubUrl: candDoc.githubUrl || "",
+      statusHistory: [
+        {
+          status: "Submitted",
+          date: candDoc.createdAt
+            ? new Date(candDoc.createdAt).toISOString().split("T")[0]
+            : new Date().toISOString().split("T")[0],
+          note: "Application submitted via candidate portal.",
+        },
+      ],
+    },
+    interviews: [
       {
-        id: "job-sarah-2",
-        jobCode: "REQ-DS-802",
-        jobTitle: "Senior Design Systems Architect",
-        location: "London (Remote)",
-        country: "United Kingdom",
-        appliedDate: "05/06/2026",
-        status: "Active Job",
-        interviewDate: "-",
-        department: "Product Design",
-        employmentType: "Full-time",
-        salaryRange: "£85,000 - £105,000",
-        companyName: "iSmartRecruit",
-        description: "Scale cross-platform component libraries in Figma and Tailwind CSS.",
+        id: "int-1",
+        roundName: "Technical Deep-Dive",
+        interviewerName: "Lead Engineer",
+        interviewerRole: "Principal Architect",
+        interviewerAvatar: "",
+        date: "2026-08-25",
+        timeSlot: "14:00 - 15:00 UTC",
+        durationMinutes: 60,
+        type: "Technical Architecture",
+        meetingUrl: "https://meet.google.com/xyz-tf-room",
+        status: "scheduled",
+        notesForCandidate: "Please prepare to walk through system architecture diagrams.",
       },
     ],
-    stages: DEFAULT_ONBOARDING_STAGES.map((s) =>
-      s.id === "offer"
-        ? { ...s, status: "action_required" as const, actionRequiredText: "Signature Required" }
-        : s.id === "background_check" || s.id === "hardware_setup"
-          ? { ...s, status: "pending" as const }
-          : s,
-    ),
     offer: {
-      ...createDefaultCandidateState("Sarah Chen", "sarah.chen@designhub.io").offer,
-      positionTitle: "Lead UX Product Designer",
-      department: "Product Design & Experience",
-      baseSalaryYearly: 165000,
-      signOnBonus: 15000,
-      equityShares: 8500,
+      offerId: "OFF-2026-001",
+      positionTitle: baseRole,
+      department: candDoc.industry || "Engineering & Technology",
+      baseSalaryYearly: 140000,
+      signOnBonus: 10000,
+      equityShares: 5000,
+      equityVesting: "4-year vesting with 1-year cliff",
+      healthInsurance: "Comprehensive Platinum Medical, Dental, and Vision coverage",
+      ptoDays: 25,
+      remoteStipend: 1500,
+      pdfUrl: "#",
       status: "pending",
-      signedAt: undefined,
-      signedName: undefined,
     },
-  },
-  empty: emptyCandidatePortalState,
+    backgroundCheck: {
+      id: "bg-001",
+      provider: "Checkr Enterprise",
+      status: "submitted",
+      submittedAt: "2026-08-10",
+      documents: [
+        {
+          id: "doc-1",
+          name: "Government ID",
+          type: "Government ID",
+          status: "verified",
+          uploadedAt: "2026-08-10",
+        },
+      ],
+      ssnLast4: "8821",
+      consentAccepted: true,
+    },
+    hardware: {
+      selectedLaptopId: candDoc.hardwarePreferences?.laptop || "macbook-pro-16",
+      selectedAccessories: candDoc.hardwarePreferences?.accessories || [
+        "acc-4k-monitor",
+        "acc-anc-headphones",
+      ],
+      shippingAddress: {
+        street: "123 Innovation Way",
+        city: "San Francisco",
+        state: "CA",
+        zipCode: "94105",
+        country: candDoc.country || "United States",
+      },
+      deliveryInstructions: "Leave with front desk / reception if unavailable",
+      carrier: "FedEx Express",
+      trackingNumber: "FEDEX-TF-991204",
+      shipmentStatus: "provisioning",
+      estimatedDeliveryDate: "2026-08-28",
+      itSetupCompleted: true,
+      unboxingNotes: [
+        "Remove security seals",
+        "Connect to power adapter",
+        "Follow SSO enrollment prompt",
+      ],
+    },
+    credentials: {
+      corporateEmail: baseEmail,
+      ssoUsername: baseEmail.split("@")[0] || "candidate",
+      slackInviteSent: true,
+      googleWorkspaceActive: true,
+      oktaProvisioned: true,
+      twoFactorSetupCompleted: true,
+      passwordCreated: true,
+      temporaryPasswordExpiry: "2026-09-15",
+    },
+    dayOne: {
+      buddy: {
+        name: "Alex Rivera",
+        role: "Senior Staff Mentor",
+        email: "buddy@talentflow.io",
+        avatarUrl: "",
+        slackHandle: "@alex.rivera",
+        welcomeNote: "Welcome aboard! Excited to build together.",
+      },
+      firstDaySchedule: [
+        {
+          id: "s1",
+          time: "09:30 AM",
+          title: "Welcome & IT Setup",
+          hostName: "IT Support",
+          hostRole: "Systems Engineer",
+          meetingType: "Google Meet",
+        },
+        {
+          id: "s2",
+          time: "11:00 AM",
+          title: "Engineering 1-on-1 Kickoff",
+          hostName: "Lead Engineer",
+          hostRole: "Engineering Manager",
+          meetingType: "Virtual Zoom",
+        },
+      ],
+      checklist: [
+        {
+          id: "c1",
+          title: "Complete Company Security & Privacy Training",
+          category: "Legal & Compliance",
+          duration: "30 min",
+          completed: true,
+        },
+        {
+          id: "c2",
+          title: "Setup 1Password Vault & Hardware Security Key",
+          category: "IT Config",
+          duration: "15 min",
+          completed: true,
+        },
+        {
+          id: "c3",
+          title: "Attend 9:30 AM Team Welcome Standup",
+          category: "Team Introduction",
+          duration: "45 min",
+          completed: false,
+        },
+        {
+          id: "c4",
+          title: "1-on-1 Kickoff Sync with Hiring Manager",
+          category: "Orientation",
+          duration: "30 min",
+          completed: false,
+        },
+        {
+          id: "c5",
+          title: "Clone Team Repositories & Run Local Build",
+          category: "IT Config",
+          duration: "45 min",
+          completed: false,
+        },
+      ],
+    },
+    notifications: [
+      {
+        id: "n-1",
+        title: "Welcome to your Candidate Portal",
+        message: `Welcome ${baseName}! Track your applications, interview schedules, and onboarding roadmaps here.`,
+        timestamp: "Just now",
+        read: false,
+        stageId: "application",
+      },
+    ],
+  };
+}
+
+export const emptyCandidatePortalState: CandidatePortalState = createCandidatePortalStateFromDoc(
+  {},
+);
+
+export const MOCK_CANDIDATES: Record<string, CandidatePortalState> = {
+  default: emptyCandidatePortalState,
 };

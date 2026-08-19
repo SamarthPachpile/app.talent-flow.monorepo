@@ -21,39 +21,58 @@ export default function SmoothScrollProvider({ children }: { children: React.Rea
       return;
     }
 
-    const lenis = new Lenis({
-      duration: 1.15,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
-      wheelMultiplier: 1,
-      touchMultiplier: 1.5,
-    });
+    try {
+      const lenis = new Lenis({
+        duration: 1.15,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        orientation: "vertical",
+        gestureOrientation: "vertical",
+        smoothWheel: true,
+        wheelMultiplier: 1,
+        touchMultiplier: 1.5,
+        infinite: false,
+      });
 
-    lenisRef.current = lenis;
-    window.__lenis = lenis;
+      lenisRef.current = lenis;
+      window.__lenis = lenis;
 
-    const onScroll = () => {
-      ScrollTrigger.update();
-    };
+      const onScroll = () => {
+        ScrollTrigger.update();
+      };
 
-    lenis.on("scroll", onScroll);
+      lenis.on("scroll", onScroll);
 
-    const updateLenis = (time: number) => {
-      lenis.raf(time * 1000);
-    };
+      const updateLenis = (time: number) => {
+        lenis.raf(time * 1000);
+      };
 
-    gsap.ticker.add(updateLenis);
-    gsap.ticker.lagSmoothing(0);
+      gsap.ticker.add(updateLenis);
+      gsap.ticker.lagSmoothing(0);
 
-    // Refresh ScrollTrigger positions after Lenis setup
-    ScrollTrigger.refresh();
+      // Refresh ScrollTrigger positions after Lenis setup
+      ScrollTrigger.refresh();
 
-    return () => {
-      gsap.ticker.remove(updateLenis);
-      lenis.off("scroll", onScroll);
-      lenis.destroy();
-      window.__lenis = undefined;
-    };
+      const handleNavigation = () => {
+        setTimeout(() => {
+          lenis.resize();
+          ScrollTrigger.refresh();
+        }, 60);
+      };
+
+      window.addEventListener("popstate", handleNavigation);
+
+      return () => {
+        window.removeEventListener("popstate", handleNavigation);
+        gsap.ticker.remove(updateLenis);
+        lenis.off("scroll", onScroll);
+        lenis.destroy();
+        if (window.__lenis === lenis) {
+          window.__lenis = undefined;
+        }
+      };
+    } catch {
+      // Fallback
+    }
   }, []);
 
   return <>{children}</>;

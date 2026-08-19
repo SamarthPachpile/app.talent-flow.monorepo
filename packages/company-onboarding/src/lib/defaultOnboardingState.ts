@@ -4,9 +4,24 @@ export function getDefaultOnboardingState(
   initialCompanyName?: string,
   initialEmail?: string,
   initialAdminName?: string,
+  initialOverrides?: {
+    industry?: string;
+    size?: string;
+    phone?: string;
+    country?: string;
+    headquarters?: string;
+    subdomain?: string;
+    referralSource?: string;
+    jobTitle?: string;
+    billingEmail?: string;
+    city?: string;
+    state?: string;
+  },
 ): OnboardingState {
   const compName = initialCompanyName || "";
-  const cleanSlug = compName ? compName.toLowerCase().replace(/[^a-z0-9]/g, "") : "";
+  const cleanSlug =
+    initialOverrides?.subdomain ||
+    (compName ? compName.toLowerCase().replace(/[^a-z0-9]/g, "") : "");
   const domain = cleanSlug ? `${cleanSlug}.com` : "";
   const email = initialEmail || (domain ? `admin@${domain}` : "");
   const now = new Date();
@@ -35,8 +50,8 @@ export function getDefaultOnboardingState(
       legalName: compName ? `${compName} Private Limited` : "",
       subdomain: cleanSlug,
       domain: domain,
-      industry: "Technology & Software",
-      size: "51-200 Employees",
+      industry: initialOverrides?.industry || "Technology & Software",
+      size: initialOverrides?.size || "51-200 Employees",
       logoUrl: "",
       coverImageUrl: "",
       gstNumber: "",
@@ -49,22 +64,22 @@ export function getDefaultOnboardingState(
       yearFounded: new Date().getFullYear().toString(),
       employeeCount: "",
       headOfficeAddress: "",
-      country: "",
-      state: "",
-      city: "",
+      country: initialOverrides?.country || "",
+      state: initialOverrides?.state || "",
+      city: initialOverrides?.city || "",
       pincode: "",
       timezone: "UTC",
       businessHours: "09:00 AM - 06:00 PM",
       brandColor: "#6366f1",
-      headquarters: "",
+      headquarters: initialOverrides?.headquarters || initialOverrides?.country || "",
     },
 
     admin: {
       fullName: initialAdminName || "",
       workEmail: email,
-      phone: "",
-      jobTitle: "Super Admin",
-      billingEmail: email,
+      phone: initialOverrides?.phone || "",
+      jobTitle: initialOverrides?.jobTitle || "Super Admin",
+      billingEmail: initialOverrides?.billingEmail || email,
     },
 
     plan: {

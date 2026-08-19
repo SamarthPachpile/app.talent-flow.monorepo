@@ -13,10 +13,15 @@ import {
   CheckCircle2,
   ExternalLink,
   ChevronRight,
+  ChevronDown,
   Filter,
   Radio,
+  Menu,
+  X,
 } from "lucide-react";
 import { CompanyApiService, CompanyDocument } from "@talent-flow/api";
+import { CTASection } from "./CTASection";
+import { Footer } from "./Footer";
 
 interface CandidateCompanySelectorProps {
   onSelectCompany: (company: CompanyDocument) => void;
@@ -32,6 +37,7 @@ export const CandidateCompanySelector: React.FC<CandidateCompanySelectorProps> =
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedIndustry, setSelectedIndustry] = useState<string>("All");
   const [imgErrorMap, setImgErrorMap] = useState<Record<string, boolean>>({});
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -45,11 +51,8 @@ export const CandidateCompanySelector: React.FC<CandidateCompanySelectorProps> =
           setLoading(false);
         }
       },
-      (err) => {
-        console.warn("Realtime listener error in CandidateCompanySelector:", err);
-        if (isMounted) {
-          setLoading(false);
-        }
+      () => {
+        if (isMounted) setLoading(false);
       },
     );
 
@@ -66,14 +69,12 @@ export const CandidateCompanySelector: React.FC<CandidateCompanySelectorProps> =
 
   const filteredCompanies = companies.filter((c) => {
     const matchesSearch =
-      (c.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (c.industry || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (c.headquarters || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (c.subdomain || "").toLowerCase().includes(searchQuery.toLowerCase());
+      c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      c.subdomain?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      c.domain?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      c.headquarters?.toLowerCase().includes(searchQuery.toLowerCase());
 
-    const matchesIndustry =
-      selectedIndustry === "All" ||
-      (c.industry || "").toLowerCase() === selectedIndustry.toLowerCase();
+    const matchesIndustry = selectedIndustry === "All" || c.industry === selectedIndustry;
 
     return matchesSearch && matchesIndustry;
   });
@@ -87,46 +88,134 @@ export const CandidateCompanySelector: React.FC<CandidateCompanySelectorProps> =
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground font-sans flex flex-col selection:bg-ember/20">
-      {/* Top Navbar */}
-      <header className="sticky top-0 z-50 backdrop-blur-md bg-card/95 border-b border-border">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <motion.span
-              whileHover={{ rotate: 5, scale: 1.05 }}
-              className="grid size-9 place-items-center rounded-lg bg-ember text-ember-foreground font-bold shadow-xs text-sm"
-            >
-              TF
-            </motion.span>
-            <div>
-              <h1 className="text-sm font-semibold tracking-tight text-foreground flex items-center gap-2">
-                TalentFlow Hub
-                <span className="bg-ember/10 text-ember border border-ember/20 text-10px px-2 py-0.5 rounded-full font-semibold">
-                  Candidates Portal
-                </span>
-              </h1>
-              <p className="text-11px text-muted-foreground">
-                Select your company to log in to your candidate dashboard
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            {onCompanyOnboardingLink && (
-              <button
-                onClick={onCompanyOnboardingLink}
-                className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-surface hover:bg-accent transition-colors"
+    <div className="min-h-screen bg-background text-foreground font-sans flex flex-col selection:bg-ember/20 relative overflow-x-clip">
+      {/* Top Floating Header Navigation (Graviton Capsule Style) */}
+      <header className="fixed top-3 sm:top-5 left-1/2 -translate-x-1/2 z-[9999] w-[calc(100%-1.5rem)] sm:w-[calc(100%-2.5rem)] max-w-[1400px]">
+        <div className="clip-path-nav-sm bg-background/95 backdrop-blur-xl shadow-[0_8px_32px_-12px_rgba(0,0,0,0.15)] border border-border/60">
+          <div className="flex items-center justify-between pl-5 pr-2 sm:pl-7 sm:pr-3 py-2.5">
+            {/* Brand Logo */}
+            <div className="flex items-center gap-3 cursor-pointer">
+              <motion.span
+                whileHover={{ rotate: 5, scale: 1.05 }}
+                className="grid size-9 place-items-center rounded-xl bg-ember text-ember-foreground font-bold shadow-xs text-xs shrink-0"
               >
-                <Building2 className="size-3.5 text-ember" />
-                <span>Register Company</span>
+                TF
+              </motion.span>
+              <div className="flex flex-col leading-none">
+                <span className="text-base sm:text-lg font-bold text-foreground tracking-tight">
+                  TalentFlow<sup className="text-[10px] top-0 ml-0.5 font-bold text-ember">®</sup>
+                </span>
+                <span className="text-10px text-muted-foreground mt-0.5 font-medium">
+                  Candidate Discovery & Portal
+                </span>
+              </div>
+            </div>
+
+            {/* Desktop Navigation Links */}
+            <nav className="hidden lg:flex items-center gap-6 text-xs font-medium text-muted-foreground">
+              <a href="#companies" className="hover:text-ember transition-colors">
+                Available Companies
+              </a>
+              <a href="#how-it-works" className="hover:text-ember transition-colors">
+                Candidate Experience
+              </a>
+              <a href="#security" className="hover:text-ember transition-colors">
+                Security & Isolation
+              </a>
+              <a href="#faq" className="hover:text-ember transition-colors">
+                Help & FAQ
+              </a>
+            </nav>
+
+            {/* Right Side Buttons */}
+            <div className="hidden lg:flex items-center gap-3">
+              <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors px-2 py-1">
+                <Globe className="w-3.5 h-3.5" />
+                <span>EN</span>
+                <ChevronDown className="w-3 h-3" />
               </button>
-            )}
+
+              {onCompanyOnboardingLink && (
+                <button
+                  onClick={onCompanyOnboardingLink}
+                  className="clip-path-button-sm bg-ember text-ember-foreground px-6 py-2.5 text-xs font-semibold hover:bg-ember/90 transition-colors flex items-center gap-2 cursor-pointer"
+                >
+                  <Building2 className="size-3.5" />
+                  <span>Register Company</span>
+                </button>
+              )}
+            </div>
+
+            {/* Mobile Menu Toggle Button */}
+            <button
+              className="hidden max-lg:flex w-10 h-10 items-center justify-center text-foreground hover:text-ember transition-colors cursor-pointer"
+              onClick={() => setMobileNavOpen(!mobileNavOpen)}
+              aria-label="Toggle Navigation Menu"
+            >
+              {mobileNavOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
           </div>
         </div>
       </header>
 
+      {/* Mobile Navigation Dropdown Overlay */}
+      <AnimatePresence>
+        {mobileNavOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="hidden max-lg:block fixed top-[70px] left-3 right-3 z-[9999] border border-border/60 bg-background/95 backdrop-blur-xl rounded-xl shadow-xl p-4 space-y-3"
+          >
+            <div className="flex flex-col gap-2.5 text-xs font-medium">
+              <a
+                href="#companies"
+                onClick={() => setMobileNavOpen(false)}
+                className="p-2 rounded-lg hover:bg-accent text-foreground"
+              >
+                Available Companies
+              </a>
+              <a
+                href="#how-it-works"
+                onClick={() => setMobileNavOpen(false)}
+                className="p-2 rounded-lg hover:bg-accent text-foreground"
+              >
+                Candidate Experience
+              </a>
+              <a
+                href="#security"
+                onClick={() => setMobileNavOpen(false)}
+                className="p-2 rounded-lg hover:bg-accent text-foreground"
+              >
+                Security & Isolation
+              </a>
+              <a
+                href="#faq"
+                onClick={() => setMobileNavOpen(false)}
+                className="p-2 rounded-lg hover:bg-accent text-foreground"
+              >
+                Help & FAQ
+              </a>
+            </div>
+
+            {onCompanyOnboardingLink && (
+              <button
+                onClick={() => {
+                  setMobileNavOpen(false);
+                  onCompanyOnboardingLink();
+                }}
+                className="w-full clip-path-button-sm bg-ember text-ember-foreground py-2.5 text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Building2 className="size-3.5" />
+                <span>Register Company</span>
+              </button>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Hero Section */}
-      <section className="relative py-14 px-6 overflow-hidden border-b border-border/60 bg-gradient-to-b from-card via-background to-background">
+      <section className="relative pt-28 pb-14 sm:pt-36 sm:pb-20 px-6 overflow-hidden border-b border-border/60 bg-gradient-to-b from-card via-background to-background">
         {/* Background Image */}
         <div className="absolute inset-0 pointer-events-none">
           <img
@@ -421,22 +510,29 @@ export const CandidateCompanySelector: React.FC<CandidateCompanySelectorProps> =
         )}
       </main>
 
-      {/* Footer Banner */}
-      <footer className="border-t border-border bg-card/60 py-8 px-6 mt-12">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="size-4 text-ember" />
-            <span>
-              Multi-tenant Cryptographic Pipeline Isolation — TalentFlow Hub Candidate Portal
-            </span>
-          </div>
-          <div className="flex items-center gap-4">
-            <span className="font-mono text-11px">
-              Route: /candidates-portal/&lt;company_name&gt;/login
-            </span>
-          </div>
-        </div>
-      </footer>
+      {/* CTA Section */}
+      <CTASection
+        buttonText="Register Company"
+        onButtonClick={onCompanyOnboardingLink}
+        headingLine1="Let's start"
+        headingLine2="engineering impact"
+        headingHighlight="together."
+        subtext="Don't see your company workspace? Set up a fully configured talent pipeline and start onboarding candidates in minutes."
+      />
+
+      {/* Footer */}
+      <Footer
+        onContactClick={onCompanyOnboardingLink}
+        linksCol1={[
+          { label: "Select Company", href: "/candidates-portal" },
+          { label: "Register Workspace", href: "#", onClick: onCompanyOnboardingLink },
+          { label: "Company Portal", href: "/companies" },
+        ]}
+        linksCol2={[
+          { label: "Admin CRM", href: "/admin-panel" },
+          { label: "Compliance & Security", href: "#" },
+        ]}
+      />
     </div>
   );
 };

@@ -13,6 +13,7 @@ export default function SmoothScrollProvider({ children }: { children: React.Rea
   useEffect(() => {
     if (typeof window === "undefined") return;
 
+    // Reuse existing Lenis instance if already initialized by parent/root
     if (window.__lenis) {
       return;
     }
@@ -21,19 +22,12 @@ export default function SmoothScrollProvider({ children }: { children: React.Rea
       const lenis = new Lenis({
         duration: 1.15,
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        orientation: "vertical",
+        gestureOrientation: "vertical",
         smoothWheel: true,
         wheelMultiplier: 1,
         touchMultiplier: 1.5,
-        prevent: (node) => {
-          if (!node || !(node instanceof HTMLElement)) return false;
-          return (
-            node.hasAttribute("data-lenis-prevent") ||
-            Boolean(node.closest("[data-lenis-prevent]")) ||
-            Boolean(node.closest(".overflow-y-auto")) ||
-            Boolean(node.closest(".overflow-x-auto")) ||
-            Boolean(node.closest(".overflow-auto"))
-          );
-        },
+        infinite: false,
       });
 
       lenisRef.current = lenis;
@@ -46,10 +40,21 @@ export default function SmoothScrollProvider({ children }: { children: React.Rea
       };
       rafId = requestAnimationFrame(raf);
 
+      const handleNavigation = () => {
+        setTimeout(() => {
+          lenis.resize();
+        }, 60);
+      };
+
+      window.addEventListener("popstate", handleNavigation);
+
       return () => {
         cancelAnimationFrame(rafId);
+        window.removeEventListener("popstate", handleNavigation);
         lenis.destroy();
-        window.__lenis = undefined;
+        if (window.__lenis === lenis) {
+          window.__lenis = undefined;
+        }
       };
     } catch {
       // Fallback
