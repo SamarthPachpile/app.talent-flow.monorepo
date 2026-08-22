@@ -25,7 +25,7 @@ export const CompanyOverview: React.FC<OverviewProps> = ({ state, setActiveTab }
       tab: "connectors",
     },
     { title: "Team Invites & Roles", done: state.teamInvites.length > 0, tab: "team" },
-    { title: "28-Stage Recruitment Pipeline", done: true, tab: "pipeline" },
+    { title: "Recruitment Pipeline", done: true, tab: "pipeline" },
   ];
 
   const completedCount = checklist.filter((c) => c.done).length;

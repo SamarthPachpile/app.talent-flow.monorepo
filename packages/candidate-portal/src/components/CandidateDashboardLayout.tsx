@@ -193,7 +193,7 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
 
       {/* 1. LEFT SIDEBAR (Fixed at left: 0, dynamic responsive width, never scrolled away) */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 h-screen z-50 flex flex-col bg-[#545C78] text-white transition-all duration-300 ease-in-out shrink-0 select-none shadow-xl ${
+        className={`fixed top-0 bottom-0 left-0 h-screen z-50 flex flex-col bg-[#545C78] text-white transition-all duration-300 ease-in-out shrink-0 select-none ${
           sidebarOpen ? "w-60 xl:w-64 min-w-[240px]" : "w-16 min-w-[64px]"
         } ${mobileSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
       >

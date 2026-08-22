@@ -143,6 +143,7 @@ export type WorkflowStageItem = {
 
 interface CompanyPipelineBoardProps {
   companyName: string;
+  logoUrl?: string;
   candidates: Candidate[];
   onAdvanceCandidate: (id: string) => void;
   workflowStages?: WorkflowStageItem[];
@@ -150,6 +151,7 @@ interface CompanyPipelineBoardProps {
 
 export const CompanyPipelineBoard: React.FC<CompanyPipelineBoardProps> = ({
   companyName,
+  logoUrl,
   candidates,
   onAdvanceCandidate,
   workflowStages,
@@ -226,68 +228,96 @@ export const CompanyPipelineBoard: React.FC<CompanyPipelineBoardProps> = ({
 
   return (
     <div className="min-h-screen bg-background font-sans text-foreground">
-      <header className="border border-border bg-surface rounded-xl p-6 shadow-xs">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div>
+      <header className="border border-border bg-surface rounded-xl p-6 shadow-xs space-y-6">
+        {/* Top Row: Title & Subtitle (Left) + Company Logo (Right) */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-1">
             <p className="text-xs tracking-[0.18em] text-muted-foreground uppercase font-semibold">
               {companyName} · Recruitment Operations
             </p>
-            <h1 className="mt-1 text-4xl leading-none font-display text-foreground font-semibold">
+            <h1 className="text-3xl sm:text-4xl leading-tight font-display text-foreground font-semibold">
               Pipeline board
             </h1>
-            <p className="mt-2 max-w-xl text-sm text-muted-foreground">
+            <p className="max-w-xl text-xs sm:text-sm text-muted-foreground">
               Candidate recruitment pipeline configured from your company setup wizard document.
             </p>
           </div>
-          <div className="flex items-center gap-6">
-            <Stat label="In pipeline" value={filtered.length} />
-            <Stat label="Needs attention" value={blockedCount} accent />
-            <Stat label="Pipeline Stages" value={activeStages.length} />
+
+          {/* Prominent Company Brand Logo */}
+          <div className="flex items-center md:justify-end shrink-0">
+            {logoUrl ? (
+              <img
+                src={logoUrl}
+                alt={companyName}
+                className="h-20 sm:h-24 md:h-28 w-auto max-w-[380px] max-h-28 object-contain block"
+                onError={(e) => {
+                  (e.target as HTMLElement).style.display = "none";
+                }}
+              />
+            ) : (
+              <div className="flex items-center gap-3.5">
+                <div className="size-14 rounded-2xl bg-ember text-ember-foreground font-bold text-xl flex items-center justify-center shrink-0 shadow-sm">
+                  {companyName ? companyName.substring(0, 2).toUpperCase() : "CO"}
+                </div>
+                <span className="text-xl font-bold text-foreground truncate max-w-[280px]">
+                  {companyName}
+                </span>
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="mt-6 flex flex-wrap items-center gap-3">
-          <div className="relative w-full max-w-xs">
-            <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-            <input
-              type="text"
-              value={query}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)}
-              placeholder="Search name, role or stage"
-              className="w-full bg-card border border-input rounded-lg pl-9 pr-3 py-2 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-ember"
-            />
+        {/* Bottom Row: Search & Filters (Left) + Stats (Right) horizontally aligned */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pt-4 border-t border-border">
+          <div className="flex flex-wrap items-center gap-3 flex-1">
+            <div className="relative w-full sm:w-64 max-w-xs">
+              <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+              <input
+                type="text"
+                value={query}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)}
+                placeholder="Search name, role or stage"
+                className="w-full bg-card border border-input rounded-lg pl-9 pr-3 py-2 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-ember"
+              />
+            </div>
+
+            <div className="relative w-full sm:w-48">
+              <select
+                value={role}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setRole(e.target.value)}
+                className="w-full bg-card border border-input rounded-lg px-3 py-2 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-ember appearance-none cursor-pointer"
+              >
+                <option value="all">All roles</option>
+                {roles.map((r) => (
+                  <option key={r} value={r}>
+                    {r}
+                  </option>
+                ))}
+              </select>
+              <Filter className="absolute right-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground pointer-events-none" />
+            </div>
+
+            <div className="relative w-full sm:w-48">
+              <select
+                value={recruiter}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setRecruiter(e.target.value)}
+                className="w-full bg-card border border-input rounded-lg px-3 py-2 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-ember appearance-none cursor-pointer"
+              >
+                <option value="all">All recruiters</option>
+                {recruiters.map((r) => (
+                  <option key={r} value={r}>
+                    {r}
+                  </option>
+                ))}
+              </select>
+              <Users className="absolute right-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground pointer-events-none" />
+            </div>
           </div>
 
-          <div className="relative w-52">
-            <select
-              value={role}
-              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setRole(e.target.value)}
-              className="w-full bg-card border border-input rounded-lg px-3 py-2 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-ember appearance-none cursor-pointer"
-            >
-              <option value="all">All roles</option>
-              {roles.map((r) => (
-                <option key={r} value={r}>
-                  {r}
-                </option>
-              ))}
-            </select>
-            <Filter className="absolute right-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground pointer-events-none" />
-          </div>
-
-          <div className="relative w-52">
-            <select
-              value={recruiter}
-              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setRecruiter(e.target.value)}
-              className="w-full bg-card border border-input rounded-lg px-3 py-2 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-ember appearance-none cursor-pointer"
-            >
-              <option value="all">All recruiters</option>
-              {recruiters.map((r) => (
-                <option key={r} value={r}>
-                  {r}
-                </option>
-              ))}
-            </select>
-            <Users className="absolute right-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground pointer-events-none" />
+          <div className="flex items-center gap-6 shrink-0 pt-3 lg:pt-0 border-t lg:border-t-0 border-border">
+            <Stat label="In pipeline" value={filtered.length} />
+            <Stat label="Needs attention" value={blockedCount} accent />
+            <Stat label="Pipeline Stages" value={activeStages.length} />
           </div>
         </div>
       </header>

@@ -127,7 +127,7 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
           LEFT SIDEBAR (Fixed at left: 0, dynamic responsive width, never scrolled away)
          ========================================================================= */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 h-screen bg-[#545C78] text-white flex flex-col justify-between shrink-0 transition-all duration-300 z-40 shadow-2xl ${
+        className={`fixed top-0 bottom-0 left-0 h-screen bg-[#545C78] text-white flex flex-col justify-between shrink-0 transition-all duration-300 z-40 ${
           isSidebarOpen ? "w-60 xl:w-64" : "w-16"
         }`}
       >
@@ -207,7 +207,7 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
                     onClick={() => handleTabChange("pipeline")}
                     className="w-full text-left py-1 text-[11px] text-white/75 hover:text-white cursor-pointer"
                   >
-                    28-Stage Pipeline
+                    Pipeline
                   </button>
                   <button
                     onClick={() => toast.info("Opening Requisitions Manager")}
@@ -525,7 +525,7 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
             <div className="hidden md:flex items-center gap-1.5 pl-2 border-l border-slate-200 dark:border-slate-800">
               <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
                 {currentTab === "dashboard" && "EmployX Overview"}
-                {currentTab === "pipeline" && "28-Stage Pipeline"}
+                {currentTab === "pipeline" && "Pipeline"}
                 {currentTab === "connectors" && "Sourcing Connectors"}
                 {currentTab === "interactions" && "Interactions Feed"}
                 {currentTab === "team" && "Team & Roles"}
@@ -692,24 +692,9 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
 
             {currentTab === "pipeline" && (
               <div className="space-y-4 animate-fadeIn">
-                <div className="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-slate-800">
-                  <div>
-                    <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">
-                      28-Stage Recruitment Pipeline
-                    </h2>
-                    <p className="text-xs text-slate-500">
-                      Autonomous stage advancement and multi-channel screening for {companyName}.
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => handleTabChange("dashboard")}
-                    className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold cursor-pointer"
-                  >
-                    Back to EmployX Dashboard
-                  </button>
-                </div>
                 <CompanyPipelineBoard
                   companyName={state.profile.name}
+                  logoUrl={state.profile.logoUrl}
                   candidates={candidates}
                   onAdvanceCandidate={onAdvanceCandidate}
                   workflowStages={state.recruitmentWorkflow}
@@ -719,22 +704,6 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
 
             {currentTab === "connectors" && (
               <div className="space-y-4 animate-fadeIn">
-                <div className="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-slate-800">
-                  <div>
-                    <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">
-                      Connectors & Sourcing Hub
-                    </h2>
-                    <p className="text-xs text-slate-500">
-                      Bi-directional sync with LinkedIn Recruiter, Google Sheets, Slack, and HRIS.
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => handleTabChange("dashboard")}
-                    className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold cursor-pointer"
-                  >
-                    Back to EmployX Dashboard
-                  </button>
-                </div>
                 <ConnectorsHub
                   onFetchCandidates={onFetchConnectorCandidates}
                   interactionsCount={
@@ -748,22 +717,14 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
 
             {currentTab === "interactions" && (
               <div className="space-y-4 animate-fadeIn bg-white dark:bg-slate-850 border border-slate-200/90 dark:border-slate-800 rounded-xl p-4 shadow-xs">
-                <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
-                  <div>
-                    <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">
-                      Candidate Interactions Audit Feed
-                    </h2>
-                    <p className="text-xs text-slate-500">
-                      Real-time audit log of all candidate stage advances, connector imports, and
-                      recruiter actions.
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => handleTabChange("dashboard")}
-                    className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold cursor-pointer"
-                  >
-                    Back to EmployX Dashboard
-                  </button>
+                <div>
+                  <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">
+                    Candidate Interactions Audit Feed
+                  </h2>
+                  <p className="text-xs text-slate-500">
+                    Real-time audit log of all candidate stage advances, connector imports, and
+                    recruiter actions.
+                  </p>
                 </div>
 
                 <div className="overflow-x-auto mt-3 border border-slate-200 dark:border-slate-800 rounded-lg">

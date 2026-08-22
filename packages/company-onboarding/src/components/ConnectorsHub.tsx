@@ -70,7 +70,7 @@ export const ConnectorsHub: React.FC<ConnectorsHubProps> = ({
           </h1>
           <p className="text-xs text-muted-foreground mt-1">
             Connect external sourcing channels to automatically pull candidate applications into
-            your 28-stage pipeline board.
+            your pipeline board.
           </p>
         </div>
 
