@@ -1,9 +1,21 @@
-import React, { useState } from "react";
-import { OnboardingState, OfficeLocationBranch, RecruitmentStage } from "../types/onboarding";
-import { CompanyApiService, CompanyDocument } from "@talent-flow/api";
+import React, { useState, useEffect, useMemo } from "react";
+import {
+  OnboardingState,
+  OfficeLocationBranch,
+  HRTeamMember,
+  RecruitmentStage,
+} from "../types/onboarding";
+import {
+  CompanyApiService,
+  CompanyDocument,
+  COUNTRY_OPTIONS,
+  COMPANY_SIZE_OPTIONS,
+  INDUSTRY_OPTIONS,
+} from "@talent-flow/api";
 import {
   Building2,
   MapPin,
+  Users,
   Network,
   Briefcase,
   GitMerge,
@@ -23,10 +35,15 @@ import {
   Palette,
   Key,
   Copy,
-  Info,
-  Zap,
+  Upload,
+  Image as ImageIcon,
+  RefreshCw,
+  Shield,
+  AlertCircle,
+  RotateCcw,
+  Database,
 } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "../lib/sweetalert";
 
 interface CompanySettingsProps {
   state: OnboardingState;
@@ -35,7 +52,9 @@ interface CompanySettingsProps {
 
 type SubTabType =
   | "profile"
+  | "admin"
   | "locations"
+  | "team"
   | "org_structure"
   | "pipeline"
   | "candidate_docs"
@@ -43,11 +62,84 @@ type SubTabType =
   | "email_comms"
   | "career_portal"
   | "it_integrations"
-  | "approvals_notifications";
+  | "approvals_system";
+
+const DEFAULT_DEPARTMENTS_SUGGESTIONS = [
+  "Engineering",
+  "Product",
+  "Marketing",
+  "Sales",
+  "Human Resources",
+  "Design",
+  "Customer Success",
+  "Finance & Accounts",
+  "Legal & Compliance",
+  "Operations",
+  "QA & Automation",
+];
+
+const DEFAULT_JOB_TITLES_SUGGESTIONS = [
+  "Senior Fullstack Engineer",
+  "Frontend Developer",
+  "Backend Developer",
+  "Product Manager",
+  "UI/UX Designer",
+  "DevOps & Cloud Engineer",
+  "QA Automation Engineer",
+  "HR Generalist",
+  "Talent Acquisition Lead",
+  "Account Executive",
+  "Customer Success Manager",
+  "Data Scientist",
+];
+
+const DEFAULT_28_MICRO_STAGES = [
+  "Application Received",
+  "Acknowledgement Email Sent",
+  "Resume Uploaded",
+  "Resume Parsed",
+  "Duplicate Check",
+  "Recruiter Assigned",
+  "Screening Pending",
+  "Screening Complete",
+  "Shortlisted",
+  "Interview Requested",
+  "Calendar Invite Sent",
+  "Reminder Sent",
+  "Interview Completed",
+  "Feedback Submitted",
+  "Hiring Manager Approved",
+  "HR Approved",
+  "Offer Generated",
+  "Offer Sent",
+  "Offer Viewed",
+  "Offer Accepted",
+  "Documents Requested",
+  "Documents Uploaded",
+  "Verification Complete",
+  "Onboarding Started",
+  "Laptop Assigned",
+  "Accounts Created",
+  "Joining Confirmed",
+  "Employee Created",
+];
 
 export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state, setState }) => {
   const [activeSubTab, setActiveSubTab] = useState<SubTabType>("profile");
   const [isSaving, setIsSaving] = useState(false);
+
+  // Local front-end working state (changes stay in memory until user explicitly saves)
+  const [formData, setFormData] = useState<OnboardingState>(state);
+
+  // Sync formData if state changes externally and form is clean
+  useEffect(() => {
+    setFormData(state);
+  }, [state]);
+
+  // Determine if there are unsaved front-end changes
+  const isDirty = useMemo(() => {
+    return JSON.stringify(formData) !== JSON.stringify(state);
+  }, [formData, state]);
 
   // Form states for adding items
   const [newBranch, setNewBranch] = useState<Omit<OfficeLocationBranch, "id">>({
@@ -55,14 +147,30 @@ export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state
     address: "",
     city: "",
     state: "",
-    country: "India",
+    country: formData.profile.country || "India",
     pincode: "",
     capacity: 25,
   });
+
+  const [newTeamMember, setNewTeamMember] = useState<Omit<HRTeamMember, "id">>({
+    name: "",
+    email: "",
+    designation: "Recruiter",
+    department: formData.departments[0] || "Human Resources",
+    role: "Recruiter",
+    permissions: ["view_pipeline", "advance_candidates"],
+    status: "Active",
+  });
+
   const [newDepartmentInput, setNewDepartmentInput] = useState("");
   const [newJobTitleInput, setNewJobTitleInput] = useState("");
-  const [newStageInput, setNewStageInput] = useState({ name: "", color: "#3b82f6", slaHours: 24 });
-  const [newRemoteCountryInput, setNewRemoteCountryInput] = useState("");
+  const [newStageInput, setNewStageInput] = useState({
+    name: "",
+    color: "#f97316",
+    slaHours: 24,
+    category: "Workflow",
+    description: "Custom stage",
+  });
   const [newScorecardTemplateInput, setNewScorecardTemplateInput] = useState("");
 
   const brandColors = [
@@ -72,386 +180,535 @@ export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state
     { name: "Slate Dark", hex: "#0f172a" },
     { name: "Amber Glow", hex: "#f59e0b" },
     { name: "Rose Accent", hex: "#f43f5e" },
-    { name: "Sky Blue", hex: "#0284c7 text-sky-500" },
+    { name: "Sky Blue", hex: "#0284c7" },
+    { name: "Purple Dynamic", hex: "#a855f7" },
+    { name: "Teal Modern", hex: "#0d9488" },
   ];
 
-  const handleSaveAll = async () => {
+  // Image Upload Handlers (Logo & Cover Image) - Front-end memory only
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select a valid image file (PNG, JPG, SVG, WebP).");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Logo file size exceeds 5MB limit.");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const dataUrl = event.target?.result as string;
+      setFormData((prev) => ({
+        ...prev,
+        profile: { ...prev.profile, logoUrl: dataUrl },
+        careerPortal: { ...prev.careerPortal, logoUrl: dataUrl },
+      }));
+      toast.info("Logo loaded in front-end preview. Click 'Save to Database' to persist.");
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleCoverImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select a valid image file (PNG, JPG, WebP).");
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("Cover banner file size exceeds 10MB limit.");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const dataUrl = event.target?.result as string;
+      setFormData((prev) => ({
+        ...prev,
+        profile: { ...prev.profile, coverImageUrl: dataUrl },
+        careerPortal: { ...prev.careerPortal, bannerUrl: dataUrl },
+      }));
+      toast.info("Cover banner loaded in front-end preview. Click 'Save to Database' to persist.");
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Discard all unsaved front-end changes
+  const handleDiscardChanges = () => {
+    setFormData(state);
+    toast.info("Unsaved changes discarded. Restored database state.");
+  };
+
+  // SAVE TO DB: Only triggers when user explicitly clicks "Save Workspace Settings" or "Save to Database"
+  const handleSaveToDatabase = async () => {
     setIsSaving(true);
     const slug =
-      state.profile.subdomain || state.profile.name.toLowerCase().replace(/[^a-z0-9]/g, "");
+      formData.profile.subdomain || formData.profile.name.toLowerCase().replace(/[^a-z0-9]/g, "");
 
-    // 1. Update localStorage
-    localStorage.setItem(
-      "talentflow_company_profile",
-      JSON.stringify({
-        id: slug,
-        name: state.profile.name,
-        subdomain: state.profile.subdomain,
-        domain: state.profile.domain,
-        industry: state.profile.industry,
-        size: state.profile.size,
-        brandColor: state.profile.brandColor,
-        headquarters: state.profile.headquarters,
-        email: state.admin.workEmail,
-        adminName: state.admin.fullName,
-        isCompleted: state.isCompleted,
-      }),
-    );
+    // 1. Commit formData to parent React state
+    setState(formData);
 
-    // 2. Persist to Firestore
+    // 2. Persist to localStorage
+    try {
+      localStorage.setItem(
+        "talentflow_company_profile",
+        JSON.stringify({
+          id: slug,
+          name: formData.profile.name,
+          legalName: formData.profile.legalName,
+          subdomain: formData.profile.subdomain,
+          domain: formData.profile.domain,
+          industry: formData.profile.industry,
+          size: formData.profile.size,
+          brandColor: formData.profile.brandColor,
+          headquarters: formData.profile.headquarters,
+          logoUrl: formData.profile.logoUrl,
+          coverImageUrl: formData.profile.coverImageUrl,
+          email: formData.admin.workEmail,
+          adminName: formData.admin.fullName,
+          isCompleted: formData.isCompleted,
+        }),
+      );
+
+      localStorage.setItem("talentflow_onboarding_state", JSON.stringify(formData));
+    } catch {
+      // ignore storage quota error
+    }
+
+    // 3. Save to Firestore Database
     const docData: CompanyDocument = {
       id: slug,
-      name: state.profile.name,
-      subdomain: state.profile.subdomain,
-      domain: state.profile.domain,
-      industry: state.profile.industry,
-      size: state.profile.size,
-      brandColor: state.profile.brandColor,
-      headquarters: state.profile.headquarters,
+      name: formData.profile.name,
+      legalName: formData.profile.legalName,
+      subdomain: formData.profile.subdomain,
+      domain: formData.profile.domain,
+      industry: formData.profile.industry,
+      size: formData.profile.size,
+      brandColor: formData.profile.brandColor,
+      headquarters: formData.profile.headquarters,
+      logoUrl: formData.profile.logoUrl,
+      coverImageUrl: formData.profile.coverImageUrl,
       admin: {
-        fullName: state.admin.fullName,
-        workEmail: state.admin.workEmail,
-        phone: state.admin.phone,
-        jobTitle: state.admin.jobTitle,
-        billingEmail: state.admin.billingEmail,
+        fullName: formData.admin.fullName,
+        workEmail: formData.admin.workEmail,
+        phone: formData.admin.phone,
+        jobTitle: formData.admin.jobTitle,
+        billingEmail: formData.admin.billingEmail,
       },
       plan: {
-        id: state.plan.id,
-        name: state.plan.name,
-        priceMonthly: state.plan.priceMonthly,
-        billingCycle: state.plan.billingCycle,
+        id: formData.plan.id,
+        name: formData.plan.name,
+        priceMonthly: formData.plan.priceMonthly,
+        billingCycle: formData.plan.billingCycle,
       },
-      modules: state.modules as unknown as Record<string, unknown>,
-      integrations: state.integrations,
-      teamInvites: state.teamInvites as unknown as CompanyDocument["teamInvites"],
-      isCompleted: state.isCompleted,
+      modules: formData.modules as unknown as Record<string, unknown>,
+      integrations: formData.integrations,
+      teamInvites: formData.teamInvites as unknown as CompanyDocument["teamInvites"],
+      isCompleted: formData.isCompleted,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
+      // Full configuration payload
+      officeLocations: formData.officeLocations as unknown as Record<string, unknown>,
+      hrTeam: formData.hrTeam as unknown as Record<string, unknown>[],
+      departments: formData.departments,
+      jobTitles: formData.jobTitles,
+      recruitmentWorkflow: formData.recruitmentWorkflow as unknown as Record<string, unknown>[],
+      candidateDocuments: formData.candidateDocuments as unknown as Record<string, unknown>,
+      interviewSettings: formData.interviewSettings as unknown as Record<string, unknown>,
+      emailConfig: formData.emailConfig as unknown as Record<string, unknown>,
+      careerPortal: formData.careerPortal as unknown as Record<string, unknown>,
+      candidateExperience: formData.candidateExperience as unknown as Record<string, unknown>,
+      itSetup: formData.itSetup as unknown as Record<string, unknown>,
+      notificationPreferences: formData.notificationPreferences as unknown as Record<
+        string,
+        unknown
+      >,
+      approvalMatrix: formData.approvalMatrix as unknown as Record<string, unknown>,
+      systemMetadata: formData.systemMetadata as unknown as Record<string, unknown>,
     };
 
     try {
       await CompanyApiService.saveCompanyToFirestore(docData);
-      toast.success(`✅ Settings for '${state.profile.name}' saved & updated across workspace!`);
+      toast.success("Settings saved & written to live database for " + formData.profile.name + "!");
     } catch (err) {
       console.warn("Failed saving settings to Firestore:", err);
-      toast.success(`✅ Settings updated in local workspace profile!`);
+      toast.success("Settings updated in local workspace cache!");
     } finally {
       setIsSaving(false);
     }
   };
 
   const copyApiKeyToClipboard = () => {
-    if (state.systemMetadata?.apiKey) {
-      navigator.clipboard.writeText(state.systemMetadata.apiKey);
+    if (formData.systemMetadata?.apiKey) {
+      navigator.clipboard.writeText(formData.systemMetadata.apiKey);
       toast.success("API key copied to clipboard!");
     }
   };
 
+  const regenerateApiKey = () => {
+    const newKey =
+      "tf_live_" +
+      Math.random().toString(36).substring(2, 15) +
+      Math.random().toString(36).substring(2, 15);
+    setFormData((prev) => ({
+      ...prev,
+      systemMetadata: {
+        ...prev.systemMetadata,
+        apiKey: newKey,
+      },
+    }));
+    toast.info("New API key generated in front-end memory! Click 'Save to Database' to persist.");
+  };
+
+  const resetToDefault28Stages = () => {
+    const defaultStages: RecruitmentStage[] = DEFAULT_28_MICRO_STAGES.map((name, i) => ({
+      id: "stg-" + (i + 1),
+      name,
+      color: brandColors[i % brandColors.length].hex,
+      slaHours: 24,
+      description: "Automated recruitment micro-stage",
+    }));
+    setFormData((prev) => ({
+      ...prev,
+      recruitmentWorkflow: defaultStages,
+    }));
+    toast.info("Workflow reset to 28 stages in front-end memory. Click Save to persist to DB.");
+  };
+
+  const tabs = [
+    { id: "profile", label: "Profile & Identity", icon: Building2, badge: "Step 1" },
+    { id: "admin", label: "Super Admin & Signup", icon: ShieldCheck, badge: "Auth" },
+    {
+      id: "locations",
+      label: "Locations & Remote",
+      icon: MapPin,
+      badge: (formData.officeLocations.branchOffices.length + 1).toString(),
+    },
+    {
+      id: "team",
+      label: "HR Team & Roles",
+      icon: Users,
+      badge: (formData.hrTeam?.length || 0).toString(),
+    },
+    {
+      id: "org_structure",
+      label: "Departments & Titles",
+      icon: Network,
+      badge: formData.departments.length.toString(),
+    },
+    {
+      id: "pipeline",
+      label: "Recruitment Workflow",
+      icon: GitMerge,
+      badge: formData.recruitmentWorkflow.length.toString(),
+    },
+    {
+      id: "candidate_docs",
+      label: "Candidate Documents",
+      icon: FileCheck,
+      badge: Object.keys(formData.candidateDocuments).length.toString(),
+    },
+    {
+      id: "interviews",
+      label: "Interview Defaults",
+      icon: Calendar,
+      badge: formData.interviewSettings.platform,
+    },
+    {
+      id: "email_comms",
+      label: "Email & Triggers",
+      icon: Mail,
+      badge: formData.emailConfig.provider,
+    },
+    { id: "career_portal", label: "Career Portal & UX", icon: Globe, badge: "Live" },
+    { id: "it_integrations", label: "IT Setup & Connectors", icon: Laptop, badge: "Sync" },
+    { id: "approvals_system", label: "Approvals & Security", icon: Shield, badge: "System" },
+  ];
+
   return (
-    <div className="max-w-6xl mx-auto py-6 px-4 space-y-6 font-sans">
-      {/* Header Banner */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-4">
-        <div>
-          <span className="text-11px font-semibold tracking-wider text-muted-foreground uppercase">
-            Setup Wizard & Company Management
-          </span>
-          <h1 className="text-3xl font-display font-bold text-foreground mt-1">
-            Company Workspace Settings
-          </h1>
-          <p className="text-xs text-muted-foreground mt-1">
-            View and modify all 17 configuration steps configured during the setup wizard.
-          </p>
+    <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 space-y-6 font-sans">
+      {/* Top Header Card */}
+      <div className="bg-surface border border-border rounded-2xl p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="flex items-center gap-4">
+          {/* Logo preview or Monogram */}
+          {formData.profile.logoUrl ? (
+            <img
+              src={formData.profile.logoUrl}
+              alt={formData.profile.name}
+              className="h-12 w-auto max-w-[200px] object-contain shrink-0"
+            />
+          ) : (
+            <div className="size-12 rounded-xl bg-ember text-ember-foreground font-bold text-lg flex items-center justify-center shrink-0 shadow-xs">
+              {formData.profile.name ? formData.profile.name.substring(0, 2).toUpperCase() : "TF"}
+            </div>
+          )}
+
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="text-2xl sm:text-3xl font-display font-bold text-foreground">
+                {formData.profile.name || "Workspace Settings"}
+              </h1>
+              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
+                <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                Live Workspace
+              </span>
+              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-secondary text-secondary-foreground">
+                {formData.plan.name} Plan
+              </span>
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Subdomain:{" "}
+              <span className="font-mono text-foreground font-semibold">
+                {formData.profile.subdomain}.talentflow.hub
+              </span>{" "}
+              · All field edits stay in front-end memory until you click Save.
+            </p>
+          </div>
         </div>
 
-        <button
-          onClick={handleSaveAll}
-          disabled={isSaving}
-          className="inline-flex items-center gap-2 bg-ember text-ember-foreground hover:bg-ember/90 font-medium text-xs px-4 py-2.5 rounded-lg transition-colors shadow-sm cursor-pointer disabled:opacity-50"
-        >
-          <Save className="size-4" />
-          <span>{isSaving ? "Saving..." : "Save All Workspace Settings"}</span>
-        </button>
+        <div className="flex items-center gap-3">
+          {isDirty && (
+            <button
+              onClick={handleDiscardChanges}
+              disabled={isSaving}
+              className="inline-flex items-center gap-1.5 bg-secondary hover:bg-secondary/80 text-secondary-foreground font-semibold text-xs px-4 py-2.5 rounded-xl transition-all border border-border cursor-pointer disabled:opacity-50"
+            >
+              <RotateCcw className="size-3.5" />
+              <span>Discard</span>
+            </button>
+          )}
+
+          <button
+            onClick={handleSaveToDatabase}
+            disabled={isSaving}
+            className="inline-flex items-center gap-2 bg-ember hover:bg-ember/90 text-ember-foreground font-semibold text-xs px-5 py-2.5 rounded-xl transition-all shadow-sm cursor-pointer disabled:opacity-50"
+          >
+            {isSaving ? (
+              <RefreshCw className="size-4 animate-spin" />
+            ) : (
+              <Database className="size-4" />
+            )}
+            <span>{isSaving ? "Saving to DB..." : "Save to Database"}</span>
+          </button>
+        </div>
       </div>
 
-      {/* Sub-Tab Navigation Bar */}
-      <div className="flex flex-wrap gap-2 border-b border-border pb-3">
-        {[
-          { id: "profile", label: "1. Profile & Admin", icon: Building2 },
-          { id: "locations", label: "2. Locations & Remote", icon: MapPin },
-          { id: "org_structure", label: "3. Depts & Job Titles", icon: Network },
-          { id: "pipeline", label: "4. Recruitment Pipeline", icon: GitMerge },
-          { id: "candidate_docs", label: "5. Candidate Docs", icon: FileCheck },
-          { id: "interviews", label: "6. Interview Defaults", icon: Calendar },
-          { id: "email_comms", label: "7. Email & Comms", icon: Mail },
-          { id: "career_portal", label: "8. Career Portal & UX", icon: Globe },
-          { id: "it_integrations", label: "9. IT & Integrations", icon: Laptop },
-          { id: "approvals_notifications", label: "10. Approvals & System", icon: ShieldCheck },
-        ].map((tab) => {
+      {/* Unsaved Changes Banner */}
+      {isDirty && (
+        <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs animate-fadeIn">
+          <div className="flex items-center gap-2.5 text-amber-600 dark:text-amber-400 font-medium">
+            <AlertCircle className="size-4 shrink-0" />
+            <span>
+              <strong>Unsaved Front-End Changes:</strong> You have made edits that are currently
+              held in front-end memory only. Click &apos;Save to Database&apos; to persist to
+              Firestore.
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+            <button
+              onClick={handleDiscardChanges}
+              className="px-3 py-1.5 rounded-lg bg-surface border border-border text-foreground hover:bg-accent font-semibold text-[11px] transition-colors cursor-pointer"
+            >
+              Discard Changes
+            </button>
+            <button
+              onClick={handleSaveToDatabase}
+              disabled={isSaving}
+              className="px-3.5 py-1.5 rounded-lg bg-ember text-ember-foreground hover:bg-ember/90 font-semibold text-[11px] transition-colors cursor-pointer flex items-center gap-1"
+            >
+              <Save className="size-3.5" />
+              {isSaving ? "Saving..." : "Save to DB"}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Horizontal Sub-Tab Navigation Bar */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin">
+        {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeSubTab === tab.id;
           return (
             <button
               key={tab.id}
               onClick={() => setActiveSubTab(tab.id as SubTabType)}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-colors cursor-pointer ${
-                isActive
-                  ? "bg-ember text-ember-foreground shadow-xs font-semibold"
-                  : "bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-accent/50"
-              }`}
+              className={
+                "flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer " +
+                (isActive
+                  ? "bg-foreground text-background shadow-xs"
+                  : "bg-surface border border-border text-muted-foreground hover:text-foreground hover:bg-card")
+              }
             >
-              <Icon className="size-3.5" />
+              <Icon className="size-3.5 shrink-0" />
               <span>{tab.label}</span>
+              <span
+                className={
+                  "text-[10px] px-1.5 py-0.2 rounded-full font-mono " +
+                  (isActive
+                    ? "bg-background/20 text-background"
+                    : "bg-secondary text-muted-foreground")
+                }
+              >
+                {tab.badge}
+              </span>
             </button>
           );
         })}
       </div>
 
-      {/* SUB-TAB 1: Profile & Admin Details */}
+      {/* =========================================================================
+          SUB-TAB 1: COMPANY PROFILE, BRANDING & LEGAL IDENTITY
+         ========================================================================= */}
       {activeSubTab === "profile" && (
         <div className="space-y-6 animate-fadeIn">
-          {/* Company Profile Details */}
-          <div className="bg-card border border-border rounded-xl p-6 shadow-xs space-y-6">
-            <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 border-b border-border pb-3">
-              <Building2 className="size-4 text-ember" /> Company Profile (Step 1 Details)
+          {/* Logo & Cover Banner Upload Section */}
+          <div className="bg-surface border border-border rounded-2xl p-6 shadow-xs space-y-6">
+            <h2 className="text-base font-bold text-foreground flex items-center gap-2 border-b border-border pb-3">
+              <ImageIcon className="size-4 text-ember" /> Company Brand Visual Assets
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-              <div>
-                <label className="block text-muted-foreground font-medium mb-1">Company Name</label>
-                <input
-                  type="text"
-                  value={state.profile.name}
-                  onChange={(e) =>
-                    setState((prev) => ({
-                      ...prev,
-                      profile: { ...prev.profile, name: e.target.value },
-                    }))
-                  }
-                  className="w-full bg-surface border border-border rounded-md px-3 py-2 text-foreground focus:outline-none focus:border-ember"
-                />
-              </div>
-
-              <div>
-                <label className="block text-muted-foreground font-medium mb-1">
-                  Legal Company Name
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Logo Upload */}
+              <div className="p-4 rounded-xl bg-card border border-border space-y-3">
+                <label className="block text-xs font-bold text-foreground">
+                  Company Official Logo
                 </label>
-                <input
-                  type="text"
-                  value={state.profile.legalName || ""}
-                  onChange={(e) =>
-                    setState((prev) => ({
-                      ...prev,
-                      profile: { ...prev.profile, legalName: e.target.value },
-                    }))
-                  }
-                  className="w-full bg-surface border border-border rounded-md px-3 py-2 text-foreground focus:outline-none focus:border-ember"
-                />
+                <div className="flex items-center gap-4">
+                  <div className="size-20 rounded-xl bg-surface border border-border flex items-center justify-center overflow-hidden shrink-0 shadow-2xs">
+                    {formData.profile.logoUrl ? (
+                      <img
+                        src={formData.profile.logoUrl}
+                        alt="Logo Preview"
+                        className="w-full h-full object-contain p-2"
+                      />
+                    ) : (
+                      <Building2 className="size-8 text-muted-foreground" />
+                    )}
+                  </div>
+
+                  <div className="space-y-2 flex-1">
+                    <p className="text-[11px] text-muted-foreground">
+                      Upload high-res PNG, SVG, or JPG (Max 5MB). Changes remain in front-end memory
+                      until you click Save to Database.
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface border border-border text-xs font-semibold text-foreground hover:bg-accent cursor-pointer transition-colors">
+                        <Upload className="size-3.5 text-ember" />
+                        <span>Choose File</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleLogoUpload}
+                          className="hidden"
+                        />
+                      </label>
+
+                      {formData.profile.logoUrl && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              profile: { ...prev.profile, logoUrl: "" },
+                              careerPortal: { ...prev.careerPortal, logoUrl: "" },
+                            }))
+                          }
+                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-destructive hover:bg-destructive/10 text-xs font-medium cursor-pointer"
+                        >
+                          <Trash2 className="size-3.5" /> Remove
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              <div>
-                <label className="block text-muted-foreground font-medium mb-1">
-                  Subdomain Handle
+              {/* Cover Banner Upload */}
+              <div className="p-4 rounded-xl bg-card border border-border space-y-3">
+                <label className="block text-xs font-bold text-foreground">
+                  Career Portal Cover Banner
                 </label>
-                <input
-                  type="text"
-                  value={state.profile.subdomain}
-                  onChange={(e) =>
-                    setState((prev) => ({
-                      ...prev,
-                      profile: { ...prev.profile, subdomain: e.target.value },
-                    }))
-                  }
-                  className="w-full bg-surface border border-border rounded-md px-3 py-2 text-foreground focus:outline-none focus:border-ember"
-                />
-              </div>
+                <div className="flex items-center gap-4">
+                  <div className="h-20 w-36 rounded-xl bg-surface border border-border flex items-center justify-center overflow-hidden shrink-0 shadow-2xs">
+                    {formData.profile.coverImageUrl ? (
+                      <img
+                        src={formData.profile.coverImageUrl}
+                        alt="Cover Preview"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <ImageIcon className="size-8 text-muted-foreground" />
+                    )}
+                  </div>
 
-              <div>
-                <label className="block text-muted-foreground font-medium mb-1">
-                  Primary Domain
-                </label>
-                <input
-                  type="text"
-                  value={state.profile.domain}
-                  onChange={(e) =>
-                    setState((prev) => ({
-                      ...prev,
-                      profile: { ...prev.profile, domain: e.target.value },
-                    }))
-                  }
-                  className="w-full bg-surface border border-border rounded-md px-3 py-2 text-foreground focus:outline-none focus:border-ember"
-                />
-              </div>
+                  <div className="space-y-2 flex-1">
+                    <p className="text-[11px] text-muted-foreground">
+                      Upload wide landscape cover banner (Max 10MB). Used on public jobs portal
+                      header.
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface border border-border text-xs font-semibold text-foreground hover:bg-accent cursor-pointer transition-colors">
+                        <Upload className="size-3.5 text-ember" />
+                        <span>Choose Banner</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleCoverImageUpload}
+                          className="hidden"
+                        />
+                      </label>
 
-              <div>
-                <label className="block text-muted-foreground font-medium mb-1">
-                  Industry Sector
-                </label>
-                <input
-                  type="text"
-                  value={state.profile.industry}
-                  onChange={(e) =>
-                    setState((prev) => ({
-                      ...prev,
-                      profile: { ...prev.profile, industry: e.target.value },
-                    }))
-                  }
-                  className="w-full bg-surface border border-border rounded-md px-3 py-2 text-foreground focus:outline-none focus:border-ember"
-                />
-              </div>
-
-              <div>
-                <label className="block text-muted-foreground font-medium mb-1">Company Size</label>
-                <input
-                  type="text"
-                  value={state.profile.size}
-                  onChange={(e) =>
-                    setState((prev) => ({
-                      ...prev,
-                      profile: { ...prev.profile, size: e.target.value },
-                    }))
-                  }
-                  className="w-full bg-surface border border-border rounded-md px-3 py-2 text-foreground focus:outline-none focus:border-ember"
-                />
-              </div>
-
-              <div>
-                <label className="block text-muted-foreground font-medium mb-1">GST Number</label>
-                <input
-                  type="text"
-                  value={state.profile.gstNumber || ""}
-                  onChange={(e) =>
-                    setState((prev) => ({
-                      ...prev,
-                      profile: { ...prev.profile, gstNumber: e.target.value },
-                    }))
-                  }
-                  className="w-full bg-surface border border-border rounded-md px-3 py-2 text-foreground focus:outline-none focus:border-ember"
-                />
-              </div>
-
-              <div>
-                <label className="block text-muted-foreground font-medium mb-1">PAN Number</label>
-                <input
-                  type="text"
-                  value={state.profile.panNumber || ""}
-                  onChange={(e) =>
-                    setState((prev) => ({
-                      ...prev,
-                      profile: { ...prev.profile, panNumber: e.target.value },
-                    }))
-                  }
-                  className="w-full bg-surface border border-border rounded-md px-3 py-2 text-foreground focus:outline-none focus:border-ember"
-                />
-              </div>
-
-              <div>
-                <label className="block text-muted-foreground font-medium mb-1">CIN Number</label>
-                <input
-                  type="text"
-                  value={state.profile.cinNumber || ""}
-                  onChange={(e) =>
-                    setState((prev) => ({
-                      ...prev,
-                      profile: { ...prev.profile, cinNumber: e.target.value },
-                    }))
-                  }
-                  className="w-full bg-surface border border-border rounded-md px-3 py-2 text-foreground focus:outline-none focus:border-ember"
-                />
-              </div>
-
-              <div>
-                <label className="block text-muted-foreground font-medium mb-1">
-                  Official Website
-                </label>
-                <input
-                  type="text"
-                  value={state.profile.website || ""}
-                  onChange={(e) =>
-                    setState((prev) => ({
-                      ...prev,
-                      profile: { ...prev.profile, website: e.target.value },
-                    }))
-                  }
-                  className="w-full bg-surface border border-border rounded-md px-3 py-2 text-foreground focus:outline-none focus:border-ember"
-                />
-              </div>
-
-              <div>
-                <label className="block text-muted-foreground font-medium mb-1">Year Founded</label>
-                <input
-                  type="text"
-                  value={state.profile.yearFounded || ""}
-                  onChange={(e) =>
-                    setState((prev) => ({
-                      ...prev,
-                      profile: { ...prev.profile, yearFounded: e.target.value },
-                    }))
-                  }
-                  className="w-full bg-surface border border-border rounded-md px-3 py-2 text-foreground focus:outline-none focus:border-ember"
-                />
-              </div>
-
-              <div>
-                <label className="block text-muted-foreground font-medium mb-1">
-                  Employee Count
-                </label>
-                <input
-                  type="text"
-                  value={state.profile.employeeCount || ""}
-                  onChange={(e) =>
-                    setState((prev) => ({
-                      ...prev,
-                      profile: { ...prev.profile, employeeCount: e.target.value },
-                    }))
-                  }
-                  className="w-full bg-surface border border-border rounded-md px-3 py-2 text-foreground focus:outline-none focus:border-ember"
-                />
-              </div>
-
-              <div className="md:col-span-3">
-                <label className="block text-muted-foreground font-medium mb-1">
-                  Company Description & Bio
-                </label>
-                <textarea
-                  rows={2}
-                  value={state.profile.about || ""}
-                  onChange={(e) =>
-                    setState((prev) => ({
-                      ...prev,
-                      profile: { ...prev.profile, about: e.target.value },
-                    }))
-                  }
-                  className="w-full bg-surface border border-border rounded-md px-3 py-2 text-foreground focus:outline-none focus:border-ember"
-                />
+                      {formData.profile.coverImageUrl && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              profile: { ...prev.profile, coverImageUrl: "" },
+                              careerPortal: { ...prev.careerPortal, bannerUrl: "" },
+                            }))
+                          }
+                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-destructive hover:bg-destructive/10 text-xs font-medium cursor-pointer"
+                        >
+                          <Trash2 className="size-3.5" /> Remove
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Brand Primary Color Selection */}
+            {/* Brand Theme Colors */}
             <div className="border-t border-border pt-4">
-              <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1.5">
+              <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1.5">
                 <Palette className="size-3.5 text-ember" /> Brand Primary Theme Color
               </label>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-2.5 items-center">
                 {brandColors.map((col) => {
-                  const isSelected = state.profile.brandColor === col.hex;
+                  const isSelected = formData.profile.brandColor === col.hex;
                   return (
                     <button
                       key={col.hex}
                       type="button"
                       onClick={() =>
-                        setState((prev) => ({
+                        setFormData((prev) => ({
                           ...prev,
                           profile: { ...prev.profile, brandColor: col.hex },
+                          careerPortal: { ...prev.careerPortal, primaryColor: col.hex },
                         }))
                       }
-                      className={`flex items-center gap-2 px-3 py-1.5 rounded-md border text-xs font-medium transition-colors cursor-pointer ${
-                        isSelected
-                          ? "border-ember ring-1 ring-ember bg-accent text-foreground"
-                          : "border-border bg-surface text-muted-foreground hover:text-foreground"
-                      }`}
+                      className={
+                        "flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all cursor-pointer " +
+                        (isSelected
+                          ? "border-ember ring-2 ring-ember/30 bg-card text-foreground"
+                          : "border-border bg-card text-muted-foreground hover:text-foreground")
+                      }
                     >
                       <span
-                        className="size-3.5 rounded-full border border-border"
+                        className="size-3.5 rounded-full border border-black/10 shadow-xs"
                         style={{ backgroundColor: col.hex }}
                       />
                       <span>{col.name}</span>
@@ -459,91 +716,336 @@ export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state
                     </button>
                   );
                 })}
+
+                <div className="flex items-center gap-2 ml-2 pl-3 border-l border-border">
+                  <span className="text-xs text-muted-foreground">Custom:</span>
+                  <input
+                    type="color"
+                    value={
+                      formData.profile.brandColor.startsWith("#")
+                        ? formData.profile.brandColor
+                        : "#f97316"
+                    }
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        profile: { ...prev.profile, brandColor: e.target.value },
+                        careerPortal: { ...prev.careerPortal, primaryColor: e.target.value },
+                      }))
+                    }
+                    className="size-7 rounded cursor-pointer border border-border bg-card p-0"
+                  />
+                  <span className="font-mono text-xs text-foreground font-semibold">
+                    {formData.profile.brandColor}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Primary Admin Details */}
-          <div className="bg-card border border-border rounded-xl p-6 shadow-xs space-y-4">
-            <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 border-b border-border pb-3">
-              <ShieldCheck className="size-4 text-ember" /> Workspace Super Admin Details
+          {/* Core Company Profile Details Grid */}
+          <div className="bg-surface border border-border rounded-2xl p-6 shadow-xs space-y-6">
+            <h2 className="text-base font-bold text-foreground flex items-center gap-2 border-b border-border pb-3">
+              <Building2 className="size-4 text-ember" /> Company Legal & Commercial Identity
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-xs">
               <div>
-                <label className="block text-muted-foreground font-medium mb-1">Full Name</label>
-                <input
-                  type="text"
-                  value={state.admin.fullName}
-                  onChange={(e) =>
-                    setState((prev) => ({
-                      ...prev,
-                      admin: { ...prev.admin, fullName: e.target.value },
-                    }))
-                  }
-                  className="w-full bg-surface border border-border rounded-md px-3 py-2 text-foreground focus:outline-none focus:border-ember"
-                />
-              </div>
-
-              <div>
-                <label className="block text-muted-foreground font-medium mb-1">Work Email</label>
-                <input
-                  type="email"
-                  value={state.admin.workEmail}
-                  onChange={(e) =>
-                    setState((prev) => ({
-                      ...prev,
-                      admin: { ...prev.admin, workEmail: e.target.value },
-                    }))
-                  }
-                  className="w-full bg-surface border border-border rounded-md px-3 py-2 text-foreground focus:outline-none focus:border-ember"
-                />
-              </div>
-
-              <div>
-                <label className="block text-muted-foreground font-medium mb-1">Phone Number</label>
-                <input
-                  type="text"
-                  value={state.admin.phone || ""}
-                  onChange={(e) =>
-                    setState((prev) => ({
-                      ...prev,
-                      admin: { ...prev.admin, phone: e.target.value },
-                    }))
-                  }
-                  className="w-full bg-surface border border-border rounded-md px-3 py-2 text-foreground focus:outline-none focus:border-ember"
-                />
-              </div>
-
-              <div>
-                <label className="block text-muted-foreground font-medium mb-1">Job Title</label>
-                <input
-                  type="text"
-                  value={state.admin.jobTitle || ""}
-                  onChange={(e) =>
-                    setState((prev) => ({
-                      ...prev,
-                      admin: { ...prev.admin, jobTitle: e.target.value },
-                    }))
-                  }
-                  className="w-full bg-surface border border-border rounded-md px-3 py-2 text-foreground focus:outline-none focus:border-ember"
-                />
-              </div>
-
-              <div>
-                <label className="block text-muted-foreground font-medium mb-1">
-                  Billing Email
+                <label className="block text-muted-foreground font-semibold mb-1">
+                  Company Display Name
                 </label>
                 <input
-                  type="email"
-                  value={state.admin.billingEmail || ""}
+                  type="text"
+                  value={formData.profile.name}
                   onChange={(e) =>
-                    setState((prev) => ({
+                    setFormData((prev) => ({
                       ...prev,
-                      admin: { ...prev.admin, billingEmail: e.target.value },
+                      profile: { ...prev.profile, name: e.target.value },
                     }))
                   }
-                  className="w-full bg-surface border border-border rounded-md px-3 py-2 text-foreground focus:outline-none focus:border-ember"
+                  className="w-full bg-card border border-border rounded-xl px-3.5 py-2.5 text-foreground font-medium focus:outline-none focus:border-ember focus:ring-1 focus:ring-ember"
+                />
+              </div>
+
+              <div>
+                <label className="block text-muted-foreground font-semibold mb-1">
+                  Registered Legal Name
+                </label>
+                <input
+                  type="text"
+                  value={formData.profile.legalName || ""}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      profile: { ...prev.profile, legalName: e.target.value },
+                    }))
+                  }
+                  className="w-full bg-card border border-border rounded-xl px-3.5 py-2.5 text-foreground font-medium focus:outline-none focus:border-ember focus:ring-1 focus:ring-ember"
+                />
+              </div>
+
+              <div>
+                <label className="block text-muted-foreground font-semibold mb-1">
+                  Subdomain Handle
+                </label>
+                <div className="flex items-center">
+                  <input
+                    type="text"
+                    value={formData.profile.subdomain}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        profile: {
+                          ...prev.profile,
+                          subdomain: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""),
+                        },
+                      }))
+                    }
+                    className="w-full bg-card border border-border rounded-l-xl px-3.5 py-2.5 text-foreground font-mono font-medium focus:outline-none focus:border-ember"
+                  />
+                  <span className="bg-secondary border border-l-0 border-border text-muted-foreground px-3 py-2.5 rounded-r-xl text-[11px] font-mono">
+                    .talentflow.hub
+                  </span>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-muted-foreground font-semibold mb-1">
+                  Corporate Primary Domain
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. acme-corp.com"
+                  value={formData.profile.domain || ""}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      profile: { ...prev.profile, domain: e.target.value },
+                    }))
+                  }
+                  className="w-full bg-card border border-border rounded-xl px-3.5 py-2.5 text-foreground font-medium focus:outline-none focus:border-ember focus:ring-1 focus:ring-ember"
+                />
+              </div>
+
+              <div>
+                <label className="block text-muted-foreground font-semibold mb-1">
+                  Industry Sector
+                </label>
+                <select
+                  value={formData.profile.industry}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      profile: { ...prev.profile, industry: e.target.value },
+                    }))
+                  }
+                  className="w-full bg-card border border-border rounded-xl px-3.5 py-2.5 text-foreground font-medium focus:outline-none focus:border-ember focus:ring-1 focus:ring-ember cursor-pointer"
+                >
+                  {INDUSTRY_OPTIONS.map((ind) => (
+                    <option key={ind} value={ind}>
+                      {ind}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-muted-foreground font-semibold mb-1">
+                  Company Size
+                </label>
+                <select
+                  value={formData.profile.size}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      profile: { ...prev.profile, size: e.target.value },
+                    }))
+                  }
+                  className="w-full bg-card border border-border rounded-xl px-3.5 py-2.5 text-foreground font-medium focus:outline-none focus:border-ember focus:ring-1 focus:ring-ember cursor-pointer"
+                >
+                  {COMPANY_SIZE_OPTIONS.map((s) => (
+                    <option key={s} value={s}>
+                      {s} employees
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-muted-foreground font-semibold mb-1">Country</label>
+                <select
+                  value={formData.profile.country || "India"}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      profile: { ...prev.profile, country: e.target.value },
+                    }))
+                  }
+                  className="w-full bg-card border border-border rounded-xl px-3.5 py-2.5 text-foreground font-medium focus:outline-none focus:border-ember focus:ring-1 focus:ring-ember cursor-pointer"
+                >
+                  {Object.keys(COUNTRY_OPTIONS).map((cntry) => (
+                    <option key={cntry} value={cntry}>
+                      {cntry}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-muted-foreground font-semibold mb-1">
+                  Year Founded
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. 2018"
+                  value={formData.profile.yearFounded || ""}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      profile: { ...prev.profile, yearFounded: e.target.value },
+                    }))
+                  }
+                  className="w-full bg-card border border-border rounded-xl px-3.5 py-2.5 text-foreground font-medium focus:outline-none focus:border-ember focus:ring-1 focus:ring-ember"
+                />
+              </div>
+
+              <div>
+                <label className="block text-muted-foreground font-semibold mb-1">
+                  Official Website
+                </label>
+                <input
+                  type="text"
+                  placeholder="https://example.com"
+                  value={formData.profile.website || ""}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      profile: { ...prev.profile, website: e.target.value },
+                    }))
+                  }
+                  className="w-full bg-card border border-border rounded-xl px-3.5 py-2.5 text-foreground font-medium focus:outline-none focus:border-ember focus:ring-1 focus:ring-ember"
+                />
+              </div>
+
+              <div>
+                <label className="block text-muted-foreground font-semibold mb-1">
+                  LinkedIn Page URL
+                </label>
+                <input
+                  type="text"
+                  placeholder="https://linkedin.com/company/..."
+                  value={formData.profile.linkedin || ""}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      profile: { ...prev.profile, linkedin: e.target.value },
+                    }))
+                  }
+                  className="w-full bg-card border border-border rounded-xl px-3.5 py-2.5 text-foreground font-medium focus:outline-none focus:border-ember focus:ring-1 focus:ring-ember"
+                />
+              </div>
+
+              <div>
+                <label className="block text-muted-foreground font-semibold mb-1">
+                  Default Timezone
+                </label>
+                <input
+                  type="text"
+                  placeholder="Asia/Kolkata (IST)"
+                  value={formData.profile.timezone || "Asia/Kolkata (IST)"}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      profile: { ...prev.profile, timezone: e.target.value },
+                    }))
+                  }
+                  className="w-full bg-card border border-border rounded-xl px-3.5 py-2.5 text-foreground font-medium focus:outline-none focus:border-ember focus:ring-1 focus:ring-ember"
+                />
+              </div>
+
+              <div>
+                <label className="block text-muted-foreground font-semibold mb-1">
+                  Standard Business Hours
+                </label>
+                <input
+                  type="text"
+                  placeholder="09:00 AM – 06:00 PM (Mon-Fri)"
+                  value={formData.profile.businessHours || "09:00 AM – 06:00 PM"}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      profile: { ...prev.profile, businessHours: e.target.value },
+                    }))
+                  }
+                  className="w-full bg-card border border-border rounded-xl px-3.5 py-2.5 text-foreground font-medium focus:outline-none focus:border-ember focus:ring-1 focus:ring-ember"
+                />
+              </div>
+
+              {/* Tax Identifiers */}
+              <div>
+                <label className="block text-muted-foreground font-semibold mb-1">GST Number</label>
+                <input
+                  type="text"
+                  placeholder="27AAACG0000A1Z5"
+                  value={formData.profile.gstNumber || ""}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      profile: { ...prev.profile, gstNumber: e.target.value },
+                    }))
+                  }
+                  className="w-full bg-card border border-border rounded-xl px-3.5 py-2.5 text-foreground font-mono font-medium focus:outline-none focus:border-ember focus:ring-1 focus:ring-ember"
+                />
+              </div>
+
+              <div>
+                <label className="block text-muted-foreground font-semibold mb-1">PAN Number</label>
+                <input
+                  type="text"
+                  placeholder="AAACG0000A"
+                  value={formData.profile.panNumber || ""}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      profile: { ...prev.profile, panNumber: e.target.value },
+                    }))
+                  }
+                  className="w-full bg-card border border-border rounded-xl px-3.5 py-2.5 text-foreground font-mono font-medium focus:outline-none focus:border-ember focus:ring-1 focus:ring-ember"
+                />
+              </div>
+
+              <div>
+                <label className="block text-muted-foreground font-semibold mb-1">CIN Number</label>
+                <input
+                  type="text"
+                  placeholder="U72900MH2020PTC000000"
+                  value={formData.profile.cinNumber || ""}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      profile: { ...prev.profile, cinNumber: e.target.value },
+                    }))
+                  }
+                  className="w-full bg-card border border-border rounded-xl px-3.5 py-2.5 text-foreground font-mono font-medium focus:outline-none focus:border-ember focus:ring-1 focus:ring-ember"
+                />
+              </div>
+
+              <div className="sm:col-span-2 md:col-span-3">
+                <label className="block text-muted-foreground font-semibold mb-1">
+                  Company Description & About Bio
+                </label>
+                <textarea
+                  rows={3}
+                  placeholder="Brief overview of your company, mission, and culture..."
+                  value={formData.profile.about || ""}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      profile: { ...prev.profile, about: e.target.value },
+                      careerPortal: { ...prev.careerPortal, aboutCompany: e.target.value },
+                    }))
+                  }
+                  className="w-full bg-card border border-border rounded-xl px-3.5 py-2.5 text-foreground font-medium focus:outline-none focus:border-ember focus:ring-1 focus:ring-ember"
                 />
               </div>
             </div>
@@ -551,23 +1053,129 @@ export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state
         </div>
       )}
 
-      {/* SUB-TAB 2: Office Locations & Remote Policy */}
-      {activeSubTab === "locations" && (
+      {/* =========================================================================
+          SUB-TAB 2: SUPER ADMIN & SIGNUP METADATA
+         ========================================================================= */}
+      {activeSubTab === "admin" && (
         <div className="space-y-6 animate-fadeIn">
-          {/* Head Office Location */}
-          <div className="bg-card border border-border rounded-xl p-6 shadow-xs space-y-4">
-            <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 border-b border-border pb-3">
-              <MapPin className="size-4 text-ember" /> Head Office Location (Step 2 Details)
+          <div className="bg-surface border border-border rounded-2xl p-6 shadow-xs space-y-6">
+            <h2 className="text-base font-bold text-foreground flex items-center gap-2 border-b border-border pb-3">
+              <ShieldCheck className="size-4 text-ember" /> Primary Super Admin & Account Owner
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-              <div className="md:col-span-2">
-                <label className="block text-muted-foreground font-medium mb-1">Address</label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+              <div>
+                <label className="block text-muted-foreground font-semibold mb-1">
+                  Super Admin Full Name
+                </label>
                 <input
                   type="text"
-                  value={state.officeLocations.headOffice.address}
+                  value={formData.admin.fullName}
                   onChange={(e) =>
-                    setState((prev) => ({
+                    setFormData((prev) => ({
+                      ...prev,
+                      admin: { ...prev.admin, fullName: e.target.value },
+                    }))
+                  }
+                  className="w-full bg-card border border-border rounded-xl px-3.5 py-2.5 text-foreground font-medium focus:outline-none focus:border-ember focus:ring-1 focus:ring-ember"
+                />
+              </div>
+
+              <div>
+                <label className="block text-muted-foreground font-semibold mb-1">
+                  Primary Work Email
+                </label>
+                <input
+                  type="email"
+                  value={formData.admin.workEmail}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      admin: { ...prev.admin, workEmail: e.target.value },
+                    }))
+                  }
+                  className="w-full bg-card border border-border rounded-xl px-3.5 py-2.5 text-foreground font-medium focus:outline-none focus:border-ember focus:ring-1 focus:ring-ember"
+                />
+              </div>
+
+              <div>
+                <label className="block text-muted-foreground font-semibold mb-1">
+                  Mobile / Phone Number
+                </label>
+                <input
+                  type="text"
+                  value={formData.admin.phone || ""}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      admin: { ...prev.admin, phone: e.target.value },
+                    }))
+                  }
+                  className="w-full bg-card border border-border rounded-xl px-3.5 py-2.5 text-foreground font-medium focus:outline-none focus:border-ember focus:ring-1 focus:ring-ember"
+                />
+              </div>
+
+              <div>
+                <label className="block text-muted-foreground font-semibold mb-1">
+                  Job Designation
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. Chief People Officer / Head of Talent"
+                  value={formData.admin.jobTitle || ""}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      admin: { ...prev.admin, jobTitle: e.target.value },
+                    }))
+                  }
+                  className="w-full bg-card border border-border rounded-xl px-3.5 py-2.5 text-foreground font-medium focus:outline-none focus:border-ember focus:ring-1 focus:ring-ember"
+                />
+              </div>
+
+              <div className="sm:col-span-2">
+                <label className="block text-muted-foreground font-semibold mb-1">
+                  Billing & Invoices Contact Email
+                </label>
+                <input
+                  type="email"
+                  placeholder="billing@company.com"
+                  value={formData.admin.billingEmail || ""}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      admin: { ...prev.admin, billingEmail: e.target.value },
+                    }))
+                  }
+                  className="w-full bg-card border border-border rounded-xl px-3.5 py-2.5 text-foreground font-medium focus:outline-none focus:border-ember focus:ring-1 focus:ring-ember"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          SUB-TAB 3: OFFICE LOCATIONS & REMOTE POLICY
+         ========================================================================= */}
+      {activeSubTab === "locations" && (
+        <div className="space-y-6 animate-fadeIn">
+          {/* Head Office */}
+          <div className="bg-surface border border-border rounded-2xl p-6 shadow-xs space-y-4">
+            <h2 className="text-base font-bold text-foreground flex items-center gap-2 border-b border-border pb-3">
+              <MapPin className="size-4 text-ember" /> Headquarters Location
+            </h2>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-xs">
+              <div className="sm:col-span-2 md:col-span-3">
+                <label className="block text-muted-foreground font-semibold mb-1">
+                  Street Address
+                </label>
+                <input
+                  type="text"
+                  value={formData.officeLocations.headOffice.address}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
                       ...prev,
                       officeLocations: {
                         ...prev.officeLocations,
@@ -575,17 +1183,17 @@ export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state
                       },
                     }))
                   }
-                  className="w-full bg-surface border border-border rounded-md px-3 py-2 text-foreground focus:outline-none focus:border-ember"
+                  className="w-full bg-card border border-border rounded-xl px-3.5 py-2.5 text-foreground font-medium focus:outline-none focus:border-ember"
                 />
               </div>
 
               <div>
-                <label className="block text-muted-foreground font-medium mb-1">City</label>
+                <label className="block text-muted-foreground font-semibold mb-1">City</label>
                 <input
                   type="text"
-                  value={state.officeLocations.headOffice.city}
+                  value={formData.officeLocations.headOffice.city}
                   onChange={(e) =>
-                    setState((prev) => ({
+                    setFormData((prev) => ({
                       ...prev,
                       officeLocations: {
                         ...prev.officeLocations,
@@ -593,17 +1201,19 @@ export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state
                       },
                     }))
                   }
-                  className="w-full bg-surface border border-border rounded-md px-3 py-2 text-foreground focus:outline-none focus:border-ember"
+                  className="w-full bg-card border border-border rounded-xl px-3.5 py-2.5 text-foreground font-medium focus:outline-none focus:border-ember"
                 />
               </div>
 
               <div>
-                <label className="block text-muted-foreground font-medium mb-1">State</label>
+                <label className="block text-muted-foreground font-semibold mb-1">
+                  State / Province
+                </label>
                 <input
                   type="text"
-                  value={state.officeLocations.headOffice.state}
+                  value={formData.officeLocations.headOffice.state}
                   onChange={(e) =>
-                    setState((prev) => ({
+                    setFormData((prev) => ({
                       ...prev,
                       officeLocations: {
                         ...prev.officeLocations,
@@ -611,37 +1221,19 @@ export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state
                       },
                     }))
                   }
-                  className="w-full bg-surface border border-border rounded-md px-3 py-2 text-foreground focus:outline-none focus:border-ember"
+                  className="w-full bg-card border border-border rounded-xl px-3.5 py-2.5 text-foreground font-medium focus:outline-none focus:border-ember"
                 />
               </div>
 
               <div>
-                <label className="block text-muted-foreground font-medium mb-1">Country</label>
-                <input
-                  type="text"
-                  value={state.officeLocations.headOffice.country}
-                  onChange={(e) =>
-                    setState((prev) => ({
-                      ...prev,
-                      officeLocations: {
-                        ...prev.officeLocations,
-                        headOffice: { ...prev.officeLocations.headOffice, country: e.target.value },
-                      },
-                    }))
-                  }
-                  className="w-full bg-surface border border-border rounded-md px-3 py-2 text-foreground focus:outline-none focus:border-ember"
-                />
-              </div>
-
-              <div>
-                <label className="block text-muted-foreground font-medium mb-1">
+                <label className="block text-muted-foreground font-semibold mb-1">
                   Pincode / ZIP
                 </label>
                 <input
                   type="text"
-                  value={state.officeLocations.headOffice.pincode}
+                  value={formData.officeLocations.headOffice.pincode}
                   onChange={(e) =>
-                    setState((prev) => ({
+                    setFormData((prev) => ({
                       ...prev,
                       officeLocations: {
                         ...prev.officeLocations,
@@ -649,36 +1241,41 @@ export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state
                       },
                     }))
                   }
-                  className="w-full bg-surface border border-border rounded-md px-3 py-2 text-foreground focus:outline-none focus:border-ember"
+                  className="w-full bg-card border border-border rounded-xl px-3.5 py-2.5 text-foreground font-medium focus:outline-none focus:border-ember"
                 />
               </div>
             </div>
           </div>
 
           {/* Branch Offices Management */}
-          <div className="bg-card border border-border rounded-xl p-6 shadow-xs space-y-4">
-            <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 border-b border-border pb-3">
-              <MapPin className="size-4 text-ember" /> Branch Offices List (
-              {state.officeLocations.branchOffices.length})
-            </h2>
+          <div className="bg-surface border border-border rounded-2xl p-6 shadow-xs space-y-4">
+            <div className="flex items-center justify-between border-b border-border pb-3">
+              <h2 className="text-base font-bold text-foreground flex items-center gap-2">
+                <MapPin className="size-4 text-ember" /> Regional & Branch Offices (
+                {formData.officeLocations.branchOffices.length})
+              </h2>
+            </div>
 
             {/* List Existing Branches */}
-            <div className="space-y-3">
-              {state.officeLocations.branchOffices.map((branch) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              {formData.officeLocations.branchOffices.map((branch) => (
                 <div
                   key={branch.id}
-                  className="p-3 border border-border rounded-lg bg-surface flex items-center justify-between gap-3 text-xs"
+                  className="p-4 border border-border rounded-xl bg-card flex items-start justify-between gap-3"
                 >
-                  <div>
-                    <p className="font-semibold text-foreground">{branch.name}</p>
+                  <div className="space-y-1">
+                    <p className="font-bold text-foreground text-sm">{branch.name}</p>
                     <p className="text-muted-foreground">
-                      {branch.address}, {branch.city}, {branch.state}, {branch.country} (
-                      {branch.pincode}) · Capacity: {branch.capacity} seats
+                      {branch.address}, {branch.city}, {branch.state} - {branch.pincode} (
+                      {branch.country})
                     </p>
+                    <span className="inline-block text-[10.5px] px-2 py-0.5 rounded bg-secondary text-secondary-foreground font-mono">
+                      Capacity: {branch.capacity} Seats
+                    </span>
                   </div>
                   <button
                     onClick={() => {
-                      setState((prev) => ({
+                      setFormData((prev) => ({
                         ...prev,
                         officeLocations: {
                           ...prev.officeLocations,
@@ -687,9 +1284,11 @@ export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state
                           ),
                         },
                       }));
-                      toast.success(`Removed branch office ${branch.name}`);
+                      toast.info(
+                        "Removed branch " + branch.name + " (click Save to DB to persist)",
+                      );
                     }}
-                    className="p-1.5 text-muted-foreground hover:text-destructive transition-colors cursor-pointer"
+                    className="p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors cursor-pointer"
                   >
                     <Trash2 className="size-4" />
                   </button>
@@ -697,57 +1296,57 @@ export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state
               ))}
             </div>
 
-            {/* Add New Branch */}
+            {/* Add Branch Form */}
             <div className="border-t border-border pt-4 space-y-3 text-xs">
-              <h3 className="font-medium text-foreground">Add New Branch Office</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <h3 className="font-bold text-foreground">Add New Regional Office</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                 <input
                   type="text"
-                  placeholder="Branch Name (e.g. Pune Tech Park)"
+                  placeholder="Branch Name (e.g. Pune R&D Center)"
                   value={newBranch.name}
                   onChange={(e) => setNewBranch({ ...newBranch, name: e.target.value })}
-                  className="bg-surface border border-border rounded-md px-3 py-1.5 text-foreground focus:outline-none focus:border-ember"
+                  className="bg-card border border-border rounded-xl px-3.5 py-2 text-foreground focus:outline-none focus:border-ember"
                 />
                 <input
                   type="text"
-                  placeholder="Address Line"
+                  placeholder="Street Address"
                   value={newBranch.address}
                   onChange={(e) => setNewBranch({ ...newBranch, address: e.target.value })}
-                  className="bg-surface border border-border rounded-md px-3 py-1.5 text-foreground focus:outline-none focus:border-ember"
+                  className="bg-card border border-border rounded-xl px-3.5 py-2 text-foreground focus:outline-none focus:border-ember"
                 />
                 <input
                   type="text"
                   placeholder="City"
                   value={newBranch.city}
                   onChange={(e) => setNewBranch({ ...newBranch, city: e.target.value })}
-                  className="bg-surface border border-border rounded-md px-3 py-1.5 text-foreground focus:outline-none focus:border-ember"
+                  className="bg-card border border-border rounded-xl px-3.5 py-2 text-foreground focus:outline-none focus:border-ember"
                 />
                 <input
                   type="text"
                   placeholder="State"
                   value={newBranch.state}
                   onChange={(e) => setNewBranch({ ...newBranch, state: e.target.value })}
-                  className="bg-surface border border-border rounded-md px-3 py-1.5 text-foreground focus:outline-none focus:border-ember"
+                  className="bg-card border border-border rounded-xl px-3.5 py-2 text-foreground focus:outline-none focus:border-ember"
                 />
                 <input
                   type="text"
                   placeholder="Pincode"
                   value={newBranch.pincode}
                   onChange={(e) => setNewBranch({ ...newBranch, pincode: e.target.value })}
-                  className="bg-surface border border-border rounded-md px-3 py-1.5 text-foreground focus:outline-none focus:border-ember"
+                  className="bg-card border border-border rounded-xl px-3.5 py-2 text-foreground focus:outline-none focus:border-ember"
                 />
                 <button
                   onClick={() => {
-                    if (!newBranch.name.trim()) return toast.error("Enter branch name");
-                    const createdBranch: OfficeLocationBranch = {
+                    if (!newBranch.name.trim()) return toast.error("Enter branch office name");
+                    const created: OfficeLocationBranch = {
                       ...newBranch,
                       id: "branch-" + Date.now(),
                     };
-                    setState((prev) => ({
+                    setFormData((prev) => ({
                       ...prev,
                       officeLocations: {
                         ...prev.officeLocations,
-                        branchOffices: [...prev.officeLocations.branchOffices, createdBranch],
+                        branchOffices: [...prev.officeLocations.branchOffices, created],
                       },
                     }));
                     setNewBranch({
@@ -755,13 +1354,17 @@ export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state
                       address: "",
                       city: "",
                       state: "",
-                      country: "India",
+                      country: formData.profile.country || "India",
                       pincode: "",
                       capacity: 25,
                     });
-                    toast.success(`Added branch office '${createdBranch.name}'`);
+                    toast.info(
+                      "Added branch office '" +
+                        created.name +
+                        "' to front-end. Click Save to persist.",
+                    );
                   }}
-                  className="bg-ember text-ember-foreground hover:bg-ember/90 font-medium px-4 py-1.5 rounded-md flex items-center justify-center gap-1.5 cursor-pointer"
+                  className="bg-ember hover:bg-ember/90 text-ember-foreground font-semibold px-4 py-2 rounded-xl flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
                 >
                   <Plus className="size-4" /> Add Branch
                 </button>
@@ -770,24 +1373,25 @@ export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state
           </div>
 
           {/* Remote Policy & Working Hours */}
-          <div className="bg-card border border-border rounded-xl p-6 shadow-xs space-y-4 text-xs">
-            <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 border-b border-border pb-3">
-              <Globe className="size-4 text-ember" /> Remote Hiring Policy & Working Hours
+          <div className="bg-surface border border-border rounded-2xl p-6 shadow-xs space-y-4 text-xs">
+            <h2 className="text-base font-bold text-foreground flex items-center gap-2 border-b border-border pb-3">
+              <Globe className="size-4 text-ember" /> Remote Hiring Policy & Corporate Calendar
             </h2>
 
             <div className="space-y-4">
-              <label className="flex items-center justify-between p-3 rounded-lg border border-border bg-surface cursor-pointer">
+              <label className="flex items-center justify-between p-4 rounded-xl border border-border bg-card cursor-pointer">
                 <div>
-                  <p className="font-semibold text-foreground">Allow Remote Hiring Worldwide</p>
-                  <p className="text-11px text-muted-foreground">
-                    Enable candidate applications for remote work roles.
+                  <p className="font-bold text-foreground">Allow Remote Work & Hiring Worldwide</p>
+                  <p className="text-[11px] text-muted-foreground">
+                    Enables remote work flags across all job requisitions and candidate
+                    applications.
                   </p>
                 </div>
                 <input
                   type="checkbox"
-                  checked={state.officeLocations.remoteLocations.enabled}
+                  checked={formData.officeLocations.remoteLocations.enabled}
                   onChange={(e) =>
-                    setState((prev) => ({
+                    setFormData((prev) => ({
                       ...prev,
                       officeLocations: {
                         ...prev.officeLocations,
@@ -798,37 +1402,37 @@ export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state
                       },
                     }))
                   }
-                  className="accent-ember size-4"
+                  className="accent-ember size-4 cursor-pointer"
                 />
               </label>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-muted-foreground font-medium mb-1">
-                    Default Working Hours Window
+                  <label className="block text-muted-foreground font-semibold mb-1">
+                    Standard Working Hours Window
                   </label>
                   <input
                     type="text"
-                    value={state.officeLocations.workingHours}
+                    value={formData.officeLocations.workingHours}
                     onChange={(e) =>
-                      setState((prev) => ({
+                      setFormData((prev) => ({
                         ...prev,
                         officeLocations: { ...prev.officeLocations, workingHours: e.target.value },
                       }))
                     }
-                    className="w-full bg-surface border border-border rounded-md px-3 py-2 text-foreground focus:outline-none focus:border-ember"
+                    className="w-full bg-card border border-border rounded-xl px-3.5 py-2.5 text-foreground font-medium focus:outline-none focus:border-ember"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-muted-foreground font-medium mb-1">
+                  <label className="block text-muted-foreground font-semibold mb-1">
                     Corporate Holiday Calendar Policy
                   </label>
                   <input
                     type="text"
-                    value={state.officeLocations.holidayCalendar}
+                    value={formData.officeLocations.holidayCalendar}
                     onChange={(e) =>
-                      setState((prev) => ({
+                      setFormData((prev) => ({
                         ...prev,
                         officeLocations: {
                           ...prev.officeLocations,
@@ -836,7 +1440,7 @@ export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state
                         },
                       }))
                     }
-                    className="w-full bg-surface border border-border rounded-md px-3 py-2 text-foreground focus:outline-none focus:border-ember"
+                    className="w-full bg-card border border-border rounded-xl px-3.5 py-2.5 text-foreground font-medium focus:outline-none focus:border-ember"
                   />
                 </div>
               </div>
@@ -845,178 +1449,378 @@ export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state
         </div>
       )}
 
-      {/* SUB-TAB 3: Departments & Job Titles */}
-      {activeSubTab === "org_structure" && (
+      {/* =========================================================================
+          SUB-TAB 4: HR TEAM MEMBERS & USER ROLES
+         ========================================================================= */}
+      {activeSubTab === "team" && (
         <div className="space-y-6 animate-fadeIn">
-          {/* Departments */}
-          <div className="bg-card border border-border rounded-xl p-6 shadow-xs space-y-4">
-            <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 border-b border-border pb-3">
-              <Network className="size-4 text-ember" /> Company Departments (Step 4 Details)
-            </h2>
+          <div className="bg-surface border border-border rounded-2xl p-6 shadow-xs space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
+              <div>
+                <h2 className="text-base font-bold text-foreground flex items-center gap-2">
+                  <Users className="size-4 text-ember" /> HR Team Directory & Access Control
+                </h2>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Manage recruiter, hiring manager, and interviewer accounts for your company.
+                </p>
+              </div>
+            </div>
 
-            <div className="flex flex-wrap gap-2">
-              {state.departments.map((dept) => (
+            {/* List Team Members */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              {(formData.hrTeam || []).map((member) => (
                 <div
-                  key={dept}
-                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface border border-border text-xs font-medium text-foreground"
+                  key={member.id}
+                  className="p-4 border border-border rounded-xl bg-card flex items-start justify-between gap-3"
                 >
-                  <span>{dept}</span>
+                  <div className="flex items-center gap-3">
+                    <div className="size-10 rounded-full bg-ember/15 text-ember font-bold text-sm flex items-center justify-center shrink-0">
+                      {member.name.substring(0, 2).toUpperCase()}
+                    </div>
+                    <div className="space-y-0.5">
+                      <div className="flex items-center gap-2">
+                        <p className="font-bold text-foreground">{member.name}</p>
+                        <span className="text-[10px] px-2 py-0.2 rounded-full font-semibold bg-ember/15 text-ember border border-ember/20">
+                          {member.role}
+                        </span>
+                      </div>
+                      <p className="text-muted-foreground text-[11px]">{member.email}</p>
+                      <p className="text-muted-foreground text-[10.5px]">
+                        {member.designation} · {member.department}
+                      </p>
+                    </div>
+                  </div>
+
                   <button
                     onClick={() => {
-                      setState((prev) => ({
+                      setFormData((prev) => ({
                         ...prev,
-                        departments: prev.departments.filter((d) => d !== dept),
+                        hrTeam: prev.hrTeam.filter((m) => m.id !== member.id),
                       }));
-                      toast.success(`Removed department '${dept}'`);
+                      toast.info(
+                        "Removed team member " + member.name + " (click Save to DB to persist)",
+                      );
                     }}
-                    className="text-muted-foreground hover:text-destructive cursor-pointer"
+                    className="p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors cursor-pointer"
                   >
-                    <Trash2 className="size-3.5" />
+                    <Trash2 className="size-4" />
                   </button>
                 </div>
               ))}
             </div>
 
-            <div className="flex gap-2 pt-2 text-xs">
-              <input
-                type="text"
-                placeholder="Enter new department name..."
-                value={newDepartmentInput}
-                onChange={(e) => setNewDepartmentInput(e.target.value)}
-                className="bg-surface border border-border rounded-md px-3 py-1.5 text-foreground focus:outline-none focus:border-ember flex-1"
-              />
-              <button
-                onClick={() => {
-                  if (!newDepartmentInput.trim()) return;
-                  if (state.departments.includes(newDepartmentInput.trim()))
-                    return toast.error("Department already exists");
-                  setState((prev) => ({
-                    ...prev,
-                    departments: [...prev.departments, newDepartmentInput.trim()],
-                  }));
-                  setNewDepartmentInput("");
-                  toast.success("Department added!");
-                }}
-                className="bg-ember text-ember-foreground font-medium px-4 py-1.5 rounded-md flex items-center gap-1.5 cursor-pointer"
-              >
-                <Plus className="size-4" /> Add Department
-              </button>
-            </div>
-          </div>
-
-          {/* Job Titles */}
-          <div className="bg-card border border-border rounded-xl p-6 shadow-xs space-y-4">
-            <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 border-b border-border pb-3">
-              <Briefcase className="size-4 text-ember" /> Job Designations & Titles (Step 5 Details)
-            </h2>
-
-            <div className="flex flex-wrap gap-2">
-              {state.jobTitles.map((title) => (
-                <div
-                  key={title}
-                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface border border-border text-xs font-medium text-foreground"
+            {/* Add Team Member Form */}
+            <div className="border-t border-border pt-4 space-y-3 text-xs">
+              <h3 className="font-bold text-foreground">Add New Team Member</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                <input
+                  type="text"
+                  placeholder="Full Name"
+                  value={newTeamMember.name}
+                  onChange={(e) => setNewTeamMember({ ...newTeamMember, name: e.target.value })}
+                  className="bg-card border border-border rounded-xl px-3.5 py-2 text-foreground focus:outline-none focus:border-ember"
+                />
+                <input
+                  type="email"
+                  placeholder="Work Email"
+                  value={newTeamMember.email}
+                  onChange={(e) => setNewTeamMember({ ...newTeamMember, email: e.target.value })}
+                  className="bg-card border border-border rounded-xl px-3.5 py-2 text-foreground focus:outline-none focus:border-ember"
+                />
+                <select
+                  value={newTeamMember.role}
+                  onChange={(e) => setNewTeamMember({ ...newTeamMember, role: e.target.value })}
+                  className="bg-card border border-border rounded-xl px-3.5 py-2 text-foreground focus:outline-none focus:border-ember cursor-pointer"
                 >
-                  <span>{title}</span>
-                  <button
-                    onClick={() => {
-                      setState((prev) => ({
-                        ...prev,
-                        jobTitles: prev.jobTitles.filter((t) => t !== title),
-                      }));
-                      toast.success(`Removed title '${title}'`);
-                    }}
-                    className="text-muted-foreground hover:text-destructive cursor-pointer"
-                  >
-                    <Trash2 className="size-3.5" />
-                  </button>
-                </div>
-              ))}
-            </div>
-
-            <div className="flex gap-2 pt-2 text-xs">
-              <input
-                type="text"
-                placeholder="Enter new job title..."
-                value={newJobTitleInput}
-                onChange={(e) => setNewJobTitleInput(e.target.value)}
-                className="bg-surface border border-border rounded-md px-3 py-1.5 text-foreground focus:outline-none focus:border-ember flex-1"
-              />
-              <button
-                onClick={() => {
-                  if (!newJobTitleInput.trim()) return;
-                  if (state.jobTitles.includes(newJobTitleInput.trim()))
-                    return toast.error("Job title already exists");
-                  setState((prev) => ({
-                    ...prev,
-                    jobTitles: [...prev.jobTitles, newJobTitleInput.trim()],
-                  }));
-                  setNewJobTitleInput("");
-                  toast.success("Job title added!");
-                }}
-                className="bg-ember text-ember-foreground font-medium px-4 py-1.5 rounded-md flex items-center gap-1.5 cursor-pointer"
-              >
-                <Plus className="size-4" /> Add Job Title
-              </button>
+                  <option value="HR Admin">HR Admin</option>
+                  <option value="Recruiter">Recruiter</option>
+                  <option value="Hiring Manager">Hiring Manager</option>
+                  <option value="Finance">Finance</option>
+                  <option value="IT Admin">IT Admin</option>
+                  <option value="Operations">Operations</option>
+                </select>
+                <button
+                  onClick={() => {
+                    if (!newTeamMember.name.trim() || !newTeamMember.email.trim())
+                      return toast.error("Enter member name and email");
+                    const createdMember: HRTeamMember = {
+                      ...newTeamMember,
+                      id: "hr-" + Date.now(),
+                      status: "Active",
+                    };
+                    setFormData((prev) => ({
+                      ...prev,
+                      hrTeam: [...(prev.hrTeam || []), createdMember],
+                    }));
+                    setNewTeamMember({
+                      name: "",
+                      email: "",
+                      designation: "Recruiter",
+                      department: formData.departments[0] || "Human Resources",
+                      role: "Recruiter",
+                      permissions: ["view_pipeline", "advance_candidates"],
+                      status: "Active",
+                    });
+                    toast.info(
+                      "Added '" +
+                        createdMember.name +
+                        "' to front-end team. Click Save to persist to DB.",
+                    );
+                  }}
+                  className="bg-ember hover:bg-ember/90 text-ember-foreground font-semibold px-4 py-2 rounded-xl flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                >
+                  <Plus className="size-4" /> Add Member
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* SUB-TAB 4: Recruitment Pipeline Stages */}
-      {activeSubTab === "pipeline" && (
+      {/* =========================================================================
+          SUB-TAB 5: DEPARTMENTS & JOB DESIGNATIONS
+         ========================================================================= */}
+      {activeSubTab === "org_structure" && (
         <div className="space-y-6 animate-fadeIn">
-          <div className="bg-card border border-border rounded-xl p-6 shadow-xs space-y-4">
-            <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 border-b border-border pb-3">
-              <GitMerge className="size-4 text-ember" /> Custom Recruitment Stages & SLA (Step 6
-              Details)
+          {/* Departments */}
+          <div className="bg-surface border border-border rounded-2xl p-6 shadow-xs space-y-4">
+            <h2 className="text-base font-bold text-foreground flex items-center gap-2 border-b border-border pb-3">
+              <Network className="size-4 text-ember" /> Company Departments (
+              {formData.departments.length})
             </h2>
 
+            <div className="flex flex-wrap gap-2">
+              {formData.departments.map((dept) => (
+                <div
+                  key={dept}
+                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-card border border-border text-xs font-semibold text-foreground shadow-2xs"
+                >
+                  <span>{dept}</span>
+                  <button
+                    onClick={() => {
+                      setFormData((prev) => ({
+                        ...prev,
+                        departments: prev.departments.filter((d) => d !== dept),
+                      }));
+                      toast.info(
+                        "Removed department '" + dept + "' (front-end only, click Save to persist)",
+                      );
+                    }}
+                    className="text-muted-foreground hover:text-destructive cursor-pointer"
+                  >
+                    <Trash2 className="size-3.5" />
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex gap-2 pt-2 text-xs">
+              <input
+                type="text"
+                placeholder="Type department name..."
+                value={newDepartmentInput}
+                onChange={(e) => setNewDepartmentInput(e.target.value)}
+                className="bg-card border border-border rounded-xl px-3.5 py-2 text-foreground focus:outline-none focus:border-ember flex-1"
+              />
+              <button
+                onClick={() => {
+                  if (!newDepartmentInput.trim()) return;
+                  if (formData.departments.includes(newDepartmentInput.trim()))
+                    return toast.error("Department already exists");
+                  setFormData((prev) => ({
+                    ...prev,
+                    departments: [...prev.departments, newDepartmentInput.trim()],
+                  }));
+                  setNewDepartmentInput("");
+                  toast.info("Department added to front-end! Click Save to DB to persist.");
+                }}
+                className="bg-ember hover:bg-ember/90 text-ember-foreground font-semibold px-4 py-2 rounded-xl flex items-center gap-1.5 cursor-pointer shadow-xs"
+              >
+                <Plus className="size-4" /> Add Department
+              </button>
+            </div>
+
+            {/* Quick Suggestions */}
+            <div className="pt-2 border-t border-border">
+              <p className="text-[11px] text-muted-foreground font-semibold mb-2">
+                Quick Add Suggestions:
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {DEFAULT_DEPARTMENTS_SUGGESTIONS.filter(
+                  (d) => !formData.departments.includes(d),
+                ).map((sug) => (
+                  <button
+                    key={sug}
+                    onClick={() => {
+                      setFormData((prev) => ({ ...prev, departments: [...prev.departments, sug] }));
+                      toast.info("Added " + sug + " to front-end");
+                    }}
+                    className="text-[11px] px-2.5 py-1 rounded-lg bg-card border border-border/70 hover:border-ember text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
+                  >
+                    + {sug}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Job Titles */}
+          <div className="bg-surface border border-border rounded-2xl p-6 shadow-xs space-y-4">
+            <h2 className="text-base font-bold text-foreground flex items-center gap-2 border-b border-border pb-3">
+              <Briefcase className="size-4 text-ember" /> Job Designations & Roles (
+              {formData.jobTitles.length})
+            </h2>
+
+            <div className="flex flex-wrap gap-2">
+              {formData.jobTitles.map((title) => (
+                <div
+                  key={title}
+                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-card border border-border text-xs font-semibold text-foreground shadow-2xs"
+                >
+                  <span>{title}</span>
+                  <button
+                    onClick={() => {
+                      setFormData((prev) => ({
+                        ...prev,
+                        jobTitles: prev.jobTitles.filter((t) => t !== title),
+                      }));
+                      toast.info("Removed title '" + title + "' (front-end only)");
+                    }}
+                    className="text-muted-foreground hover:text-destructive cursor-pointer"
+                  >
+                    <Trash2 className="size-3.5" />
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex gap-2 pt-2 text-xs">
+              <input
+                type="text"
+                placeholder="Type job designation..."
+                value={newJobTitleInput}
+                onChange={(e) => setNewJobTitleInput(e.target.value)}
+                className="bg-card border border-border rounded-xl px-3.5 py-2 text-foreground focus:outline-none focus:border-ember flex-1"
+              />
+              <button
+                onClick={() => {
+                  if (!newJobTitleInput.trim()) return;
+                  if (formData.jobTitles.includes(newJobTitleInput.trim()))
+                    return toast.error("Job title already exists");
+                  setFormData((prev) => ({
+                    ...prev,
+                    jobTitles: [...prev.jobTitles, newJobTitleInput.trim()],
+                  }));
+                  setNewJobTitleInput("");
+                  toast.info("Job title added to front-end! Click Save to DB to persist.");
+                }}
+                className="bg-ember hover:bg-ember/90 text-ember-foreground font-semibold px-4 py-2 rounded-xl flex items-center gap-1.5 cursor-pointer shadow-xs"
+              >
+                <Plus className="size-4" /> Add Designation
+              </button>
+            </div>
+
+            {/* Quick Suggestions */}
+            <div className="pt-2 border-t border-border">
+              <p className="text-[11px] text-muted-foreground font-semibold mb-2">
+                Quick Add Suggestions:
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {DEFAULT_JOB_TITLES_SUGGESTIONS.filter((j) => !formData.jobTitles.includes(j)).map(
+                  (sug) => (
+                    <button
+                      key={sug}
+                      onClick={() => {
+                        setFormData((prev) => ({ ...prev, jobTitles: [...prev.jobTitles, sug] }));
+                        toast.info("Added " + sug + " to front-end");
+                      }}
+                      className="text-[11px] px-2.5 py-1 rounded-lg bg-card border border-border/70 hover:border-ember text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
+                    >
+                      + {sug}
+                    </button>
+                  ),
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          SUB-TAB 6: RECRUITMENT PIPELINE STAGES & SLA
+         ========================================================================= */}
+      {activeSubTab === "pipeline" && (
+        <div className="space-y-6 animate-fadeIn">
+          <div className="bg-surface border border-border rounded-2xl p-6 shadow-xs space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
+              <div>
+                <h2 className="text-base font-bold text-foreground flex items-center gap-2">
+                  <GitMerge className="size-4 text-ember" /> Custom Recruitment Pipeline Stages (
+                  {formData.recruitmentWorkflow.length})
+                </h2>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Configure SLA turnarounds, micro-stage advancement triggers, and color themes.
+                </p>
+              </div>
+
+              <button
+                onClick={resetToDefault28Stages}
+                className="text-xs text-ember font-semibold hover:underline flex items-center gap-1 cursor-pointer"
+              >
+                <RefreshCw className="size-3.5" /> Reset to 28 Micro-Stages
+              </button>
+            </div>
+
             {/* List Stages */}
-            <div className="space-y-3 text-xs">
-              {state.recruitmentWorkflow.map((stage, idx) => (
+            <div className="space-y-2.5 text-xs max-h-[480px] overflow-y-auto pr-1">
+              {formData.recruitmentWorkflow.map((stage, idx) => (
                 <div
                   key={stage.id}
-                  className="p-3 border border-border rounded-lg bg-surface flex flex-wrap items-center justify-between gap-3"
+                  className="p-3 border border-border rounded-xl bg-card flex flex-wrap items-center justify-between gap-3 hover:border-ember/40 transition-colors"
                 >
                   <div className="flex items-center gap-3">
                     <span
-                      className="size-4 rounded-full"
+                      className="size-3.5 rounded-full shrink-0"
                       style={{ backgroundColor: stage.color }}
                     />
                     <div>
-                      <p className="font-semibold text-foreground">
+                      <p className="font-bold text-foreground">
                         {idx + 1}. {stage.name}
                       </p>
-                      <p className="text-muted-foreground text-11px">
-                        {stage.description || "Pipeline stage"} · SLA: {stage.slaHours ?? 24} hours
+                      <p className="text-muted-foreground text-[11px]">
+                        {stage.description || "Micro-stage"} · SLA Turnaround:{" "}
+                        {stage.slaHours ?? 24} hours
                       </p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <input
-                      type="number"
-                      value={stage.slaHours ?? 24}
-                      onChange={(e) => {
-                        const val = parseInt(e.target.value) || 0;
-                        const updated = [...state.recruitmentWorkflow];
-                        updated[idx] = { ...stage, slaHours: val };
-                        setState((prev) => ({ ...prev, recruitmentWorkflow: updated }));
-                      }}
-                      className="w-16 bg-card border border-border rounded px-2 py-1 text-center font-mono"
-                      title="SLA Hours"
-                    />
+                    <div className="flex items-center gap-1">
+                      <span className="text-[11px] text-muted-foreground">SLA (hrs):</span>
+                      <input
+                        type="number"
+                        value={stage.slaHours ?? 24}
+                        onChange={(e) => {
+                          const val = parseInt(e.target.value) || 0;
+                          const updated = [...formData.recruitmentWorkflow];
+                          updated[idx] = { ...stage, slaHours: val };
+                          setFormData((prev) => ({ ...prev, recruitmentWorkflow: updated }));
+                        }}
+                        className="w-16 bg-surface border border-border rounded-lg px-2 py-1 text-center font-mono text-xs text-foreground focus:outline-none focus:border-ember"
+                      />
+                    </div>
+
                     <button
                       onClick={() => {
-                        setState((prev) => ({
+                        setFormData((prev) => ({
                           ...prev,
                           recruitmentWorkflow: prev.recruitmentWorkflow.filter(
                             (s) => s.id !== stage.id,
                           ),
                         }));
-                        toast.success(`Removed stage '${stage.name}'`);
+                        toast.info("Removed stage '" + stage.name + "' from front-end");
                       }}
-                      className="p-1.5 text-muted-foreground hover:text-destructive cursor-pointer"
+                      className="p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg cursor-pointer"
                     >
                       <Trash2 className="size-4" />
                     </button>
@@ -1025,16 +1829,16 @@ export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state
               ))}
             </div>
 
-            {/* Add New Stage */}
+            {/* Add Custom Stage */}
             <div className="border-t border-border pt-4 space-y-3 text-xs">
-              <h3 className="font-medium text-foreground">Add Custom Stage</h3>
+              <h3 className="font-bold text-foreground">Add Custom Stage</h3>
               <div className="flex flex-wrap gap-3">
                 <input
                   type="text"
-                  placeholder="Stage Name (e.g. Tech Assessment)"
+                  placeholder="Stage Name (e.g. AI Technical Screening)"
                   value={newStageInput.name}
                   onChange={(e) => setNewStageInput({ ...newStageInput, name: e.target.value })}
-                  className="bg-surface border border-border rounded-md px-3 py-1.5 text-foreground focus:outline-none focus:border-ember flex-1"
+                  className="bg-card border border-border rounded-xl px-3.5 py-2 text-foreground focus:outline-none focus:border-ember flex-1"
                 />
                 <input
                   type="number"
@@ -1043,7 +1847,7 @@ export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state
                   onChange={(e) =>
                     setNewStageInput({ ...newStageInput, slaHours: parseInt(e.target.value) || 24 })
                   }
-                  className="w-24 bg-surface border border-border rounded-md px-3 py-1.5 text-foreground focus:outline-none focus:border-ember"
+                  className="w-24 bg-card border border-border rounded-xl px-3.5 py-2 text-foreground focus:outline-none focus:border-ember font-mono"
                 />
                 <button
                   onClick={() => {
@@ -1053,16 +1857,22 @@ export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state
                       name: newStageInput.name.trim(),
                       color: newStageInput.color,
                       slaHours: newStageInput.slaHours,
-                      description: "Custom pipeline stage",
+                      description: "Custom recruitment workflow stage",
                     };
-                    setState((prev) => ({
+                    setFormData((prev) => ({
                       ...prev,
                       recruitmentWorkflow: [...prev.recruitmentWorkflow, newStage],
                     }));
-                    setNewStageInput({ name: "", color: "#3b82f6", slaHours: 24 });
-                    toast.success(`Added stage '${newStage.name}'`);
+                    setNewStageInput({
+                      name: "",
+                      color: "#f97316",
+                      slaHours: 24,
+                      category: "Workflow",
+                      description: "",
+                    });
+                    toast.info("Added stage '" + newStage.name + "' to front-end");
                   }}
-                  className="bg-ember text-ember-foreground font-medium px-4 py-1.5 rounded-md flex items-center gap-1.5 cursor-pointer"
+                  className="bg-ember hover:bg-ember/90 text-ember-foreground font-semibold px-4 py-2 rounded-xl flex items-center gap-1.5 cursor-pointer shadow-xs"
                 >
                   <Plus className="size-4" /> Add Stage
                 </button>
@@ -1072,34 +1882,36 @@ export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state
         </div>
       )}
 
-      {/* SUB-TAB 5: Candidate Document Requirements */}
+      {/* =========================================================================
+          SUB-TAB 7: CANDIDATE VERIFICATION DOCUMENTS
+         ========================================================================= */}
       {activeSubTab === "candidate_docs" && (
         <div className="space-y-6 animate-fadeIn">
-          <div className="bg-card border border-border rounded-xl p-6 shadow-xs space-y-4">
-            <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 border-b border-border pb-3">
-              <FileCheck className="size-4 text-ember" /> Candidate Document Requirements (Step 7
-              Details)
+          <div className="bg-surface border border-border rounded-2xl p-6 shadow-xs space-y-4">
+            <h2 className="text-base font-bold text-foreground flex items-center gap-2 border-b border-border pb-3">
+              <FileCheck className="size-4 text-ember" /> Candidate Verification & Onboarding
+              Documents Matrix
             </h2>
 
-            <div className="overflow-x-auto border border-border rounded-lg">
+            <div className="overflow-x-auto border border-border rounded-xl bg-card">
               <table className="w-full text-left text-xs">
-                <thead className="bg-surface border-b border-border text-muted-foreground font-semibold uppercase text-10px">
+                <thead className="bg-surface border-b border-border text-muted-foreground font-bold uppercase text-[10px]">
                   <tr>
-                    <th className="p-3">Document Type</th>
-                    <th className="p-3">Enable Verification</th>
-                    <th className="p-3">Mandatory / Required</th>
+                    <th className="p-3.5">Document Requirement</th>
+                    <th className="p-3.5 text-center">Enable Upload</th>
+                    <th className="p-3.5 text-center">Mandatory / Strict Blocking</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                  {Object.entries(state.candidateDocuments).map(([docKey, config]) => (
-                    <tr key={docKey} className="hover:bg-surface/50">
-                      <td className="p-3 font-semibold text-foreground">{docKey}</td>
-                      <td className="p-3">
+                  {Object.entries(formData.candidateDocuments).map(([docKey, config]) => (
+                    <tr key={docKey} className="hover:bg-surface/50 transition-colors">
+                      <td className="p-3.5 font-bold text-foreground">{docKey}</td>
+                      <td className="p-3.5 text-center">
                         <input
                           type="checkbox"
                           checked={config.enabled}
                           onChange={(e) =>
-                            setState((prev) => ({
+                            setFormData((prev) => ({
                               ...prev,
                               candidateDocuments: {
                                 ...prev.candidateDocuments,
@@ -1110,12 +1922,12 @@ export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state
                           className="accent-ember size-4 cursor-pointer"
                         />
                       </td>
-                      <td className="p-3">
+                      <td className="p-3.5 text-center">
                         <input
                           type="checkbox"
                           checked={config.required}
                           onChange={(e) =>
-                            setState((prev) => ({
+                            setFormData((prev) => ({
                               ...prev,
                               candidateDocuments: {
                                 ...prev.candidateDocuments,
@@ -1135,24 +1947,25 @@ export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state
         </div>
       )}
 
-      {/* SUB-TAB 6: Interview & Scheduling Defaults */}
+      {/* =========================================================================
+          SUB-TAB 8: INTERVIEW DEFAULTS & SCORECARDS
+         ========================================================================= */}
       {activeSubTab === "interviews" && (
         <div className="space-y-6 animate-fadeIn">
-          <div className="bg-card border border-border rounded-xl p-6 shadow-xs space-y-4">
-            <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 border-b border-border pb-3">
-              <Calendar className="size-4 text-ember" /> Interview Defaults & Scorecards (Step 8
-              Details)
+          <div className="bg-surface border border-border rounded-2xl p-6 shadow-xs space-y-6">
+            <h2 className="text-base font-bold text-foreground flex items-center gap-2 border-b border-border pb-3">
+              <Calendar className="size-4 text-ember" /> Interview Scheduling & Evaluation Defaults
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
               <div>
-                <label className="block text-muted-foreground font-medium mb-1">
-                  Video Platform Integration
+                <label className="block text-muted-foreground font-semibold mb-1">
+                  Default Meeting Platform
                 </label>
                 <select
-                  value={state.interviewSettings.platform}
+                  value={formData.interviewSettings.platform}
                   onChange={(e) =>
-                    setState((prev) => ({
+                    setFormData((prev) => ({
                       ...prev,
                       interviewSettings: {
                         ...prev.interviewSettings,
@@ -1160,23 +1973,23 @@ export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state
                       },
                     }))
                   }
-                  className="w-full bg-surface border border-border rounded-md px-3 py-2 text-foreground focus:outline-none focus:border-ember"
+                  className="w-full bg-card border border-border rounded-xl px-3.5 py-2.5 text-foreground font-medium focus:outline-none focus:border-ember cursor-pointer"
                 >
                   <option value="Google Meet">Google Meet</option>
                   <option value="Zoom">Zoom</option>
                   <option value="Microsoft Teams">Microsoft Teams</option>
-                  <option value="Custom">Custom Link Provider</option>
+                  <option value="Custom">Custom Provider URL</option>
                 </select>
               </div>
 
               <div>
-                <label className="block text-muted-foreground font-medium mb-1">
-                  Default Interview Duration
+                <label className="block text-muted-foreground font-semibold mb-1">
+                  Default Interview Slot Duration
                 </label>
                 <select
-                  value={state.interviewSettings.durationMinutes}
+                  value={formData.interviewSettings.durationMinutes}
                   onChange={(e) =>
-                    setState((prev) => ({
+                    setFormData((prev) => ({
                       ...prev,
                       interviewSettings: {
                         ...prev.interviewSettings,
@@ -1184,24 +1997,26 @@ export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state
                       },
                     }))
                   }
-                  className="w-full bg-surface border border-border rounded-md px-3 py-2 text-foreground focus:outline-none focus:border-ember"
+                  className="w-full bg-card border border-border rounded-xl px-3.5 py-2.5 text-foreground font-medium focus:outline-none focus:border-ember cursor-pointer"
                 >
-                  <option value="30">30 Minutes</option>
-                  <option value="45">45 Minutes</option>
-                  <option value="60">60 Minutes</option>
-                  <option value="90">90 Minutes</option>
+                  <option value="15">15 Minutes (Screening)</option>
+                  <option value="30">30 Minutes (Standard)</option>
+                  <option value="45">45 Minutes (Technical)</option>
+                  <option value="60">60 Minutes (Deep Dive)</option>
+                  <option value="90">90 Minutes (Panel)</option>
                 </select>
               </div>
 
-              <div className="md:col-span-2">
-                <label className="block text-muted-foreground font-medium mb-1">
-                  Custom Platform Link (if applicable)
+              <div className="sm:col-span-2">
+                <label className="block text-muted-foreground font-semibold mb-1">
+                  Custom Video Platform Link Pattern (if applicable)
                 </label>
                 <input
                   type="text"
-                  value={state.interviewSettings.customPlatformUrl || ""}
+                  placeholder="https://meet.company.internal/{interviewId}"
+                  value={formData.interviewSettings.customPlatformUrl || ""}
                   onChange={(e) =>
-                    setState((prev) => ({
+                    setFormData((prev) => ({
                       ...prev,
                       interviewSettings: {
                         ...prev.interviewSettings,
@@ -1209,24 +2024,24 @@ export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state
                       },
                     }))
                   }
-                  className="w-full bg-surface border border-border rounded-md px-3 py-2 text-foreground focus:outline-none focus:border-ember"
+                  className="w-full bg-card border border-border rounded-xl px-3.5 py-2.5 text-foreground font-medium focus:outline-none focus:border-ember"
                 />
               </div>
             </div>
 
-            {/* Scorecards */}
+            {/* Scorecard Templates */}
             <div className="border-t border-border pt-4 space-y-3 text-xs">
-              <h3 className="font-semibold text-foreground">Scorecard Evaluation Templates</h3>
+              <h3 className="font-bold text-foreground">Scorecard Evaluation Criteria Templates</h3>
               <div className="flex flex-wrap gap-2">
-                {state.interviewSettings.scorecardTemplates.map((template) => (
+                {formData.interviewSettings.scorecardTemplates.map((template) => (
                   <span
                     key={template}
-                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface border border-border text-foreground"
+                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-card border border-border text-foreground font-semibold shadow-2xs"
                   >
                     {template}
                     <button
                       onClick={() =>
-                        setState((prev) => ({
+                        setFormData((prev) => ({
                           ...prev,
                           interviewSettings: {
                             ...prev.interviewSettings,
@@ -1243,87 +2058,121 @@ export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state
                   </span>
                 ))}
               </div>
+
+              <div className="flex gap-2 pt-2">
+                <input
+                  type="text"
+                  placeholder="New evaluation criteria (e.g. System Design Mastery)..."
+                  value={newScorecardTemplateInput}
+                  onChange={(e) => setNewScorecardTemplateInput(e.target.value)}
+                  className="bg-card border border-border rounded-xl px-3.5 py-2 text-foreground focus:outline-none focus:border-ember flex-1"
+                />
+                <button
+                  onClick={() => {
+                    if (!newScorecardTemplateInput.trim()) return;
+                    setFormData((prev) => ({
+                      ...prev,
+                      interviewSettings: {
+                        ...prev.interviewSettings,
+                        scorecardTemplates: [
+                          ...prev.interviewSettings.scorecardTemplates,
+                          newScorecardTemplateInput.trim(),
+                        ],
+                      },
+                    }));
+                    setNewScorecardTemplateInput("");
+                    toast.info("Added criteria template to front-end");
+                  }}
+                  className="bg-ember hover:bg-ember/90 text-ember-foreground font-semibold px-4 py-2 rounded-xl flex items-center gap-1.5 cursor-pointer shadow-xs"
+                >
+                  <Plus className="size-4" /> Add Criteria
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* SUB-TAB 7: Email & Communication Hub */}
+      {/* =========================================================================
+          SUB-TAB 9: EMAIL & AUTOMATION TRIGGERS
+         ========================================================================= */}
       {activeSubTab === "email_comms" && (
         <div className="space-y-6 animate-fadeIn">
-          <div className="bg-card border border-border rounded-xl p-6 shadow-xs space-y-4">
-            <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 border-b border-border pb-3">
-              <Mail className="size-4 text-ember" /> Email & Communication Settings (Step 9 Details)
+          <div className="bg-surface border border-border rounded-2xl p-6 shadow-xs space-y-6">
+            <h2 className="text-base font-bold text-foreground flex items-center gap-2 border-b border-border pb-3">
+              <Mail className="size-4 text-ember" /> Email Inboxes & Automated Candidate Triggers
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
               <div>
-                <label className="block text-muted-foreground font-medium mb-1">
-                  Recruitment Email
+                <label className="block text-muted-foreground font-semibold mb-1">
+                  Recruitment Outbox Email
                 </label>
                 <input
                   type="email"
-                  value={state.emailConfig.recruitmentEmail}
+                  value={formData.emailConfig.recruitmentEmail}
                   onChange={(e) =>
-                    setState((prev) => ({
+                    setFormData((prev) => ({
                       ...prev,
                       emailConfig: { ...prev.emailConfig, recruitmentEmail: e.target.value },
                     }))
                   }
-                  className="w-full bg-surface border border-border rounded-md px-3 py-2 text-foreground focus:outline-none focus:border-ember"
+                  className="w-full bg-card border border-border rounded-xl px-3.5 py-2.5 text-foreground font-medium focus:outline-none focus:border-ember"
                 />
               </div>
 
               <div>
-                <label className="block text-muted-foreground font-medium mb-1">Reply Email</label>
+                <label className="block text-muted-foreground font-semibold mb-1">
+                  Reply-To Address
+                </label>
                 <input
                   type="email"
-                  value={state.emailConfig.replyEmail}
+                  value={formData.emailConfig.replyEmail}
                   onChange={(e) =>
-                    setState((prev) => ({
+                    setFormData((prev) => ({
                       ...prev,
                       emailConfig: { ...prev.emailConfig, replyEmail: e.target.value },
                     }))
                   }
-                  className="w-full bg-surface border border-border rounded-md px-3 py-2 text-foreground focus:outline-none focus:border-ember"
+                  className="w-full bg-card border border-border rounded-xl px-3.5 py-2.5 text-foreground font-medium focus:outline-none focus:border-ember"
                 />
               </div>
 
               <div>
-                <label className="block text-muted-foreground font-medium mb-1">
-                  Career Portal Email
+                <label className="block text-muted-foreground font-semibold mb-1">
+                  Career Inquiries Email
                 </label>
                 <input
                   type="email"
-                  value={state.emailConfig.careerEmail}
+                  value={formData.emailConfig.careerEmail}
                   onChange={(e) =>
-                    setState((prev) => ({
+                    setFormData((prev) => ({
                       ...prev,
                       emailConfig: { ...prev.emailConfig, careerEmail: e.target.value },
                     }))
                   }
-                  className="w-full bg-surface border border-border rounded-md px-3 py-2 text-foreground focus:outline-none focus:border-ember"
+                  className="w-full bg-card border border-border rounded-xl px-3.5 py-2.5 text-foreground font-medium focus:outline-none focus:border-ember"
                 />
               </div>
             </div>
 
-            {/* Auto Emails */}
+            {/* Email Triggers */}
             <div className="border-t border-border pt-4 space-y-3 text-xs">
-              <h3 className="font-semibold text-foreground">Automated Notification Triggers</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {Object.entries(state.emailConfig.autoEmails).map(([key, enabled]) => (
+              <h3 className="font-bold text-foreground">Automated Notification Triggers</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {Object.entries(formData.emailConfig.autoEmails).map(([key, enabled]) => (
                   <label
                     key={key}
-                    className="flex items-center justify-between p-3 rounded-lg border border-border bg-surface cursor-pointer"
+                    className="flex items-center justify-between p-3.5 rounded-xl border border-border bg-card cursor-pointer"
                   >
-                    <span className="capitalize font-medium text-foreground">
+                    <span className="capitalize font-semibold text-foreground">
                       {key.replace(/([A-Z])/g, " $1")}
                     </span>
                     <input
                       type="checkbox"
                       checked={enabled}
                       onChange={(e) =>
-                        setState((prev) => ({
+                        setFormData((prev) => ({
                           ...prev,
                           emailConfig: {
                             ...prev.emailConfig,
@@ -1331,7 +2180,7 @@ export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state
                           },
                         }))
                       }
-                      className="accent-ember size-4"
+                      className="accent-ember size-4 cursor-pointer"
                     />
                   </label>
                 ))}
@@ -1341,71 +2190,109 @@ export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state
         </div>
       )}
 
-      {/* SUB-TAB 8: Career Portal & Experience */}
+      {/* =========================================================================
+          SUB-TAB 10: CAREER PORTAL & CANDIDATE EXPERIENCE
+         ========================================================================= */}
       {activeSubTab === "career_portal" && (
         <div className="space-y-6 animate-fadeIn">
-          <div className="bg-card border border-border rounded-xl p-6 shadow-xs space-y-4 text-xs">
-            <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 border-b border-border pb-3">
-              <Globe className="size-4 text-ember" /> Career Portal Customization (Step 10 Details)
+          <div className="bg-surface border border-border rounded-2xl p-6 shadow-xs space-y-4 text-xs">
+            <h2 className="text-base font-bold text-foreground flex items-center gap-2 border-b border-border pb-3">
+              <Globe className="size-4 text-ember" /> Public Career Portal Configuration
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-muted-foreground font-medium mb-1">
-                  Career Portal Public URL
+                <label className="block text-muted-foreground font-semibold mb-1">
+                  Public Jobs Portal URL
                 </label>
                 <input
                   type="text"
-                  value={state.careerPortal.url}
+                  value={formData.careerPortal.url}
                   onChange={(e) =>
-                    setState((prev) => ({
+                    setFormData((prev) => ({
                       ...prev,
                       careerPortal: { ...prev.careerPortal, url: e.target.value },
                     }))
                   }
-                  className="w-full bg-surface border border-border rounded-md px-3 py-2 text-foreground font-mono text-11px focus:outline-none focus:border-ember"
+                  className="w-full bg-card border border-border rounded-xl px-3.5 py-2.5 text-foreground font-mono text-xs focus:outline-none focus:border-ember"
                 />
               </div>
 
               <div>
-                <label className="block text-muted-foreground font-medium mb-1">
-                  About Company Heading
+                <label className="block text-muted-foreground font-semibold mb-1">
+                  Career Portal Headline
                 </label>
                 <input
                   type="text"
-                  value={state.careerPortal.aboutCompany}
+                  value={formData.careerPortal.aboutCompany}
                   onChange={(e) =>
-                    setState((prev) => ({
+                    setFormData((prev) => ({
                       ...prev,
                       careerPortal: { ...prev.careerPortal, aboutCompany: e.target.value },
                     }))
                   }
-                  className="w-full bg-surface border border-border rounded-md px-3 py-2 text-foreground focus:outline-none focus:border-ember"
+                  className="w-full bg-card border border-border rounded-xl px-3.5 py-2.5 text-foreground font-medium focus:outline-none focus:border-ember"
                 />
+              </div>
+            </div>
+
+            {/* Application form fields requirements */}
+            <div className="border-t border-border pt-4 space-y-3">
+              <h3 className="font-bold text-foreground">Application Form Requirements</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {Object.entries(formData.careerPortal.applicationFormFields).map(
+                  ([key, enabled]) => (
+                    <label
+                      key={key}
+                      className="flex items-center justify-between p-3 rounded-xl border border-border bg-card cursor-pointer"
+                    >
+                      <span className="font-semibold text-foreground capitalize">
+                        {key.replace(/^require/, "").replace(/([A-Z])/g, " $1")}
+                      </span>
+                      <input
+                        type="checkbox"
+                        checked={enabled}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            careerPortal: {
+                              ...prev.careerPortal,
+                              applicationFormFields: {
+                                ...prev.careerPortal.applicationFormFields,
+                                [key]: e.target.checked,
+                              },
+                            },
+                          }))
+                        }
+                        className="accent-ember size-4 cursor-pointer"
+                      />
+                    </label>
+                  ),
+                )}
               </div>
             </div>
           </div>
 
-          <div className="bg-card border border-border rounded-xl p-6 shadow-xs space-y-4 text-xs">
-            <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 border-b border-border pb-3">
-              <Sparkles className="size-4 text-ember" /> Candidate Experience Features (Step 11
-              Details)
+          {/* Candidate Experience Features */}
+          <div className="bg-surface border border-border rounded-2xl p-6 shadow-xs space-y-4 text-xs">
+            <h2 className="text-base font-bold text-foreground flex items-center gap-2 border-b border-border pb-3">
+              <Sparkles className="size-4 text-ember" /> Candidate Experience Enhancements
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {Object.entries(state.candidateExperience).map(([key, enabled]) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {Object.entries(formData.candidateExperience).map(([key, enabled]) => (
                 <label
                   key={key}
-                  className="flex items-center justify-between p-3 rounded-lg border border-border bg-surface cursor-pointer"
+                  className="flex items-center justify-between p-3.5 rounded-xl border border-border bg-card cursor-pointer"
                 >
-                  <span className="capitalize font-medium text-foreground">
+                  <span className="capitalize font-semibold text-foreground">
                     {key.replace(/([A-Z])/g, " $1")}
                   </span>
                   <input
                     type="checkbox"
                     checked={enabled}
                     onChange={(e) =>
-                      setState((prev) => ({
+                      setFormData((prev) => ({
                         ...prev,
                         candidateExperience: {
                           ...prev.candidateExperience,
@@ -1413,7 +2300,7 @@ export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state
                         },
                       }))
                     }
-                    className="accent-ember size-4"
+                    className="accent-ember size-4 cursor-pointer"
                   />
                 </label>
               ))}
@@ -1422,35 +2309,36 @@ export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state
         </div>
       )}
 
-      {/* SUB-TAB 9: IT Provisioning & Integrations */}
+      {/* =========================================================================
+          SUB-TAB 11: IT PROVISIONING & SOFTWARE CONNECTORS
+         ========================================================================= */}
       {activeSubTab === "it_integrations" && (
         <div className="space-y-6 animate-fadeIn">
           {/* IT Provisioning */}
-          <div className="bg-card border border-border rounded-xl p-6 shadow-xs space-y-4 text-xs">
-            <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 border-b border-border pb-3">
-              <Laptop className="size-4 text-ember" /> IT Setup & Provisioning Workflows (Step 12
-              Details)
+          <div className="bg-surface border border-border rounded-2xl p-6 shadow-xs space-y-4 text-xs">
+            <h2 className="text-base font-bold text-foreground flex items-center gap-2 border-b border-border pb-3">
+              <Laptop className="size-4 text-ember" /> IT Equipment & Account Provisioning Workflows
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              {Object.entries(state.itSetup).map(([key, enabled]) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+              {Object.entries(formData.itSetup).map(([key, enabled]) => (
                 <label
                   key={key}
-                  className="flex items-center justify-between p-3 rounded-lg border border-border bg-surface cursor-pointer"
+                  className="flex items-center justify-between p-3.5 rounded-xl border border-border bg-card cursor-pointer"
                 >
-                  <span className="capitalize font-medium text-foreground">
+                  <span className="capitalize font-semibold text-foreground">
                     {key.replace(/([A-Z])/g, " $1")}
                   </span>
                   <input
                     type="checkbox"
                     checked={enabled}
                     onChange={(e) =>
-                      setState((prev) => ({
+                      setFormData((prev) => ({
                         ...prev,
                         itSetup: { ...prev.itSetup, [key]: e.target.checked },
                       }))
                     }
-                    className="accent-ember size-4"
+                    className="accent-ember size-4 cursor-pointer"
                   />
                 </label>
               ))}
@@ -1458,30 +2346,30 @@ export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state
           </div>
 
           {/* Integrations */}
-          <div className="bg-card border border-border rounded-xl p-6 shadow-xs space-y-4 text-xs">
-            <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 border-b border-border pb-3">
-              <Puzzle className="size-4 text-ember" /> Software Integrations Hub (Step 15 Details)
+          <div className="bg-surface border border-border rounded-2xl p-6 shadow-xs space-y-4 text-xs">
+            <h2 className="text-base font-bold text-foreground flex items-center gap-2 border-b border-border pb-3">
+              <Puzzle className="size-4 text-ember" /> Multi-Channel Connectors & HRIS Sync
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              {Object.entries(state.integrations).map(([key, enabled]) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+              {Object.entries(formData.integrations).map(([key, enabled]) => (
                 <label
                   key={key}
-                  className="flex items-center justify-between p-3 rounded-lg border border-border bg-surface cursor-pointer"
+                  className="flex items-center justify-between p-3.5 rounded-xl border border-border bg-card cursor-pointer"
                 >
-                  <span className="capitalize font-medium text-foreground">
+                  <span className="capitalize font-semibold text-foreground">
                     {key.replace(/([A-Z])/g, " $1")}
                   </span>
                   <input
                     type="checkbox"
                     checked={enabled}
                     onChange={(e) =>
-                      setState((prev) => ({
+                      setFormData((prev) => ({
                         ...prev,
                         integrations: { ...prev.integrations, [key]: e.target.checked },
                       }))
                     }
-                    className="accent-ember size-4"
+                    className="accent-ember size-4 cursor-pointer"
                   />
                 </label>
               ))}
@@ -1490,72 +2378,124 @@ export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state
         </div>
       )}
 
-      {/* SUB-TAB 10: Approvals & System Metadata */}
-      {activeSubTab === "approvals_notifications" && (
+      {/* =========================================================================
+          SUB-TAB 12: APPROVAL MATRIX, NOTIFICATIONS & SYSTEM SECURITY
+         ========================================================================= */}
+      {activeSubTab === "approvals_system" && (
         <div className="space-y-6 animate-fadeIn">
-          {/* Notification Channels */}
-          <div className="bg-card border border-border rounded-xl p-6 shadow-xs space-y-4 text-xs">
-            <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 border-b border-border pb-3">
-              <Bell className="size-4 text-ember" /> Notification Channels (Step 13 Details)
+          {/* Approval Matrix */}
+          <div className="bg-surface border border-border rounded-2xl p-6 shadow-xs space-y-4 text-xs">
+            <h2 className="text-base font-bold text-foreground flex items-center gap-2 border-b border-border pb-3">
+              <ShieldCheck className="size-4 text-ember" /> Multi-Stage Governance & Approval Matrix
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-              {Object.entries(state.notificationPreferences.channels).map(([channel, enabled]) => (
-                <label
-                  key={channel}
-                  className="flex items-center justify-between p-3 rounded-lg border border-border bg-surface cursor-pointer"
-                >
-                  <span className="capitalize font-medium text-foreground">{channel}</span>
-                  <input
-                    type="checkbox"
-                    checked={enabled}
-                    onChange={(e) =>
-                      setState((prev) => ({
-                        ...prev,
-                        notificationPreferences: {
-                          ...prev.notificationPreferences,
-                          channels: {
-                            ...prev.notificationPreferences.channels,
-                            [channel]: e.target.checked,
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+              {Object.entries(formData.approvalMatrix).map(([key, config]) => (
+                <div key={key} className="p-3.5 rounded-xl border border-border bg-card space-y-2">
+                  <p className="font-bold text-foreground capitalize">
+                    {key.replace(/([A-Z])/g, " $1")}
+                  </p>
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[11px] text-muted-foreground">Approver Role:</span>
+                    <select
+                      value={config.approverRole}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          approvalMatrix: {
+                            ...prev.approvalMatrix,
+                            [key]: { ...config, approverRole: e.target.value },
                           },
-                        },
-                      }))
-                    }
-                    className="accent-ember size-4"
-                  />
-                </label>
+                        }))
+                      }
+                      className="bg-surface border border-border rounded-lg px-2 py-1 text-xs text-foreground focus:outline-none cursor-pointer"
+                    >
+                      <option value="Admin">Admin</option>
+                      <option value="HR Head">HR Head</option>
+                      <option value="Hiring Manager">Hiring Manager</option>
+                      <option value="Finance Lead">Finance Lead</option>
+                      <option value="Operations Head">Operations Head</option>
+                    </select>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
 
-          {/* System Metadata & API Key */}
-          <div className="bg-card border border-border rounded-xl p-6 shadow-xs space-y-4 text-xs font-mono">
-            <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 border-b border-border pb-3 font-sans">
-              <Key className="size-4 text-ember" /> System Identifiers & API Security (Step 17
-              Details)
+          {/* Notification Channels */}
+          <div className="bg-surface border border-border rounded-2xl p-6 shadow-xs space-y-4 text-xs">
+            <h2 className="text-base font-bold text-foreground flex items-center gap-2 border-b border-border pb-3">
+              <Bell className="size-4 text-ember" /> Notification Delivery Channels
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-3 bg-surface border border-border rounded-lg flex items-center justify-between">
-                <span className="text-muted-foreground">Company UUID:</span>
-                <span className="font-bold text-foreground">{state.systemMetadata?.companyId}</span>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {Object.entries(formData.notificationPreferences.channels).map(
+                ([channel, enabled]) => (
+                  <label
+                    key={channel}
+                    className="flex items-center justify-between p-3.5 rounded-xl border border-border bg-card cursor-pointer"
+                  >
+                    <span className="capitalize font-semibold text-foreground">{channel}</span>
+                    <input
+                      type="checkbox"
+                      checked={enabled}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          notificationPreferences: {
+                            ...prev.notificationPreferences,
+                            channels: {
+                              ...prev.notificationPreferences.channels,
+                              [channel]: e.target.checked,
+                            },
+                          },
+                        }))
+                      }
+                      className="accent-ember size-4 cursor-pointer"
+                    />
+                  </label>
+                ),
+              )}
+            </div>
+          </div>
+
+          {/* System Metadata & API Key */}
+          <div className="bg-surface border border-border rounded-2xl p-6 shadow-xs space-y-4 text-xs font-mono">
+            <h2 className="text-base font-bold text-foreground flex items-center gap-2 border-b border-border pb-3 font-sans">
+              <Key className="size-4 text-ember" /> System Identifiers & API Keys
+            </h2>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="p-3.5 bg-card border border-border rounded-xl flex items-center justify-between">
+                <span className="text-muted-foreground font-sans text-xs">Tenant ID:</span>
+                <span className="font-bold text-foreground">
+                  {formData.systemMetadata?.tenantId || "tenant-default"}
+                </span>
               </div>
-              <div className="p-3 bg-surface border border-border rounded-lg flex items-center justify-between">
-                <span className="text-muted-foreground">Tenant ID:</span>
-                <span className="font-bold text-foreground">{state.systemMetadata?.tenantId}</span>
+              <div className="p-3.5 bg-card border border-border rounded-xl flex items-center justify-between">
+                <span className="text-muted-foreground font-sans text-xs">Company Slug:</span>
+                <span className="font-bold text-foreground">{formData.profile.subdomain}</span>
               </div>
-              <div className="p-3 bg-surface border border-border rounded-lg flex items-center justify-between md:col-span-2">
-                <span className="text-muted-foreground">Secret API Key:</span>
+
+              <div className="p-3.5 bg-card border border-border rounded-xl flex items-center justify-between sm:col-span-2">
+                <span className="text-muted-foreground font-sans text-xs">Secret API Key:</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-ember truncate max-w-xs">
-                    {state.systemMetadata?.apiKey}
+                  <span className="text-ember font-bold truncate max-w-xs sm:max-w-md">
+                    {formData.systemMetadata?.apiKey || "tf_live_default_key"}
                   </span>
                   <button
                     onClick={copyApiKeyToClipboard}
-                    className="p-1 rounded bg-card border border-border hover:bg-accent text-foreground cursor-pointer"
+                    className="p-1.5 rounded-lg bg-surface border border-border hover:bg-accent text-foreground cursor-pointer shadow-2xs"
                     title="Copy API Key"
                   >
                     <Copy className="size-3.5" />
+                  </button>
+                  <button
+                    onClick={regenerateApiKey}
+                    className="p-1.5 rounded-lg bg-surface border border-border hover:bg-accent text-foreground cursor-pointer shadow-2xs"
+                    title="Regenerate API Key"
+                  >
+                    <RefreshCw className="size-3.5" />
                   </button>
                 </div>
               </div>

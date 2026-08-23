@@ -106,8 +106,6 @@ function getPointOnCurve(t: number) {
   return { x, y };
 }
 
-const DOT_T = [0.1, 0.3, 0.5, 0.7, 0.9];
-
 export default function ImpactSection() {
   const [active, setActive] = useState(0);
   const [direction, setDirection] = useState(1);
@@ -164,7 +162,7 @@ export default function ImpactSection() {
         >
           <path d="M0 320 Q800 40 1600 320" fill="none" stroke="#ff5a1f" strokeWidth="3" />
 
-          {[-2, -1, 0, 1, 2].map((offset, i) => {
+          {[-2, -1, 0, 1, 2].map((offset) => {
             const index = (active + offset + timeline.length) % timeline.length;
 
             // shift t based on offset (center = 0.5)

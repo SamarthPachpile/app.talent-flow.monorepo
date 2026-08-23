@@ -125,15 +125,6 @@ export type Candidate = {
   history: StageEvent[];
 };
 
-function history(stage: Stage, actor: string): StageEvent[] {
-  const upto = STAGES.slice(0, stageIndex(stage) + 1) as Stage[];
-  return upto.map((s, i) => ({
-    stage: s,
-    at: `Day ${i + 1}`,
-    actor: i < 5 ? "Automation" : actor,
-  }));
-}
-
 export const CANDIDATES: Candidate[] = [];
 
 export const RECRUITERS: string[] = [];

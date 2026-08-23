@@ -9,9 +9,8 @@ import {
   CheckCircle2,
   Monitor,
   ShieldCheck,
-  Sparkles,
 } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "../../lib/sweetalert";
 
 interface HardwareSetupStageViewProps {
   hardware: HardwareSelection;

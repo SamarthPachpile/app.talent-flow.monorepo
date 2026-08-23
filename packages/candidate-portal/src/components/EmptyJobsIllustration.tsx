@@ -1,5 +1,5 @@
 import React from "react";
-import { Search, Briefcase, Plus, RotateCcw } from "lucide-react";
+import { Briefcase, RotateCcw } from "lucide-react";
 
 interface EmptyJobsIllustrationProps {
   title?: string;

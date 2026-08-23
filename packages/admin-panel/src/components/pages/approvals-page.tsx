@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ClipboardCheck, ThumbsDown, ThumbsUp, UserPlus } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "@/lib/sweetalert";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { Label } from "../ui/label";

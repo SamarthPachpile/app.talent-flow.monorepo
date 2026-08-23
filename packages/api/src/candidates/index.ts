@@ -13,7 +13,7 @@ export {
 } from "./firebase";
 export { CandidateApiService } from "./candidateService";
 export type { CandidateDocument } from "./candidateService";
-export { CandidateAuthService, CandidateAuthService as FirebaseAuthService } from "./authService";
+export { CandidateAuthService } from "./authService";
 export {
   CandidateSettingsBackendService,
   CandidateSettingsBackendService as SettingsBackendService,

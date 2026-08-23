@@ -23,6 +23,18 @@
     "./candidates": {
       "import": "./src/candidates/index.ts",
       "types": "./src/candidates/index.ts"
+    },
+    "./notifications": {
+      "import": "./src/notifications/index.ts",
+      "types": "./src/notifications/index.ts"
+    },
+    "./sweetalert": {
+      "import": "./src/notifications/sweetalert.ts",
+      "types": "./src/notifications/sweetalert.ts"
+    },
+    "./constants": {
+      "import": "./src/constants/index.ts",
+      "types": "./src/constants/index.ts"
     }
   },
   "scripts": {
@@ -32,7 +44,8 @@
     "lint-fix": "eslint . --fix"
   },
   "dependencies": {
-    "firebase": "^12.17.0"
+    "firebase": "^12.17.0",
+    "sweetalert2": "^11.26.25"
   },
   "devDependencies": {
     "@types/node": "^22.16.5",

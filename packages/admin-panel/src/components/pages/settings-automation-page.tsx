@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Zap, BellRing, Mail, CheckCircle2 } from "lucide-react";
-import { toast } from "sonner";
+import { Zap, CheckCircle2 } from "lucide-react";
+import { toast } from "@/lib/sweetalert";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { SettingsCard } from "@/components/settings/settings-card";

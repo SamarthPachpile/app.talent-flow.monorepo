@@ -13,7 +13,7 @@ export {
 } from "./firebase";
 export { CompanyApiService } from "./companyService";
 export type { CompanyDocument } from "./companyService";
-export { FirebaseAuthService } from "./authService";
+export { CompanyAuthService, CompanyAuthService as FirebaseAuthService } from "./authService";
 export { sendMemberCredentialsSmtp, getSmtpConfig } from "./smtpService";
 export type { SendMemberCredentialsParams, SmtpSendResult, SmtpConfig } from "./smtpService";
 export {

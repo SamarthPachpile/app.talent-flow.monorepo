@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { OnboardingState, TeamInvite } from "../types/onboarding";
 import { UserPlus, Trash2, Send } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "../lib/sweetalert";
 
 interface TeamProps {
   state: OnboardingState;

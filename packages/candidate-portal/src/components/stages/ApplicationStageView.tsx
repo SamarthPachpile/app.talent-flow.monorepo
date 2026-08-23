@@ -1,16 +1,14 @@
 import React from "react";
 import { ApplicationInfo, CandidateProfile } from "../../types/candidate";
 import { FileText, Download, CheckCircle2, Calendar, ExternalLink } from "lucide-react";
+import { toast } from "../../lib/sweetalert";
 
 interface ApplicationStageViewProps {
   application: ApplicationInfo;
-  candidate: CandidateProfile;
+  candidate?: CandidateProfile;
 }
 
-export const ApplicationStageView: React.FC<ApplicationStageViewProps> = ({
-  application,
-  candidate,
-}) => {
+export const ApplicationStageView: React.FC<ApplicationStageViewProps> = ({ application }) => {
   return (
     <div className="space-y-5 font-sans">
       {/* Stage Header Banner */}
@@ -32,7 +30,7 @@ export const ApplicationStageView: React.FC<ApplicationStageViewProps> = ({
         </div>
 
         <button
-          onClick={() => alert(`Downloading resume: ${application.resumeFileName}`)}
+          onClick={() => toast.info(`Downloading resume: ${application.resumeFileName}`)}
           className="px-3.5 py-2 rounded-md bg-surface hover:bg-accent/60 text-foreground border border-border text-xs font-medium flex items-center gap-2 transition-colors cursor-pointer"
         >
           <Download className="size-3.5 text-ember" />

@@ -9,8 +9,8 @@ import {
   Wand2,
   LogOut,
 } from "lucide-react";
-import { toast } from "sonner";
-import { FirebaseAuthService } from "@talent-flow/api";
+import { toast } from "../lib/sweetalert";
+import { CompanyAuthService } from "@talent-flow/api";
 
 interface HeaderProps {
   activeTab: string;
@@ -34,7 +34,6 @@ export const Header: React.FC<HeaderProps> = ({
   companyName,
   subdomain,
   industry,
-  size,
   adminEmail,
   progressPercent,
   isCompleted,
@@ -77,7 +76,7 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   const handleLogoutCompany = async () => {
-    await FirebaseAuthService.signOut();
+    await CompanyAuthService.signOut();
     localStorage.removeItem("talentflow_company_auth");
     localStorage.removeItem("talentflow_company_profile");
     localStorage.removeItem("talentflow_active_company_id");

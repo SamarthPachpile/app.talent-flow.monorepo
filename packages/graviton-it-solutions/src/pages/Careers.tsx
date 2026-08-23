@@ -1,9 +1,7 @@
 import Header from "@graviton/components/Header";
 import Footer from "@graviton/components/Footer";
-import CTASection from "@graviton/components/CTASection";
 import { usePageMeta } from "@graviton/lib/use-page-meta";
 import CareersHero from "@graviton/components/careers/CareersHero";
-import FindMatchSection from "@graviton/components/careers/FindMatchSection";
 import CareersCTA from "@graviton/components/careers/CareersCTA";
 import CareersFAQ from "@graviton/components/careers/CareersFaq";
 import CareersIntro from "@graviton/components/careers/CareersIntro";

@@ -1,28 +1,13 @@
 import React, { useState } from "react";
-import {
-  ShieldCheck,
-  FileText,
-  Download,
-  Trash2,
-  Lock,
-  Eye,
-  CheckCircle2,
-  AlertTriangle,
-  FileCode,
-  Globe,
-  Clock,
-  HelpCircle,
-} from "lucide-react";
+import { ShieldCheck, Download, Trash2, Lock, AlertTriangle, Globe, Clock } from "lucide-react";
 import { CandidateProfile } from "../../types/candidate";
-import { toast } from "sonner";
+import { toast } from "../../lib/sweetalert";
 
 interface GdprStatusViewProps {
   candidate: CandidateProfile;
 }
 
 export const GdprStatusView: React.FC<GdprStatusViewProps> = ({ candidate }) => {
-  const [anonymousScreening, setAnonymousScreening] = useState<boolean>(true);
-  const [talentPoolSearch, setTalentPoolSearch] = useState<boolean>(true);
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
 
   const handleDownloadData = () => {

@@ -5,21 +5,8 @@ import {
   uploadCandidateFileToStorage,
   type CandidateSettings as CandidateSettingsType,
 } from "@talent-flow/api";
-import {
-  User,
-  Bell,
-  Shield,
-  FileText,
-  Key,
-  Save,
-  CheckCircle2,
-  Lock,
-  Eye,
-  Smartphone,
-  Camera,
-  Upload,
-} from "lucide-react";
-import { toast } from "sonner";
+import { User, Bell, FileText, Save, Lock, Eye, Camera, Upload } from "lucide-react";
+import { toast } from "../lib/sweetalert";
 
 interface CandidateSettingsProps {
   onClose?: () => void;

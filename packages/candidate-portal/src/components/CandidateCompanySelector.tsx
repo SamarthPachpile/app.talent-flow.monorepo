@@ -7,12 +7,9 @@ import {
   Users,
   Sparkles,
   ArrowRight,
-  ShieldCheck,
   Globe,
   Briefcase,
   CheckCircle2,
-  ExternalLink,
-  ChevronRight,
   ChevronDown,
   Filter,
   Radio,
@@ -442,7 +439,7 @@ export const CandidateCompanySelector: React.FC<CandidateCompanySelectorProps> =
                                   onError={() =>
                                     setImgErrorMap((prev) => ({ ...prev, [c.id || slug]: true }))
                                   }
-                                  className="size-12 rounded-xl object-cover border border-border bg-surface p-1 shadow-xs shrink-0"
+                                  className="h-10 w-auto max-w-[140px] object-contain shrink-0"
                                 />
                               );
                             }

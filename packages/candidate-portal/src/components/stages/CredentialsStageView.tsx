@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { SystemCredentials } from "../../types/candidate";
 import { Mail, QrCode, CheckCircle2, Copy, Check } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "../../lib/sweetalert";
 
 interface CredentialsStageViewProps {
   credentials: SystemCredentials;

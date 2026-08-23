@@ -1,15 +1,6 @@
 import React, { useState } from "react";
-import {
-  Linkedin,
-  FileSpreadsheet,
-  CheckCircle2,
-  RefreshCw,
-  Zap,
-  ExternalLink,
-  Link2,
-  PlusCircle,
-} from "lucide-react";
-import { toast } from "sonner";
+import { Linkedin, FileSpreadsheet, CheckCircle2, RefreshCw, Zap, PlusCircle } from "lucide-react";
+import { toast } from "../lib/sweetalert";
 
 interface ConnectorsHubProps {
   onFetchCandidates: (source: "LinkedIn" | "Google Sheets") => void;
@@ -70,7 +61,7 @@ export const ConnectorsHub: React.FC<ConnectorsHubProps> = ({
           </h1>
           <p className="text-xs text-muted-foreground mt-1">
             Connect external sourcing channels to automatically pull candidate applications into
-            your 28-stage pipeline board.
+            your pipeline board.
           </p>
         </div>
 

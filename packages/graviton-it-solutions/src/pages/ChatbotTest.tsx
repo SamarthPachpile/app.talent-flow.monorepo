@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import Header from "@graviton/components/Header";
 import Footer from "@graviton/components/Footer";
 import { usePageMeta } from "@graviton/lib/use-page-meta";
@@ -92,9 +92,7 @@ export default function ChatbotTest() {
     "Internal: run sample questions against the local chatbot knowledge base.",
   );
   const [rows, setRows] = useState<Row[]>(() => runSuite());
-  const [logTick, setLogTick] = useState(0);
-
-  const log = useMemo(() => getUnmatchedLog(), [logTick]);
+  const [log, setLog] = useState(() => getUnmatchedLog());
 
   const passed = rows.filter((r) => r.pass).length;
   const total = rows.length;
@@ -207,7 +205,7 @@ export default function ChatbotTest() {
           </div>
           <div className="flex gap-2">
             <button
-              onClick={() => setLogTick((t) => t + 1)}
+              onClick={() => setLog(getUnmatchedLog())}
               className="text-sm px-3 py-2 rounded-full border border-border hover:bg-muted"
             >
               Refresh
@@ -223,7 +221,7 @@ export default function ChatbotTest() {
               disabled={log.length === 0}
               onClick={() => {
                 clearUnmatchedLog();
-                setLogTick((t) => t + 1);
+                setLog(getUnmatchedLog());
               }}
               className="inline-flex items-center gap-2 text-sm px-3 py-2 rounded-full border border-border hover:bg-muted disabled:opacity-40"
             >

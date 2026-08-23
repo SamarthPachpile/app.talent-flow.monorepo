@@ -11,7 +11,7 @@ import {
   Clock,
   Heart,
 } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "../../lib/sweetalert";
 
 interface OfferStageViewProps {
   offer: OfferDetails;
@@ -159,7 +159,7 @@ export const OfferStageView: React.FC<OfferStageViewProps> = ({
           </div>
 
           <button
-            onClick={() => alert("Downloading official PDF document...")}
+            onClick={() => toast.info("Downloading official PDF document...")}
             className="px-3.5 py-1.5 rounded-md bg-surface hover:bg-accent/60 text-foreground border border-border text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
           >
             <Download className="size-3.5 text-ember" />

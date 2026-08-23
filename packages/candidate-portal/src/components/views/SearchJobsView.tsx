@@ -6,23 +6,17 @@ import {
   DollarSign,
   ArrowRight,
   Check,
-  CheckCircle2,
-  Building2,
   Sparkles,
   RotateCcw,
-  SlidersHorizontal,
-  Clock,
   Laptop,
-  HeartHandshake,
   TrendingUp,
   Globe2,
   ShieldCheck,
-  Filter,
   X,
 } from "lucide-react";
 import { AvailableJob } from "../../types/candidate";
 import { OPEN_POSITIONS_CATALOG } from "../../data/mockCandidateData";
-import { toast } from "sonner";
+import { toast } from "../../lib/sweetalert";
 
 interface SearchJobsViewProps {
   availableJobs?: AvailableJob[];

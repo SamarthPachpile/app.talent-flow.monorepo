@@ -7,15 +7,15 @@ import { OnboardingWizard } from "./components/OnboardingWizard";
 import { CompanyDashboard } from "./components/CompanyDashboard";
 import { OnboardingState } from "./types/onboarding";
 import { Candidate } from "./components/CompanyPipelineBoard";
-import { Toaster, toast } from "sonner";
+import { toast } from "./lib/sweetalert";
 import { Building2, ArrowLeft, Plus } from "lucide-react";
 import { getDefaultOnboardingState } from "./lib/defaultOnboardingState";
-import { CompanyApiService, FirebaseAuthService, CompanyDocument } from "@talent-flow/api";
+import { CompanyApiService, CompanyAuthService, CompanyDocument } from "@talent-flow/api";
 
 import SmoothScrollProvider from "./components/SmoothScrollProvider";
 
 export const App: React.FC = () => {
-  const [currentPath, setCurrentPath] = useState<string>(() => {
+  const [, setCurrentPath] = useState<string>(() => {
     if (typeof window !== "undefined") {
       return window.location.pathname;
     }
@@ -255,13 +255,26 @@ export const App: React.FC = () => {
     return null;
   }, []);
 
-  // Listen to Firebase Auth state updates
+  // Listen to Firebase Auth state updates with strict company role verification
   useEffect(() => {
-    const unsubscribe = FirebaseAuthService.onAuthChange(async (user) => {
-      if (user) {
-        setIsAuthenticated(true);
-        localStorage.setItem("talentflow_company_auth", "true");
-        await loadAuthenticatedCompanyData(user.email || undefined, user.uid);
+    const unsubscribe = CompanyAuthService.onAuthChange(async (user) => {
+      if (user && user.email) {
+        // Verify this user is an authorized company admin/member
+        const compDoc = await CompanyApiService.getCompanyByEmailOrUid(user.email, user.uid);
+        if (compDoc) {
+          setIsAuthenticated(true);
+          localStorage.setItem("talentflow_company_auth", "true");
+          await loadAuthenticatedCompanyData(user.email, user.uid);
+        } else {
+          // User is not a company workspace account (could be a candidate user)
+          const storedAuth =
+            typeof window !== "undefined" &&
+            localStorage.getItem("talentflow_company_auth") === "true" &&
+            !!localStorage.getItem("talentflow_company_profile");
+          if (!storedAuth) {
+            setIsAuthenticated(false);
+          }
+        }
       } else {
         const hasAuthFlag =
           typeof window !== "undefined" &&
@@ -321,16 +334,9 @@ export const App: React.FC = () => {
       if (segments[0] === "companies" && segments.length >= 2) {
         const potentialSlug = decodeURIComponent(segments[1]);
         if (
-          ![
-            "login",
-            "auth",
-            "dashboard",
-            "dashbaord",
-            "home",
-            "wizard",
-            "register",
-            "signup",
-          ].includes(potentialSlug.toLowerCase())
+          !["login", "auth", "dashboard", "home", "wizard", "register", "signup"].includes(
+            potentialSlug.toLowerCase(),
+          )
         ) {
           requestedSlug = potentialSlug;
         }
@@ -387,11 +393,7 @@ export const App: React.FC = () => {
       ) {
         setAuthMode("signin");
         setActiveTab("auth");
-      } else if (
-        cleanPath === "/companies/dashboard" ||
-        cleanPath === "/companies/dashbaord" ||
-        cleanPath === "/dashboard"
-      ) {
+      } else if (cleanPath === "/companies/dashboard" || cleanPath === "/dashboard") {
         if (!isAuth) {
           toast.error("Authentication required. Please sign in to access your company dashboard.");
           window.history.pushState({}, "", "/companies/login");
@@ -438,10 +440,7 @@ export const App: React.FC = () => {
 
     // Strict Auth Check for protected tabs/routes
     if (
-      (path.includes("/dashboard") ||
-        path.includes("/dashbaord") ||
-        targetTab === "wizard" ||
-        targetTab === "dashboard") &&
+      (path.includes("/dashboard") || targetTab === "wizard" || targetTab === "dashboard") &&
       !isAuth
     ) {
       toast.error("Authentication required. Please sign in to access your company dashboard.");
@@ -464,11 +463,7 @@ export const App: React.FC = () => {
     }
 
     // Uncompleted setup enforcement
-    if (
-      isAuth &&
-      !isComp &&
-      (targetTab === "dashboard" || path.includes("/dashboard") || path.includes("/dashbaord"))
-    ) {
+    if (isAuth && !isComp && (targetTab === "dashboard" || path.includes("/dashboard"))) {
       toast.warning("Mandatory Step: Complete company setup before accessing the dashboard.");
       const activeSlug =
         state.profile.subdomain ||
@@ -497,11 +492,7 @@ export const App: React.FC = () => {
       setActiveTab(targetTab);
     } else if (path.endsWith("/login") || path === "/login" || path.startsWith("/auth")) {
       setActiveTab("auth");
-    } else if (
-      path.includes("/dashboard") ||
-      path.includes("/dashbaord") ||
-      path === "/dashboard"
-    ) {
+    } else if (path.includes("/dashboard") || path === "/dashboard") {
       setActiveTab(isComp ? "dashboard" : "wizard");
     } else {
       setActiveTab("home");
@@ -735,7 +726,7 @@ export const App: React.FC = () => {
   };
 
   const handleLogout = async () => {
-    await FirebaseAuthService.signOut();
+    await CompanyAuthService.signOut();
     localStorage.removeItem("talentflow_company_auth");
     localStorage.removeItem("talentflow_company_profile");
     localStorage.removeItem("talentflow_active_company_id");
@@ -744,9 +735,9 @@ export const App: React.FC = () => {
     navigateTo("/companies/login", "auth");
   };
 
-  const [candidates, setCandidates] = useState<Candidate[]>([]);
+  const [candidates] = useState<Candidate[]>([]);
 
-  const [interactionsLog, setInteractionsLog] = useState<
+  const [interactionsLog] = useState<
     { id: string; at: string; actor: string; action: string; channel: string }[]
   >([]);
 

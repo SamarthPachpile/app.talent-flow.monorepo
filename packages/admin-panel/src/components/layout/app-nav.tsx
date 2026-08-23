@@ -12,7 +12,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { useWorkspace } from "../../lib/workspace-store";
 import { OPERATOR } from "../../lib/workspace-data";
-import { toast } from "sonner";
+import { toast } from "@/lib/sweetalert";
 
 const LINKS = [
   { to: "/admin-panel/dashboard", label: "Pipeline", exact: true, icon: LayoutGrid },

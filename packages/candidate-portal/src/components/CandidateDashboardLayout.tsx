@@ -1,13 +1,11 @@
 import React, { useState, useRef } from "react";
 import {
-  Gauge,
   Search,
   User,
   ShieldCheck,
   Briefcase,
   Menu,
   X,
-  Zap,
   ChevronRight,
   LogOut,
   Settings,
@@ -16,12 +14,7 @@ import {
   Moon,
   HelpCircle,
   Building2,
-  CheckCircle2,
-  Users,
-  Layers,
-  FileCheck,
   Camera,
-  Upload,
 } from "lucide-react";
 import {
   CandidatePortalState,
@@ -42,7 +35,7 @@ import { NotificationCenter } from "./NotificationCenter";
 import { HelpdeskModal } from "./HelpdeskModal";
 import { CandidateSettingsComponent } from "./CandidateSettings";
 import { Footer } from "./Footer";
-import { toast } from "sonner";
+import { toast } from "../lib/sweetalert";
 
 export type SidebarTab = "search_jobs" | "my_applications" | "profile" | "gdpr" | "my_application";
 
@@ -50,8 +43,6 @@ interface CandidateDashboardLayoutProps {
   portalState: CandidatePortalState;
   setPortalState: React.Dispatch<React.SetStateAction<CandidatePortalState>>;
   company: CompanyDocument | null;
-  activeCandidateKey?: string;
-  onSelectCandidate?: (key: string) => void;
   activeStageId: StageId;
   setActiveStageId: (id: StageId) => void;
   darkMode: boolean;
@@ -66,8 +57,6 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
   portalState,
   setPortalState,
   company,
-  activeCandidateKey,
-  onSelectCandidate,
   activeStageId,
   setActiveStageId,
   darkMode,
@@ -193,7 +182,7 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
 
       {/* 1. LEFT SIDEBAR (Fixed at left: 0, dynamic responsive width, never scrolled away) */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 h-screen z-50 flex flex-col bg-[#545C78] text-white transition-all duration-300 ease-in-out shrink-0 select-none shadow-xl ${
+        className={`fixed top-0 bottom-0 left-0 h-screen z-50 flex flex-col bg-[#545C78] text-white transition-all duration-300 ease-in-out shrink-0 select-none ${
           sidebarOpen ? "w-60 xl:w-64 min-w-[240px]" : "w-16 min-w-[64px]"
         } ${mobileSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
       >
@@ -204,21 +193,18 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
           }`}
         >
           <div className="flex items-center gap-2.5 min-w-0">
-            {/* Covered Company Logo Box */}
-            <div className="w-8.5 h-8.5 min-w-[34px] min-h-[34px] max-w-[34px] max-h-[34px] rounded-lg overflow-hidden bg-white/10 border border-white/20 shrink-0 flex items-center justify-center shadow-xs">
-              {company?.logoUrl && !companyLogoError ? (
-                <img
-                  src={company.logoUrl}
-                  alt={brandName}
-                  className="w-full h-full object-cover object-center block"
-                  onError={() => setCompanyLogoError(true)}
-                />
-              ) : (
-                <div className="w-full h-full bg-gradient-to-br from-orange-500 to-amber-600 text-white flex items-center justify-center font-bold text-xs uppercase tracking-wider">
-                  {brandName ? brandName.substring(0, 2).toUpperCase() : "TF"}
-                </div>
-              )}
-            </div>
+            {company?.logoUrl && !companyLogoError ? (
+              <img
+                src={company.logoUrl}
+                alt={brandName}
+                className="h-8 w-auto max-w-[120px] object-contain shrink-0 block"
+                onError={() => setCompanyLogoError(true)}
+              />
+            ) : (
+              <div className="w-8.5 h-8.5 min-w-[34px] min-h-[34px] rounded-lg bg-gradient-to-br from-orange-500 to-amber-600 text-white flex items-center justify-center font-bold text-xs uppercase tracking-wider shrink-0 shadow-xs">
+                {brandName ? brandName.substring(0, 2).toUpperCase() : "TF"}
+              </div>
+            )}
 
             {sidebarOpen && (
               <div className="min-w-0 flex-1">
@@ -383,7 +369,7 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
                     <img
                       src={company.logoUrl}
                       alt={company.name}
-                      className="w-4 h-4 rounded object-cover"
+                      className="h-4 w-auto max-w-[60px] object-contain"
                       onError={() => setCompanyLogoError(true)}
                     />
                   ) : (

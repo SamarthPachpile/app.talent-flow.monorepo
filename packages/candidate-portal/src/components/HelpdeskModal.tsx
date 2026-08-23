@@ -61,11 +61,11 @@ export const HelpdeskModal: React.FC<HelpdeskModalProps> = ({ candidate, onClose
               <img
                 src={company.logoUrl}
                 alt={compName}
-                className="size-9 rounded-xl object-cover border border-border bg-surface p-0.5 shadow-xs shrink-0"
+                className="h-8 w-auto max-w-[140px] object-contain shrink-0"
               />
             ) : (
               <div
-                className="size-9 rounded-xl grid place-items-center text-white font-bold text-xs shadow-xs shrink-0"
+                className="size-8 rounded-lg grid place-items-center text-white font-bold text-xs shadow-xs shrink-0"
                 style={{ backgroundColor: compColor }}
               >
                 {compName.substring(0, 2).toUpperCase()}

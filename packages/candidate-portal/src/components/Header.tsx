@@ -1,24 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import { CandidateProfile } from "../types/candidate";
-import {
-  Bell,
-  MessageSquare,
-  Sun,
-  Moon,
-  ChevronDown,
-  CheckCircle2,
-  Building2,
-  LogOut,
-  Settings,
-} from "lucide-react";
-import { toast } from "sonner";
-import { FirebaseAuthService, CompanyDocument } from "@talent-flow/api";
+import { Bell, MessageSquare, Sun, Moon, LogOut, Settings } from "lucide-react";
+import { toast } from "../lib/sweetalert";
+import { CandidateAuthService, CompanyDocument } from "@talent-flow/api";
 
 interface HeaderProps {
   candidate: CandidateProfile;
   company?: CompanyDocument | null;
-  activeCandidateKey: string;
-  onSelectCandidate: (key: string) => void;
+  activeCandidateKey?: string;
+  onSelectCandidate?: (key: string) => void;
   unreadCount: number;
   onToggleNotifications: () => void;
   onOpenHelpdesk: () => void;
@@ -31,8 +21,6 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({
   candidate,
   company,
-  activeCandidateKey,
-  onSelectCandidate,
   unreadCount,
   onToggleNotifications,
   onOpenHelpdesk,
@@ -41,11 +29,10 @@ export const Header: React.FC<HeaderProps> = ({
   onToggleDarkMode,
   onLogout,
 }) => {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-
   const handleLogoutCandidate = async () => {
-    await FirebaseAuthService.signOut();
+    await CandidateAuthService.signOut();
     localStorage.removeItem("talentflow_candidate_auth");
+    localStorage.removeItem("talentflow_candidate_profile");
     toast.info("Candidate session signed out");
     if (onLogout) {
       onLogout();
@@ -70,7 +57,7 @@ export const Header: React.FC<HeaderProps> = ({
               <img
                 src={company.logoUrl}
                 alt={compName}
-                className="size-9 rounded-xl object-cover border border-border bg-surface p-0.5 shadow-xs shrink-0 group-hover:scale-105 transition-transform"
+                className="h-8 w-auto max-w-[160px] object-contain shrink-0 group-hover:scale-105 transition-transform"
               />
             ) : (
               <span

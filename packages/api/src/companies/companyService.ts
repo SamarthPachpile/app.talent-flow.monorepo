@@ -319,10 +319,13 @@ export class CompanyApiService {
       const match = companies.find((comp) => {
         const adminEmail = comp.admin?.workEmail?.trim().toLowerCase();
         const adminUid = comp.admin?.uid;
+        const isMember =
+          comp.teamInvites?.some((m) => m.email?.trim().toLowerCase() === cleanEmail) ||
+          comp.hrTeam?.some((m) => (m.email as string)?.trim().toLowerCase() === cleanEmail);
         return (
           (adminEmail && adminEmail === cleanEmail) ||
-          (uid && adminUid === uid) ||
-          (comp.domain && cleanEmail.endsWith("@" + comp.domain.toLowerCase()))
+          (uid && adminUid && adminUid === uid) ||
+          Boolean(isMember)
         );
       });
 
@@ -339,7 +342,10 @@ export class CompanyApiService {
           const parsed = JSON.parse(activeProf);
           const parsedEmail = (parsed.admin?.workEmail || parsed.email || "").trim().toLowerCase();
           const parsedUid = parsed.admin?.uid || parsed.uid;
-          if ((parsedEmail && parsedEmail === cleanEmail) || (uid && parsedUid === uid)) {
+          if (
+            (parsedEmail && parsedEmail === cleanEmail) ||
+            (uid && parsedUid && parsedUid === uid)
+          ) {
             return parsed;
           }
         } catch {
@@ -349,12 +355,16 @@ export class CompanyApiService {
 
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
-        if (key && key.startsWith("talentflow_company_")) {
+        if (
+          key &&
+          key.startsWith("talentflow_company_") &&
+          !key.startsWith("talentflow_company_user_")
+        ) {
           try {
             const item = JSON.parse(localStorage.getItem(key) || "");
             const itemEmail = (item.admin?.workEmail || item.email || "").trim().toLowerCase();
             const itemUid = item.admin?.uid || item.uid;
-            if ((itemEmail && itemEmail === cleanEmail) || (uid && itemUid === cleanEmail)) {
+            if ((itemEmail && itemEmail === cleanEmail) || (uid && itemUid && itemUid === uid)) {
               return item;
             }
           } catch {
@@ -365,6 +375,14 @@ export class CompanyApiService {
     }
 
     return null;
+  }
+
+  /**
+   * Helper to check if an email or UID is registered as a company admin/member
+   */
+  static async isCompanyAccount(email: string, uid?: string): Promise<boolean> {
+    const doc = await this.getCompanyByEmailOrUid(email, uid);
+    return !!doc;
   }
 
   /**

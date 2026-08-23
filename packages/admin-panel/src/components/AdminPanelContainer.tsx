@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../styles.css";
 import { WorkspaceProvider } from "../lib/workspace-store";
-import { DashboardPage } from "../routes/admin-panel.dashboard";
+import { DashboardPage } from "./pages/dashboard-page";
 import { OnboardedCompaniesPage } from "./pages/companies-page";
 import { InterviewsPage } from "./pages/interviews-page";
 import { ApprovalsPage } from "./pages/approvals-page";
@@ -21,8 +21,7 @@ export function AdminPanelContainer() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
     if (typeof window !== "undefined") {
       const cleanPath = window.location.pathname.split("?")[0].replace(/\/+$/, "");
-      if (cleanPath === "/admin-panel" || cleanPath === "" || cleanPath.endsWith("/login")) {
-        localStorage.removeItem("talentflow_admin_auth");
+      if (cleanPath.endsWith("/login")) {
         return false;
       }
       return !!localStorage.getItem("talentflow_admin_auth");

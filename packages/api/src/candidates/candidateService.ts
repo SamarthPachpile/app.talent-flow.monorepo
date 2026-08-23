@@ -255,6 +255,14 @@ export class CandidateApiService {
     return null;
   }
 
+  /**
+   * Helper to check if an email or UID is registered as a candidate
+   */
+  static async isCandidateAccount(email: string, uid?: string): Promise<boolean> {
+    const doc = await this.getCandidateByEmailOrUid(email, uid);
+    return !!doc;
+  }
+
   static getSettings(): CandidateSettings {
     if (typeof window === "undefined") return defaultCandidateSettings;
     const stored = localStorage.getItem(STORAGE_KEY_CANDIDATE_SETTINGS);

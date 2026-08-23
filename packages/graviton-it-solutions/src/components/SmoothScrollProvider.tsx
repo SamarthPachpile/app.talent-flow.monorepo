@@ -31,6 +31,14 @@ export default function SmoothScrollProvider({ children }: { children: React.Rea
         wheelMultiplier: 1,
         touchMultiplier: 1.5,
         infinite: false,
+        prevent: (node) => {
+          return (
+            node?.hasAttribute?.("data-lenis-prevent") ||
+            !!node?.closest?.("[data-lenis-prevent]") ||
+            !!node?.closest?.(".overflow-y-auto") ||
+            !!node?.closest?.(".overflow-auto")
+          );
+        },
       });
 
       lenisRef.current = lenis;

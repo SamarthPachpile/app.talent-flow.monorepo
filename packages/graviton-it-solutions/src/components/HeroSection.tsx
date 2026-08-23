@@ -98,7 +98,7 @@ export default function HeroSection() {
       data-label="Home"
       className="relative h-screen w-full flex items-end pb-12 sm:pb-8 overflow-hidden"
     >
-      {/* Background Image */}
+      {/* Background Image & Bottom White Fade Overlay */}
       <div className="absolute inset-0 pointer-events-none">
         <img
           src={heroBg}
@@ -107,6 +107,8 @@ export default function HeroSection() {
           width={1920}
           height={1080}
         />
+        {/* Overlay effect of fade out matching the next section background color */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent via-50% to-background pointer-events-none" />
       </div>
 
       {/* Floating brand icons */}

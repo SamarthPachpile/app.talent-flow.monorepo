@@ -36,18 +36,13 @@ import {
   ChevronRight,
   CheckCircle2,
   Clock,
-  Info,
-  Key,
   Shield,
-  Layers,
-  ExternalLink,
-  Bot,
   Copy,
   ChevronDown,
   ChevronUp,
   FileText,
 } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "../lib/sweetalert";
 
 interface WizardProps {
   state: OnboardingState;
@@ -653,7 +648,7 @@ export const OnboardingWizard: React.FC<WizardProps> = ({ state, setState, onCom
                       <img
                         src={state.profile.logoUrl}
                         alt="Logo Preview"
-                        className="size-14 rounded-xl border border-border object-cover bg-background shrink-0 shadow-xs"
+                        className="h-14 w-auto max-w-[200px] object-contain shrink-0"
                       />
                     ) : (
                       <div className="size-14 rounded-xl border-2 border-dashed border-border bg-background flex flex-col items-center justify-center text-muted-foreground shrink-0">

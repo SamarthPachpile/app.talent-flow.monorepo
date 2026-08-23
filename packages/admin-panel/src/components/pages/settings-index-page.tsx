@@ -24,7 +24,7 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Switch } from "../ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { toast } from "sonner";
+import { toast } from "@/lib/sweetalert";
 import { SettingsCard } from "../settings/settings-card";
 import { Footer } from "../Footer";
 
@@ -40,7 +40,7 @@ export function AdminSettingsPage() {
   const [healthMetrics, setHealthMetrics] = useState<SystemHealthMetric[]>(() =>
     AdminApiService.getHealthMetrics(),
   );
-  const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>(() => AdminApiService.getAuditLogs());
+  const [auditLogs] = useState<AuditLogEntry[]>(() => AdminApiService.getAuditLogs());
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {

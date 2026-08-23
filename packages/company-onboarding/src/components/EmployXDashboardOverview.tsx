@@ -1,44 +1,28 @@
 import React, { useState } from "react";
 import {
-  Search,
   Briefcase,
   BookOpen,
-  Building2,
   MessageSquare,
   Users,
   CheckCircle2,
   TrendingUp,
   ArrowRight,
   ChevronRight,
-  MoreVertical,
-  Calendar,
   Layers,
-  Award,
   Sparkles,
-  ExternalLink,
-  Filter,
-  Check,
-  Star,
-  Coins,
-  Mail,
   UserCheck,
-  HelpCircle,
-  FileText,
   Clock,
-  Eye,
-  Plus,
   X,
 } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "../lib/sweetalert";
 import { OnboardingState } from "../types/onboarding";
 
 interface EmployXDashboardOverviewProps {
-  state: OnboardingState;
+  state?: OnboardingState;
   onNavigateTab?: (tab: string) => void;
 }
 
 export const EmployXDashboardOverview: React.FC<EmployXDashboardOverviewProps> = ({
-  state,
   onNavigateTab,
 }) => {
   // Active Filter state for Top Active Jobs
@@ -58,54 +42,8 @@ export const EmployXDashboardOverview: React.FC<EmployXDashboardOverviewProps> =
   // Employee Gender state for hover inspection
   const [hoveredGender, setHoveredGender] = useState<"Male" | "Female" | null>(null);
 
-  // Profile completion state
-  const [profileCompletion, setProfileCompletion] = useState<number>(50);
-
-  const companyName = state?.profile?.name || "EmployX Enterprise";
-
   return (
     <div className="space-y-3.5 animate-fadeIn font-sans text-slate-800 dark:text-slate-100">
-      {/* =========================================================================
-          WORKSPACE QUICK ACTION & HEALTH STATUS BANNER
-         ========================================================================= */}
-      <div className="bg-white dark:bg-slate-850 rounded-xl border border-slate-100 dark:border-slate-800 shadow-xs p-3 sm:p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-xs shrink-0">
-            <Building2 className="w-4 h-4" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="font-bold text-xs sm:text-sm text-slate-900 dark:text-slate-100 leading-tight">
-                {companyName} Workspace
-              </h2>
-              <span className="px-2 py-0.2 rounded-full text-[9.5px] font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-                ● Live Autonomous Sourcing
-              </span>
-            </div>
-            <p className="text-[10.5px] text-slate-500 mt-0.5">
-              4 Active Requisitions • 28-Stage AI Screening Active • Sourcing Connectors Synced
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 w-full sm:w-auto">
-          <button
-            onClick={() => onNavigateTab?.("pipeline")}
-            className="flex-1 sm:flex-none px-3 py-1.5 rounded-lg bg-[#3b82f6] hover:bg-[#2563eb] text-white text-xs font-semibold shadow-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-          >
-            <Layers className="w-3.5 h-3.5" />
-            <span>Open 28-Stage Pipeline</span>
-          </button>
-          <button
-            onClick={() => onNavigateTab?.("connectors")}
-            className="flex-1 sm:flex-none px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-          >
-            <Filter className="w-3.5 h-3.5 text-slate-500" />
-            <span>Connectors Hub</span>
-          </button>
-        </div>
-      </div>
-
       {/* =========================================================================
           ROW 1: 4 TOP CARDS (Jobs for Me, My Learning, My Social Story, Profile)
          ========================================================================= */}
@@ -1243,7 +1181,6 @@ export const EmployXDashboardOverview: React.FC<EmployXDashboardOverviewProps> =
               </button>
               <button
                 onClick={() => {
-                  setProfileCompletion(100);
                   setShowProfileModal(false);
                   toast.success("Profile 100% completed! Recruiter badge updated.");
                 }}

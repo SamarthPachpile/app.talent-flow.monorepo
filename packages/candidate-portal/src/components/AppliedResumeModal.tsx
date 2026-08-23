@@ -14,7 +14,7 @@ import {
   Award,
 } from "lucide-react";
 import { CandidateProfile, AppliedJob } from "../types/candidate";
-import { toast } from "sonner";
+import { toast } from "../lib/sweetalert";
 
 interface AppliedResumeModalProps {
   isOpen: boolean;
