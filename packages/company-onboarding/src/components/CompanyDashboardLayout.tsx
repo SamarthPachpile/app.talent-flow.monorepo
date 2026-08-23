@@ -19,27 +19,15 @@ import {
   Maximize2,
   Minimize2,
   ChevronRight,
-  ChevronDown,
-  Layers,
-  Sparkles,
   LogOut,
   Settings,
-  HelpCircle,
-  ExternalLink,
-  ShieldCheck,
-  Building2,
-  CheckCircle2,
-  Coins,
-  Mail,
-  User,
-  Plus,
 } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "../lib/sweetalert";
 import { OnboardingState } from "../types/onboarding";
 import { Candidate, CompanyPipelineBoard } from "./CompanyPipelineBoard";
 import { ConnectorsHub } from "./ConnectorsHub";
 import { TeamManagement } from "./TeamManagement";
-import { CompanySettingsComponent as CompanyProfileSettings } from "./CompanySettings";
+import { CompanySettingsComponent } from "./CompanySettings";
 import { EmployXDashboardOverview } from "./EmployXDashboardOverview";
 import { Footer } from "./Footer";
 
@@ -118,8 +106,6 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
       setIsFullscreen(false);
     }
   };
-
-  const companyName = state?.profile?.name || "EmployX Enterprise";
 
   return (
     <div className="flex min-h-screen w-full bg-[#f4f6fb] dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-sans">
@@ -782,7 +768,7 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
 
             {currentTab === "settings" && (
               <div className="space-y-4 animate-fadeIn">
-                <CompanyProfileSettings state={state} setState={setState} />
+                <CompanySettingsComponent state={state} setState={setState} />
               </div>
             )}
           </div>

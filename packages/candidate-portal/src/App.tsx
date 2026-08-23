@@ -1,36 +1,21 @@
 import React, { useState, useEffect, useCallback } from "react";
 import "./index.css";
 import {
-  MOCK_CANDIDATES,
   emptyCandidatePortalState,
-  createDefaultCandidateState,
   createCandidatePortalStateFromDoc,
 } from "./data/mockCandidateData";
 import { CandidatePortalState, StageId, HardwareSelection } from "./types/candidate";
-import { Header } from "./components/Header";
-import { CandidateHero } from "./components/CandidateHero";
-import { StageStepper } from "./components/StageStepper";
-import { ApplicationStageView } from "./components/stages/ApplicationStageView";
-import { InterviewStageView } from "./components/stages/InterviewStageView";
-import { OfferStageView } from "./components/stages/OfferStageView";
-import { BackgroundCheckStageView } from "./components/stages/BackgroundCheckStageView";
-import { HardwareSetupStageView } from "./components/stages/HardwareSetupStageView";
-import { CredentialsStageView } from "./components/stages/CredentialsStageView";
-import { DayOneStageView } from "./components/stages/DayOneStageView";
-import { NotificationCenter } from "./components/NotificationCenter";
-import { HelpdeskModal } from "./components/HelpdeskModal";
 import { CandidateAuthScreen, CandidateAuthSuccessData } from "./components/CandidateAuthScreen";
 import { CandidateOnboardingWizard } from "./components/CandidateOnboardingWizard";
-import { CandidateSettingsComponent } from "./components/CandidateSettings";
 import { CandidateCompanySelector } from "./components/CandidateCompanySelector";
 import { CandidateDashboardLayout } from "./components/CandidateDashboardLayout";
-import { Toaster, toast } from "sonner";
+import { toast } from "./lib/sweetalert";
 import { Building2, ArrowLeft, Plus } from "lucide-react";
 import SmoothScrollProvider from "./components/SmoothScrollProvider";
 import {
   CandidateApiService,
   CandidateDocument,
-  FirebaseAuthService,
+  CandidateAuthService,
   CompanyApiService,
   CompanyDocument,
 } from "@talent-flow/api";
@@ -122,9 +107,6 @@ export function App() {
   });
 
   const [activeStageId, setActiveStageId] = useState<StageId>("application");
-  const [showNotifications, setShowNotifications] = useState(false);
-  const [showHelpdesk, setShowHelpdesk] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
 
   const [isCompanyLoading, setIsCompanyLoading] = useState<boolean>(false);
@@ -222,12 +204,22 @@ export function App() {
     }
   }, [isAuthenticated, loadAuthenticatedCandidateData]);
 
-  // Listen to Firebase Auth state updates
+  // Listen to Firebase Auth state updates with candidate role verification
   useEffect(() => {
-    const unsubscribe = FirebaseAuthService.onAuthChange(async (user) => {
-      if (user) {
-        setIsAuthenticated(true);
-        await loadAuthenticatedCandidateData(user.email || undefined, user.uid);
+    const unsubscribe = CandidateAuthService.onAuthChange(async (user) => {
+      if (user && user.email) {
+        // Verify this user is an authorized candidate
+        const candDoc = await CandidateApiService.getCandidateByEmailOrUid(user.email, user.uid);
+        if (candDoc) {
+          setIsAuthenticated(true);
+          await loadAuthenticatedCandidateData(user.email, user.uid);
+        } else {
+          // User is not a candidate account (could be a company admin active in auth)
+          const storedAuth = localStorage.getItem("talentflow_candidate_auth");
+          if (!storedAuth) {
+            setIsAuthenticated(false);
+          }
+        }
       } else {
         const storedAuth = localStorage.getItem("talentflow_candidate_auth");
         if (!storedAuth) {
@@ -405,11 +397,10 @@ export function App() {
   };
 
   const handleLogout = async () => {
-    await FirebaseAuthService.signOut();
+    await CandidateAuthService.signOut();
     localStorage.removeItem("talentflow_candidate_auth");
     localStorage.removeItem("talentflow_candidate_profile");
     setIsAuthenticated(false);
-    setShowSettings(false);
     toast.info("Signed out of candidate portal");
 
     const companySlug =
@@ -475,8 +466,6 @@ export function App() {
     }));
     toast.success("Hardware choices confirmed & order dispatched to IT!");
   };
-
-  const unreadNotifCount = portalState.notifications.filter((n) => !n.read).length;
 
   const routeInfo = getRouteInfo(currentPath);
 

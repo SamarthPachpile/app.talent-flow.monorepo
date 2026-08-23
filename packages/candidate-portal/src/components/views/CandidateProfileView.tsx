@@ -1,26 +1,8 @@
 import React, { useState, useRef } from "react";
-import {
-  User,
-  Mail,
-  Phone,
-  MapPin,
-  Briefcase,
-  FileText,
-  Upload,
-  CheckCircle2,
-  Linkedin,
-  Github,
-  Globe,
-  Save,
-  Clock,
-  Sparkles,
-  X,
-  Plus,
-  Camera,
-} from "lucide-react";
+import { FileText, Upload, Linkedin, Github, Globe, Save, X, Plus, Camera } from "lucide-react";
 import { CandidateProfile } from "../../types/candidate";
 import { uploadCandidateFileToStorage } from "@talent-flow/api";
-import { toast } from "sonner";
+import { toast } from "../../lib/sweetalert";
 
 interface CandidateProfileViewProps {
   candidate: CandidateProfile;
@@ -39,8 +21,8 @@ export const CandidateProfileView: React.FC<CandidateProfileViewProps> = ({
   const [email, setEmail] = useState(candidate.email);
   const [phone, setPhone] = useState(candidate.phone);
   const [location, setLocation] = useState(candidate.location);
-  const [roleTitle, setRoleTitle] = useState(candidate.roleTitle);
-  const [department, setDepartment] = useState(candidate.department);
+  const roleTitle = candidate.roleTitle;
+  const department = candidate.department;
   const [bio, setBio] = useState(
     "Senior software engineer specializing in scalable fullstack web platforms, distributed systems, and modern component architectures.",
   );

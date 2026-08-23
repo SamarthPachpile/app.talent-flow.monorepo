@@ -108,8 +108,10 @@ export const CandidateAuthService = {
 
         // Local cache fallback
         if (typeof window !== "undefined") {
-          localStorage.setItem(`talentflow_user_${user.uid}`, JSON.stringify(profilePayload));
-          localStorage.setItem("talentflow_active_user_profile", JSON.stringify(profilePayload));
+          localStorage.setItem(
+            `talentflow_candidate_user_${user.uid}`,
+            JSON.stringify(profilePayload),
+          );
         }
 
         return { user, userProfile: profilePayload, verificationSent };

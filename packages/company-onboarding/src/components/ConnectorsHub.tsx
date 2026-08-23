@@ -1,15 +1,6 @@
 import React, { useState } from "react";
-import {
-  Linkedin,
-  FileSpreadsheet,
-  CheckCircle2,
-  RefreshCw,
-  Zap,
-  ExternalLink,
-  Link2,
-  PlusCircle,
-} from "lucide-react";
-import { toast } from "sonner";
+import { Linkedin, FileSpreadsheet, CheckCircle2, RefreshCw, Zap, PlusCircle } from "lucide-react";
+import { toast } from "../lib/sweetalert";
 
 interface ConnectorsHubProps {
   onFetchCandidates: (source: "LinkedIn" | "Google Sheets") => void;

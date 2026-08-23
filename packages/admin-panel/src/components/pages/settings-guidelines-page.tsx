@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { BookOpen, CheckCircle2, ShieldAlert } from "lucide-react";
-import { toast } from "sonner";
+import { BookOpen, CheckCircle2 } from "lucide-react";
+import { toast } from "@/lib/sweetalert";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { SettingsCard } from "@/components/settings/settings-card";

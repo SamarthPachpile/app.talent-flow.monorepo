@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { DayOneReadiness, CandidateProfile } from "../../types/candidate";
 import { Rocket, Calendar, CheckCircle2, Clock, Sparkles, Send } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "../../lib/sweetalert";
 
 interface DayOneStageViewProps {
   dayOne: DayOneReadiness;

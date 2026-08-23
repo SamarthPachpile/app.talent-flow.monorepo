@@ -16,7 +16,7 @@ import {
   Paperclip,
   Camera,
 } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "../lib/sweetalert";
 import {
   CandidateApiService,
   CandidateDocument,

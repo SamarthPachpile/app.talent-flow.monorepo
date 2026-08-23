@@ -21,7 +21,7 @@ export interface AuthResult {
   verificationSent?: boolean;
 }
 
-export const FirebaseAuthService = {
+export const CompanyAuthService = {
   /**
    * Signs in or registers a user using Google Authentication popup.
    */
@@ -108,8 +108,10 @@ export const FirebaseAuthService = {
 
         // Local cache fallback
         if (typeof window !== "undefined") {
-          localStorage.setItem(`talentflow_user_${user.uid}`, JSON.stringify(profilePayload));
-          localStorage.setItem("talentflow_active_user_profile", JSON.stringify(profilePayload));
+          localStorage.setItem(
+            `talentflow_company_user_${user.uid}`,
+            JSON.stringify(profilePayload),
+          );
         }
 
         return { user, userProfile: profilePayload, verificationSent };
@@ -339,3 +341,5 @@ function formatFirebaseError(err: unknown): string {
       return errorObj?.message || "Authentication failed. Please try again.";
   }
 }
+
+export const FirebaseAuthService = CompanyAuthService;

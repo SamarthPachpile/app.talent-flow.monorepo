@@ -2,7 +2,7 @@
 // Multi-tenant: every record is scoped to a client company. No backend yet —
 // this mirrors the shape the real database tables will follow.
 
-import { CANDIDATES, type Candidate, type Stage } from "./ats-data";
+import { type Candidate, type Stage } from "./ats-data";
 
 export const OPERATOR = {
   name: "GRAVITON IT SOLUTIONS",

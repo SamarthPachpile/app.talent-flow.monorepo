@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Users, UserPlus, ShieldCheck } from "lucide-react";
-import { toast } from "sonner";
+import { Users, UserPlus } from "lucide-react";
+import { toast } from "@/lib/sweetalert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";

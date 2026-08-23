@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Mail,
   KeyRound,
   ArrowRight,
   ShieldCheck,
   User,
+  UserPlus,
+  LogIn,
   Phone,
   Globe,
   RefreshCw,
@@ -16,9 +19,9 @@ import {
   Loader2,
   Sparkles,
 } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "../lib/sweetalert";
 import {
-  FirebaseAuthService,
+  CandidateAuthService,
   CandidateApiService,
   CandidateDocument,
   COUNTRY_OPTIONS,
@@ -76,7 +79,7 @@ export function CandidateAuthScreen({
 
   const handleGoogleAuth = async () => {
     setIsSubmitting(true);
-    const result = await FirebaseAuthService.signInWithGoogle();
+    const result = await CandidateAuthService.signInWithGoogle();
     setIsSubmitting(false);
 
     if (result.user) {
@@ -88,8 +91,17 @@ export function CandidateAuthScreen({
         company?.id ||
         (company?.name ? company.name.toLowerCase().replace(/[^a-z0-9]/g, "") : "");
 
-      // Fetch candidate profile from Firestore 'candidates' collection if it exists
+      // CROSS-PORTAL CHECK: Check if this user is a Company Workspace Admin
       let candDoc = await CandidateApiService.getCandidateByEmailOrUid(userEmail, uid);
+      const companyDoc = await CompanyApiService.getCompanyByEmailOrUid(userEmail, uid);
+
+      if (companyDoc && !candDoc) {
+        await CandidateAuthService.signOut();
+        toast.error(
+          "Access Denied: This Google account is registered as a Company Workspace Administrator and cannot be used to log in to the Candidate Portal. Please sign in via the Company Portal.",
+        );
+        return;
+      }
 
       if (candDoc) {
         // PER-COMPANY REGISTRATION CHECK: Must be registered for this company's portal
@@ -194,7 +206,7 @@ export function CandidateAuthScreen({
   const handleResendEmailVerification = async () => {
     setIsResendingEmail(true);
     const activeMail = createdUserEmail || email;
-    const res = await FirebaseAuthService.sendVerificationEmail(activeMail);
+    const res = await CandidateAuthService.sendVerificationEmail(activeMail);
     setIsResendingEmail(false);
     toast.success(res.message || `Verification link dispatched to ${activeMail}`);
   };
@@ -213,7 +225,7 @@ export function CandidateAuthScreen({
     }
 
     setIsResendingEmail(true);
-    const updateRes = await FirebaseAuthService.updateUserEmailAndResend(trimmed);
+    const updateRes = await CandidateAuthService.updateUserEmailAndResend(trimmed);
     setIsResendingEmail(false);
 
     setEmail(trimmed);
@@ -227,7 +239,7 @@ export function CandidateAuthScreen({
 
   const handleCompleteEmailVerification = useCallback(async () => {
     setIsCheckingVerification(true);
-    const isVerified = await FirebaseAuthService.checkEmailVerified();
+    await CandidateAuthService.checkEmailVerified();
     setIsCheckingVerification(false);
 
     const activeEmail = createdUserEmail || email;
@@ -335,7 +347,7 @@ export function CandidateAuthScreen({
 
     if (showEmailVerificationModal) {
       intervalId = setInterval(async () => {
-        const isVerified = await FirebaseAuthService.checkEmailVerified();
+        const isVerified = await CandidateAuthService.checkEmailVerified();
         if (isVerified) {
           if (intervalId) clearInterval(intervalId);
           await handleCompleteEmailVerification();
@@ -350,8 +362,6 @@ export function CandidateAuthScreen({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    const candidateKey = email.toLowerCase().includes("sarah") ? "sarah" : "alex";
 
     if (mode === "signup") {
       if (password !== confirmPassword) {
@@ -378,6 +388,43 @@ export function CandidateAuthScreen({
 
       setIsSubmitting(true);
 
+      const companySlug =
+        company?.subdomain ||
+        company?.id ||
+        (company?.name ? company.name.toLowerCase().replace(/[^a-z0-9]/g, "") : "");
+
+      // CROSS-PORTAL CHECK: Check if email is registered as a Company Workspace Administrator
+      try {
+        const companyAdminDoc = await CompanyApiService.getCompanyByEmailOrUid(email);
+        if (companyAdminDoc) {
+          setIsSubmitting(false);
+          toast.error(
+            "Registration Rejected: This email address is registered as a Company Workspace Administrator. Please use a candidate/personal email address to create a Candidate profile.",
+          );
+          return;
+        }
+      } catch (compCheckErr) {
+        console.warn("Company admin email pre-check error:", compCheckErr);
+      }
+
+      // Check if already registered for this specific company portal
+      try {
+        const existingCand = await CandidateApiService.getCandidateByEmailOrUid(email);
+        if (
+          existingCand &&
+          companySlug &&
+          CandidateApiService.isCandidateRegisteredForCompany(existingCand, companySlug)
+        ) {
+          setIsSubmitting(false);
+          toast.error(
+            `An account with email '${email}' is already registered for ${company?.name || companySlug}. Please sign in instead.`,
+          );
+          return;
+        }
+      } catch (candCheckErr) {
+        console.warn("Candidate email pre-check error:", candCheckErr);
+      }
+
       const signupPayload = {
         email,
         password,
@@ -393,14 +440,9 @@ export function CandidateAuthScreen({
         captchaVerified: true,
       };
 
-      const result = await FirebaseAuthService.signUpWithFullDetails(signupPayload);
+      const result = await CandidateAuthService.signUpWithFullDetails(signupPayload);
 
       if (result.user || result.userProfile) {
-        const companySlug =
-          company?.subdomain ||
-          company?.id ||
-          (company?.name ? company.name.toLowerCase().replace(/[^a-z0-9]/g, "") : "");
-
         const initialCandidateDoc: CandidateDocument = {
           id: "", // Auto-generated default Firestore ID in saveCandidateToFirestore
           fullName,
@@ -446,7 +488,7 @@ export function CandidateAuthScreen({
       }
     } else {
       setIsSubmitting(true);
-      const result = await FirebaseAuthService.signIn(email, password);
+      const result = await CandidateAuthService.signIn(email, password);
 
       // STRICT FIREBASE AUTHENTICATION CHECK: Password and email must be verified by Firebase Auth
       if (!result.user) {
@@ -465,8 +507,28 @@ export function CandidateAuthScreen({
         activeUser.uid,
       );
 
+      // CROSS-PORTAL CHECK: Check if this user is a Company Workspace Admin trying to access Candidate Portal
+      const companyDoc = await CompanyApiService.getCompanyByEmailOrUid(
+        activeUser.email || email,
+        activeUser.uid,
+      );
+
+      if (companyDoc && !candDoc) {
+        await CandidateAuthService.signOut();
+        localStorage.removeItem("talentflow_candidate_auth");
+        localStorage.removeItem("talentflow_candidate_profile");
+        setIsSubmitting(false);
+        toast.error(
+          "Access Denied: This email address is registered as a Company Workspace Administrator and cannot be used to log in to the Candidate Portal. Please sign in via the Company Portal.",
+        );
+        return;
+      }
+
       // STRICT DATABASE CANDIDATE CHECK: Must exist in database
       if (!candDoc) {
+        await CandidateAuthService.signOut();
+        localStorage.removeItem("talentflow_candidate_auth");
+        localStorage.removeItem("talentflow_candidate_profile");
         setIsSubmitting(false);
         toast.error(
           `No candidate account found for ${email}. Please register an account for this company portal first.`,
@@ -487,6 +549,9 @@ export function CandidateAuthScreen({
         );
 
         if (!isRegisteredForCompany) {
+          await CandidateAuthService.signOut();
+          localStorage.removeItem("talentflow_candidate_auth");
+          localStorage.removeItem("talentflow_candidate_profile");
           setIsSubmitting(false);
           toast.error(
             `Account '${email}' is not registered for ${company?.name || companySlug}'s candidate portal. Please sign up on this company portal first.`,
@@ -531,347 +596,573 @@ export function CandidateAuthScreen({
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-4 sm:p-6 font-sans relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-ember/5 via-transparent to-transparent pointer-events-none" />
+    <div
+      data-lenis-prevent
+      className="min-h-screen lg:h-screen lg:overflow-hidden bg-background text-foreground grid grid-cols-1 lg:grid-cols-2 font-sans relative"
+    >
+      {/* Left Section: Cover Background Image & Candidate Roadmap Showcase */}
+      <div className="relative hidden lg:flex flex-col justify-between p-10 xl:p-14 text-white overflow-hidden h-full">
+        {/* Background Image with Overlay */}
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105 transition-transform duration-1000"
+          style={{
+            backgroundImage: `url('/assets/hero-bg.jpg'), url('/assets/Cnadidates Portal UI.jpg')`,
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/75 to-black/45 backdrop-blur-[2px] pointer-events-none" />
+        <div className="absolute inset-0 bg-radial-at-t from-ember/25 via-transparent to-transparent opacity-80 pointer-events-none" />
 
-      <div className="w-full max-w-xl bg-card border border-border rounded-2xl shadow-lifted p-5 sm:p-8 relative z-10 space-y-6 my-auto max-h-[92vh] overflow-y-auto">
-        {/* Header */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
+        {/* Top Branding */}
+        <div className="relative z-10 flex items-center justify-between">
           <div className="flex items-center gap-3">
             {company ? (
               company.logoUrl ? (
                 <img
                   src={company.logoUrl}
                   alt={company.name}
-                  className="size-11 rounded-xl object-cover border border-border bg-surface p-1 shadow-xs shrink-0"
+                  className="h-11 w-auto max-w-[200px] object-contain shrink-0 drop-shadow-md"
                 />
               ) : (
                 <span
-                  className="grid size-11 place-items-center rounded-xl text-white font-bold text-base shadow-xs shrink-0"
+                  className="grid size-11 place-items-center rounded-xl text-white font-bold text-base shadow-lg shrink-0 border border-white/20 backdrop-blur-md"
                   style={{ backgroundColor: company.brandColor || "#6366f1" }}
                 >
                   {company.name.substring(0, 2).toUpperCase()}
                 </span>
               )
             ) : (
-              <span className="grid size-10 place-items-center rounded-xl bg-ember text-ember-foreground font-bold text-sm shadow-xs shrink-0">
+              <span className="grid size-11 place-items-center rounded-xl bg-ember text-ember-foreground font-bold text-sm shadow-lg shadow-ember/30 shrink-0">
                 TF
               </span>
             )}
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="font-display text-xl font-bold text-foreground leading-tight">
-                  {company
-                    ? mode === "signup"
-                      ? `Register — ${company.name}`
-                      : `${company.name} Portal Login`
-                    : mode === "signup"
-                      ? "Candidate Registration"
-                      : "Candidate Sign In"}
-                </h2>
-              </div>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                {company
-                  ? mode === "signup"
-                    ? `Create candidate profile for ${company.name}`
-                    : `Sign in to access candidate portal & status at ${company.name}`
-                  : mode === "signup"
-                    ? "Create candidate profile & access onboarding roadmap"
-                    : "Sign in to access candidate portal & application status"}
-              </p>
+            <div className="flex flex-col leading-none">
+              <span className="text-xl font-bold tracking-tight text-white">
+                {company ? company.name : "TalentFlow"}
+                <sup className="text-[10px] top-0 ml-0.5 font-bold text-ember">®</sup>
+              </span>
+              <span className="text-11px text-white/70 mt-0.5 font-medium">
+                {company ? "Candidate Experience Portal" : "Candidate Career Portal"}
+              </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            {(onBackToCompanies || onBackToHome) && (
-              <button
-                type="button"
-                onClick={onBackToCompanies || onBackToHome}
-                className="px-3 py-1.5 rounded-lg bg-surface border border-border text-xs font-semibold text-foreground hover:bg-accent transition-colors cursor-pointer flex items-center gap-1 shrink-0"
-                title="Switch Company Portal"
-              >
-                <ArrowLeft className="size-3.5 text-ember" />
-                <span>Switch Company</span>
-              </button>
-            )}
-            <button
-              type="button"
-              onClick={() => setMode(mode === "login" ? "signup" : "login")}
-              className="text-xs font-semibold text-ember hover:underline cursor-pointer bg-ember/10 px-3 py-1.5 rounded-lg border border-ember/20 shrink-0"
-            >
-              {mode === "login" ? "Sign Up" : "Sign In"}
-            </button>
+          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-xs text-white/90">
+            <span className="size-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="font-semibold text-11px">Real-Time Sync</span>
           </div>
         </div>
 
-        {/* Google Authentication Button */}
-        <div className="space-y-3">
-          <button
-            type="button"
-            onClick={handleGoogleAuth}
-            disabled={isSubmitting}
-            className="w-full py-2.5 px-4 rounded-xl border border-border bg-surface hover:bg-accent text-foreground text-xs font-semibold shadow-xs transition-all flex items-center justify-center gap-3 cursor-pointer hover:border-ember/40 disabled:opacity-50"
-          >
-            <svg className="size-4 shrink-0" viewBox="0 0 24 24">
-              <path
-                fill="#4285F4"
-                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-              />
-              <path
-                fill="#34A853"
-                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-              />
-              <path
-                fill="#FBBC05"
-                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
-              />
-              <path
-                fill="#EA4335"
-                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
-              />
-            </svg>
-            <span>{mode === "signup" ? "Sign up with Google" : "Sign in with Google"}</span>
-          </button>
+        {/* Center Showcase Info */}
+        <div className="relative z-10 my-auto py-8 space-y-6 max-w-xl">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-ember/20 border border-ember/40 text-ember text-xs font-semibold backdrop-blur-md shadow-xs">
+            <Sparkles className="size-4" />
+            <span>Interactive 6-Stage Candidate Roadmap</span>
+          </div>
 
-          <div className="relative flex items-center justify-center my-2">
-            <div className="border-t border-border w-full" />
-            <span className="bg-card px-3 text-10px text-muted-foreground uppercase tracking-wider font-semibold absolute">
-              or continue with email
+          <div className="space-y-3">
+            <h1 className="text-3xl xl:text-4xl 2xl:text-5xl font-display font-bold leading-tight tracking-tight text-white">
+              {company
+                ? `Welcome to ${company.name}'s Hiring & Onboarding Portal`
+                : "Accelerate Your Journey From Application to Day One"}
+            </h1>
+            <p className="text-sm xl:text-base text-white/80 leading-relaxed font-light">
+              Access your personalized hiring roadmap, review interview milestones, e-sign offer
+              agreements, and customize your IT equipment with full transparency.
+            </p>
+          </div>
+
+          {/* Interactive Steps Pill Grid */}
+          <div className="grid grid-cols-2 gap-3 pt-1">
+            <div className="p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/15 flex items-start gap-2.5">
+              <span className="size-6 rounded-lg bg-ember/30 border border-ember/40 text-ember text-xs font-bold grid place-items-center shrink-0">
+                1
+              </span>
+              <div>
+                <h4 className="text-xs font-semibold text-white">Screening & Status</h4>
+                <p className="text-10px text-white/70">Live candidate telemetry</p>
+              </div>
+            </div>
+
+            <div className="p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/15 flex items-start gap-2.5">
+              <span className="size-6 rounded-lg bg-ember/30 border border-ember/40 text-ember text-xs font-bold grid place-items-center shrink-0">
+                2
+              </span>
+              <div>
+                <h4 className="text-xs font-semibold text-white">Interviews Hub</h4>
+                <p className="text-10px text-white/70">Google Meet & calendar sync</p>
+              </div>
+            </div>
+
+            <div className="p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/15 flex items-start gap-2.5">
+              <span className="size-6 rounded-lg bg-ember/30 border border-ember/40 text-ember text-xs font-bold grid place-items-center shrink-0">
+                3
+              </span>
+              <div>
+                <h4 className="text-xs font-semibold text-white">Offer E-Signing</h4>
+                <p className="text-10px text-white/70">Binding contract signing</p>
+              </div>
+            </div>
+
+            <div className="p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/15 flex items-start gap-2.5">
+              <span className="size-6 rounded-lg bg-ember/30 border border-ember/40 text-ember text-xs font-bold grid place-items-center shrink-0">
+                4
+              </span>
+              <div>
+                <h4 className="text-xs font-semibold text-white">IT Hardware Choice</h4>
+                <p className="text-10px text-white/70">Dispatch & equipment tracking</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Trust Footer */}
+        <div className="relative z-10 flex items-center justify-between pt-6 border-t border-white/15 text-xs text-white/75">
+          <div className="flex items-center gap-4">
+            <span className="flex items-center gap-1.5">
+              <ShieldCheck className="size-3.5 text-emerald-400" />
+              <span>100% GDPR Compliant</span>
+            </span>
+            <span className="flex items-center gap-1.5">
+              <Lock className="size-3.5 text-ember" />
+              <span>AES-256 Auth Encryption</span>
             </span>
           </div>
+          <span className="text-11px text-white/50">Verified Candidate Portal</span>
         </div>
+      </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {mode === "signup" ? (
-            <div className="space-y-4">
-              {/* Row 1: Full Name & Mobile Number */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                <div>
-                  <label className="block text-xs font-semibold text-foreground mb-1">
-                    Legal Full Name <span className="text-ember">*</span>
-                  </label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-                    <input
-                      type="text"
-                      required
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      placeholder="e.g. Alex Rivera"
-                      className="w-full pl-9 pr-3 py-2 rounded-lg bg-surface border border-input text-foreground text-xs focus:outline-none focus:border-ember"
+      {/* Right Section: Form Container */}
+      <div
+        data-lenis-prevent
+        className="h-full min-h-screen lg:min-h-0 lg:max-h-screen overflow-y-auto relative z-10 flex flex-col overscroll-contain"
+        style={{
+          WebkitOverflowScrolling: "touch",
+          touchAction: "pan-y",
+        }}
+      >
+        <div className="flex-1 flex flex-col justify-between p-6 sm:p-10 lg:p-12 xl:p-14 min-h-full">
+          <div className="w-full max-w-xl mx-auto py-4 space-y-6">
+            {/* Header */}
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
+              <div className="flex items-center gap-3">
+                {company ? (
+                  company.logoUrl ? (
+                    <img
+                      src={company.logoUrl}
+                      alt={company.name}
+                      className="h-11 w-auto max-w-[200px] object-contain shrink-0"
                     />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-foreground mb-1">
-                    Mobile Number <span className="text-ember">*</span>
-                  </label>
-                  <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-                    <input
-                      type="tel"
-                      required
-                      value={mobileNumber}
-                      onChange={(e) => setMobileNumber(e.target.value)}
-                      placeholder="+1 (555) 234-5678"
-                      className="w-full pl-9 pr-3 py-2 rounded-lg bg-surface border border-input text-foreground text-xs focus:outline-none focus:border-ember font-mono"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Row 2: Email & Country */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                <div>
-                  <label className="block text-xs font-semibold text-foreground mb-1">
-                    Email Address <span className="text-ember">*</span>
-                  </label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-                    <input
-                      type="email"
-                      required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="candidate@example.com"
-                      className="w-full pl-9 pr-3 py-2 rounded-lg bg-surface border border-input text-foreground text-xs focus:outline-none focus:border-ember font-mono"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-foreground mb-1">
-                    Country <span className="text-ember">*</span>
-                  </label>
-                  <div className="relative">
-                    <Globe className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-                    <select
-                      value={country}
-                      onChange={(e) => setCountry(e.target.value)}
-                      className="w-full bg-surface border border-input rounded-lg pl-9 pr-3 py-2 text-xs text-foreground focus:outline-none focus:border-ember cursor-pointer"
+                  ) : (
+                    <span
+                      className="grid size-11 place-items-center rounded-xl text-white font-bold text-base shadow-xs shrink-0"
+                      style={{ backgroundColor: company.brandColor || "#6366f1" }}
                     >
-                      {Object.keys(COUNTRY_OPTIONS).map((cName) => (
-                        <option key={cName} value={cName}>
-                          {cName} ({COUNTRY_OPTIONS[cName].phonePrefix})
-                        </option>
-                      ))}
-                    </select>
+                      {company.name.substring(0, 2).toUpperCase()}
+                    </span>
+                  )
+                ) : (
+                  <span className="grid size-10 place-items-center rounded-xl bg-ember text-ember-foreground font-bold text-sm shadow-xs shrink-0">
+                    TF
+                  </span>
+                )}
+                <div>
+                  <div className="flex items-center gap-2">
+                    <AnimatePresence mode="wait">
+                      <motion.h2
+                        key={mode}
+                        initial={{ opacity: 0, y: -4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 4 }}
+                        transition={{ duration: 0.2 }}
+                        className="font-display text-xl font-bold text-foreground leading-tight"
+                      >
+                        {company
+                          ? mode === "signup"
+                            ? `Register — ${company.name}`
+                            : `${company.name} Portal Login`
+                          : mode === "signup"
+                            ? "Candidate Registration"
+                            : "Candidate Sign In"}
+                      </motion.h2>
+                    </AnimatePresence>
                   </div>
+                  <AnimatePresence mode="wait">
+                    <motion.p
+                      key={mode}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="text-xs text-muted-foreground mt-0.5"
+                    >
+                      {company
+                        ? mode === "signup"
+                          ? `Create candidate profile for ${company.name}`
+                          : `Sign in to access candidate portal & status at ${company.name}`
+                        : mode === "signup"
+                          ? "Create candidate profile & access onboarding roadmap"
+                          : "Sign in to access candidate portal & application status"}
+                    </motion.p>
+                  </AnimatePresence>
                 </div>
               </div>
 
-              {/* Row 3: Password & Confirm Password */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                <div>
-                  <label className="block text-xs font-semibold text-foreground mb-1">
-                    Password <span className="text-ember">*</span>
-                  </label>
-                  <div className="relative">
-                    <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-                    <input
-                      type="password"
-                      required
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="••••••••••••"
-                      className="w-full pl-9 pr-3 py-2 rounded-lg bg-surface border border-input text-foreground text-xs focus:outline-none focus:border-ember font-mono"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="block text-xs font-semibold text-foreground">
-                      Confirm Password <span className="text-ember">*</span>
-                    </label>
-                    <span className="text-10px text-muted-foreground">Must match</span>
-                  </div>
-                  <div className="relative">
-                    <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-                    <input
-                      type="password"
-                      required
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      placeholder="••••••••••••"
-                      className={`w-full pl-9 pr-3 py-2 rounded-lg bg-surface border text-foreground text-xs focus:outline-none font-mono ${
-                        confirmPassword && confirmPassword !== password
-                          ? "border-destructive focus:ring-1 focus:ring-destructive"
-                          : "border-input focus:border-ember"
-                      }`}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Row 4: Third-Party Free CAPTCHA Widget */}
-              <div className="p-3 bg-surface rounded-xl border border-border flex items-center justify-between shadow-xs">
-                <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                {(onBackToCompanies || onBackToHome) && (
                   <button
                     type="button"
-                    onClick={() => setIsCaptchaVerified(!isCaptchaVerified)}
-                    className={`size-6 rounded border flex items-center justify-center transition-all cursor-pointer ${
-                      isCaptchaVerified
-                        ? "bg-success text-success-foreground border-success"
-                        : "bg-card border-input hover:border-ember"
-                    }`}
+                    onClick={onBackToCompanies || onBackToHome}
+                    className="px-3 py-1.5 rounded-lg bg-surface border border-border text-xs font-semibold text-foreground hover:bg-accent transition-colors cursor-pointer flex items-center gap-1 shrink-0"
+                    title="Switch Company Portal"
                   >
-                    {isCaptchaVerified && <CheckCircle2 className="size-4" />}
+                    <ArrowLeft className="size-3.5 text-ember" />
+                    <span>Switch Company</span>
                   </button>
-                  <div className="text-left">
-                    <p className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                      <ShieldCheck className="size-3.5 text-ember" />
-                      <span>Security CAPTCHA Check</span>
-                    </p>
-                    <p className="text-10px text-muted-foreground">
-                      Cloudflare Turnstile · I am human
-                    </p>
-                  </div>
-                </div>
-                <span className="text-10px font-semibold text-success bg-success/15 px-2 py-0.5 rounded border border-success/30">
-                  VERIFIED
-                </span>
-              </div>
-
-              {/* Row 5: Terms Checkbox */}
-              <label className="flex items-start gap-2 text-xs text-foreground cursor-pointer pt-1">
-                <input
-                  type="checkbox"
-                  checked={acceptTerms}
-                  onChange={(e) => setAcceptTerms(e.target.checked)}
-                  className="rounded text-ember focus:ring-ember cursor-pointer mt-0.5"
-                />
-                <span className="text-11px leading-tight text-muted-foreground">
-                  I accept the{" "}
-                  <a href="#" className="text-ember hover:underline font-medium">
-                    Terms of Service
-                  </a>{" "}
-                  and{" "}
-                  <a href="#" className="text-ember hover:underline font-medium">
-                    Privacy Policy
-                  </a>
-                </span>
-              </label>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {/* Email Address */}
-              <div>
-                <label className="block text-xs font-semibold text-foreground mb-1">
-                  Email Address <span className="text-ember">*</span>
-                </label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="candidate@example.com"
-                    className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-surface border border-input text-foreground text-xs focus:outline-none focus:border-ember font-mono"
-                  />
-                </div>
-              </div>
-
-              {/* Password */}
-              <div>
-                <label className="block text-xs font-semibold text-foreground mb-1">
-                  Password <span className="text-ember">*</span>
-                </label>
-                <div className="relative">
-                  <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-                  <input
-                    type="password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••••••"
-                    className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-surface border border-input text-foreground text-xs focus:outline-none focus:border-ember font-mono"
-                  />
-                </div>
+                )}
+                {/* Single Animated Mode Switcher Button */}
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  type="button"
+                  onClick={() => setMode(mode === "login" ? "signup" : "login")}
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-ember hover:text-ember-foreground hover:bg-ember transition-all cursor-pointer bg-ember/10 px-3.5 py-1.5 rounded-xl border border-ember/30 shadow-2xs shrink-0"
+                >
+                  {mode === "login" ? (
+                    <>
+                      <UserPlus className="size-3.5" />
+                      <span>Create Candidate Account</span>
+                    </>
+                  ) : (
+                    <>
+                      <LogIn className="size-3.5" />
+                      <span>Sign In to Account</span>
+                    </>
+                  )}
+                </motion.button>
               </div>
             </div>
-          )}
 
-          <button
-            type="submit"
-            disabled={isSubmitting || (mode === "signup" && (!isCaptchaVerified || !acceptTerms))}
-            className="w-full py-3 rounded-xl bg-ember text-ember-foreground font-semibold text-xs shadow-xs hover:bg-ember/90 transition-colors flex items-center justify-center gap-2 cursor-pointer mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isSubmitting ? (
-              <span>Authenticating with Firebase...</span>
-            ) : (
-              <>
-                <span>
-                  {mode === "signup" ? "Register Candidate Account" : "Sign In to Portal"}
+            {/* Google Authentication Button */}
+            <div className="space-y-3">
+              <button
+                type="button"
+                onClick={handleGoogleAuth}
+                disabled={isSubmitting}
+                className="w-full py-2.5 px-4 rounded-xl border border-border bg-surface hover:bg-accent text-foreground text-xs font-semibold shadow-xs transition-all flex items-center justify-center gap-3 cursor-pointer hover:border-ember/40 disabled:opacity-50"
+              >
+                <svg className="size-4 shrink-0" viewBox="0 0 24 24">
+                  <path
+                    fill="#4285F4"
+                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                  />
+                  <path
+                    fill="#34A853"
+                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                  />
+                  <path
+                    fill="#FBBC05"
+                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                  />
+                  <path
+                    fill="#EA4335"
+                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                  />
+                </svg>
+                <span>{mode === "signup" ? "Sign up with Google" : "Sign in with Google"}</span>
+              </button>
+
+              <div className="relative flex items-center justify-center my-2">
+                <div className="border-t border-border w-full" />
+                <span className="bg-card px-3 text-10px text-muted-foreground uppercase tracking-wider font-semibold absolute">
+                  or continue with email
                 </span>
-                <ArrowRight className="size-4" />
-              </>
-            )}
-          </button>
-        </form>
+              </div>
+            </div>
+
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={mode}
+                  initial={{ opacity: 0, y: 10, scale: 0.99 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -10, scale: 0.99 }}
+                  transition={{ duration: 0.22, ease: "easeInOut" }}
+                >
+                  {mode === "signup" ? (
+                    <div className="space-y-4">
+                      {/* Row 1: Full Name & Mobile Number */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                        <div>
+                          <label className="block text-xs font-semibold text-foreground mb-1">
+                            Legal Full Name <span className="text-ember">*</span>
+                          </label>
+                          <div className="relative">
+                            <User className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                            <input
+                              type="text"
+                              required
+                              value={fullName}
+                              onChange={(e) => setFullName(e.target.value)}
+                              placeholder="e.g. Alex Rivera"
+                              className="w-full pl-9 pr-3 py-2 rounded-lg bg-surface border border-input text-foreground text-xs focus:outline-none focus:border-ember"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-foreground mb-1">
+                            Mobile Number <span className="text-ember">*</span>
+                          </label>
+                          <div className="relative">
+                            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                            <input
+                              type="tel"
+                              required
+                              value={mobileNumber}
+                              onChange={(e) => setMobileNumber(e.target.value)}
+                              placeholder="+1 (555) 234-5678"
+                              className="w-full pl-9 pr-3 py-2 rounded-lg bg-surface border border-input text-foreground text-xs focus:outline-none focus:border-ember font-mono"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Row 2: Email & Country */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                        <div>
+                          <label className="block text-xs font-semibold text-foreground mb-1">
+                            Email Address <span className="text-ember">*</span>
+                          </label>
+                          <div className="relative">
+                            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                            <input
+                              type="email"
+                              required
+                              value={email}
+                              onChange={(e) => setEmail(e.target.value)}
+                              placeholder="candidate@example.com"
+                              className="w-full pl-9 pr-3 py-2 rounded-lg bg-surface border border-input text-foreground text-xs focus:outline-none focus:border-ember font-mono"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-foreground mb-1">
+                            Country <span className="text-ember">*</span>
+                          </label>
+                          <div className="relative">
+                            <Globe className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                            <select
+                              value={country}
+                              onChange={(e) => setCountry(e.target.value)}
+                              className="w-full bg-surface border border-input rounded-lg pl-9 pr-3 py-2 text-xs text-foreground focus:outline-none focus:border-ember cursor-pointer"
+                            >
+                              {Object.keys(COUNTRY_OPTIONS).map((cName) => (
+                                <option key={cName} value={cName}>
+                                  {cName} ({COUNTRY_OPTIONS[cName].phonePrefix})
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Row 3: Password & Confirm Password */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                        <div>
+                          <label className="block text-xs font-semibold text-foreground mb-1">
+                            Password <span className="text-ember">*</span>
+                          </label>
+                          <div className="relative">
+                            <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                            <input
+                              type="password"
+                              required
+                              value={password}
+                              onChange={(e) => setPassword(e.target.value)}
+                              placeholder="••••••••••••"
+                              className="w-full pl-9 pr-3 py-2 rounded-lg bg-surface border border-input text-foreground text-xs focus:outline-none focus:border-ember font-mono"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <div className="flex items-center justify-between mb-1">
+                            <label className="block text-xs font-semibold text-foreground">
+                              Confirm Password <span className="text-ember">*</span>
+                            </label>
+                            <span className="text-10px text-muted-foreground">Must match</span>
+                          </div>
+                          <div className="relative">
+                            <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                            <input
+                              type="password"
+                              required
+                              value={confirmPassword}
+                              onChange={(e) => setConfirmPassword(e.target.value)}
+                              placeholder="••••••••••••"
+                              className={`w-full pl-9 pr-3 py-2 rounded-lg bg-surface border text-foreground text-xs focus:outline-none font-mono ${
+                                confirmPassword && confirmPassword !== password
+                                  ? "border-destructive focus:ring-1 focus:ring-destructive"
+                                  : "border-input focus:border-ember"
+                              }`}
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Row 4: Third-Party Free CAPTCHA Widget */}
+                      <div className="p-3 bg-surface rounded-xl border border-border flex items-center justify-between shadow-xs">
+                        <div className="flex items-center gap-3">
+                          <button
+                            type="button"
+                            onClick={() => setIsCaptchaVerified(!isCaptchaVerified)}
+                            className={`size-6 rounded border flex items-center justify-center transition-all cursor-pointer ${
+                              isCaptchaVerified
+                                ? "bg-success text-success-foreground border-success"
+                                : "bg-card border-input hover:border-ember"
+                            }`}
+                          >
+                            {isCaptchaVerified && <CheckCircle2 className="size-4" />}
+                          </button>
+                          <div className="text-left">
+                            <p className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                              <ShieldCheck className="size-3.5 text-ember" />
+                              <span>Security CAPTCHA Check</span>
+                            </p>
+                            <p className="text-10px text-muted-foreground">
+                              Cloudflare Turnstile · I am human
+                            </p>
+                          </div>
+                        </div>
+                        <span className="text-10px font-semibold text-success bg-success/15 px-2 py-0.5 rounded border border-success/30">
+                          VERIFIED
+                        </span>
+                      </div>
+
+                      {/* Row 5: Terms Checkbox */}
+                      <label className="flex items-start gap-2 text-xs text-foreground cursor-pointer pt-1">
+                        <input
+                          type="checkbox"
+                          checked={acceptTerms}
+                          onChange={(e) => setAcceptTerms(e.target.checked)}
+                          className="rounded text-ember focus:ring-ember cursor-pointer mt-0.5"
+                        />
+                        <span className="text-11px leading-tight text-muted-foreground">
+                          I accept the{" "}
+                          <a href="#" className="text-ember hover:underline font-medium">
+                            Terms of Service
+                          </a>{" "}
+                          and{" "}
+                          <a href="#" className="text-ember hover:underline font-medium">
+                            Privacy Policy
+                          </a>
+                        </span>
+                      </label>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {/* Email Address */}
+                      <div>
+                        <label className="block text-xs font-semibold text-foreground mb-1">
+                          Email Address <span className="text-ember">*</span>
+                        </label>
+                        <div className="relative">
+                          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                          <input
+                            type="email"
+                            required
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="candidate@example.com"
+                            className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-surface border border-input text-foreground text-xs focus:outline-none focus:border-ember font-mono"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Password */}
+                      <div>
+                        <label className="block text-xs font-semibold text-foreground mb-1">
+                          Password <span className="text-ember">*</span>
+                        </label>
+                        <div className="relative">
+                          <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                          <input
+                            type="password"
+                            required
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="••••••••••••"
+                            className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-surface border border-input text-foreground text-xs focus:outline-none focus:border-ember font-mono"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </motion.div>
+              </AnimatePresence>
+
+              <motion.button
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
+                type="submit"
+                disabled={
+                  isSubmitting || (mode === "signup" && (!isCaptchaVerified || !acceptTerms))
+                }
+                className="w-full py-3 rounded-xl bg-ember text-ember-foreground font-semibold text-xs shadow-xs hover:bg-ember/90 transition-all flex items-center justify-center gap-2 cursor-pointer mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSubmitting ? (
+                  <span>Authenticating with Firebase...</span>
+                ) : (
+                  <>
+                    <span>
+                      {mode === "signup" ? "Register Candidate Account" : "Sign In to Portal"}
+                    </span>
+                    <ArrowRight className="size-4" />
+                  </>
+                )}
+              </motion.button>
+
+              {/* Single Mode Toggle Action Under Form */}
+              <div className="pt-2 text-center">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  type="button"
+                  onClick={() => setMode(mode === "login" ? "signup" : "login")}
+                  className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 transition-colors cursor-pointer py-1"
+                >
+                  <span>
+                    {mode === "login"
+                      ? "Don't have a candidate account yet?"
+                      : "Already registered for this portal?"}
+                  </span>
+                  <span className="text-ember font-bold hover:underline inline-flex items-center gap-1">
+                    {mode === "login" ? "Create an account" : "Sign in now"}
+                    <ArrowRight className="size-3" />
+                  </span>
+                </motion.button>
+              </div>
+            </form>
+          </div>
+
+          {/* Bottom Footer */}
+          <div className="pt-6 mt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between text-xs text-muted-foreground gap-3 shrink-0">
+            <span>© {new Date().getFullYear()} TalentFlow Inc. All rights reserved.</span>
+            <div className="flex items-center gap-4">
+              <a href="/candidates-portal" className="hover:text-foreground transition-colors">
+                Candidate Home
+              </a>
+              <a href="/companies" className="hover:text-foreground transition-colors">
+                Company Portal
+              </a>
+              <a href="/admin-panel/login" className="hover:text-foreground transition-colors">
+                Admin Suite
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Firebase Account Verification Link Modal - Matching Company Portal 1-to-1 */}

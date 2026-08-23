@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { CandidatePortalState, StageId, HardwareSelection } from "../../types/candidate";
 import { StageStepper } from "../StageStepper";
 import { ApplicationStageView } from "../stages/ApplicationStageView";
@@ -9,8 +9,7 @@ import { HardwareSetupStageView } from "../stages/HardwareSetupStageView";
 import { CredentialsStageView } from "../stages/CredentialsStageView";
 import { DayOneStageView } from "../stages/DayOneStageView";
 import { CompanyDocument } from "@talent-flow/api";
-import { CheckCircle2, Clock, Calendar, Sparkles, Building2 } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "../../lib/sweetalert";
 
 interface MyApplicationRoadmapViewProps {
   portalState: CandidatePortalState;

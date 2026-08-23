@@ -66,7 +66,8 @@ export {
 export {
   CompanyApiService,
   CompanySettingsBackendService,
-  FirebaseAuthService as CompanyAuthService,
+  CompanyAuthService,
+  CompanyAuthService as FirebaseAuthService,
   sendMemberCredentialsSmtp,
   getSmtpConfig,
   companyApp,
@@ -91,7 +92,6 @@ export {
   CandidateApiService,
   CandidateSettingsBackendService,
   CandidateAuthService,
-  CandidateAuthService as FirebaseAuthService,
   candidateApp,
   candidateAuth,
   candidateDb,
@@ -119,4 +119,9 @@ export {
 
 // Export Domain & API Types and Constants
 export * from "./types";
-export * from "./constants/signupOptions";
+export * from "./constants";
+export * as constants from "./constants";
+
+// Export SweetAlert Notifications & Toast Service
+export * from "./notifications";
+export * as notifications from "./notifications";

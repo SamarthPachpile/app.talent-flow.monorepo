@@ -43,7 +43,7 @@ import {
   RotateCcw,
   Database,
 } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "../lib/sweetalert";
 
 interface CompanySettingsProps {
   state: OnboardingState;
@@ -432,19 +432,17 @@ export const CompanySettingsComponent: React.FC<CompanySettingsProps> = ({ state
       <div className="bg-surface border border-border rounded-2xl p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
           {/* Logo preview or Monogram */}
-          <div className="size-14 rounded-2xl bg-card border border-border flex items-center justify-center overflow-hidden shrink-0 shadow-xs">
-            {formData.profile.logoUrl ? (
-              <img
-                src={formData.profile.logoUrl}
-                alt={formData.profile.name}
-                className="w-full h-full object-contain p-1.5"
-              />
-            ) : (
-              <div className="size-full bg-ember text-ember-foreground font-bold text-xl flex items-center justify-center">
-                {formData.profile.name ? formData.profile.name.substring(0, 2).toUpperCase() : "TF"}
-              </div>
-            )}
-          </div>
+          {formData.profile.logoUrl ? (
+            <img
+              src={formData.profile.logoUrl}
+              alt={formData.profile.name}
+              className="h-12 w-auto max-w-[200px] object-contain shrink-0"
+            />
+          ) : (
+            <div className="size-12 rounded-xl bg-ember text-ember-foreground font-bold text-lg flex items-center justify-center shrink-0 shadow-xs">
+              {formData.profile.name ? formData.profile.name.substring(0, 2).toUpperCase() : "TF"}
+            </div>
+          )}
 
           <div>
             <div className="flex flex-wrap items-center gap-2">

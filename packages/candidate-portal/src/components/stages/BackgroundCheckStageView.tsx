@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { BackgroundCheck } from "../../types/candidate";
 import { ShieldCheck, Upload, FileText, CheckCircle2, Lock } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "../../lib/sweetalert";
 
 interface BackgroundCheckStageViewProps {
   backgroundCheck: BackgroundCheck;

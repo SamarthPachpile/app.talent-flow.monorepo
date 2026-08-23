@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { Eye, RotateCcw, Search, Plus, Filter, Sparkles, ArrowRight } from "lucide-react";
+import { Eye, RotateCcw } from "lucide-react";
 import { AppliedJob, StageId } from "../../types/candidate";
 import { EmptyJobsIllustration } from "../EmptyJobsIllustration";
 
@@ -14,7 +14,6 @@ interface DashboardJobListViewProps {
 export const DashboardJobListView: React.FC<DashboardJobListViewProps> = ({
   appliedJobs = [],
   onBrowseJobs,
-  onNavigateToStage,
   onSelectJobForFullPage,
 }) => {
   // Search Filters

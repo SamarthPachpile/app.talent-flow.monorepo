@@ -5,8 +5,6 @@ const insight2 = "/assets/insight-2.jpg";
 const insight3 = "/assets/insight-3.jpg";
 const insight4 = "/assets/insight-4.jpg";
 import { usePageMeta } from "@graviton/lib/use-page-meta";
-import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import Slider from "@graviton/components/insights/Slider";
 import CTASection from "@graviton/components/CTASection";
 

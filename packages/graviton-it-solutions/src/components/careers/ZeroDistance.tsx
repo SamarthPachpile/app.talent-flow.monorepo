@@ -67,15 +67,6 @@ export default function ZeroDistance() {
     });
     const wireframe = new THREE.Mesh(new THREE.SphereGeometry(1.002, 28, 28), wireMat);
 
-    // ── Atmosphere glow ───────────────────────────────────────
-    const atmMat = new THREE.MeshPhongMaterial({
-      color: 0xf97316,
-      transparent: true,
-      opacity: 0.055,
-      side: THREE.BackSide,
-    });
-    const atmosphere = new THREE.Mesh(new THREE.SphereGeometry(1.12, 48, 48), atmMat);
-
     // ── Lights ────────────────────────────────────────────────
     scene.add(new THREE.AmbientLight(0xffffff, 0.75)); // brighter ambient = whiter overall
     const sun = new THREE.DirectionalLight(0xfffaf0, 1.2);
@@ -225,9 +216,10 @@ export default function ZeroDistance() {
     };
     tick();
 
+    const animations = animationsRef.current;
     return () => {
       cancelAnimationFrame(rafId);
-      animationsRef.current.forEach((t) => t.kill());
+      animations.forEach((t) => t.kill());
       renderer.dispose();
       canvas.removeEventListener("mousedown", onMouseDown);
       window.removeEventListener("mousemove", onMouseMove);

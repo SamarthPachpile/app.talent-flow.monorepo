@@ -55,7 +55,8 @@
     "typescript-eslint": "^8.56.1"
   },
   "dependencies": {
-    "firebase": "^12.17.0"
+    "firebase": "^12.17.0",
+    "sweetalert2": "^11.26.25"
   },
   "lint-staged": {
     "packages/**/*.{js,jsx,ts,tsx}": [

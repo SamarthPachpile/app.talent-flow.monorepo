@@ -1,6 +1,5 @@
 import { useState, useMemo } from "react";
 import {
-  Building2,
   Search,
   Linkedin,
   FileSpreadsheet,

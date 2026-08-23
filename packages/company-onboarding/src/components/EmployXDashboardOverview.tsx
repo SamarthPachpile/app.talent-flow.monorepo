@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import {
-  Search,
   Briefcase,
   BookOpen,
   MessageSquare,
@@ -9,35 +8,21 @@ import {
   TrendingUp,
   ArrowRight,
   ChevronRight,
-  MoreVertical,
-  Calendar,
   Layers,
-  Award,
   Sparkles,
-  ExternalLink,
-  Filter,
-  Check,
-  Star,
-  Coins,
-  Mail,
   UserCheck,
-  HelpCircle,
-  FileText,
   Clock,
-  Eye,
-  Plus,
   X,
 } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "../lib/sweetalert";
 import { OnboardingState } from "../types/onboarding";
 
 interface EmployXDashboardOverviewProps {
-  state: OnboardingState;
+  state?: OnboardingState;
   onNavigateTab?: (tab: string) => void;
 }
 
 export const EmployXDashboardOverview: React.FC<EmployXDashboardOverviewProps> = ({
-  state,
   onNavigateTab,
 }) => {
   // Active Filter state for Top Active Jobs
@@ -56,9 +41,6 @@ export const EmployXDashboardOverview: React.FC<EmployXDashboardOverviewProps> =
 
   // Employee Gender state for hover inspection
   const [hoveredGender, setHoveredGender] = useState<"Male" | "Female" | null>(null);
-
-  // Profile completion state
-  const [profileCompletion, setProfileCompletion] = useState<number>(50);
 
   return (
     <div className="space-y-3.5 animate-fadeIn font-sans text-slate-800 dark:text-slate-100">
@@ -1199,7 +1181,6 @@ export const EmployXDashboardOverview: React.FC<EmployXDashboardOverviewProps> =
               </button>
               <button
                 onClick={() => {
-                  setProfileCompletion(100);
                   setShowProfileModal(false);
                   toast.success("Profile 100% completed! Recruiter badge updated.");
                 }}

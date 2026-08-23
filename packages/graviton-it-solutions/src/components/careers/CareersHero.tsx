@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-const heroImage = "/assets/careershero.png";
+
 export default function CareersHero() {
   return (
     <section

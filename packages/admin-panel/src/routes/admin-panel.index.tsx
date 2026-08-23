@@ -2,9 +2,12 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/admin-panel/")({
   beforeLoad: () => {
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("talentflow_admin_auth");
+    const isAuth = typeof window !== "undefined" && !!localStorage.getItem("talentflow_admin_auth");
+
+    if (isAuth) {
+      throw redirect({ to: "/admin-panel/dashboard" });
+    } else {
+      throw redirect({ to: "/admin-panel/login" });
     }
-    throw redirect({ to: "/admin-panel/login" });
   },
 });
