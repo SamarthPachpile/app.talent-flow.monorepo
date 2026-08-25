@@ -68,6 +68,7 @@ export {
   CompanySettingsBackendService,
   CompanyAuthService,
   CompanyAuthService as FirebaseAuthService,
+  JobApiService,
   sendMemberCredentialsSmtp,
   getSmtpConfig,
   companyApp,
@@ -82,6 +83,8 @@ export {
 } from "./companies";
 export type {
   CompanyDocument,
+  JobPosting,
+  CompanyJobsDocument,
   SendMemberCredentialsParams,
   SmtpSendResult,
   SmtpConfig,

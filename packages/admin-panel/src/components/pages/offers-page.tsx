@@ -107,12 +107,17 @@ export function OffersPage() {
                   id="salary"
                   value={salary}
                   onChange={(e) => setSalary(e.target.value)}
-                  placeholder="£85,000"
+                  placeholder="₹18,50,000"
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="bonus">Bonus / OTE</Label>
-                <Input id="bonus" value={bonus} onChange={(e) => setBonus(e.target.value)} />
+                <Input
+                  id="bonus"
+                  value={bonus}
+                  onChange={(e) => setBonus(e.target.value)}
+                  placeholder="₹2,00,000"
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="start">Start date</Label>

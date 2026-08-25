@@ -20,5 +20,7 @@ export {
   CompanySettingsBackendService,
   CompanySettingsBackendService as SettingsBackendService,
 } from "./settingsService";
+export { JobApiService } from "./jobService";
+export type { JobPosting, CompanyJobsDocument } from "./jobService";
 export * from "../types";
 export * from "../constants/signupOptions";

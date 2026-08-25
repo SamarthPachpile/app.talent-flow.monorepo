@@ -1,9 +1,19 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Search,
   User,
+  UserCheck,
+  UserCircle,
   ShieldCheck,
   Briefcase,
+  Layers,
+  GitBranch,
+  Workflow,
+  Route,
+  Milestone,
+  Compass,
+  FileText,
+  ClipboardList,
   Menu,
   X,
   ChevronRight,
@@ -15,6 +25,7 @@ import {
   HelpCircle,
   Building2,
   Camera,
+  Sparkles,
 } from "lucide-react";
 import {
   CandidatePortalState,
@@ -24,7 +35,7 @@ import {
   AvailableJob,
 } from "../types/candidate";
 import { OPEN_POSITIONS_CATALOG } from "../data/mockCandidateData";
-import { CompanyDocument, uploadCandidateFileToStorage } from "@talent-flow/api";
+import { CompanyDocument, uploadCandidateFileToStorage, JobApiService } from "@talent-flow/api";
 import { DashboardJobListView } from "./views/DashboardJobListView";
 import { SearchJobsView } from "./views/SearchJobsView";
 import { CandidateProfileView } from "./views/CandidateProfileView";
@@ -113,6 +124,41 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
 
   const brandName = company?.name || portalState.candidate.companyName || "Graviton";
 
+  const [dynamicJobs, setDynamicJobs] = useState<AvailableJob[]>(OPEN_POSITIONS_CATALOG);
+
+  useEffect(() => {
+    JobApiService.getAllJobsAcrossCompanies()
+      .then((remoteJobs) => {
+        if (remoteJobs && remoteJobs.length > 0) {
+          const mapped: AvailableJob[] = remoteJobs.map((j) => ({
+            id: j.id,
+            title: j.title,
+            department: j.department,
+            location: j.location,
+            country: j.country || "United States",
+            type: (j.employmentType as AvailableJob["type"]) || "Full-time",
+            experienceLevel: (j.experienceLevel as AvailableJob["experienceLevel"]) || "Senior",
+            salaryRange: j.salaryRange || "Competitive",
+            postedDate: j.postedDate || "Recently",
+            description: j.description,
+            requirements: j.requirements || [],
+            benefits: j.benefits || [],
+            skills: j.skills || [],
+          }));
+
+          const existingIds = new Set(mapped.map((m) => m.id));
+          const combined = [
+            ...mapped,
+            ...OPEN_POSITIONS_CATALOG.filter((c) => !existingIds.has(c.id)),
+          ];
+          setDynamicJobs(combined);
+        }
+      })
+      .catch((err) => {
+        console.warn("Failed to load remote jobs for candidate portal:", err);
+      });
+  }, []);
+
   const appliedJobsList = portalState.appliedJobs || [];
 
   const handleApplyNewJob = (availJob: AvailableJob) => {
@@ -145,26 +191,28 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
       id: "search_jobs" as SidebarTab,
       label: "Search Jobs",
       icon: Search,
+      badge: dynamicJobs.length > 0 ? dynamicJobs.length : undefined,
     },
     {
       id: "my_applications" as SidebarTab,
       label: "My Applications",
       icon: Briefcase,
+      badge: appliedJobsList.length > 0 ? appliedJobsList.length : undefined,
+    },
+    {
+      id: "my_application" as SidebarTab,
+      label: "My Application",
+      icon: GitBranch,
     },
     {
       id: "profile" as SidebarTab,
       label: "Profile",
-      icon: User,
+      icon: UserCheck,
     },
     {
       id: "gdpr" as SidebarTab,
       label: "GDPR Status",
       icon: ShieldCheck,
-    },
-    {
-      id: "my_application" as SidebarTab,
-      label: "My Application",
-      icon: ChevronRight,
     },
   ];
 
@@ -287,21 +335,34 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
                   setActiveTab(item.id);
                   setMobileSidebarOpen(false);
                 }}
-                className={`clip-path-button-sm w-full flex items-center gap-2.5 px-3 py-2.5 text-xs font-semibold transition-all cursor-pointer group ${
+                className={`clip-path-button-sm w-full flex items-center justify-between px-3 py-2.5 text-xs font-semibold transition-all cursor-pointer group ${
                   isActive
                     ? "bg-[#ff5f2e] text-white shadow-md font-bold scale-[1.02]"
                     : "text-white/85 hover:bg-[#5B6381] hover:text-white"
                 } ${!sidebarOpen ? "justify-center px-0" : ""}`}
                 title={item.label}
               >
-                <Icon
-                  className={`w-4 h-4 shrink-0 transition-colors ${
-                    isActive
-                      ? "text-white fill-white/20"
-                      : "text-orange-400 group-hover:text-orange-300"
-                  }`}
-                />
-                {sidebarOpen && <span className="truncate">{item.label}</span>}
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <Icon
+                    className={`w-4 h-4 shrink-0 transition-colors ${
+                      isActive
+                        ? "text-white fill-white/20"
+                        : "text-orange-400 group-hover:text-orange-300"
+                    }`}
+                  />
+                  {sidebarOpen && <span className="truncate">{item.label}</span>}
+                </div>
+                {sidebarOpen && item.badge !== undefined && (
+                  <span
+                    className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold leading-none shrink-0 ${
+                      isActive
+                        ? "bg-white/25 text-white"
+                        : "bg-white/10 text-white/80 group-hover:bg-white/20"
+                    }`}
+                  >
+                    {item.badge}
+                  </span>
+                )}
               </button>
             );
           })}
@@ -328,8 +389,12 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
           sidebarOpen ? "lg:pl-60 xl:lg:pl-64" : "lg:pl-16"
         }`}
       >
-        {/* Top Header Bar */}
-        <header className="sticky top-0 h-12 min-h-[48px] bg-white dark:bg-slate-850 border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between px-4 sm:px-6 shrink-0 z-30">
+        {/* Top Header Bar (Fixed at top) */}
+        <header
+          className={`fixed top-0 right-0 left-0 lg:left-auto h-12 min-h-[48px] bg-white/95 dark:bg-slate-850/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between px-4 sm:px-6 shrink-0 z-30 transition-all duration-300 ${
+            sidebarOpen ? "lg:left-60 xl:lg:left-64" : "lg:left-16"
+          }`}
+        >
           {/* Left: Sidebar Toggle Button & Current View Breadcrumbs */}
           <div className="flex items-center gap-3">
             <button
@@ -488,6 +553,9 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
           </div>
         </header>
 
+        {/* Fixed Header Spacer */}
+        <div className="h-12 min-h-[48px] shrink-0" aria-hidden="true" />
+
         {/* Main Content Viewport */}
         <main className="flex-1 p-3.5 sm:p-4.5 lg:p-5">
           <div className="max-w-[1400px] mx-auto">
@@ -539,7 +607,7 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
                 {/* 1. Search Jobs View (Default / Main Tab) */}
                 {activeTab === "search_jobs" && (
                   <SearchJobsView
-                    availableJobs={OPEN_POSITIONS_CATALOG}
+                    availableJobs={dynamicJobs}
                     appliedJobIds={appliedJobsList.map((j) => j.jobCode || j.id)}
                     onApplyJob={handleApplyNewJob}
                     onGoToMyApplications={() => {

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { OfferDetails, CandidateProfile } from "../../types/candidate";
 import {
   FileCheck,
-  DollarSign,
+  IndianRupee,
   Award,
   CheckCircle2,
   Download,
@@ -90,11 +90,11 @@ export const OfferStageView: React.FC<OfferStageViewProps> = ({
           <div className="flex items-center justify-between mb-1.5">
             <span className="text-xs font-medium text-muted-foreground">Base Salary (Yearly)</span>
             <div className="p-1.5 rounded-md bg-surface text-ember border border-border">
-              <DollarSign className="size-3.5" />
+              <IndianRupee className="size-3.5" />
             </div>
           </div>
           <div className="text-2xl font-display font-normal text-foreground">
-            ${offer.baseSalaryYearly.toLocaleString()}
+            ₹{offer.baseSalaryYearly.toLocaleString("en-IN")}
           </div>
           <div className="text-11px text-success font-medium mt-0.5">Paid Bi-Weekly</div>
         </div>
@@ -107,7 +107,7 @@ export const OfferStageView: React.FC<OfferStageViewProps> = ({
             </div>
           </div>
           <div className="text-2xl font-display font-normal text-success">
-            ${offer.signOnBonus.toLocaleString()}
+            ₹{offer.signOnBonus.toLocaleString("en-IN")}
           </div>
           <div className="text-11px text-muted-foreground mt-0.5">First Paycheck Lump-sum</div>
         </div>
@@ -120,7 +120,7 @@ export const OfferStageView: React.FC<OfferStageViewProps> = ({
             </div>
           </div>
           <div className="text-2xl font-display font-normal text-foreground">
-            {offer.equityShares.toLocaleString()} Options
+            {offer.equityShares.toLocaleString("en-IN")} Options
           </div>
           <div className="text-11px text-muted-foreground mt-0.5">{offer.equityVesting}</div>
         </div>
@@ -133,10 +133,10 @@ export const OfferStageView: React.FC<OfferStageViewProps> = ({
             </div>
           </div>
           <div className="text-2xl font-display font-normal text-foreground">
-            ${offer.remoteStipend}
+            ₹{offer.remoteStipend.toLocaleString("en-IN")}
           </div>
           <div className="text-11px text-muted-foreground mt-0.5">
-            + ${offer.remoteStipend / 3} Monthly Tech Allowance
+            + ₹{Math.round(offer.remoteStipend / 3).toLocaleString("en-IN")} Monthly Tech Allowance
           </div>
         </div>
       </div>
@@ -185,10 +185,12 @@ export const OfferStageView: React.FC<OfferStageViewProps> = ({
           <div className="bg-card p-3.5 rounded-md border border-border space-y-1 font-mono text-11px">
             <div>• Position: {offer.positionTitle}</div>
             <div>• Department: {offer.department}</div>
-            <div>• Annual Base Compensation: ${offer.baseSalaryYearly.toLocaleString()} USD</div>
-            <div>• Sign-on Bonus: ${offer.signOnBonus.toLocaleString()} USD</div>
             <div>
-              • Equity Stock Grant: {offer.equityShares.toLocaleString()} ISO Stock Options (
+              • Annual Base Compensation: ₹{offer.baseSalaryYearly.toLocaleString("en-IN")} INR
+            </div>
+            <div>• Sign-on Bonus: ₹{offer.signOnBonus.toLocaleString("en-IN")} INR</div>
+            <div>
+              • Equity Stock Grant: {offer.equityShares.toLocaleString("en-IN")} ISO Stock Options (
               {offer.equityVesting})
             </div>
             <div>• Paid Time Off: {offer.ptoDays} Flexible Days Annually</div>
