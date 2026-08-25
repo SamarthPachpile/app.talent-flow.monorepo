@@ -34,7 +34,7 @@ export const App: React.FC = () => {
 
   const [activeTab, setActiveTab] = useState<string>("home");
   const [authMode, setAuthMode] = useState<"signin" | "register">("signin");
-  const [dashboardSubTab, setDashboardSubTab] = useState<string>("pipeline");
+  const [dashboardSubTab, setDashboardSubTab] = useState<string>("dashboard");
 
   const [companyNotFound, setCompanyNotFound] = useState<boolean>(false);
   const [companyNotFoundName, setCompanyNotFoundName] = useState<string>("");
@@ -322,9 +322,17 @@ export const App: React.FC = () => {
       const urlSubTab = searchParams.get("tab");
       if (
         urlSubTab &&
-        ["pipeline", "connectors", "interactions", "overview", "team", "settings"].includes(
-          urlSubTab,
-        )
+        [
+          "pipeline",
+          "create-job",
+          "jobs-list",
+          "jobs",
+          "connectors",
+          "interactions",
+          "overview",
+          "team",
+          "settings",
+        ].includes(urlSubTab)
       ) {
         setDashboardSubTab(urlSubTab);
       }
@@ -480,7 +488,17 @@ export const App: React.FC = () => {
     const urlSubTab = searchParams.get("tab");
     if (
       urlSubTab &&
-      ["pipeline", "connectors", "interactions", "overview", "team", "settings"].includes(urlSubTab)
+      [
+        "pipeline",
+        "create-job",
+        "jobs-list",
+        "jobs",
+        "connectors",
+        "interactions",
+        "overview",
+        "team",
+        "settings",
+      ].includes(urlSubTab)
     ) {
       setDashboardSubTab(urlSubTab);
     }
@@ -586,6 +604,7 @@ export const App: React.FC = () => {
         toast.warning("Mandatory Step: Complete your company setup wizard.");
         navigateTo(`/companies/${compSlug}/dashboard`, "wizard");
       } else {
+        setDashboardSubTab("dashboard");
         toast.success(
           `Welcome back to ${loadedDoc?.profile?.name || data.companyName || "Workspace"}`,
         );
@@ -628,7 +647,7 @@ export const App: React.FC = () => {
     );
 
     // Direct and immediate redirect to Dashboard
-    setDashboardSubTab("pipeline");
+    setDashboardSubTab("dashboard");
     navigateTo(`/companies/${activeCompanyId}/dashboard`, "dashboard", true);
     toast.success("🎉 Setup complete! Welcome to your Company Dashboard.");
 

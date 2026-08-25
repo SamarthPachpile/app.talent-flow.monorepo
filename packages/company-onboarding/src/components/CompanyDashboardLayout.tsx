@@ -21,6 +21,8 @@ import {
   ChevronRight,
   LogOut,
   Settings,
+  Plus,
+  Sparkles,
 } from "lucide-react";
 import { toast } from "../lib/sweetalert";
 import { OnboardingState } from "../types/onboarding";
@@ -29,6 +31,8 @@ import { ConnectorsHub } from "./ConnectorsHub";
 import { TeamManagement } from "./TeamManagement";
 import { CompanySettingsComponent } from "./CompanySettings";
 import { EmployXDashboardOverview } from "./EmployXDashboardOverview";
+import { CompanyJobsList } from "./CompanyJobsList";
+import { CreateJobModal } from "./CreateJobModal";
 import { Footer } from "./Footer";
 
 interface CompanyDashboardLayoutProps {
@@ -61,6 +65,7 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [showProfileMenu, setShowProfileMenu] = useState<boolean>(false);
   const [showNotifications, setShowNotifications] = useState<boolean>(false);
+  const [isCreateJobModalOpen, setIsCreateJobModalOpen] = useState<boolean>(false);
 
   // Menu expansion state for sidebar categories
   const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({
@@ -166,40 +171,58 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
               <button
                 onClick={() => {
                   toggleSubmenu("jobs");
-                  handleTabChange("pipeline");
+                  if (currentTab !== "pipeline" && currentTab !== "jobs-list") {
+                    handleTabChange("jobs-list");
+                  }
                 }}
                 className={`clip-path-button-sm w-full flex items-center justify-between px-3 py-2 text-xs font-semibold transition-all cursor-pointer group ${
-                  currentTab === "pipeline"
+                  currentTab === "pipeline" || currentTab === "jobs-list"
                     ? "bg-[#ff5f2e] text-white shadow-md font-bold scale-[1.02]"
                     : "text-white/85 hover:bg-[#5B6381] hover:text-white"
                 }`}
-                title="Jobs & Pipeline"
+                title="Jobs & Requisitions"
               >
                 <div className="flex items-center gap-3 truncate">
                   <Briefcase
-                    className={`w-4 h-4 shrink-0 transition-colors ${currentTab === "pipeline" ? "text-white fill-white/20" : "text-orange-400 group-hover:text-orange-300"}`}
+                    className={`w-4 h-4 shrink-0 transition-colors ${
+                      currentTab === "pipeline" || currentTab === "jobs-list"
+                        ? "text-white fill-white/20"
+                        : "text-orange-400 group-hover:text-orange-300"
+                    }`}
                   />
                   {isSidebarOpen && <span className="truncate">Jobs</span>}
                 </div>
                 {isSidebarOpen && (
                   <ChevronRight
-                    className={`w-3.5 h-3.5 ${currentTab === "pipeline" ? "text-white" : "text-orange-400/80"} transition-transform ${expandedMenus.jobs ? "rotate-90" : ""}`}
+                    className={`w-3.5 h-3.5 ${
+                      currentTab === "pipeline" || currentTab === "jobs-list"
+                        ? "text-white"
+                        : "text-orange-400/80"
+                    } transition-transform ${expandedMenus.jobs ? "rotate-90" : ""}`}
                   />
                 )}
               </button>
               {isSidebarOpen && expandedMenus.jobs && (
                 <div className="ml-7 mt-0.5 space-y-0.5 border-l border-white/20 pl-2">
                   <button
-                    onClick={() => handleTabChange("pipeline")}
-                    className="w-full text-left py-1 text-[11px] text-white/75 hover:text-white cursor-pointer"
+                    onClick={() => handleTabChange("jobs-list")}
+                    className={`w-full text-left py-1.5 px-2 rounded-md text-[11px] font-semibold cursor-pointer transition-colors ${
+                      currentTab === "jobs-list"
+                        ? "bg-white/20 text-white font-bold"
+                        : "text-white/80 hover:text-white hover:bg-white/10"
+                    }`}
                   >
-                    Pipeline
+                    Manage Jobs
                   </button>
                   <button
-                    onClick={() => toast.info("Opening Requisitions Manager")}
-                    className="w-full text-left py-1 text-[11px] text-white/75 hover:text-white cursor-pointer"
+                    onClick={() => handleTabChange("pipeline")}
+                    className={`w-full text-left py-1.5 px-2 rounded-md text-[11px] font-semibold cursor-pointer transition-colors ${
+                      currentTab === "pipeline"
+                        ? "bg-white/20 text-white font-bold"
+                        : "text-white/80 hover:text-white hover:bg-white/10"
+                    }`}
                   >
-                    Manage Requisitions
+                    Hiring Pipeline
                   </button>
                 </div>
               )}
@@ -483,8 +506,12 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
           isSidebarOpen ? "pl-60 xl:pl-64" : "pl-16"
         }`}
       >
-        {/* Top Header Bar */}
-        <header className="sticky top-0 h-14 bg-white dark:bg-slate-850 border-b border-slate-200/80 dark:border-slate-800 px-4 sm:px-6 flex items-center justify-between shrink-0 shadow-2xs z-20">
+        {/* Top Header Bar (Fixed at top) */}
+        <header
+          className={`fixed top-0 right-0 h-14 bg-white/95 dark:bg-slate-850/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 px-4 sm:px-6 flex items-center justify-between shadow-2xs z-30 transition-all duration-300 ${
+            isSidebarOpen ? "left-60 xl:left-64" : "left-16"
+          }`}
+        >
           {/* Left Controls: Hamburger + Search Input */}
           <div className="flex items-center gap-3.5 flex-1 max-w-md">
             <button
@@ -511,7 +538,9 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
             <div className="hidden md:flex items-center gap-1.5 pl-2 border-l border-slate-200 dark:border-slate-800">
               <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
                 {currentTab === "dashboard" && "EmployX Overview"}
-                {currentTab === "pipeline" && "Pipeline"}
+                {currentTab === "create-job" && "Create New Job Posting"}
+                {currentTab === "jobs-list" && "Job Requisitions & Postings"}
+                {currentTab === "pipeline" && "Hiring Pipeline"}
                 {currentTab === "connectors" && "Sourcing Connectors"}
                 {currentTab === "interactions" && "Interactions Feed"}
                 {currentTab === "team" && "Team & Roles"}
@@ -520,8 +549,18 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
             </div>
           </div>
 
-          {/* Right Header Icons */}
+          {/* Right Header Controls */}
           <div className="flex items-center gap-1.5 sm:gap-2">
+            {/* Quick Create Job Action Button */}
+            <button
+              onClick={() => setIsCreateJobModalOpen(true)}
+              className="px-3 py-1.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white rounded-lg text-xs font-bold shadow-xs hover:shadow-md transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
+              title="Create New Job Posting in Firestore 'jobs' Collection"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Post Job</span>
+            </button>
+
             {/* Dark Mode Moon Toggle */}
             <button
               onClick={toggleDarkMode}
@@ -666,6 +705,9 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
           </div>
         </header>
 
+        {/* Fixed Header Spacer */}
+        <div className="h-14 shrink-0" aria-hidden="true" />
+
         {/* Viewport Content */}
         <main className="flex-1 p-3.5 sm:p-4.5 lg:p-5">
           <div className="max-w-[1500px] mx-auto">
@@ -674,6 +716,18 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
                 state={state}
                 onNavigateTab={(tab) => handleTabChange(tab)}
               />
+            )}
+
+            {(currentTab === "jobs-list" ||
+              currentTab === "create-job" ||
+              currentTab === "jobs") && (
+              <div className="space-y-4 animate-fadeIn">
+                <CompanyJobsList
+                  state={state}
+                  onCreateNewJob={() => setIsCreateJobModalOpen(true)}
+                  onNavigatePipeline={() => handleTabChange("pipeline")}
+                />
+              </div>
             )}
 
             {currentTab === "pipeline" && (
@@ -777,7 +831,9 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
         {/* Monorepo Standard Dashboard Footer (Full-width edge-to-edge flush footer) */}
         <Footer
           linksCol1={[
-            { label: "Pipeline Board", href: "#", onClick: () => handleTabChange("dashboard") },
+            { label: "Post New Job", href: "#", onClick: () => setIsCreateJobModalOpen(true) },
+            { label: "Manage Jobs", href: "#", onClick: () => handleTabChange("jobs-list") },
+            { label: "Pipeline Board", href: "#", onClick: () => handleTabChange("pipeline") },
             { label: "Connectors Hub", href: "#", onClick: () => handleTabChange("connectors") },
             { label: "Team Management", href: "#", onClick: () => handleTabChange("team") },
             { label: "Company Settings", href: "#", onClick: () => handleTabChange("settings") },
@@ -789,6 +845,17 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
           ]}
         />
       </div>
+
+      {/* Global Quick Create Job Modal */}
+      <CreateJobModal
+        isOpen={isCreateJobModalOpen}
+        onClose={() => setIsCreateJobModalOpen(false)}
+        state={state}
+        onJobCreated={() => {
+          setIsCreateJobModalOpen(false);
+          handleTabChange("jobs-list");
+        }}
+      />
     </div>
   );
 };

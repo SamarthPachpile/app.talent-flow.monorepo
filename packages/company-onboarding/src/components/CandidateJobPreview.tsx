@@ -15,6 +15,7 @@ import {
   Sparkles,
   Eye,
   UserCheck,
+  Globe,
   Globe2,
   Layers,
   Award,
@@ -28,84 +29,170 @@ import {
   Mail,
   Shield,
   BadgeCheck,
+  X,
 } from "lucide-react";
-import { AppliedJob, AvailableJob, CandidateProfile, StageId } from "../../types/candidate";
-import { AppliedResumeModal } from "../AppliedResumeModal";
+import { toast } from "../lib/sweetalert";
 
-interface JobDescriptionFullPageViewProps {
-  job: AppliedJob | AvailableJob;
-  candidate: CandidateProfile;
-  sourceTab?: "search_jobs" | "my_applications";
-  isApplied?: boolean;
-  onApply?: (job: AvailableJob) => void;
-  onBack: () => void;
-  onNavigateToRoadmap?: (stageId?: StageId) => void;
+export interface CandidateJobPreviewData {
+  id?: string;
+  jobCode?: string;
+  title: string;
+  companyName: string;
+  department?: string;
+  location?: string;
+  country?: string;
+  workplaceType?: string;
+  employmentType?: string;
+  experienceLevel?: string;
+  salaryRange?: string;
+  salaryMin?: number | string;
+  salaryMax?: number | string;
+  currency?: string;
+  salaryPeriod?: string;
+  openings?: number | string;
+  priority?: string;
+  status?: string;
+  description?: string;
+  responsibilities?: string[];
+  requirements?: string[];
+  skills?: string[];
+  benefits?: string[];
+  hiringManager?: {
+    name?: string;
+    email?: string;
+    designation?: string;
+  };
+  recruiterEmail?: string;
+  applicationDeadline?: string;
+  postedDate?: string;
 }
 
-export const JobDescriptionFullPageView: React.FC<JobDescriptionFullPageViewProps> = ({
+interface CandidateJobPreviewProps {
+  job: CandidateJobPreviewData;
+  onBack?: () => void;
+  isInModal?: boolean;
+}
+
+export const CandidateJobPreview: React.FC<CandidateJobPreviewProps> = ({
   job,
-  candidate,
-  sourceTab = "my_applications",
-  isApplied = false,
-  onApply,
   onBack,
-  onNavigateToRoadmap,
+  isInModal = false,
 }) => {
-  const [showResumeModal, setShowResumeModal] = useState<boolean>(false);
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
-  const [appliedLocal, setAppliedLocal] = useState<boolean>(isApplied);
 
-  // Derive job attributes safely
-  const jobTitle = "jobTitle" in job ? job.jobTitle : job.title;
-  const jobCode = "jobCode" in job ? job.jobCode : job.id;
-  const appliedDate = "appliedDate" in job ? job.appliedDate : undefined;
-  const status = "status" in job ? job.status : "Open Opening";
-  const interviewDate = "interviewDate" in job ? job.interviewDate : "-";
-  const recruiterNotes = "recruiterNotes" in job ? job.recruiterNotes : undefined;
-  const employmentType =
-    "employmentType" in job ? job.employmentType : "type" in job ? job.type : "Full-time";
-  const salaryRange = job.salaryRange || "₹18,00,000 - ₹26,00,000 / yr";
-  const brandName =
-    ("companyName" in job && job.companyName) || candidate.companyName || "Graviton IT Solutions";
-  const department = job.department || "Platform Engineering";
-  const location = job.location || "Remote";
-  const country = job.country || "Global";
-  const requirements = job.requirements || [];
-  const skills = "skills" in job ? job.skills : [];
+  const jobTitle = job.title || "Untitled Position";
+  const jobCode = job.jobCode || job.id || "REQ-2026-001";
+  const brandName = job.companyName || "Company Workspace";
+  const department = job.department || "Engineering";
+  const location = job.location || "San Francisco, CA";
+  const country = job.country || "United States";
+  const workplaceType = job.workplaceType || "Remote";
+  const employmentType = job.employmentType || "Full-time";
+  const experienceLevel = job.experienceLevel || "Senior";
+  const status = job.status || "Active";
+  const openings = job.openings || 1;
 
-  const handleApplyClick = () => {
-    if (onApply && !appliedLocal && !isApplied) {
-      onApply(job as AvailableJob);
-      setAppliedLocal(true);
+  // Format Salary Range
+  const getFormattedSalary = (): string => {
+    if (job.salaryRange && job.salaryRange.trim().length > 0) return job.salaryRange;
+    if (!job.salaryMin && !job.salaryMax) return "₹18,00,000 - ₹26,00,000 / yr";
+    const currSym =
+      job.currency === "USD"
+        ? "$"
+        : job.currency === "EUR"
+          ? "€"
+          : job.currency === "GBP"
+            ? "£"
+            : "₹";
+    const period = job.salaryPeriod ? ` / ${job.salaryPeriod}` : " / yr";
+    if (job.salaryMin && job.salaryMax) {
+      return `${currSym}${Number(job.salaryMin).toLocaleString("en-IN")} - ${currSym}${Number(job.salaryMax).toLocaleString("en-IN")}${period}`;
     }
+    return `${currSym}${Number(job.salaryMin || job.salaryMax).toLocaleString("en-IN")}${period}`;
   };
+
+  const salaryDisplay = getFormattedSalary();
 
   const handleCopyLink = () => {
     if (navigator.clipboard) {
       navigator.clipboard.writeText(window.location.href);
       setCopiedLink(true);
+      toast.success("Job link copied to clipboard!");
       setTimeout(() => setCopiedLink(false), 2500);
     }
   };
 
-  const backLabel = sourceTab === "search_jobs" ? "Back to Open Positions" : "Back to Applications";
+  // Fallback lists if empty
+  const responsibilities =
+    job.responsibilities && job.responsibilities.length > 0
+      ? job.responsibilities
+      : [
+          "Architect, code, and deploy resilient web services and responsive user interfaces with high performance and accessibility.",
+          "Collaborate with product managers and UX teams to translate business requirements into technical execution plans and sprints.",
+          "Champion code quality, automated test coverage, peer reviews, and continuous integration workflows.",
+          "Proactively identify bottlenecks, optimize latency, and scale distributed database models and API endpoints.",
+          "Mentor teammates, participate in architecture discussions, and contribute to shared design system token libraries.",
+        ];
 
-  const isActuallyApplied = appliedLocal || isApplied || Boolean(appliedDate);
+  const requirements =
+    job.requirements && job.requirements.length > 0
+      ? job.requirements
+      : [
+          "3+ years of professional full-stack or frontend development experience with TypeScript, React, and modern web frameworks.",
+          "Strong background in modular CSS architecture, responsive design patterns, and cross-browser optimization.",
+          "Experience integrating RESTful & GraphQL APIs, websockets, and relational/document databases (PostgreSQL, Firestore).",
+          "Familiarity with containerized workflows (Docker), automated CI/CD pipelines, and cloud hosting (AWS / GCP / Vercel).",
+          "Excellent problem-solving acumen, written communication skills, and an empathetic team-first approach.",
+        ];
+
+  const skills =
+    job.skills && job.skills.length > 0
+      ? job.skills
+      : [
+          "React",
+          "TypeScript",
+          "Node.js",
+          "Tailwind CSS",
+          "PostgreSQL",
+          "Next.js",
+          "GraphQL",
+          "Docker",
+        ];
+
+  const benefits =
+    job.benefits && job.benefits.length > 0
+      ? job.benefits
+      : [
+          "Full Health, Dental & Vision Insurance",
+          "401(k) with 5% Employer Match",
+          "Unlimited Paid Time Off (PTO)",
+          "Remote Work Home Office Budget ($1,500)",
+          "Annual Learning & Conference Stipend ($2,000)",
+          "Parental Leave (16 Weeks Paid)",
+        ];
+
+  const hiringManagerName = job.hiringManager?.name || "Nil Yeager";
+  const recruiterEmail =
+    job.recruiterEmail || job.hiringManager?.email || "recruiting@talentflow.hub";
 
   return (
-    <div className="space-y-6 animate-fadeIn font-sans text-slate-800 dark:text-slate-100 pb-12 max-w-7xl mx-auto">
+    <div
+      className={`space-y-6 animate-fadeIn font-sans text-slate-800 dark:text-slate-100 ${isInModal ? "" : "max-w-7xl mx-auto pb-10"}`}
+    >
       {/* 1. TOP BREADCRUMB & ACTION NAVIGATION BAR */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 bg-white dark:bg-slate-850 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs">
         <div className="flex items-center gap-3">
-          <button
-            onClick={onBack}
-            className="group px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer shadow-2xs hover:scale-[1.02]"
-          >
-            <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-0.5" />
-            <span>{backLabel}</span>
-          </button>
+          {onBack && (
+            <button
+              onClick={onBack}
+              className="group px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer shadow-2xs hover:scale-[1.02]"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-0.5" />
+              <span>Back to Job Studio</span>
+            </button>
+          )}
 
-          <div className="hidden sm:flex items-center gap-2 text-xs text-slate-400 dark:text-slate-500">
+          <div className="flex items-center gap-2 text-xs text-slate-400 dark:text-slate-500">
             <span>/</span>
             <span className="font-semibold text-slate-600 dark:text-slate-300">{brandName}</span>
             <span>/</span>
@@ -115,6 +202,12 @@ export const JobDescriptionFullPageView: React.FC<JobDescriptionFullPageViewProp
 
         {/* Action Buttons */}
         <div className="flex items-center gap-2">
+          {/* Candidate Preview Pill */}
+          <span className="px-3 py-1 rounded-full bg-orange-100 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 text-xs font-bold border border-orange-200 dark:border-orange-900 flex items-center gap-1.5">
+            <Eye className="w-3.5 h-3.5" />
+            <span>Candidate Portal Live View</span>
+          </span>
+
           {/* Share / Copy Link Button */}
           <button
             onClick={handleCopyLink}
@@ -135,42 +228,6 @@ export const JobDescriptionFullPageView: React.FC<JobDescriptionFullPageViewProp
               </>
             )}
           </button>
-
-          {/* If applied: Resume and Roadmap triggers */}
-          {isActuallyApplied ? (
-            <>
-              <button
-                onClick={() => setShowResumeModal(true)}
-                className="px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
-              >
-                <FileText className="w-3.5 h-3.5 text-[#ff5a1f]" />
-                <span>View Resume</span>
-              </button>
-
-              {onNavigateToRoadmap && (
-                <button
-                  onClick={() =>
-                    onNavigateToRoadmap("stageId" in job ? job.stageId : "application")
-                  }
-                  className="px-4 py-2 rounded-xl bg-[#ff5a1f] hover:bg-[#e04e18] text-white text-xs font-bold shadow-xs flex items-center gap-1.5 transition-all cursor-pointer hover:scale-[1.02]"
-                >
-                  <span>Track Roadmap</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              )}
-            </>
-          ) : (
-            onApply && (
-              <button
-                onClick={handleApplyClick}
-                className="px-5 py-2 rounded-xl bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white text-xs font-bold shadow-xs flex items-center gap-2 transition-all cursor-pointer hover:scale-[1.02]"
-              >
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>Quick Apply</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            )
-          )}
         </div>
       </div>
 
@@ -186,15 +243,15 @@ export const JobDescriptionFullPageView: React.FC<JobDescriptionFullPageViewProp
             <div className="flex flex-wrap items-center gap-2">
               <span
                 className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wide shadow-2xs ${
-                  isActuallyApplied
-                    ? "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800"
-                    : "bg-orange-50 dark:bg-orange-950/60 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800"
+                  status === "Active"
+                    ? "bg-orange-50 dark:bg-orange-950/60 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800"
+                    : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
                 }`}
               >
                 <span
-                  className={`w-2 h-2 rounded-full ${isActuallyApplied ? "bg-emerald-500 animate-pulse" : "bg-orange-500"}`}
+                  className={`w-2 h-2 rounded-full ${status === "Active" ? "bg-orange-500 animate-pulse" : "bg-slate-400"}`}
                 />
-                {isActuallyApplied ? status || "Application Active" : "Accepting Applications"}
+                {status === "Active" ? "Accepting Applications" : "Draft (Private Preview)"}
               </span>
 
               <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/70 dark:border-slate-700">
@@ -204,15 +261,15 @@ export const JobDescriptionFullPageView: React.FC<JobDescriptionFullPageViewProp
 
               <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-sky-50 dark:bg-sky-950/50 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800">
                 <Globe2 className="w-3 h-3 text-sky-500" />
-                <span>{location}</span>
+                <span>
+                  {location} ({workplaceType})
+                </span>
               </span>
 
-              {appliedDate && (
-                <span className="text-xs text-slate-500 flex items-center gap-1 pl-1">
-                  <Calendar className="w-3 h-3 text-slate-400" />
-                  <span>Applied on {appliedDate}</span>
-                </span>
-              )}
+              <span className="text-xs text-slate-500 flex items-center gap-1 pl-1">
+                <Calendar className="w-3 h-3 text-slate-400" />
+                <span>{job.postedDate || "Posted Recently"}</span>
+              </span>
             </div>
 
             {/* Main Job Title */}
@@ -243,39 +300,30 @@ export const JobDescriptionFullPageView: React.FC<JobDescriptionFullPageViewProp
 
               <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/60 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300 font-semibold">
                 <DollarSign className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                <span>{salaryRange}</span>
+                <span>{salaryDisplay}</span>
               </div>
             </div>
           </div>
 
-          {/* Right Action Box in Hero */}
+          {/* Right Info Box in Hero for Company Preview (No Apply Button) */}
           <div className="flex flex-col sm:flex-row lg:flex-col gap-2.5 shrink-0 pt-2 lg:pt-0">
-            {isActuallyApplied ? (
-              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 space-y-2.5 text-center sm:text-left min-w-[220px]">
-                <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 dark:text-emerald-400">
-                  <BadgeCheck className="w-4 h-4" />
-                  <span>Application Submitted</span>
-                </div>
-                <p className="text-[11px] text-slate-500 leading-normal">
-                  Your profile and documents are in active review by {brandName} hiring team.
-                </p>
-                <button
-                  onClick={() => setShowResumeModal(true)}
-                  className="w-full py-2 px-3 rounded-lg bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 hover:bg-slate-100 text-slate-800 dark:text-slate-100 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                >
-                  <Eye className="w-3.5 h-3.5 text-slate-500" />
-                  <span>View Submitted Resume</span>
-                </button>
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 space-y-2 text-left min-w-[230px]">
+              <div className="flex items-center gap-2 text-xs font-bold text-slate-800 dark:text-slate-200">
+                <Globe className="w-4 h-4 text-orange-500" />
+                <span>Requisition Live View</span>
               </div>
-            ) : (
-              <button
-                onClick={handleApplyClick}
-                className="px-6 py-3 rounded-xl bg-[#ff5a1f] hover:bg-[#e04e18] text-white text-sm font-bold shadow-md hover:shadow-lg flex items-center justify-center gap-2 transition-all cursor-pointer hover:scale-[1.02]"
-              >
-                <span>Submit Application Now</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            )}
+              <p className="text-[11px] text-slate-500 leading-normal">
+                Live candidate portal presentation for{" "}
+                <code className="font-mono text-orange-600 dark:text-orange-400 font-bold">
+                  {jobCode}
+                </code>
+                .
+              </p>
+              <div className="pt-1.5 border-t border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between text-[11px]">
+                <span className="text-slate-500">Status:</span>
+                <span className="font-bold text-emerald-600 dark:text-emerald-400">● {status}</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -287,37 +335,37 @@ export const JobDescriptionFullPageView: React.FC<JobDescriptionFullPageViewProp
               <span>Experience Level</span>
             </div>
             <div className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100">
-              Mid - Senior (3-6 yrs)
+              {experienceLevel}
             </div>
           </div>
 
           <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
             <div className="text-[11px] font-medium text-slate-400 flex items-center gap-1 mb-0.5">
               <Clock className="w-3.5 h-3.5 text-blue-500" />
-              <span>Work Schedule</span>
+              <span>Work Flexibility</span>
             </div>
             <div className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100">
-              Flexible / Async Ready
+              {workplaceType} Model
             </div>
           </div>
 
           <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
             <div className="text-[11px] font-medium text-slate-400 flex items-center gap-1 mb-0.5">
               <Coins className="w-3.5 h-3.5 text-emerald-500" />
-              <span>Equity & Bonus</span>
+              <span>Compensation Band</span>
             </div>
-            <div className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100">
-              Stock Options + Annual Bonus
+            <div className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate">
+              {salaryDisplay}
             </div>
           </div>
 
           <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
             <div className="text-[11px] font-medium text-slate-400 flex items-center gap-1 mb-0.5">
               <Shield className="w-3.5 h-3.5 text-purple-500" />
-              <span>Security Clearance</span>
+              <span>Open Headcount</span>
             </div>
             <div className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100">
-              Standard Background Verification
+              {openings} {openings === 1 ? "Position" : "Positions"}
             </div>
           </div>
         </div>
@@ -334,7 +382,7 @@ export const JobDescriptionFullPageView: React.FC<JobDescriptionFullPageViewProp
               <span>About the Role & Mission</span>
             </h2>
             <div className="space-y-3 text-xs sm:text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-              <p>
+              <p className="whitespace-pre-line">
                 {job.description ||
                   `As a ${jobTitle} at ${brandName}, you will play a pivotal role in designing, building, and deploying mission-critical software solutions. You'll partner closely with cross-functional product designers, domain specialists, and fellow engineers to craft delightful user journeys and bulletproof scalable infrastructure.`}
               </p>
@@ -353,13 +401,7 @@ export const JobDescriptionFullPageView: React.FC<JobDescriptionFullPageViewProp
               <span>Key Responsibilities</span>
             </h2>
             <div className="grid grid-cols-1 gap-3">
-              {[
-                "Architect, code, and deploy resilient web services and responsive user interfaces with high performance and accessibility.",
-                "Collaborate with product managers and UX teams to translate business requirements into technical execution plans and sprints.",
-                "Champion code quality, automated test coverage, peer reviews, and continuous integration workflows.",
-                "Proactively identify bottlenecks, optimize latency, and scale distributed database models and API endpoints.",
-                "Mentor teammates, participate in architecture discussions, and contribute to shared design system token libraries.",
-              ].map((item, idx) => (
+              {responsibilities.map((item, idx) => (
                 <div
                   key={idx}
                   className="flex items-start gap-3 p-3 rounded-xl bg-slate-50/70 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800"
@@ -382,16 +424,7 @@ export const JobDescriptionFullPageView: React.FC<JobDescriptionFullPageViewProp
               <span>Qualifications & Requirements</span>
             </h2>
             <div className="space-y-2.5">
-              {(requirements.length > 0
-                ? requirements
-                : [
-                    "3+ years of professional full-stack or frontend development experience with TypeScript, React, and modern web frameworks.",
-                    "Strong background in modular CSS architecture, responsive design patterns, and cross-browser optimization.",
-                    "Experience integrating RESTful & GraphQL APIs, websockets, and relational/document databases (PostgreSQL, Firestore).",
-                    "Familiarity with containerized workflows (Docker), automated CI/CD pipelines, and cloud hosting (AWS / GCP / Vercel).",
-                    "Excellent problem-solving acumen, written communication skills, and an empathetic team-first approach.",
-                  ]
-              ).map((req, idx) => (
+              {requirements.map((req, idx) => (
                 <div
                   key={idx}
                   className="flex items-start gap-3 text-xs sm:text-sm text-slate-700 dark:text-slate-300"
@@ -410,23 +443,7 @@ export const JobDescriptionFullPageView: React.FC<JobDescriptionFullPageViewProp
               <span>Technology Stack & Tools</span>
             </h2>
             <div className="flex flex-wrap gap-2">
-              {(skills.length > 0
-                ? skills
-                : [
-                    "TypeScript",
-                    "React",
-                    "Node.js",
-                    "TailwindCSS",
-                    "Next.js",
-                    "PostgreSQL",
-                    "Firebase",
-                    "GraphQL",
-                    "Docker",
-                    "Git & GitHub Actions",
-                    "Jest / Vitest",
-                    "Figma",
-                  ]
-              ).map((skill, idx) => (
+              {skills.map((skill, idx) => (
                 <span
                   key={idx}
                   className="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-750 text-slate-800 dark:text-slate-200 text-xs font-semibold border border-slate-200/80 dark:border-slate-700 transition-colors shadow-2xs"
@@ -444,61 +461,50 @@ export const JobDescriptionFullPageView: React.FC<JobDescriptionFullPageViewProp
               <span>Benefits, Growth & Perks</span>
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 flex items-start gap-3">
-                <div className="p-2 rounded-lg bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 shrink-0">
-                  <HeartHandshake className="w-4 h-4" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-xs text-slate-800 dark:text-slate-100">
-                    Comprehensive Healthcare
-                  </h4>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
-                    100% premium coverage for medical, dental, vision, and mental wellness.
-                  </p>
-                </div>
-              </div>
+              {benefits.map((b, idx) => {
+                const isHealth =
+                  b.toLowerCase().includes("health") || b.toLowerCase().includes("dental");
+                const isEquipment =
+                  b.toLowerCase().includes("budget") || b.toLowerCase().includes("office");
+                const isLearn =
+                  b.toLowerCase().includes("learn") || b.toLowerCase().includes("conference");
+                const isPto = b.toLowerCase().includes("pto") || b.toLowerCase().includes("leave");
 
-              <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 flex items-start gap-3">
-                <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 shrink-0">
-                  <Laptop className="w-4 h-4" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-xs text-slate-800 dark:text-slate-100">
-                    $2,500 Home Office Stipend
-                  </h4>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
-                    Brand new Apple M-series hardware + monitor and ergonomic desk budget.
-                  </p>
-                </div>
-              </div>
+                const Icon = isHealth
+                  ? HeartHandshake
+                  : isEquipment
+                    ? Laptop
+                    : isLearn
+                      ? GraduationCap
+                      : isPto
+                        ? Plane
+                        : Award;
 
-              <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 flex items-start gap-3">
-                <div className="p-2 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 shrink-0">
-                  <GraduationCap className="w-4 h-4" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-xs text-slate-800 dark:text-slate-100">
-                    Learning & Conference Budget
-                  </h4>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
-                    $1,500 annual stipend for courses, books, certifications, and conferences.
-                  </p>
-                </div>
-              </div>
+                const colorClass = isHealth
+                  ? "bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400"
+                  : isEquipment
+                    ? "bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400"
+                    : isLearn
+                      ? "bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400"
+                      : "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400";
 
-              <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 flex items-start gap-3">
-                <div className="p-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 shrink-0">
-                  <Plane className="w-4 h-4" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-xs text-slate-800 dark:text-slate-100">
-                    Flexible PTO & Offsites
-                  </h4>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
-                    Unlimited paid time off with mandatory minimums + biannual team retreats.
-                  </p>
-                </div>
-              </div>
+                return (
+                  <div
+                    key={idx}
+                    className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 flex items-start gap-3"
+                  >
+                    <div className={`p-2 rounded-lg ${colorClass} shrink-0`}>
+                      <Icon className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-xs text-slate-800 dark:text-slate-100">{b}</h4>
+                      <p className="text-[11px] text-slate-500 mt-0.5">
+                        Provided standard for all members of the {department} department.
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -516,15 +522,13 @@ export const JobDescriptionFullPageView: React.FC<JobDescriptionFullPageViewProp
               <div className="flex items-center justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
                 <span className="text-slate-500">Current Status</span>
                 <span className="font-bold text-slate-800 dark:text-slate-200">
-                  {isActuallyApplied ? status || "Under Review" : "Open for Applications"}
+                  {status === "Active" ? "Open for Applications" : "Draft Mode"}
                 </span>
               </div>
 
               <div className="flex items-center justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
                 <span className="text-slate-500">Interview Session</span>
-                <span className="font-bold text-slate-800 dark:text-slate-200">
-                  {interviewDate !== "-" ? interviewDate : "To Be Scheduled"}
-                </span>
+                <span className="font-bold text-slate-800 dark:text-slate-200">Direct Screen</span>
               </div>
 
               <div className="flex items-center justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
@@ -537,40 +541,28 @@ export const JobDescriptionFullPageView: React.FC<JobDescriptionFullPageViewProp
               <div className="flex items-center justify-between py-1.5">
                 <span className="text-slate-500">Target Start Date</span>
                 <span className="font-semibold text-slate-700 dark:text-slate-300">
-                  {candidate.targetStartDate || "September 2026"}
+                  {job.applicationDeadline || "Rolling Admissions"}
                 </span>
               </div>
             </div>
 
-            {/* Recruiter Review Note if present */}
-            {recruiterNotes && (
-              <div className="p-3 rounded-xl bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800 space-y-1">
-                <div className="flex items-center gap-1.5 text-sky-800 dark:text-sky-300 font-bold text-xs">
-                  <ShieldCheck className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
-                  <span>Talent Partner Note</span>
-                </div>
-                <p className="text-xs text-sky-900 dark:text-sky-200 leading-normal">
-                  {recruiterNotes}
-                </p>
+            <div className="p-3 rounded-xl bg-orange-50 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-800 space-y-1">
+              <div className="flex items-center gap-1.5 text-orange-800 dark:text-orange-300 font-bold text-xs">
+                <Sparkles className="w-3.5 h-3.5 text-orange-600 dark:text-orange-400" />
+                <span>Enterprise Talent Flow</span>
               </div>
-            )}
-
-            {isActuallyApplied && onNavigateToRoadmap && (
-              <button
-                onClick={() => onNavigateToRoadmap("stageId" in job ? job.stageId : "application")}
-                className="w-full py-2.5 px-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-750 text-white font-bold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs"
-              >
-                <span>Track 7-Stage Roadmap</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            )}
+              <p className="text-xs text-orange-900 dark:text-orange-200 leading-normal">
+                Candidates applying to this requisition will be routed through the 7-stage hiring
+                pipeline.
+              </p>
+            </div>
           </div>
 
           {/* Card 2: Submitted Candidate Documents */}
           <div className="bg-white dark:bg-slate-850 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs p-5 space-y-3.5">
             <h3 className="font-bold text-xs uppercase tracking-wider text-slate-900 dark:text-slate-100 flex items-center gap-2">
               <FileText className="w-4 h-4 text-orange-500" />
-              <span>Application Documents</span>
+              <span>Candidate Submissions</span>
             </h3>
 
             <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60 space-y-3">
@@ -580,23 +572,18 @@ export const JobDescriptionFullPageView: React.FC<JobDescriptionFullPageViewProp
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">
-                    {candidate.name
-                      ? `${candidate.name.replace(/\s+/g, "_")}_Resume.pdf`
-                      : "Candidate_Resume.pdf"}
+                    Candidate_Resume.pdf
                   </div>
                   <div className="text-[11px] text-slate-400 mt-0.5">
-                    Verified Document • {appliedDate || "Active"}
+                    1-Click Auto Parsing Enabled
                   </div>
                 </div>
               </div>
 
-              <button
-                onClick={() => setShowResumeModal(true)}
-                className="w-full py-2 px-3 rounded-lg bg-white dark:bg-slate-750 border border-slate-200 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
-              >
-                <Eye className="w-3.5 h-3.5 text-orange-500" />
-                <span>Preview Submitted Resume</span>
-              </button>
+              <div className="text-[11px] text-slate-500 leading-relaxed">
+                Applicants submit resumes that are automatically indexed into the candidates
+                pipeline database.
+              </div>
             </div>
           </div>
 
@@ -609,26 +596,24 @@ export const JobDescriptionFullPageView: React.FC<JobDescriptionFullPageViewProp
 
             <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-500 to-amber-600 text-white font-bold text-sm flex items-center justify-center shrink-0 shadow-2xs">
-                {candidate.recruiter?.name
-                  ? candidate.recruiter.name.substring(0, 2).toUpperCase()
-                  : "TA"}
+                {hiringManagerName.substring(0, 2).toUpperCase()}
               </div>
               <div className="min-w-0 flex-1">
                 <div className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">
-                  {candidate.recruiter?.name || "Talent Acquisition Lead"}
+                  {hiringManagerName}
                 </div>
                 <div className="text-[11px] text-slate-500 truncate">
-                  {candidate.recruiter?.role || "Senior Technical Recruiter"}
+                  Hiring Manager • {department}
                 </div>
               </div>
             </div>
 
             <a
-              href={`mailto:${candidate.recruiter?.email || "recruitment@graviton.io"}?subject=Question regarding ${jobTitle} (${jobCode})`}
+              href={`mailto:${recruiterEmail}?subject=Inquiry regarding ${jobTitle} (${jobCode})`}
               className="w-full py-2 px-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer"
             >
               <Mail className="w-3.5 h-3.5 text-slate-400" />
-              <span>Contact Recruiter</span>
+              <span>Contact Hiring Team</span>
             </a>
           </div>
 
@@ -645,14 +630,6 @@ export const JobDescriptionFullPageView: React.FC<JobDescriptionFullPageViewProp
           </div>
         </div>
       </div>
-
-      {/* Applied Resume Document Modal */}
-      <AppliedResumeModal
-        isOpen={showResumeModal}
-        onClose={() => setShowResumeModal(false)}
-        candidate={candidate}
-        job={"jobTitle" in job ? (job as AppliedJob) : null}
-      />
     </div>
   );
 };
