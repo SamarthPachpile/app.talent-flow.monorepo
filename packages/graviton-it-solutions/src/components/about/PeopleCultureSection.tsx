@@ -39,12 +39,13 @@ export default function PeopleCultureSection() {
               People & Culture
             </p>
             <h2 className="text-28px sm:text-40px md:text-6xl lg:text-7xl xl:text-7xl leading-[1.1] mb-4 sm:mb-6 font-semibold">
-              A <span className="text-primary">people-first</span> consultancy
+              A <span className="text-primary">people-first</span> HR software culture
             </h2>
             <p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-2xl">
-              Graviton is built on certified consultants, architects and engineers who care about
-              the customer behind every record. We invest in continuous learning, certifications and
-              inclusive teams — because better people build better CRMs.
+              Graviton is built on dedicated product designers, HR technologists, and distributed
+              systems engineers who care about every candidate and employee journey. We invest in
+              continuous innovation, empathy, and inclusive teams — because empowered people create
+              exceptional workplace software.
             </p>
           </motion.div>
         </div>

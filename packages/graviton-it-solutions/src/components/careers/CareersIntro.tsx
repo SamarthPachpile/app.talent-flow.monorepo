@@ -2,7 +2,7 @@ import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
 import { useRef } from "react";
 
 const text =
-  "Today, we help transform businesses and refine industries through intelligent products, platforms, and services    ";
+  "Today, we help empower HR leaders and job seekers through intelligent recruitment CRM, candidate portals, and workforce software";
 
 function WordSpan({
   word,
@@ -20,7 +20,16 @@ function WordSpan({
   const opacity = useTransform(scrollYProgress, [start, end], [0.15, 1]);
   const y = useTransform(scrollYProgress, [start, end], [40, 0]);
 
-  const isHighlight = ["intelligent", "products,", "platforms,", "and", "services"].includes(word);
+  const isHighlight = [
+    "intelligent",
+    "recruitment",
+    "CRM,",
+    "candidate",
+    "portals,",
+    "and",
+    "workforce",
+    "software",
+  ].includes(word);
 
   return (
     <motion.span style={{ opacity, y }} className={isHighlight ? "text-orange-500" : ""}>
@@ -60,8 +69,8 @@ export default function CareersIntro() {
           }}
           className="text-sm text-gray-600 max-w-md mb-10 leading-relaxed"
         >
-          Graviton is a trusted digital engineering partner helping forward-thinking companies build
-          impactful solutions
+          Graviton is an enterprise HR CRM and workforce software partner helping companies build
+          exceptional hiring and employment journeys.
         </motion.p>
 
         {/* Animated heading */}
@@ -87,8 +96,8 @@ export default function CareersIntro() {
         >
           <div className="max-w-md text-gray-600 text-base leading-relaxed">
             <p className="mb-6">
-              Since 2020, we’ve been at the forefront of innovation—helping create scalable and
-              impactful digital experiences used worldwide.
+              Since 2018, we've been building scalable HR portals and candidate experiences that
+              power thousands of workplaces worldwide.
             </p>
 
             <button className="flex items-center gap-2 text-black font-medium group">

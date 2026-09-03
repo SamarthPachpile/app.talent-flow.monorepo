@@ -6,13 +6,14 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const navItems = [
   {
-    label: "Services",
+    label: "HR Solutions",
     href: "/services",
     dropdown: [
-      "CRM Consulting",
-      "Salesforce Implementation",
-      "HubSpot & Zoho Solutions",
-      "AI-Powered Automation",
+      "Candidate Application & ATS CRM",
+      "Employee Lifecycle & HRMS Suite",
+      "Smart Onboarding & Candidature Verification",
+      "HR Helpdesk & Workforce Portal",
+      "Workforce Analytics & Dragonfly DB Engine",
     ],
   },
   {
@@ -33,16 +34,16 @@ const navItems = [
     label: "Portals",
     href: "#",
     dropdown: [
-      { label: "Startup Admin Panel (Port 3001)", href: "http://localhost:3001", external: true },
+      { label: "Candidate Portal (Port 3003)", href: "http://localhost:3003", external: true },
       {
-        label: "Company Onboarding Portal (Port 3002)",
+        label: "Company Onboarding & Workspace (Port 3002)",
         href: "http://localhost:3002",
         external: true,
       },
-      { label: "Candidate Portal (Port 3003)", href: "http://localhost:3003", external: true },
+      { label: "Super Admin Panel (Port 3001)", href: "http://localhost:3001", external: true },
     ],
   },
-  { label: "Graviton AI", href: "/velocity-ai", highlight: true },
+  { label: "HR AI Assistant", href: "/velocity-ai", highlight: true },
   { label: "Insights", href: "/insights" },
   { label: "About Us", href: "/about" },
   { label: "Careers", href: "/careers" },
@@ -75,7 +76,7 @@ export default function Header() {
                 Graviton<sup className="text-25px top-0 ml-0.5">®</sup>
               </span>
               <span className="text-9px sm:text-10px text-muted-foreground mt-0.5">
-                A Tapasys Group Company
+                Enterprise HR CRM & Workforce Solutions
               </span>
             </Link>
 

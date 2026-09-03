@@ -4,15 +4,15 @@ import { useRef } from "react";
 const columns = [
   {
     label: "GRAVITON",
-    text: "For more than a decade, Graviton has helped revenue, marketing and service teams turn fragmented customer data into a single source of truth. We sit at the intersection of CRM strategy, platform engineering and applied AI.",
+    text: "Graviton unifies fragmented HR data, candidate applications, and employee records into a single high-performance CRM architecture with sub-millisecond Dragonfly DB response times.",
   },
   {
     label: "OUR APPROACH",
-    text: "We combine deep CRM domain expertise with modern engineering. Strategy, configuration, integration, data, analytics and AI agents are not separate practices — they ship as one outcome-driven program.",
+    text: "We combine deep recruitment ATS expertise with modern workforce management. Candidate screening, digital onboarding, candidature compliance, and AI assistants work seamlessly as one integrated suite.",
   },
   {
     label: "INNOVATION",
-    text: "As a Tapasys Group company, Graviton taps into a wider network of data, cloud and AI specialists — co-creating with clients to solve the hardest customer-experience challenges of today.",
+    text: "Graviton provides dedicated portal solutions for Candidates, HR Recruiters, and Super Admins, accelerating hiring velocity and empowering modern workplaces worldwide.",
   },
 ];
 
@@ -35,8 +35,9 @@ export default function InnovationSection() {
           transition={{ duration: 0.6 }}
           className="sm:text-3xl text-center text-primary tracking-[2.6px] mb-2 sm:mb-5"
         >
-          A decade of CRM craftsmanship
+          A Decade of HR CRM & Workforce Innovation
         </motion.h2>
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 py-5 px-10 sm:gap-20">
           {columns.map((col, i) => (
             <motion.div

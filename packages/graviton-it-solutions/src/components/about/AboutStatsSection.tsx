@@ -2,9 +2,9 @@ import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 
 const stats = [
-  { value: "240+", label: "CRM rollouts delivered" },
-  { value: "98%", label: "client retention rate" },
-  { value: "12", label: "industries served globally" },
+  { value: "2M+", label: "candidates & applications processed" },
+  { value: "850+", label: "enterprise employers & HR teams" },
+  { value: "99.8%", label: "onboarding compliance & uptime" },
 ];
 
 export default function AboutStatsSection() {

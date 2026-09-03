@@ -11,20 +11,20 @@ import CTASection from "@graviton/components/CTASection";
 const carouselItems = [
   {
     img: insight1,
-    title: "The IQ Era of Connectivity: How AI in Telecom is Redefining Intelligent Networks",
-    tags: ["Agentic AI", "AI Governance", "Enterprise AI"],
+    title: "The Next Generation of Recruitment: How AI & Dragonfly DB Supercharge Candidate CRM",
+    tags: ["Recruitment CRM", "AI Screening", "Dragonfly DB"],
     date: "24 April 2026",
   },
   {
     img: insight2,
-    title: "AI-led CRM transformation for modern enterprises",
-    tags: ["CRM", "AI", "Sales"],
+    title: "Transforming the Employee Lifecycle: From Digital Offer Letters to Tenured Growth",
+    tags: ["Employee HRMS", "Onboarding", "Retention"],
     date: "20 April 2026",
   },
   {
     img: insight3,
-    title: "Building scalable RevOps with AI copilots",
-    tags: ["RevOps", "Automation"],
+    title: "Building Multi-Tenant Candidate & Employer Portals with Real-Time Data Sync",
+    tags: ["Candidate Portal", "Workforce Architecture"],
     date: "18 April 2026",
   },
 ];
@@ -33,73 +33,46 @@ const articles = [
   {
     img: insight1,
     tag: "Blogs",
-    title: "From RevOps to AgentOps: the next chapter of CRM operations",
+    title: "From Manual Sourcing to Autonomous ATS: The Modern Recruitment Playbook",
     date: "7 April 2026",
     author: "Graviton",
-    tags: ["RevOps", "Agentic AI"],
+    tags: ["Recruitment ATS", "HR Automation"],
   },
   {
     img: insight2,
     tag: "Case Studies",
-    title: "B2B SaaS firm cuts sales cycle by 38% with AI lead scoring on Salesforce",
-    date: "",
+    title: "Global Tech Enterprise cuts hiring cycle by 45% with AI candidate matching",
+    date: "5 April 2026",
     author: "Graviton",
-    tags: ["Salesforce", "AI Scoring"],
+    tags: ["Candidate Matching", "ATS CRM"],
   },
   {
     img: insight3,
     tag: "Blogs",
-    title: "Clean data is the new CRM superpower — a practical playbook",
+    title:
+      "Clean candidate data and instant Dragonfly DB caching: The secret to sub-second ATS portals",
     date: "2 April 2026",
     author: "Graviton",
-    tags: ["Data Quality", "Governance"],
+    tags: ["Dragonfly DB", "HR Data"],
   },
   {
     img: insight4,
     tag: "Case Studies",
-    title: "Voice-AI for service: 4× faster ticket triage on HubSpot Service Hub",
-    date: "",
+    title:
+      "Accelerating Day-1 readiness: Digital onboarding & background verification for 10,000+ staff",
+    date: "28 March 2026",
     author: "Graviton",
-    tags: ["HubSpot", "Service AI"],
-  },
-  {
-    img: insight1,
-    tag: "Blogs",
-    title: "From RevOps to AgentOps: the next chapter of CRM operations",
-    date: "7 April 2026",
-    author: "Graviton",
-    tags: ["RevOps", "Agentic AI"],
-  },
-  {
-    img: insight2,
-    tag: "Case Studies",
-    title: "B2B SaaS firm cuts sales cycle by 38% with AI lead scoring on Salesforce",
-    date: "",
-    author: "Graviton",
-    tags: ["Salesforce", "AI Scoring"],
-  },
-  {
-    img: insight3,
-    tag: "Blogs",
-    title: "Clean data is the new CRM superpower — a practical playbook",
-    date: "2 April 2026",
-    author: "Graviton",
-    tags: ["Data Quality", "Governance"],
-  },
-  {
-    img: insight4,
-    tag: "Case Studies",
-    title: "Voice-AI for service: 4× faster ticket triage on HubSpot Service Hub",
-    date: "",
-    author: "Graviton",
-    tags: ["HubSpot", "Service AI"],
+    tags: ["Digital Onboarding", "Compliance"],
   },
 ];
 
 const tabs = ["All", "Case Studies", "Blogs", "White Papers"];
 
 export default function Insights() {
-  usePageMeta("Insights — Graviton", "Fresh thinking on CRM, RevOps and applied AI from Graviton.");
+  usePageMeta(
+    "HR CRM & Workforce Insights — Graviton",
+    "Fresh perspectives on recruitment ATS, employee lifecycle management, and applied HR AI.",
+  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -111,9 +84,9 @@ export default function Insights() {
         data-label="Overview"
         className="max-w-[1500px] mx-auto px-4 sm:px-6 py-32 sm:py-40"
       >
-        <p className="text-xs uppercase tracking-[0.3em] text-primary mb-3">Insights</p>
+        <p className="text-xs uppercase tracking-[0.3em] text-primary mb-3">Workforce Insights</p>
         <h1 className="text-3xl sm:text-4xl md:text-7xl mb-10 max-w-6xl">
-          Fresh thinking on CRM, <br /> RevOps and applied AI from Graviton
+          Fresh thinking on HR CRM, <br /> candidate management, and workforce AI
         </h1>
       </section>
 

@@ -717,7 +717,7 @@ export function createDefaultCandidateState(
         meetingUrl: "https://meet.google.com/xyz-uvwx-rst",
         status: "passed",
         notesForCandidate:
-          "Designed scalable multi-tenant Firestore schema and realtime sync layer.",
+          "Designed scalable multi-tenant MongoDB Atlas schema and realtime sync layer.",
       },
       {
         id: "int-3",
@@ -961,7 +961,7 @@ export function createCandidatePortalStateFromDoc(
         : new Date().toISOString().split("T")[0],
       resumeFileName: candDoc.resumeFileName || `${baseName.replace(/\s+/g, "_")}_Resume.pdf`,
       resumeUrl: candDoc.resumeUrl || "#",
-      experienceYears: parseInt(candDoc.experienceYears || "4", 10) || 4,
+      experienceYears: parseInt(String(candDoc.experienceYears || "4"), 10) || 4,
       portfolioUrl: candDoc.portfolioUrl || "",
       githubUrl: candDoc.githubUrl || "",
       statusHistory: [

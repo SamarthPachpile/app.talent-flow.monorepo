@@ -32,8 +32,10 @@ function CharSpan({
 export default function TransformSection() {
   const sectionRef = useRef(null);
 
-  const firstText = "Today, we help transform businesses and refine industries through ";
-  const secondText = "intelligent products, platforms, and services ...";
+  const firstText =
+    "We empower HR leaders to transform talent acquisition and employee management through ";
+  const secondText =
+    "unified CRM portals, intelligent candidate tracking, and automated workforce operations ...";
 
   const fullText = firstText + secondText;
   const totalChars = fullText.length;
@@ -72,12 +74,12 @@ export default function TransformSection() {
         {/* Top */}
         <div>
           <p className="text-10px sm:text-xs uppercase tracking-[0.35em] text-[#7b8196] mb-5">
-            The Tapasys Group Company
+            Next-Gen HR CRM & Workforce Solutions
           </p>
 
           <p className="max-w-720px text-[#33456b] text-16px sm:text-22px lg:text-30px leading-[1.22] tracking-[-0.02em]">
-            Graviton is a trusted digital transformation partner helping ambitious businesses
-            modernize customer relationships and scale smarter.
+            Graviton is a dedicated enterprise software suite that delivers end-to-end recruitment
+            CRM, candidate application portals, and unified employee lifecycle management.
           </p>
         </div>
 
@@ -91,12 +93,15 @@ export default function TransformSection() {
 
         {/* CTA */}
         <div className="flex justify-end">
-          <button className="group flex items-center gap-4 text-[#0e1730] text-base sm:text-xl lg:text-3xl font-medium tracking-[-0.02em]">
-            Learn more about what sets us apart
+          <a
+            href="/about"
+            className="group flex items-center gap-4 text-[#0e1730] text-base sm:text-xl lg:text-3xl font-medium tracking-[-0.02em]"
+          >
+            Learn more about our HR portal software
             <span className="text-[#ff5a1f] text-3xl lg:text-5xl transition-transform duration-300 group-hover:translate-x-2">
               →
             </span>
-          </button>
+          </a>
         </div>
       </div>
     </section>

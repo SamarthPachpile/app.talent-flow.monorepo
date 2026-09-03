@@ -1,0 +1,51 @@
+{
+  "name": "@talent-flow/schema-types",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts",
+      "types": "./src/index.ts"
+    },
+    "./mongo": {
+      "import": "./src/mongo.ts",
+      "types": "./src/mongo.ts"
+    },
+    "./models": {
+      "import": "./src/models/index.ts",
+      "types": "./src/models/index.ts"
+    },
+    "./types": {
+      "import": "./src/types/index.ts",
+      "types": "./src/types/index.ts"
+    },
+    "./c-types": {
+      "import": "./src/c-types/index.ts",
+      "types": "./src/c-types/index.ts"
+    },
+    "./enums": {
+      "import": "./src/enums/index.ts",
+      "types": "./src/enums/index.ts"
+    },
+    "./constants": {
+      "import": "./src/constants/index.ts",
+      "types": "./src/constants/index.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "dependencies": {
+    "mongoose": "^9.9.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.16.5",
+    "typescript": "^5.8.3"
+  }
+}

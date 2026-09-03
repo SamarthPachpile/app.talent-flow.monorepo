@@ -8,25 +8,26 @@ const insights = [
   {
     img: insight1,
     tag: "Case Studies",
-    title: "How a B2B SaaS firm cut sales cycle by 38% with AI lead scoring on Salesforce",
+    title:
+      "How a global technology enterprise cut hiring cycle time by 45% with AI candidate screening",
     author: "Graviton",
   },
   {
     img: insight2,
     tag: "Blogs",
-    title: "From RevOps to AgentOps: the next chapter of CRM operations",
+    title: "From manual ATS spreadsheets to autonomous candidate CRM operations",
     author: "Graviton",
   },
   {
     img: insight3,
     tag: "Blogs",
-    title: "Clean data is the new CRM superpower — a practical playbook",
+    title: "Sub-second candidate search and Dragonfly DB caching: An HR portal deep-dive",
     author: "Graviton",
   },
   {
     img: insight4,
     tag: "Case Studies",
-    title: "Voice-AI for service: 4× faster ticket triage on HubSpot Service Hub",
+    title: "Smart digital onboarding: Accelerating Day-1 readiness across 10,000+ employees",
     author: "Graviton",
   },
 ];

@@ -2,7 +2,7 @@ import Header from "@graviton/components/Header";
 import Footer from "@graviton/components/Footer";
 import { usePageMeta } from "@graviton/lib/use-page-meta";
 import CareersHero from "@graviton/components/careers/CareersHero";
-import CareersCTA from "@graviton/components/careers/CareersCTA";
+import CTASection from "@graviton/components/CTASection";
 import CareersFAQ from "@graviton/components/careers/CareersFaq";
 import CareersIntro from "@graviton/components/careers/CareersIntro";
 import CareersStats from "@graviton/components/careers/CareersStats";
@@ -34,7 +34,7 @@ export default function Careers() {
       <ZeroDistance />
       <Testimonials />
       <CareersFAQ />
-      <CareersCTA />
+      <CTASection />
       <Footer />
     </div>
   );

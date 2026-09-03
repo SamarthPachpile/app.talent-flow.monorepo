@@ -11,63 +11,59 @@ import {
 
 const CAPABILITIES = [
   {
-    tag: "AI strategy",
-    title: "AI-powered solutions",
-    desc: "Co-create roadmaps that turn AI ambition into deployed CRM workflows.",
+    tag: "Candidate Intelligence",
+    title: "AI-Powered Recruitment",
+    desc: "Automated resume parsing, skill matching, and candidate ranking inside the CRM.",
   },
   {
-    tag: "Data engineering",
-    title: "Trusted data, ready for AI",
-    desc: "Pipelines, governance, and feature stores that make your CRM AI-ready.",
+    tag: "Smart Onboarding",
+    title: "Document & Verification AI",
+    desc: "Automated identity validation, credential checks, and day-one readiness workflows.",
   },
   {
-    tag: "Build & deploy",
-    title: "Production-grade AI",
-    desc: "Ship copilots, agents and scoring models with measurable impact.",
+    tag: "Workforce Copilot",
+    title: "24/7 Employee HR Desk",
+    desc: "AI assistant for leave management, benefit inquiries, helpdesk tickets, and policy guidance.",
   },
 ];
 
 const METRICS = [
-  { value: "75%", label: "increase in overall product KPIs" },
-  { value: "12x", label: "reduction in time to market" },
-  { value: "20%", label: "lower operational costs" },
+  { value: "45%", label: "reduction in candidate time-to-hire" },
+  { value: "10x", label: "faster onboarding document processing" },
+  { value: "90%", label: "automated resolution of common HR queries" },
 ];
 
 const STORIES = [
   {
-    title: "Reimagining onboarding for a global bank",
+    title: "Automated candidate screening for a global tech enterprise",
     img: "https://images.unsplash.com/photo-1556761175-b413da4baf72?w=800&q=80&auto=format&fit=crop",
   },
   {
-    title: "Predictive deal scoring for a SaaS leader",
+    title: "Predictive retention analytics for a financial services firm",
     img: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=800&q=80&auto=format&fit=crop",
   },
   {
-    title: "Agentic ops for a Fortune 500 retailer",
+    title: "Self-service HR portal for a 10,000+ employee healthcare network",
     img: "https://images.unsplash.com/photo-1556745757-8d76bdb6984b?w=800&q=80&auto=format&fit=crop",
   },
 ];
 
 const FAQS = [
   {
-    q: "What is Graviton VelocityAI?",
-    a: "Graviton VelocityAI is our applied-AI practice that helps enterprises move from AI experimentation to production-grade outcomes inside their CRM and revenue stack.",
+    q: "What is Graviton AI for HR & Recruitment?",
+    a: "Graviton AI is our applied-intelligence engine embedded within the HR CRM to automate resume screening, candidate communications, employee onboarding, and workforce service desks.",
   },
   {
-    q: "How does VelocityAI accelerate AI adoption?",
-    a: "We combine reusable accelerators, governance frameworks, and senior AI engineers to compress time-to-value from months to weeks.",
+    q: "How does Graviton AI accelerate recruitment velocity?",
+    a: "By parsing unstructured resume files in milliseconds, scoring candidate-to-job fit, and triggering automated interview scheduling directly through the candidate portal.",
   },
   {
-    q: "What kinds of clients does VelocityAI support?",
-    a: "From mid-market SaaS to Fortune 500 enterprises across financial services, healthcare, retail, and technology.",
+    q: "What portals and workflows does Graviton AI support?",
+    a: "It natively connects candidate portals, recruiter workspaces, and super admin control panels with sub-second Dragonfly DB synchronization.",
   },
   {
-    q: "Which CRMs and AI platforms are supported?",
-    a: "Salesforce, HubSpot, Zoho, Microsoft Dynamics — paired with OpenAI, Azure AI, AWS Bedrock, and Google Vertex.",
-  },
-  {
-    q: "How does VelocityAI enable safe AI adoption?",
-    a: "Built-in guardrails, evaluation harnesses, and human-in-the-loop workflows ensure responsible deployment at scale.",
+    q: "How does the AI maintain hiring compliance and unbiased scoring?",
+    a: "Built-in audit trails, anonymized screening modes, and skill-only evaluation rubrics ensure fair and transparent hiring processes.",
   },
 ];
 

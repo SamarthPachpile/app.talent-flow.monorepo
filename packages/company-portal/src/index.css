@@ -1,0 +1,485 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Manrope:wght@200..800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap");
+@import "tailwindcss";
+@config "../../../tailwind.config.ts";
+@source "../src";
+@source "../../..";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Design system & Sizing System mapped from tailwind.config.ts
+ */
+
+@theme inline {
+  /* Screen Breakpoints */
+  --breakpoint-xs-480px: 480px;
+  --breakpoint-xs-560px: 560px;
+  --breakpoint-xs-600px: 600px;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg-1000px: 1000px;
+  --breakpoint-lg-1022px: 1022px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+
+  /* Standard Spacing & Sizing Scale */
+  --spacing-0: 0px;
+  --spacing-0\.5: 0.125rem;
+  --spacing-1: 0.25rem;
+  --spacing-1\.5: 0.375rem;
+  --spacing-2: 0.5rem;
+  --spacing-2\.5: 0.625rem;
+  --spacing-3: 0.75rem;
+  --spacing-3\.5: 0.875rem;
+  --spacing-4: 1rem;
+  --spacing-4\.5: 1.125rem;
+  --spacing-5: 1.25rem;
+  --spacing-5\.5: 1.375rem;
+  --spacing-6: 1.5rem;
+  --spacing-7: 1.75rem;
+  --spacing-8: 2rem;
+  --spacing-9: 2.25rem;
+  --spacing-10: 2.5rem;
+  --spacing-11: 2.75rem;
+  --spacing-12: 3rem;
+  --spacing-14: 3.5rem;
+  --spacing-16: 4rem;
+  --spacing-18: 4.5rem;
+  --spacing-20: 5rem;
+  --spacing-24: 6rem;
+  --spacing-28: 7rem;
+  --spacing-32: 8rem;
+  --spacing-36: 9rem;
+  --spacing-40: 10rem;
+  --spacing-44: 11rem;
+  --spacing-48: 12rem;
+  --spacing-52: 13rem;
+  --spacing-56: 14rem;
+  --spacing-60: 15rem;
+  --spacing-64: 16rem;
+  --spacing-72: 18rem;
+  --spacing-80: 20rem;
+  --spacing-96: 24rem;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --font-display: var(--font-display);
+  --font-sans: var(--font-sans);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-foreground: var(--surface-foreground);
+  --color-ember: var(--ember);
+  --color-ember-foreground: var(--ember-foreground);
+  --color-clay: var(--clay);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-gl-orange: var(--gl-orange);
+  --color-gl-orange-hover: var(--gl-orange-hover);
+  --color-gl-dark: var(--gl-dark);
+  --color-gl-navy: var(--gl-navy);
+  --color-gl-gray: var(--gl-gray);
+  --color-gl-light-gray: var(--gl-light-gray);
+  --color-gl-bg: var(--gl-bg);
+  --shadow-card: 0 1px 2px oklch(0.22 0.02 60 / 0.06), 0 8px 24px -16px oklch(0.22 0.02 60 / 0.35);
+  --shadow-lifted:
+    0 2px 6px oklch(0.22 0.02 60 / 0.08), 0 18px 40px -20px oklch(0.22 0.02 60 / 0.45);
+}
+
+.talentflow-company-onboarding-scope {
+  --radius: 0.625rem;
+  --font-sans: "Poppins", sans-serif;
+  --font-display: "Poppins", sans-serif;
+  --background: oklch(0.99 0 0);
+  --foreground: oklch(0.15 0.02 260);
+  --surface: oklch(0.96 0.005 260);
+  --surface-foreground: oklch(0.15 0.02 260);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.15 0.02 260);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.15 0.02 260);
+  --primary: oklch(0.637 0.194 29);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.96 0.005 260);
+  --secondary-foreground: oklch(0.15 0.02 260);
+  --muted: oklch(0.96 0.005 260);
+  --muted-foreground: oklch(0.5 0.02 260);
+  --accent: oklch(0.96 0.005 260);
+  --accent-foreground: oklch(0.15 0.02 260);
+  --ember: oklch(0.637 0.194 29);
+  --ember-foreground: oklch(1 0 0);
+  --clay: oklch(0.637 0.194 29);
+  --success: oklch(0.6 0.18 145);
+  --success-foreground: oklch(1 0 0);
+  --warning: oklch(0.75 0.15 75);
+  --warning-foreground: oklch(0.15 0.02 260);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.984 0.003 247.858);
+  --border: oklch(0.92 0.005 260);
+  --input: oklch(0.92 0.005 260);
+  --ring: oklch(0.637 0.194 29);
+  --chart-1: oklch(0.637 0.194 29);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.984 0.003 247.858);
+  --sidebar-foreground: oklch(0.129 0.042 264.695);
+  --sidebar-primary: oklch(0.637 0.194 29);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.968 0.007 247.896);
+  --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
+  --sidebar-border: oklch(0.929 0.013 255.508);
+  --sidebar-ring: oklch(0.637 0.194 29);
+
+  --gl-orange: oklch(0.637 0.194 29);
+  --gl-orange-hover: oklch(0.58 0.194 29);
+  --gl-dark: oklch(0.15 0.02 260);
+  --gl-navy: oklch(0.18 0.04 265);
+  --gl-gray: oklch(0.5 0.01 260);
+  --gl-light-gray: oklch(0.96 0.005 260);
+  --gl-bg: oklch(0.985 0.002 260);
+}
+
+.talentflow-company-onboarding-scope.dark,
+.talentflow-company-onboarding-scope .dark {
+  --background: oklch(0.15 0.02 260);
+  --foreground: oklch(0.98 0.005 260);
+  --surface: oklch(0.18 0.04 265);
+  --surface-foreground: oklch(0.98 0.005 260);
+  --card: oklch(0.18 0.04 265);
+  --card-foreground: oklch(0.98 0.005 260);
+  --popover: oklch(0.18 0.04 265);
+  --popover-foreground: oklch(0.98 0.005 260);
+  --primary: oklch(0.637 0.194 29);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.22 0.03 260);
+  --secondary-foreground: oklch(0.98 0.005 260);
+  --muted: oklch(0.22 0.03 260);
+  --muted-foreground: oklch(0.65 0.01 260);
+  --accent: oklch(0.24 0.03 260);
+  --accent-foreground: oklch(0.98 0.005 260);
+  --ember: oklch(0.637 0.194 29);
+  --ember-foreground: oklch(1 0 0);
+  --clay: oklch(0.637 0.194 29);
+  --success: oklch(0.66 0.11 155);
+  --success-foreground: oklch(1 0 0);
+  --warning: oklch(0.78 0.13 78);
+  --warning-foreground: oklch(0.15 0.02 260);
+  --destructive: oklch(0.63 0.19 27);
+  --destructive-foreground: oklch(0.98 0.005 85);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 16%);
+  --ring: oklch(0.637 0.194 29);
+  --chart-1: oklch(0.637 0.194 29);
+  --chart-2: oklch(0.62 0.06 55);
+  --chart-3: oklch(0.66 0.11 155);
+  --chart-4: oklch(0.78 0.13 78);
+  --chart-5: oklch(0.72 0.012 70);
+  --sidebar: oklch(0.18 0.04 265);
+  --sidebar-foreground: oklch(0.98 0.005 260);
+  --sidebar-primary: oklch(0.637 0.194 29);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.24 0.03 260);
+  --sidebar-accent-foreground: oklch(0.98 0.005 260);
+  --sidebar-border: oklch(1 0 0 / 12%);
+  --sidebar-ring: oklch(0.637 0.194 29);
+}
+
+.talentflow-company-onboarding-scope {
+  font-family: var(--font-sans);
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Typography Hierarchy & Weight Scaling (aligned with Graviton IT Solutions) */
+.talentflow-company-onboarding-scope h1 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+
+.talentflow-company-onboarding-scope h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.talentflow-company-onboarding-scope h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.35;
+}
+
+.talentflow-company-onboarding-scope h4,
+.talentflow-company-onboarding-scope h5,
+.talentflow-company-onboarding-scope h6 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.talentflow-company-onboarding-scope p {
+  font-weight: 400;
+}
+
+@layer base {
+  .talentflow-company-onboarding-scope * {
+    border-color: var(--color-border);
+  }
+}
+
+/* Graviton glowing effects and background grid */
+.talentflow-company-onboarding-scope .bg-grid-pattern {
+  background-size: 40px 40px;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+}
+
+.talentflow-company-onboarding-scope .glow-gradient-purple {
+  background: radial-gradient(
+    circle at center,
+    rgba(124, 58, 237, 0.15) 0%,
+    rgba(15, 23, 42, 0) 70%
+  );
+}
+
+.talentflow-company-onboarding-scope .glow-gradient-blue {
+  background: radial-gradient(
+    circle at center,
+    rgba(59, 130, 246, 0.15) 0%,
+    rgba(15, 23, 42, 0) 70%
+  );
+}
+
+/* Glass & Panel utilities aligned to Graviton design tokens */
+.talentflow-company-onboarding-scope .glass-panel,
+.talentflow-company-onboarding-scope .glass-card {
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.talentflow-company-onboarding-scope .glass-card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.talentflow-company-onboarding-scope .glass-card-hover:hover,
+.talentflow-company-onboarding-scope .glass-card:hover {
+  background: rgba(30, 41, 59, 0.75);
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px -10px rgba(249, 115, 22, 0.25);
+}
+
+/* Graviton Chamfered Corner Clip Paths with Smooth 8-Sided Border Tracing */
+:root {
+  --clip-border-color: rgba(226, 232, 240, 0.95);
+  --clip-border-dark: rgba(51, 65, 85, 0.9);
+}
+
+.clip-path-card,
+.talentflow-company-onboarding-scope .clip-path-card {
+  clip-path: polygon(
+    28px 0,
+    calc(100% - 28px) 0,
+    100% 28px,
+    100% calc(100% - 28px),
+    calc(100% - 28px) 100%,
+    28px 100%,
+    0 calc(100% - 28px),
+    0 28px
+  );
+  filter: drop-shadow(0 0 1px rgba(148, 163, 184, 0.4))
+    drop-shadow(0 1px 2px rgba(15, 23, 42, 0.04));
+  border: none !important;
+}
+
+.dark .clip-path-card,
+.dark .talentflow-company-onboarding-scope .clip-path-card {
+  filter: drop-shadow(0 0 1px rgba(71, 85, 105, 0.8)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.clip-service,
+.talentflow-company-onboarding-scope .clip-service {
+  clip-path: polygon(
+    20px 0,
+    calc(100% - 20px) 0,
+    100% 20px,
+    100% calc(100% - 20px),
+    calc(100% - 20px) 100%,
+    20px 100%,
+    0 calc(100% - 20px),
+    0 20px
+  );
+  filter: drop-shadow(0 0 1px rgba(148, 163, 184, 0.45))
+    drop-shadow(0 1px 2px rgba(15, 23, 42, 0.03));
+  border: none !important;
+}
+
+.dark .clip-service,
+.dark .talentflow-company-onboarding-scope .clip-service {
+  filter: drop-shadow(0 0 1px rgba(71, 85, 105, 0.85)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.clip-service:hover,
+.talentflow-company-onboarding-scope .clip-service:hover {
+  filter: drop-shadow(0 0 1.5px rgba(249, 115, 22, 0.85))
+    drop-shadow(0 4px 12px rgba(249, 115, 22, 0.12));
+}
+
+.clip-path-nav-sm,
+.talentflow-company-onboarding-scope .clip-path-nav-sm {
+  clip-path: polygon(
+    18px 0,
+    calc(100% - 18px) 0,
+    100% 18px,
+    100% calc(100% - 18px),
+    calc(100% - 18px) 100%,
+    18px 100%,
+    0 calc(100% - 18px),
+    0 18px
+  );
+  filter: drop-shadow(0 0 1px rgba(148, 163, 184, 0.4));
+  border: none !important;
+  border-radius: 0;
+}
+
+.dark .clip-path-nav-sm,
+.dark .talentflow-company-onboarding-scope .clip-path-nav-sm {
+  filter: drop-shadow(0 0 1px rgba(71, 85, 105, 0.8));
+}
+
+.clip-path-button-sm,
+.talentflow-company-onboarding-scope .clip-path-button-sm {
+  clip-path: polygon(
+    10px 0,
+    calc(100% - 10px) 0,
+    100% 10px,
+    100% calc(100% - 10px),
+    calc(100% - 10px) 100%,
+    10px 100%,
+    0 calc(100% - 10px),
+    0 10px
+  );
+  border: none !important;
+  border-radius: 0;
+}
+
+@media (max-width: 768px) {
+  .clip-path-card,
+  .talentflow-company-onboarding-scope .clip-path-card {
+    clip-path: polygon(
+      16px 0,
+      calc(100% - 16px) 0,
+      100% 16px,
+      100% calc(100% - 16px),
+      calc(100% - 16px) 100%,
+      16px 100%,
+      0 calc(100% - 16px),
+      0 16px
+    );
+  }
+}
+
+.talentflow-company-onboarding-scope .form-input {
+  @apply w-full bg-[#e9ebef] rounded-md px-4 py-3 text-sm 
+  placeholder:text-gray-500 outline-none border-none;
+}
+
+/* Custom Sticky Scrollbar - Flush to the right edge with zero gap, transparent track */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  background: transparent !important;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent !important;
+  margin: 0;
+  padding: 0;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(140, 140, 150, 0.45);
+  border: 0 !important;
+  border-radius: 4px 0 0 4px;
+  margin: 0;
+  padding: 0;
+  transition: background 0.2s ease-in-out;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(249, 115, 22, 0.9);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent !important;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(140, 140, 150, 0.45) transparent;
+}
+
+/* Lenis Smooth Scroll Configuration */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: clip;
+}

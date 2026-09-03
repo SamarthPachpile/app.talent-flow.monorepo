@@ -27,7 +27,7 @@ export default function IndustriesSection() {
       <div className="w-full mx-auto px-6 sm:px-10 lg:px-16">
         {/* Label */}
         <p className="text-[#33456b] text-lg sm:text-2xl mb-10 tracking-[-0.02em]">
-          Our industries
+          Workforce & HR CRM Solutions by Industry
         </p>
 
         {/* Industry List */}

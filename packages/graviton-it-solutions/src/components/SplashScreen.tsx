@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 
-const HOLD_MS = 5000; // static screen time
+const HOLD_MS = 2000; // 2 seconds intro for smooth and snappy UX
 
 export default function SplashScreen({ children }: { children: React.ReactNode }) {
   const [done, setDone] = useState(false);
@@ -13,75 +13,92 @@ export default function SplashScreen({ children }: { children: React.ReactNode }
   const orbitRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Safety fallback: if GSAP is blocked or slow, ensure done is set
+    const fallbackTimer = setTimeout(() => {
+      setDone(true);
+    }, HOLD_MS + 800);
+
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         defaults: { ease: "power3.out" },
       });
 
-      // Orbit rings spin in
-      tl.from(orbitRef.current!.querySelectorAll(".orbit"), {
-        scale: 0,
-        opacity: 0,
-        rotate: -90,
-        duration: 1.0,
-        stagger: 0.1,
-        ease: "expo.out",
-      });
-
-      tl.from(
-        logoRef.current!.querySelectorAll(".letter"),
-        {
-          y: 60,
+      if (orbitRef.current) {
+        tl.from(orbitRef.current.querySelectorAll(".orbit"), {
+          scale: 0,
           opacity: 0,
-          rotateX: -90,
+          rotate: -90,
           duration: 0.6,
-          stagger: 0.035,
-        },
-        "-=0.7",
-      );
+          stagger: 0.08,
+          ease: "expo.out",
+        });
+      }
 
-      tl.from(subRef.current, { opacity: 0, y: 12, duration: 0.5 }, "-=0.2");
+      if (logoRef.current) {
+        tl.from(
+          logoRef.current.querySelectorAll(".letter"),
+          {
+            y: 40,
+            opacity: 0,
+            rotateX: -90,
+            duration: 0.5,
+            stagger: 0.03,
+          },
+          "-=0.4",
+        );
+      }
 
-      // Counter + bar tied to the full HOLD duration so it reaches 100 right at the end
+      if (subRef.current) {
+        tl.from(subRef.current, { opacity: 0, y: 10, duration: 0.4 }, "-=0.2");
+      }
+
       const counter = { v: 0 };
       tl.to(
         counter,
         {
           v: 100,
-          duration: HOLD_MS / 1000 - 1.2, // leave room for intro
+          duration: Math.max(0.6, HOLD_MS / 1000 - 0.8),
           ease: "none",
           onUpdate: () => {
-            if (counterRef.current)
+            if (counterRef.current) {
               counterRef.current.textContent = Math.round(counter.v).toString().padStart(3, "0");
-            if (barRef.current) barRef.current.style.width = `${counter.v}%`;
+            }
+            if (barRef.current) {
+              barRef.current.style.width = `${counter.v}%`;
+            }
           },
         },
-        0.6,
+        0.3,
       );
 
-      // Smooth fade-out at the very end
-      tl.to(
-        overlayRef.current,
-        {
-          autoAlpha: 0,
-          duration: 0.9,
-          ease: "power2.inOut",
-          onComplete: () => setDone(true),
-        },
-        `>-0.05`,
-      );
+      if (overlayRef.current) {
+        tl.to(
+          overlayRef.current,
+          {
+            autoAlpha: 0,
+            duration: 0.6,
+            ease: "power2.inOut",
+            onComplete: () => setDone(true),
+          },
+          `>-0.05`,
+        );
+      }
 
-      // Continuous orbit rotation
-      gsap.to(orbitRef.current!.querySelectorAll(".orbit"), {
-        rotate: "+=360",
-        duration: 14,
-        repeat: -1,
-        ease: "none",
-        stagger: { each: 2 },
-      });
+      if (orbitRef.current) {
+        gsap.to(orbitRef.current.querySelectorAll(".orbit"), {
+          rotate: "+=360",
+          duration: 14,
+          repeat: -1,
+          ease: "none",
+          stagger: { each: 2 },
+        });
+      }
     }, overlayRef);
 
-    return () => ctx.revert();
+    return () => {
+      clearTimeout(fallbackTimer);
+      ctx.revert();
+    };
   }, []);
 
   const word = "GRAVITON";
@@ -91,8 +108,9 @@ export default function SplashScreen({ children }: { children: React.ReactNode }
       {!done && (
         <div
           ref={overlayRef}
+          onClick={() => setDone(true)}
           data-splash="active"
-          className="fixed inset-0 z-[100000] overflow-hidden"
+          className="fixed inset-0 z-[100000] overflow-hidden cursor-pointer"
           style={{
             background:
               "radial-gradient(ellipse at 30% 20%, #2a1340 0%, #140628 40%, #08020f 100%)",
@@ -110,7 +128,10 @@ export default function SplashScreen({ children }: { children: React.ReactNode }
           />
 
           {/* Orbits */}
-          <div ref={orbitRef} className="absolute inset-0 flex items-center justify-center">
+          <div
+            ref={orbitRef}
+            className="absolute inset-0 flex items-center justify-center pointer-events-none"
+          >
             <div className="orbit absolute w-300px h-300px md:w-520px md:h-520px rounded-full border border-primary/30" />
             <div className="orbit absolute w-[220px] h-[220px] md:w-380px md:h-380px rounded-full border border-primary/20">
               <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-primary shadow-[0_0_20px_var(--gl-orange)]" />
@@ -121,7 +142,7 @@ export default function SplashScreen({ children }: { children: React.ReactNode }
           </div>
 
           {/* Center content */}
-          <div className="relative z-10 h-full flex flex-col items-center justify-center px-6">
+          <div className="relative z-10 h-full flex flex-col items-center justify-center px-6 pointer-events-none">
             <div ref={logoRef} className="overflow-hidden">
               <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold text-primary-foreground tracking-tight flex">
                 {word.split("").map((c, i) => (

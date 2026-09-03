@@ -113,7 +113,7 @@ export default function HeroSection() {
 
       {/* Floating brand icons */}
       <FloatingIcon
-        label="Boost Sales with Salesforce"
+        label="Recruitment CRM & Smart ATS"
         className="top-[18%] left-[6%]"
         delay={0.3}
         duration={50}
@@ -122,7 +122,7 @@ export default function HeroSection() {
       </FloatingIcon>
 
       <FloatingIcon
-        label="See Data Clearly with Tableau"
+        label="Candidate Portal & Screening"
         className="top-[24%] right-[7%]"
         delay={0.5}
         duration={50}
@@ -131,7 +131,7 @@ export default function HeroSection() {
       </FloatingIcon>
 
       <FloatingIcon
-        label="Automate with AI"
+        label="Automated HR Workflows with AI"
         className="top-[48%] left-[15%]"
         delay={0.7}
         duration={50}
@@ -140,7 +140,7 @@ export default function HeroSection() {
       </FloatingIcon>
 
       <FloatingIcon
-        label="Grow Faster with HubSpot"
+        label="Employee Lifecycle & HRMS"
         className="top-[50%] right-[9%]"
         delay={0.9}
         duration={50}
@@ -165,7 +165,7 @@ export default function HeroSection() {
           transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
           className="text-center text-xs sm:text-sm uppercase tracking-[0.35em] text-foreground/60 mb-6"
         >
-          CRM Consultancy · Applied AI · RevOps
+          HR CRM · Candidate Application Management · Employee Lifecycle Suite
         </motion.p>
 
         <motion.h1
@@ -174,7 +174,7 @@ export default function HeroSection() {
           transition={{ duration: 0.9, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
           className="text-[clamp(3rem,8vw,12rem)] leading-[0.9] tracking-[-0.0001em] text-foreground text-center mb-10 sm:mb-12"
         >
-          Engineering Impact
+          Workforce Intelligence
         </motion.h1>
 
         <motion.div
@@ -183,12 +183,15 @@ export default function HeroSection() {
           transition={{ duration: 0.7, delay: 0.45, ease: [0.22, 1, 0.36, 1] }}
           className="flex justify-center"
         >
-          <button className="group flex items-center gap-3 bg-foreground/10 backdrop-blur-md text-foreground pl-7 pr-2 py-2 rounded-full text-base sm:text-lg font-medium border border-foreground/15 hover:bg-foreground/15 transition-all">
-            Get to know us
+          <a
+            href="/services"
+            className="group flex items-center gap-3 bg-foreground/10 backdrop-blur-md text-foreground pl-7 pr-2 py-2 rounded-full text-base sm:text-lg font-medium border border-foreground/15 hover:bg-foreground/15 transition-all"
+          >
+            Explore HR Solutions
             <span className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-background flex items-center justify-center shadow-md group-hover:translate-x-1 transition-transform">
               <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </span>
-          </button>
+          </a>
         </motion.div>
       </div>
     </section>

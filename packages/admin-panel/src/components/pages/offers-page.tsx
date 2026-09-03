@@ -11,6 +11,7 @@ import { SettingsCard } from "../settings/settings-card";
 import { AuditTrail } from "../ats/audit-trail";
 import { useWorkspace } from "../../lib/workspace-store";
 import { OFFER_FLOW, type Offer } from "../../lib/workspace-data";
+import { formatInrCurrency } from "@talent-flow/api";
 import { Footer } from "../Footer";
 
 const statusTone: Record<Offer["status"], string> = {
@@ -165,7 +166,8 @@ export function OffersPage() {
                       <div>
                         <p className="text-sm font-medium text-foreground">{o.candidateName}</p>
                         <p className="text-xs text-muted-foreground">
-                          {o.role} · {o.salary} + {o.bonus} · starts {o.startDate}
+                          {o.role} · {formatInrCurrency(o.salary)} + {formatInrCurrency(o.bonus)} ·
+                          starts {o.startDate}
                         </p>
                         <p className="mt-1 text-11px text-muted-foreground">
                           Signer {o.signerEmail} · expires {o.expiresOn}

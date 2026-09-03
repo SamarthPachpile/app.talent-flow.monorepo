@@ -5,43 +5,43 @@ import { usePageMeta } from "@graviton/lib/use-page-meta";
 
 const services = [
   {
-    title: "CRM Strategy & Advisory",
-    desc: "Vendor selection, roadmaps, RevOps design and CRM operating model.",
+    title: "Candidate Application & ATS CRM",
+    desc: "End-to-end recruitment tracking, multi-channel job postings, and automated candidate pipeline stages.",
   },
   {
-    title: "Salesforce Implementation",
-    desc: "Sales Cloud, Service Cloud, Marketing Cloud and Data Cloud rollouts.",
+    title: "Employee Lifecycle & HRMS",
+    desc: "Central employee records, digital org charts, attendance, leave approvals, and appraisals.",
   },
   {
-    title: "HubSpot & Zoho",
-    desc: "Sales, marketing and service hubs configured around your buyer journey.",
+    title: "Smart Digital Onboarding",
+    desc: "Automated document collection, background check integrations, digital signing, and Day-1 roadmaps.",
   },
   {
-    title: "Microsoft Dynamics 365",
-    desc: "Enterprise-grade Dynamics deployments with Power Platform extensions.",
+    title: "Candidature Screening & AI Parsing",
+    desc: "Resume parsing, AI qualification scoring, and automated candidate interview scheduling.",
   },
   {
-    title: "CRM Migration & Integration",
-    desc: "Clean data migrations and pre-built integrations to your stack.",
+    title: "HR Helpdesk & Employee Portal",
+    desc: "Self-service workforce helpdesk, policy guidance, payroll slip downloads, and 24/7 AI assistants.",
   },
   {
-    title: "AI & Agentic Automation",
-    desc: "Predictive scoring, copilots, agentic workflows and conversation intelligence.",
+    title: "Payroll & Compensation Management",
+    desc: "Salary structures, deductions, tax compliance filings, and automated compensation disbursements.",
   },
   {
-    title: "Analytics & RevOps",
-    desc: "Dashboards, attribution and revenue analytics teams actually use.",
+    title: "Workforce Analytics & Intelligence",
+    desc: "Hiring velocity metrics, candidate funnel drop-offs, retention analytics, and headcount forecasting.",
   },
   {
-    title: "Managed CRM Operations",
-    desc: "Ongoing admin, optimization and enhancements as a managed service.",
+    title: "Multi-Tenant Portals & Dragonfly DB Engine",
+    desc: "High-throughput candidate portals, company employer workspaces, and super admin control suites.",
   },
 ];
 
 export default function Services() {
   usePageMeta(
-    "Services — Graviton",
-    "End-to-end CRM consulting, implementation and AI services from Graviton.",
+    "HR CRM & Workforce Solutions — Graviton",
+    "Comprehensive HR CRM portal software, candidate application tracking, and employee management solutions.",
   );
   return (
     <div className="min-h-screen bg-background">
@@ -53,13 +53,16 @@ export default function Services() {
         className="pt-32 sm:pt-40 pb-16 sm:pb-20 max-w-[1400px] mx-auto px-4 sm:px-6"
       >
         <p className="text-10px sm:text-xs uppercase tracking-[0.3em] text-primary mb-3">
-          What we do
+          Software & Services
         </p>
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6">Our Services</h1>
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6">
+          HR CRM & Workforce Solutions
+        </h1>
         <p className="text-muted-foreground max-w-xl mb-12">
-          End-to-end CRM consulting, implementation and AI — across Salesforce, HubSpot, Zoho and
-          Microsoft Dynamics.
+          A complete enterprise suite for candidate application management, smart candidature
+          verification, employee lifecycle HRMS, and real-time portal operations.
         </p>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {services.map((s) => (
             <div

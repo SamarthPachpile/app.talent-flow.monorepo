@@ -4,26 +4,26 @@ import { useState, useEffect, useRef } from "react";
 const TESTIMONIALS = [
   {
     quote:
-      "The atmosphere at Graviton is unmatched. I get to learn from world-class CRM architects every day.",
-    highlight: "Every project feels like a masterclass.",
+      "The engineering culture at Graviton is unmatched. I get to design high-throughput HR CRM portals and ATS engines used by thousands of hiring managers every day.",
+    highlight: "Every project solves real-world workforce challenges.",
     name: "Aarti M.",
-    role: "Senior Consultant · Pune",
+    role: "Senior HR Tech Architect · Pune",
     initials: "AM",
   },
   {
     quote:
-      "Ideas turn into shipped work quickly. Our AI copilots went from idea to production in weeks.",
-    highlight: "The pace of innovation here is electric.",
+      "Ideas turn into production features rapidly. Our AI candidate screening parser and Dragonfly DB sync went from concept to live deployment in weeks.",
+    highlight: "The speed of product iteration here is electric.",
     name: "Rohan S.",
     role: "Applied AI Engineer · Remote",
     initials: "RS",
   },
   {
     quote:
-      "Graviton invests in people — certifications, mentorship, and learning are part of the job.",
+      "Graviton empowers people with autonomy, HR tech domain depth, and continuous learning. We build software that directly transforms people's careers.",
     highlight: "Growth here is intentional, not accidental.",
     name: "Priya K.",
-    role: "RevOps Lead · Pune",
+    role: "Workforce Solutions Lead · Pune",
     initials: "PK",
   },
 ];

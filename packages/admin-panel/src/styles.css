@@ -183,16 +183,43 @@
   font-family: var(--font-sans);
   background-color: var(--color-background);
   color: var(--color-foreground);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-.talentflow-admin-panel-scope h1,
-.talentflow-admin-panel-scope h2,
-.talentflow-admin-panel-scope h3,
+/* Typography Hierarchy & Weight Scaling (aligned with Graviton IT Solutions) */
+.talentflow-admin-panel-scope h1 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+
+.talentflow-admin-panel-scope h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.talentflow-admin-panel-scope h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.35;
+}
+
 .talentflow-admin-panel-scope h4,
 .talentflow-admin-panel-scope h5,
 .talentflow-admin-panel-scope h6 {
   font-family: var(--font-display);
+  font-weight: 600;
   letter-spacing: -0.01em;
+}
+
+.talentflow-admin-panel-scope p {
+  font-weight: 400;
 }
 
 @layer base {

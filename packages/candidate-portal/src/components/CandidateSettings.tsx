@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
   CandidateApiService,
-  SettingsBackendService,
+  CandidateSettingsBackendService as SettingsBackendService,
   uploadCandidateFileToStorage,
   type CandidateSettings as CandidateSettingsType,
 } from "@talent-flow/api";
@@ -58,7 +58,7 @@ export const CandidateSettingsComponent: React.FC<CandidateSettingsProps> = ({
 
     try {
       toast.loading("Uploading profile image...", { id: "settings-avatar-upload" });
-      const path = `candidates/${settings.profile.id || "cand"}/avatar_${Date.now()}`;
+      const path = `candidates/${settings.profile.fullName || "cand"}/avatar_${Date.now()}`;
       const url = await uploadCandidateFileToStorage(file, path);
       setAvatarUrl(url);
       if (onUpdateAvatar) {
@@ -162,7 +162,7 @@ export const CandidateSettingsComponent: React.FC<CandidateSettingsProps> = ({
                   <img src={avatarUrl} alt="Avatar" className="size-full object-cover" />
                 ) : (
                   <div className="size-full bg-gradient-to-br from-ember to-orange-600 text-white flex items-center justify-center font-bold text-lg">
-                    {settings.profile.fullName
+                    {settings.profile?.fullName
                       ? settings.profile.fullName.charAt(0).toUpperCase()
                       : "U"}
                   </div>
@@ -218,7 +218,7 @@ export const CandidateSettingsComponent: React.FC<CandidateSettingsProps> = ({
               </label>
               <input
                 type="text"
-                value={settings.profile.fullName}
+                value={settings.profile?.fullName || ""}
                 onChange={(e) =>
                   setSettings((prev) => ({
                     ...prev,
@@ -233,7 +233,7 @@ export const CandidateSettingsComponent: React.FC<CandidateSettingsProps> = ({
               <label className="block text-muted-foreground font-medium mb-1">Email Address</label>
               <input
                 type="email"
-                value={settings.profile.email}
+                value={settings.profile?.email || ""}
                 onChange={(e) =>
                   setSettings((prev) => ({
                     ...prev,
@@ -248,7 +248,7 @@ export const CandidateSettingsComponent: React.FC<CandidateSettingsProps> = ({
               <label className="block text-muted-foreground font-medium mb-1">Phone Number</label>
               <input
                 type="text"
-                value={settings.profile.phone}
+                value={settings.profile?.phone || ""}
                 onChange={(e) =>
                   setSettings((prev) => ({
                     ...prev,
@@ -265,11 +265,11 @@ export const CandidateSettingsComponent: React.FC<CandidateSettingsProps> = ({
               </label>
               <input
                 type="text"
-                value={settings.profile.location}
+                value={settings.profile?.currentLocation || ""}
                 onChange={(e) =>
                   setSettings((prev) => ({
                     ...prev,
-                    profile: { ...prev.profile, location: e.target.value },
+                    profile: { ...prev.profile, currentLocation: e.target.value },
                   }))
                 }
                 className="w-full bg-surface border border-border rounded-md px-3 py-2 text-foreground focus:outline-none focus:border-ember"
@@ -282,7 +282,7 @@ export const CandidateSettingsComponent: React.FC<CandidateSettingsProps> = ({
               </label>
               <input
                 type="text"
-                value={settings.profile.linkedinUrl}
+                value={settings.profile?.linkedinUrl || ""}
                 onChange={(e) =>
                   setSettings((prev) => ({
                     ...prev,
@@ -299,7 +299,7 @@ export const CandidateSettingsComponent: React.FC<CandidateSettingsProps> = ({
               </label>
               <input
                 type="text"
-                value={settings.profile.githubUrl}
+                value={settings.profile?.githubUrl || ""}
                 onChange={(e) =>
                   setSettings((prev) => ({
                     ...prev,
@@ -316,7 +316,7 @@ export const CandidateSettingsComponent: React.FC<CandidateSettingsProps> = ({
               </label>
               <input
                 type="text"
-                value={settings.profile.headline}
+                value={settings.profile?.headline || ""}
                 onChange={(e) =>
                   setSettings((prev) => ({
                     ...prev,
@@ -331,7 +331,7 @@ export const CandidateSettingsComponent: React.FC<CandidateSettingsProps> = ({
               <label className="block text-muted-foreground font-medium mb-1">Summary / Bio</label>
               <textarea
                 rows={3}
-                value={settings.profile.bio}
+                value={settings.profile?.bio || ""}
                 onChange={(e) =>
                   setSettings((prev) => ({
                     ...prev,
@@ -357,11 +357,14 @@ export const CandidateSettingsComponent: React.FC<CandidateSettingsProps> = ({
             </div>
             <input
               type="checkbox"
-              checked={settings.notifications.emailStageUpdates}
+              checked={settings.notifications?.applicationStatusAlerts ?? true}
               onChange={(e) =>
                 setSettings((prev) => ({
                   ...prev,
-                  notifications: { ...prev.notifications, emailStageUpdates: e.target.checked },
+                  notifications: {
+                    ...prev.notifications,
+                    applicationStatusAlerts: e.target.checked,
+                  },
                 }))
               }
               className="accent-ember size-4"
@@ -377,11 +380,11 @@ export const CandidateSettingsComponent: React.FC<CandidateSettingsProps> = ({
             </div>
             <input
               type="checkbox"
-              checked={settings.notifications.emailInterviewInvites}
+              checked={settings.notifications?.interviewReminders ?? true}
               onChange={(e) =>
                 setSettings((prev) => ({
                   ...prev,
-                  notifications: { ...prev.notifications, emailInterviewInvites: e.target.checked },
+                  notifications: { ...prev.notifications, interviewReminders: e.target.checked },
                 }))
               }
               className="accent-ember size-4"
@@ -397,11 +400,11 @@ export const CandidateSettingsComponent: React.FC<CandidateSettingsProps> = ({
             </div>
             <input
               type="checkbox"
-              checked={settings.notifications.smsReminders}
+              checked={settings.notifications?.smsAlerts ?? false}
               onChange={(e) =>
                 setSettings((prev) => ({
                   ...prev,
-                  notifications: { ...prev.notifications, smsReminders: e.target.checked },
+                  notifications: { ...prev.notifications, smsAlerts: e.target.checked },
                 }))
               }
               className="accent-ember size-4"
@@ -422,11 +425,11 @@ export const CandidateSettingsComponent: React.FC<CandidateSettingsProps> = ({
             </div>
             <input
               type="checkbox"
-              checked={settings.privacy.openToWork}
+              checked={settings.privacy?.allowDirectMessages ?? true}
               onChange={(e) =>
                 setSettings((prev) => ({
                   ...prev,
-                  privacy: { ...prev.privacy, openToWork: e.target.checked },
+                  privacy: { ...prev.privacy, allowDirectMessages: e.target.checked },
                 }))
               }
               className="accent-ember size-4"
@@ -442,11 +445,11 @@ export const CandidateSettingsComponent: React.FC<CandidateSettingsProps> = ({
             </div>
             <input
               type="checkbox"
-              checked={settings.privacy.anonymousScreeningOptIn}
+              checked={settings.privacy?.anonymizeResume ?? false}
               onChange={(e) =>
                 setSettings((prev) => ({
                   ...prev,
-                  privacy: { ...prev.privacy, anonymousScreeningOptIn: e.target.checked },
+                  privacy: { ...prev.privacy, anonymizeResume: e.target.checked },
                 }))
               }
               className="accent-ember size-4"
@@ -464,7 +467,7 @@ export const CandidateSettingsComponent: React.FC<CandidateSettingsProps> = ({
             </label>
             <input
               type="text"
-              value={settings.documents.primaryResumeName}
+              value={settings.documents?.primaryResumeName || ""}
               onChange={(e) =>
                 setSettings((prev) => ({
                   ...prev,
@@ -481,7 +484,7 @@ export const CandidateSettingsComponent: React.FC<CandidateSettingsProps> = ({
             </label>
             <input
               type="text"
-              value={settings.documents.portfolioUrl}
+              value={settings.documents?.portfolioUrl || ""}
               onChange={(e) =>
                 setSettings((prev) => ({
                   ...prev,
@@ -506,7 +509,7 @@ export const CandidateSettingsComponent: React.FC<CandidateSettingsProps> = ({
             </div>
             <button
               onClick={() => {
-                const nextMfa = !settings.account.mfaEnabled;
+                const nextMfa = !settings.account?.mfaEnabled;
                 setSettings((prev) => ({
                   ...prev,
                   account: { ...prev.account, mfaEnabled: nextMfa },
@@ -515,7 +518,7 @@ export const CandidateSettingsComponent: React.FC<CandidateSettingsProps> = ({
               }}
               className="px-3 py-1 rounded bg-ember text-ember-foreground font-medium cursor-pointer"
             >
-              {settings.account.mfaEnabled ? "Enabled" : "Enable MFA"}
+              {settings.account?.mfaEnabled ? "Enabled" : "Enable MFA"}
             </button>
           </div>
 
@@ -523,7 +526,7 @@ export const CandidateSettingsComponent: React.FC<CandidateSettingsProps> = ({
             <div>
               <p className="font-semibold text-foreground">Password Credentials</p>
               <p className="text-11px text-muted-foreground">
-                Last updated: {settings.account.passwordLastChanged}
+                Last updated: {settings.account?.passwordLastChanged || "2026-08-15"}
               </p>
             </div>
             <button
@@ -538,3 +541,5 @@ export const CandidateSettingsComponent: React.FC<CandidateSettingsProps> = ({
     </div>
   );
 };
+
+export default CandidateSettingsComponent;

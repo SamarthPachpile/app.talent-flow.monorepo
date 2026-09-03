@@ -330,7 +330,9 @@ export default function RecruitmentProcess() {
 
         <button
           onClick={() => {
-            /* hook up your router / modal here */
+            const el =
+              document.getElementById("search") || document.getElementById("recent-postings");
+            if (el) el.scrollIntoView({ behavior: "smooth" });
           }}
           style={{
             display: "flex",
