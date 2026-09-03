@@ -24,18 +24,19 @@ export const KB: KBEntry[] = [
       "about graviton",
       "who are you",
       "company",
-      "tapasys",
+      "hr crm",
+      "talent flow",
     ],
     questions: ["What is Graviton?", "Who is Graviton?", "Tell me about Graviton"],
     weight: 1.2,
     answer:
-      "**Graviton** is a CRM consultancy and applied-AI partner — part of the **Tapasys Group**. " +
-      "We help revenue, marketing, and service teams turn customer data into measurable growth through " +
-      "CRM strategy, implementation, RevOps automation, and AI built directly into the workflows your teams already use.",
+      "**Graviton** is an enterprise HR CRM and workforce software suite. " +
+      "We provide complete portal software for candidate application management, smart candidature screening, " +
+      "automated digital onboarding, and unified employee lifecycle management — powered by sub-millisecond Dragonfly DB sync.",
     followups: [
-      "What services do you offer?",
-      "Which CRM platforms do you work with?",
-      "Where are you located?",
+      "What HR software modules do you offer?",
+      "Tell me about the Candidate Portal",
+      "How does Dragonfly DB optimize data fetching?",
     ],
   },
   {
@@ -58,7 +59,7 @@ export const KB: KBEntry[] = [
     answer:
       "Our office is in **Pune, India**:\n\n" +
       "Nyati Hermitage, Dr. Homi Bhabha Rd, Ram Nagar, Bavdhan, Pune, Maharashtra 411021.\n\n" +
-      "We work with clients globally — visit the **Contact** page to schedule a meeting.",
+      "We work with clients globally — visit the **Contact** page to schedule a meeting or demo.",
   },
   {
     id: "industries",
@@ -83,14 +84,13 @@ export const KB: KBEntry[] = [
     ],
     questions: ["What industries do you serve?", "Which sectors do you work in?"],
     answer:
-      "We work across:\n\n" +
-      "- **SaaS & Tech** — product-led growth, usage-based revenue\n" +
-      "- **Financial Services & Fintech** — KYC-aware CRM, advisor desks\n" +
-      "- **Healthcare & Life Sciences** — patient 360, HIPAA-aware data flows\n" +
-      "- **Manufacturing & Distribution** — dealer/partner CRM, field service\n" +
-      "- **Retail & E-commerce** — loyalty, omnichannel customer 360\n" +
-      "- **Real Estate** — lead-to-booking pipelines\n" +
-      "- **Education & EdTech** — admissions and lifecycle CRM",
+      "Our HR CRM powers workforce operations across:\n\n" +
+      "- **SaaS & Technology** — high-volume engineering recruitment, ATS pipelines\n" +
+      "- **Financial Services & Banking** — compliance-first onboarding and verification\n" +
+      "- **Healthcare & Life Sciences** — credentialing, shift scheduling, and HR desk\n" +
+      "- **Manufacturing & Operations** — shift-based attendance and workforce records\n" +
+      "- **Retail & E-commerce** — seasonal hiring and high-velocity onboarding\n" +
+      "- **Education & EdTech** — faculty recruitment and employee records",
   },
 
   // ───────────────────────── Services ─────────────────────────
@@ -103,42 +103,35 @@ export const KB: KBEntry[] = [
       "offerings",
       "capabilities",
       "expertise",
+      "modules",
     ],
     questions: ["What services does Graviton offer?", "What can you help with?"],
     weight: 1.2,
     answer:
-      "Graviton delivers four core service tracks:\n\n" +
-      "1. **CRM Strategy & Consulting** — platform selection, customer-360 architecture, RevOps blueprints\n" +
-      "2. **Implementation & Migration** — Salesforce, HubSpot, Zoho, Microsoft Dynamics rollouts and re-platforming\n" +
-      "3. **Applied AI** — copilots, predictive lead scoring, conversation intelligence, agentic workflows\n" +
-      "4. **Data & Analytics** — pipelines, dashboards (Tableau, Power BI), governance and reporting",
+      "Graviton delivers an all-in-one HR CRM and workforce software suite:\n\n" +
+      "1. **Candidate Application & ATS CRM** — multi-channel job postings, resume parsing, pipeline tracking\n" +
+      "2. **Smart Digital Onboarding** — automated document collection, background checks, digital offer letters\n" +
+      "3. **Employee Lifecycle & HRMS** — centralized workforce profiles, org charts, leave tracking, appraisals\n" +
+      "4. **HR Helpdesk & Service Portal** — 24/7 AI employee assistant, ticket resolution, policy guidance\n" +
+      "5. **Workforce Analytics & Dragonfly DB Engine** — sub-millisecond data reads, recruitment velocity, retention metrics",
     followups: [
-      "Tell me about CRM implementation",
-      "How does AI fit into CRM?",
-      "Do you do data migrations?",
+      "Tell me about the Candidate Portal",
+      "How does AI candidate screening work?",
+      "Tell me about Employee HRMS",
     ],
   },
   {
     id: "crm-strategy",
-    keywords: [
-      "strategy",
-      "consulting",
-      "advisory",
-      "blueprint",
-      "roadmap",
-      "platform selection",
-      "revops",
-      "rev ops",
-    ],
+    keywords: ["recruitment", "ats", "candidate crm", "applicant tracking", "pipeline", "hiring"],
     answer:
-      "Our **CRM Strategy & Consulting** practice covers:\n\n" +
-      "- Current-state assessment and pain-point mapping\n" +
-      "- Platform selection (Salesforce vs HubSpot vs Zoho vs Dynamics)\n" +
-      "- Customer-360 data architecture\n" +
-      "- RevOps process design (lead → opportunity → renewal)\n" +
-      "- Adoption, change-management and governance plans\n\n" +
-      "Most engagements start with a 2–4 week discovery sprint that produces a phased roadmap.",
+      "Our **Recruitment ATS & Candidate CRM** module provides:\n\n" +
+      "- Multi-channel job posting and candidate intake\n" +
+      "- AI-powered resume parsing and qualification scoring\n" +
+      "- Visual kanban pipeline management for hiring stages\n" +
+      "- Automated interview scheduling and feedback collection\n" +
+      "- Candidate self-service tracking portal with real-time status updates",
   },
+
   {
     id: "implementation",
     keywords: [

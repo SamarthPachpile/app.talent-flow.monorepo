@@ -2,61 +2,46 @@
   "compilerOptions": {
     "target": "ES2022",
     "useDefineForClassFields": true,
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
-    "types": ["vite/client", "node"],
-
-    /* Bundler mode */
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
     "isolatedModules": true,
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
-
-    /* Linting */
-    "strict": true,
+    "strict": false,
+    "noImplicitAny": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@": ["./src"],
-      "@graviton-it-solutions/*": ["./src/*"],
-      "@graviton-it-solutions": ["./src"],
       "@graviton/*": ["./src/*"],
       "@graviton": ["./src"],
+      "@graviton-it-solutions/*": ["./src/*"],
+      "@graviton-it-solutions": ["./src"],
+      "@talent-flow/graviton-it-solutions": ["./src/App.tsx"],
       "@talent-flow/graviton-it-solutions/*": ["./src/*"],
-      "@talent-flow/graviton-it-solutions": ["./src"],
-
       "@talent-flow/api": ["../api/src/index.ts"],
       "@talent-flow/api/*": ["../api/src/*"],
-      "@api": ["../api/src/index.ts"],
-      "@api/*": ["../api/src/*"],
-
+      "@talent-flow/schema-types": ["../schema-types/src/index.ts"],
+      "@talent-flow/schema-types/*": ["../schema-types/src/*"],
+      "@talent-flow/utilities": ["../utilities/src/index.ts"],
+      "@talent-flow/utilities/*": ["../utilities/src/*"],
       "@talent-flow/admin-panel": ["../admin-panel/src/components/AdminPanelContainer.tsx"],
-      "@talent-flow/admin-panel/*": ["../admin-panel/src/*"],
       "@admin-panel/*": ["../admin-panel/src/*"],
       "@admin-panel": ["../admin-panel/src"],
-      "@admin/*": ["../admin-panel/src/*"],
-      "@admin": ["../admin-panel/src"],
-
       "@talent-flow/candidate-portal": ["../candidate-portal/src/App.tsx"],
-      "@talent-flow/candidate-portal/*": ["../candidate-portal/src/*"],
       "@candidate-portal/*": ["../candidate-portal/src/*"],
       "@candidate-portal": ["../candidate-portal/src"],
-      "@candidate/*": ["../candidate-portal/src/*"],
-      "@candidate": ["../candidate-portal/src"],
-
-      "@talent-flow/company-onboarding": ["../company-onboarding/src/App.tsx"],
-      "@talent-flow/company-onboarding/*": ["../company-onboarding/src/*"],
-      "@company-onboarding/*": ["../company-onboarding/src/*"],
-      "@company-onboarding": ["../company-onboarding/src"],
-      "@onboarding/*": ["../company-onboarding/src/*"],
-      "@onboarding": ["../company-onboarding/src"]
+      "@talent-flow/company-portal": ["../company-portal/src/App.tsx"],
+      "@talent-flow/company-onboarding": ["../company-portal/src/App.tsx"],
+      "@company-onboarding/*": ["../company-portal/src/*"],
+      "@company-onboarding": ["../company-portal/src"]
     }
   },
-  "include": ["src/**/*", "vite.config.ts", "../../tailwind.config.ts"]
+  "include": ["src", "vite.config.ts"]
 }

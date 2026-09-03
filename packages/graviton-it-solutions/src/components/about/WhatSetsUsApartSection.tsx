@@ -3,28 +3,28 @@ import { useRef, useState } from "react";
 
 const cards = [
   {
-    title: "Multi-Platform CRM Expertise",
-    desc: "Deep, certified expertise across Salesforce, HubSpot, Zoho and Microsoft Dynamics — we recommend what fits, not what we sell.",
+    title: "Complete HR & Recruitment CRM",
+    desc: "End-to-end recruitment ATS, applicant tracking, and pipeline management with automated job distribution.",
   },
   {
-    title: "AI Built into the Workflow",
-    desc: "We ship AI inside the CRM where reps and agents already work — copilots, scoring, summarization and agentic automations.",
+    title: "AI-Powered Candidature Screening",
+    desc: "Intelligent resume parsing, automated scoring, and smart scheduling integrated directly into recruiter workflows.",
   },
   {
-    title: "Outcome-Based Engagements",
-    desc: "Programs are scoped around revenue, retention and CSAT outcomes — not vague hours or generic deliverables.",
+    title: "Digital Onboarding & Verification",
+    desc: "Automate document verification, background checks, digital contract signing, and day-one readiness.",
   },
   {
-    title: "From Strategy to Managed Ops",
-    desc: "Strategy, implementation and ongoing managed CRM operations — with one accountable team across the full lifecycle.",
+    title: "Total Employee Lifecycle Suite",
+    desc: "Centralized employee directory, digital org charts, attendance tracking, leave workflows, and appraisals.",
   },
   {
-    title: "Data You Can Trust",
-    desc: "Master data, deduplication, governance and analytics are built into every rollout — not retrofitted later.",
+    title: "Sub-Second Multi-Tenant Portals",
+    desc: "Dedicated portals for Candidates, HR Recruiters, and Super Admins powered by Dragonfly DB and live DB sync.",
   },
   {
-    title: "Industry-Proven Playbooks",
-    desc: "Repeatable accelerators for SaaS, financial services, healthcare, manufacturing and retail mean faster time-to-value.",
+    title: "Enterprise Compliance & Security",
+    desc: "Granular RBAC, audit logging, multi-jurisdiction compliance, and bank-grade data encryption.",
   },
 ];
 

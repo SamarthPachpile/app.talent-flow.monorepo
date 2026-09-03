@@ -39,8 +39,9 @@ export default function CareersHero() {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="text-base sm:text-lg text-white max-w-md justify-self-start lg:justify-self-end"
         >
-          Build CRM and applied-AI products that move revenue for the world's most ambitious
-          companies. Smart, bold, human teams — shipping work that matters.
+          Build HR CRM and candidate management software that empowers talent and transforms
+          workplaces for the world's leading organizations. Smart, bold, human teams — shaping the
+          future of work.
         </motion.p>
       </div>
     </section>

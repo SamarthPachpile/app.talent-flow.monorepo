@@ -8,84 +8,84 @@ const timeline = [
     suffix: "am",
     bg: "#eef7ff",
     phase: "morning",
-    text: "Sales teams start the day reviewing leads, pipeline health, and priority follow-ups.",
+    text: "Recruiters and HR managers review incoming applications, pipeline health, and interview schedules.",
   },
   {
     time: "08:20",
     suffix: "am",
     bg: "#eef7ff",
     phase: "morning",
-    text: "Automated lead capture syncs new prospects from website forms, ads, and integrations.",
+    text: "Automated candidate capture syncs new applications across job boards and career portals into Dragonfly DB.",
   },
   {
     time: "08:45",
     suffix: "am",
     bg: "#eef7ff",
     phase: "morning",
-    text: "AI lead scoring ranks prospects based on behavior, engagement, and conversion likelihood.",
+    text: "AI resume parser screens candidatures, matching skill competencies and ranking top candidate profiles.",
   },
   {
     time: "09:00",
     suffix: "am",
     bg: "#eef7ff",
     phase: "morning",
-    text: "Sales outreach begins with personalized emails, calls, and scheduled follow-ups.",
+    text: "Recruiter outreach begins with automated interview invites and self-service candidate scheduling.",
   },
   {
     time: "10:00",
     suffix: "am",
     bg: "#f3f3f3",
     phase: "day",
-    text: "Real-time pipeline updates give managers full visibility into deals and team performance.",
+    text: "Real-time pipeline dashboards give hiring teams complete visibility into candidature progression.",
   },
   {
     time: "01:00",
     suffix: "pm",
     bg: "#fff5ea",
     phase: "afternoon",
-    text: "Customer interactions increase with demos, meetings, and product walkthroughs.",
+    text: "Employees interact with the HRMS portal for leave approvals, attendance tracking, and internal opportunities.",
   },
   {
     time: "03:30",
     suffix: "pm",
     bg: "#fff5ea",
     phase: "afternoon",
-    text: "Deals progress with automated reminders, document sharing, and contract tracking. Driving faster conversions and reducing sales cycle time.",
+    text: "Digital offer letters progress with automated document verification, background checks, and e-signatures.",
   },
   {
     time: "05:20",
     suffix: "pm",
     bg: "#fff5ea",
     phase: "afternoon",
-    text: "Customer support and success teams resolve tickets and nurture relationships.",
+    text: "HR service desk resolves employee requests and automates day-one onboarding asset provisioning.",
   },
   {
     time: "07:30",
     suffix: "pm",
     bg: "#1b2135",
     phase: "night",
-    text: "Automations take over—sending follow-ups, updating records, and triggering workflows.",
+    text: "Automated Dragonfly DB webhook sync executes seamless database updates across candidate and employee records.",
   },
   {
     time: "08:20",
     suffix: "pm",
     bg: "#1b2135",
     phase: "night",
-    text: "Analytics dashboards process daily data to generate insights and performance reports.",
+    text: "Workforce analytics process daily metrics to generate recruitment velocity and retention reports.",
   },
   {
     time: "10:30",
     suffix: "pm",
     bg: "#1b2135",
     phase: "night",
-    text: "AI-driven recommendations optimize next-day strategies for sales and marketing teams.",
+    text: "AI-driven talent intelligence optimizes job postings, sourcing channels, and headcount forecasting.",
   },
   {
     time: "07:00",
     suffix: "am",
     bg: "#eef7ff",
     phase: "morning",
-    text: "A new day begins with smarter insights, stronger pipelines, and better customer relationships.",
+    text: "A new day begins with smarter hiring pipelines, engaged employees, and unified HR intelligence.",
   },
 ];
 
@@ -140,8 +140,8 @@ export default function ImpactSection() {
               dark ? "text-white" : "text-[#111625]"
             }`}
           >
-            We have a profound <br />
-            impact on everyday life
+            Empowering every moment of <br />
+            the workforce lifecycle
           </h1>
 
           <p
@@ -149,8 +149,8 @@ export default function ImpactSection() {
               dark ? "text-white/70" : "text-[#4a5568]"
             }`}
           >
-            Every day, billions of people connect with products, platforms, and services that we
-            helped design and engineer.
+            From first candidate application to tenured employee milestones, our HR CRM powers
+            seamless talent operations across global enterprises.
           </p>
         </div>
 

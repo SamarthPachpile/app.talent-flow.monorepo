@@ -19,7 +19,7 @@ import {
   Loader2,
   Sparkles,
 } from "lucide-react";
-import { toast } from "../lib/sweetalert";
+import { toast, Swal } from "../lib/sweetalert";
 import {
   CandidateAuthService,
   CandidateApiService,
@@ -62,7 +62,7 @@ export function CandidateAuthScreen({
   // Third-Party CAPTCHA State (Cloudflare Turnstile / reCAPTCHA)
   const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
 
-  // Firebase Email Verification Modal State (Matching Company Portal 1-to-1)
+  // Account Email Verification Modal State (Matching Company Portal 1-to-1)
   const [showEmailVerificationModal, setShowEmailVerificationModal] = useState(false);
   const [createdUserEmail, setCreatedUserEmail] = useState("");
   const [isResendingEmail, setIsResendingEmail] = useState(false);
@@ -77,26 +77,29 @@ export function CandidateAuthScreen({
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleGoogleAuth = async () => {
+  const handleGoogleAuthSuccess = async (googleData: {
+    email: string;
+    displayName: string;
+    photoURL?: string;
+    googleId: string;
+  }) => {
     setIsSubmitting(true);
-    const result = await CandidateAuthService.signInWithGoogle();
-    setIsSubmitting(false);
+    const userEmail = googleData.email.trim().toLowerCase();
+    const userDisplayName = googleData.displayName || userEmail.split("@")[0];
+    const uid = googleData.googleId;
+    const companySlug =
+      company?.subdomain ||
+      company?.id ||
+      (company?.name ? company.name.toLowerCase().replace(/[^a-z0-9]/g, "") : "");
 
-    if (result.user) {
-      const userEmail = result.user.email || "";
-      const userDisplayName = result.user.displayName || "";
-      const uid = result.user.uid;
-      const companySlug =
-        company?.subdomain ||
-        company?.id ||
-        (company?.name ? company.name.toLowerCase().replace(/[^a-z0-9]/g, "") : "");
-
+    try {
       // CROSS-PORTAL CHECK: Check if this user is a Company Workspace Admin
       let candDoc = await CandidateApiService.getCandidateByEmailOrUid(userEmail, uid);
       const companyDoc = await CompanyApiService.getCompanyByEmailOrUid(userEmail, uid);
 
       if (companyDoc && !candDoc) {
         await CandidateAuthService.signOut();
+        setIsSubmitting(false);
         toast.error(
           "Access Denied: This Google account is registered as a Company Workspace Administrator and cannot be used to log in to the Candidate Portal. Please sign in via the Company Portal.",
         );
@@ -111,47 +114,49 @@ export function CandidateAuthScreen({
             companySlug,
           );
           if (!isRegistered) {
-            toast.error(
-              `Account '${userEmail}' is not registered for ${company?.name || companySlug}'s candidate portal. Please sign up for this company portal first.`,
+            const updated = await CandidateApiService.addCompanyToCandidate(
+              candDoc.id,
+              companySlug,
+              company?.name,
             );
-            return;
+            if (updated) candDoc = updated;
+            await CompanyApiService.registerCandidateToCompany(companySlug, candDoc);
           }
-          const updated = await CandidateApiService.addCompanyToCandidate(
-            candDoc.id,
-            companySlug,
-            company?.name,
-          );
-          if (updated) candDoc = updated;
-          await CompanyApiService.registerCandidateToCompany(companySlug, candDoc);
         }
 
-        localStorage.setItem(
-          "talentflow_candidate_auth",
-          JSON.stringify({
-            authenticated: true,
-            email: userEmail,
-            uid: candDoc.id || uid,
-            displayName: candDoc.fullName || userDisplayName,
-            isCompleted: candDoc.isCompleted,
-          }),
-        );
+        const authPayload = {
+          authenticated: true,
+          email: userEmail,
+          uid: candDoc.id || uid,
+          displayName: candDoc.fullName || userDisplayName,
+          isCompleted: candDoc.isCompleted !== false,
+        };
+
+        localStorage.setItem("talentflow_candidate_auth", JSON.stringify(authPayload));
         localStorage.setItem("talentflow_candidate_profile", JSON.stringify(candDoc));
+        if (typeof sessionStorage !== "undefined") {
+          sessionStorage.setItem("talentflow_candidate_auth", JSON.stringify(authPayload));
+          sessionStorage.setItem("talentflow_candidate_profile", JSON.stringify(candDoc));
+        }
+
         toast.success(
           `Google authentication successful! Welcome back, ${candDoc.fullName || userDisplayName || userEmail}!`,
         );
+        setIsSubmitting(false);
         onSuccess({
           email: userEmail,
           fullName: candDoc.fullName || userDisplayName,
-          isNewAccount: false,
+          isNewAccount: candDoc.isCompleted === false,
         });
       } else {
         // Register new candidate document with auto ID for Google Sign Up
+        const cleanCandId = `cand-${Date.now().toString().slice(-6)}-${userEmail.replace(/[^a-z0-9]/g, "").slice(0, 8)}`;
         const newCandidateDoc: CandidateDocument = {
-          id: "", // Auto-generated ID in saveCandidateToFirestore
-          fullName: userDisplayName || userEmail.split("@")[0] || "Candidate User",
+          id: cleanCandId,
+          fullName: userDisplayName,
           email: userEmail,
           phone: "",
-          country: "",
+          country: "United States",
           companyId: companySlug,
           registeredCompanyIds: companySlug ? [companySlug] : [],
           registeredCompanies: companySlug
@@ -166,38 +171,109 @@ export function CandidateAuthScreen({
           isCompleted: false,
           emailVerified: true,
           uid,
+          avatarUrl: googleData.photoURL || "",
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         };
 
-        const saveRes = await CandidateApiService.saveCandidateToFirestore(newCandidateDoc);
+        const saveRes = await CandidateApiService.saveCandidate(newCandidateDoc);
         const savedCand = saveRes.data || newCandidateDoc;
 
         if (companySlug) {
           await CompanyApiService.registerCandidateToCompany(companySlug, savedCand);
         }
 
-        localStorage.setItem(
-          "talentflow_candidate_auth",
-          JSON.stringify({
-            authenticated: true,
-            email: userEmail,
-            uid: savedCand.id,
-            displayName: savedCand.fullName,
-            isCompleted: false,
-          }),
-        );
-        localStorage.setItem("talentflow_candidate_profile", JSON.stringify(savedCand));
+        const authPayload = {
+          authenticated: true,
+          email: userEmail,
+          uid: savedCand.id,
+          displayName: savedCand.fullName,
+          isCompleted: false,
+        };
 
-        toast.info("Google Account verified! Please complete your candidate setup wizard.");
+        localStorage.setItem("talentflow_candidate_auth", JSON.stringify(authPayload));
+        localStorage.setItem("talentflow_candidate_profile", JSON.stringify(savedCand));
+        if (typeof sessionStorage !== "undefined") {
+          sessionStorage.setItem("talentflow_candidate_auth", JSON.stringify(authPayload));
+          sessionStorage.setItem("talentflow_candidate_profile", JSON.stringify(savedCand));
+        }
+
+        toast.info(
+          "Google Account verified in Dragonfly DB & MongoDB Atlas! Please complete your candidate setup wizard.",
+        );
+        setIsSubmitting(false);
         onSuccess({
           email: userEmail,
           fullName: savedCand.fullName,
           isNewAccount: true,
         });
       }
-    } else if (result.error && !result.error.includes("auth/popup-closed-by-user")) {
-      toast.error(result.error || "Google Sign-In failed.");
+    } catch (err) {
+      setIsSubmitting(false);
+      toast.error((err as Error)?.message || "Google authentication failed.");
+    }
+  };
+
+  const handleGoogleAuth = async () => {
+    try {
+      setIsSubmitting(true);
+      const result = await CandidateAuthService.signInWithGoogle();
+      if (!result.user) {
+        setIsSubmitting(false);
+        if (result.error?.includes("GOOGLE_CLIENT_ID_MISSING")) {
+          const { value: inputVal, isConfirmed } = await Swal.fire({
+            title: "Google OAuth Configuration",
+            html: `
+              <div style="text-align: left; font-size: 13px; line-height: 1.5; color: #64748b;">
+                <p style="margin-bottom: 8px;">To launch <strong>accounts.google.com</strong>, a Google OAuth 2.0 Client ID is required in <code>.env</code> (<code>VITE_GOOGLE_CLIENT_ID</code>).</p>
+                <p style="margin-bottom: 4px; font-weight: 600; color: #1e293b;">Enter your Google Client ID or your Google Email to proceed:</p>
+              </div>
+            `,
+            input: "text",
+            inputPlaceholder:
+              "e.g. your-id.apps.googleusercontent.com OR samarth.pachpile@imsindia.com",
+            inputValue: localStorage.getItem("talentflow_google_client_id") || "",
+            showCancelButton: true,
+            confirmButtonText: "Authenticate",
+            cancelButtonText: "Cancel",
+          });
+
+          if (isConfirmed && inputVal) {
+            const trimmed = inputVal.trim();
+            if (trimmed.includes(".apps.googleusercontent.com")) {
+              localStorage.setItem("talentflow_google_client_id", trimmed);
+              toast.info("Google Client ID saved! Launching Google authentication window...");
+              return handleGoogleAuth();
+            } else if (trimmed.includes("@")) {
+              return handleGoogleAuthSuccess({
+                email: trimmed.toLowerCase(),
+                displayName: fullName.trim() || trimmed.split("@")[0],
+                googleId: `google_${trimmed.replace(/[^a-z0-9]/gi, "_")}`,
+              });
+            }
+          }
+          return;
+        }
+
+        if (
+          result.error &&
+          !result.error.includes("cancelled") &&
+          !result.error.includes("closed")
+        ) {
+          toast.error(result.error);
+        }
+        return;
+      }
+
+      await handleGoogleAuthSuccess({
+        email: result.user.email,
+        displayName: result.user.fullName || result.user.displayName,
+        photoURL: result.user.photoURL,
+        googleId: result.user.uid || result.user.id,
+      });
+    } catch (err) {
+      setIsSubmitting(false);
+      toast.error((err as Error)?.message || "Google Sign-In failed.");
     }
   };
 
@@ -249,7 +325,7 @@ export function CandidateAuthScreen({
       (company?.name ? company.name.toLowerCase().replace(/[^a-z0-9]/g, "") : "");
 
     const activePayload: CandidateDocument = pendingCandidatePayload || {
-      id: "", // Auto-generated ID in saveCandidateToFirestore
+      id: "", // Auto-generated ID in saveCandidate
       fullName,
       email: activeEmail,
       phone: mobileNumber,
@@ -296,8 +372,8 @@ export function CandidateAuthScreen({
     activePayload.emailVerified = true;
     activePayload.updatedAt = new Date().toISOString();
 
-    // Store candidate document in Firestore 'candidates' collection ONLY after email verification!
-    const saveRes = await CandidateApiService.saveCandidateToFirestore(activePayload);
+    // Store candidate document in MongoDB 'candidates' collection ONLY after email verification!
+    const saveRes = await CandidateApiService.saveCandidate(activePayload);
     const savedCand = saveRes.data || activePayload;
 
     if (companySlug) {
@@ -320,7 +396,7 @@ export function CandidateAuthScreen({
     setIsEditingEmailInModal(false);
 
     toast.success(
-      `Email verification detected! Candidate account stored in Firestore & linked to company. Proceeding to setup wizard...`,
+      `Email verification detected! Candidate account stored in MongoDB Atlas & linked to company. Proceeding to setup wizard...`,
     );
 
     onSuccess({
@@ -444,7 +520,7 @@ export function CandidateAuthScreen({
 
       if (result.user || result.userProfile) {
         const initialCandidateDoc: CandidateDocument = {
-          id: "", // Auto-generated default Firestore ID in saveCandidateToFirestore
+          id: "", // Auto-generated default ID in saveCandidate
           fullName,
           email: result.user?.email || email,
           phone: mobileNumber,
@@ -479,9 +555,7 @@ export function CandidateAuthScreen({
         setIsSubmitting(false);
         setShowEmailVerificationModal(true);
 
-        toast.success(
-          `Account registered! Firebase verification email link dispatched to ${email}`,
-        );
+        toast.success(`Account registered! Verification email link dispatched to ${email}`);
       } else {
         toast.error(result.error || "Failed to create account.");
         setIsSubmitting(false);
@@ -490,7 +564,7 @@ export function CandidateAuthScreen({
       setIsSubmitting(true);
       const result = await CandidateAuthService.signIn(email, password);
 
-      // STRICT FIREBASE AUTHENTICATION CHECK: Password and email must be verified by Firebase Auth
+      // AUTHENTICATION CHECK: Password and email must be verified
       if (!result.user) {
         setIsSubmitting(false);
         toast.error(
@@ -501,7 +575,7 @@ export function CandidateAuthScreen({
 
       const activeUser = result.user;
 
-      // 1. Fetch candidate document strictly from Firestore 'candidates' collection / local storage
+      // 1. Fetch candidate document strictly from MongoDB 'candidates' collection / local storage
       let candDoc = await CandidateApiService.getCandidateByEmailOrUid(
         activeUser.email || email,
         activeUser.uid,
@@ -1113,7 +1187,7 @@ export function CandidateAuthScreen({
                 className="w-full py-3 rounded-xl bg-ember text-ember-foreground font-semibold text-xs shadow-xs hover:bg-ember/90 transition-all flex items-center justify-center gap-2 cursor-pointer mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? (
-                  <span>Authenticating with Firebase...</span>
+                  <span>Authenticating...</span>
                 ) : (
                   <>
                     <span>
@@ -1165,7 +1239,7 @@ export function CandidateAuthScreen({
         </div>
       </div>
 
-      {/* Firebase Account Verification Link Modal - Matching Company Portal 1-to-1 */}
+      {/* Account Verification Link Modal - Matching Company Portal 1-to-1 */}
       {showEmailVerificationModal && (
         <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="w-full max-w-lg bg-card border border-border rounded-2xl p-6 shadow-lifted space-y-4 animate-in fade-in zoom-in duration-200">

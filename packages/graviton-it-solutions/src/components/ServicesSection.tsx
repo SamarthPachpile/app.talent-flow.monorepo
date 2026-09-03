@@ -4,29 +4,34 @@ import { useRef, useState } from "react";
 
 const services = [
   {
-    title: "Product Strategy &",
-    subtitle: "Experience Design",
-    description: "Design and build what’s next with help from Graviton, a Tapasys company.",
+    title: "Candidate Application &",
+    subtitle: "ATS Recruitment CRM",
+    description:
+      "Streamline multi-channel applicant tracking, resume parsing, and pipeline orchestration.",
   },
   {
-    title: "Digital Business",
-    subtitle: "Transformation",
-    description: "Advance your digital transformation journey.",
+    title: "Employee Lifecycle &",
+    subtitle: "Digital HRMS Suite",
+    description:
+      "Manage digital profiles, org hierarchies, attendance, appraisals, and employee growth.",
   },
   {
-    title: "Intelligence",
-    subtitle: "Engineering",
-    description: "Leverage data and AI to transform products, operations, and outcomes.",
+    title: "Smart Onboarding &",
+    subtitle: "Candidature Verification",
+    description:
+      "Automate document collection, background checks, digital signing, and Day-1 readiness.",
   },
   {
-    title: "Software Product",
-    subtitle: "Engineering",
-    description: "Create high-value products faster with AI-powered and human-driven engineering.",
+    title: "HR Helpdesk &",
+    subtitle: "Workforce Service Portal",
+    description:
+      "Empower teams with 24/7 AI HR assistants, ticket resolution, and self-service benefits.",
   },
   {
-    title: "Technology",
-    subtitle: "Modernization",
-    description: "Modernize legacy systems with scalable cloud and platform engineering.",
+    title: "Workforce Analytics &",
+    subtitle: "Dragonfly DB Sync",
+    description:
+      "Sub-millisecond data fetching, hiring funnel analytics, and multi-tenant portal sync.",
   },
 ];
 
@@ -81,18 +86,18 @@ export default function ServicesSection() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start mb-14">
           <div>
             <p className="text-[#33456b] text-lg sm:text-2xl mb-6 tracking-[-0.02em]">
-              What we offer
+              Our HR CRM Capabilities
             </p>
 
             <h2 className="text-[#111625] font-light leading-[0.95] tracking-[-0.05em] text-[50px]">
-              Explore our services
+              Explore our software solutions
             </h2>
           </div>
 
           <div className="lg:pt-10 lg:pl-10">
             <p className="text-[#33456b] text-lg sm:text-xl leading-[1.35] max-w-700px">
-              Unlock the power of data, design, and engineering to fuel innovation and drive
-              meaningful outcomes for your business.
+              Unify candidate applications, smart candidature verification, and employee lifecycle
+              management in one high-performance enterprise portal platform.
             </p>
           </div>
         </div>

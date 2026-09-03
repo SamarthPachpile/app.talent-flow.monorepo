@@ -54,7 +54,7 @@ export function AdminSettingsPage() {
     const res = await SettingsBackendService.saveAdminSettings(settings);
     setLoading(false);
     if (res.success) {
-      toast.success("Platform admin settings saved to backend & Firebase!");
+      toast.success("Platform admin settings saved to MongoDB Atlas & Dragonfly DB!");
     } else {
       toast.error("Failed to save admin settings");
     }
@@ -76,16 +76,16 @@ export function AdminSettingsPage() {
           <div>
             <div className="flex items-center gap-2">
               <h2 className="font-display font-semibold text-foreground text-base">
-                Backend & Firebase Connection
+                MongoDB Atlas & REST API Backend
               </h2>
               <span className="inline-flex items-center gap-1 bg-success/15 text-success border border-success/30 text-11px px-2.5 py-0.5 rounded-full font-semibold">
-                <CheckCircle2 className="size-3" /> Connected · {backendStatus.projectId}
+                <CheckCircle2 className="size-3" /> Connected · {backendStatus.database}
               </span>
             </div>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Firestore Status:{" "}
-              <span className="text-foreground font-mono">{backendStatus.firestoreStatus}</span> ·
-              Auth: <span className="text-foreground font-mono">{backendStatus.authStatus}</span>
+              Database Engine:{" "}
+              <span className="text-foreground font-mono">{backendStatus.engine}</span> · Auth:{" "}
+              <span className="text-foreground font-mono">{backendStatus.authStatus}</span>
             </p>
           </div>
         </div>
@@ -213,7 +213,7 @@ export function AdminSettingsPage() {
         <SettingsCard
           icon={Activity}
           title="System Health & Microservice Latency"
-          description="Real-time uptime and ping response times for Firebase and backend API services."
+          description="Real-time uptime and ping response times for MongoDB Atlas and Node.js REST API services."
         >
           <div className="divide-y divide-border border border-border rounded-lg overflow-hidden">
             {healthMetrics.map((item) => (

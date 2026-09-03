@@ -34,9 +34,9 @@ export default function AboutHeroSection() {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-tight tracking-tight text-foreground max-w-5xl"
         >
-          <h1 className="font-semibold">Graviton :</h1>
-          <span className="text-primary">CRM consultancy</span> built around customer gravity and
-          applied AI
+          <span className="font-semibold block mb-2">Graviton Solutions :</span>
+          <span className="text-primary">Enterprise HR CRM</span> & Complete Workforce Software
+          Suite
         </motion.h1>
 
         <motion.div
@@ -46,9 +46,9 @@ export default function AboutHeroSection() {
           className="mt-6 sm:mt-8 max-w-2xl"
         >
           <p className="text-xl text-muted-foreground leading-relaxed">
-            Part of the Tapasys Group, Graviton helps modern enterprises design, deploy and
-            modernize CRM platforms — and infuse them with AI that drives measurable revenue,
-            retention and experience.
+            Graviton powers modern organizations with full-scale HR portal software—delivering
+            seamless candidate tracking, automated candidature screening, digital onboarding, and
+            unified employee lifecycle management.
           </p>
         </motion.div>
       </div>

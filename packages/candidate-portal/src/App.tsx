@@ -192,7 +192,7 @@ export function App() {
           setActiveStageId(dynamicState.candidate.currentStageId || "application");
         }
       } catch (err) {
-        console.warn("Error fetching candidate from Firestore 'candidates' collection:", err);
+        console.warn("Error fetching candidate from MongoDB 'candidates' collection:", err);
       }
     },
     [activeCompany],
@@ -204,7 +204,7 @@ export function App() {
     }
   }, [isAuthenticated, loadAuthenticatedCandidateData]);
 
-  // Listen to Firebase Auth state updates with candidate role verification
+  // Listen to Auth state updates with candidate role verification
   useEffect(() => {
     const unsubscribe = CandidateAuthService.onAuthChange(async (user) => {
       if (user && user.email) {
@@ -299,20 +299,42 @@ export function App() {
     const companySlug =
       activeCompany?.subdomain ||
       activeCompany?.id ||
-      (activeCompany?.name ? activeCompany.name.toLowerCase().replace(/[^a-z0-9]/g, "-") : "acme");
+      (activeCompany?.name
+        ? activeCompany.name.toLowerCase().replace(/[^a-z0-9]/g, "-")
+        : "company");
 
     if (data.isNewAccount) {
+      const generatedId = `cand-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
       const newCandDoc: CandidateDocument = {
-        id: (data.email || data.fullName || "cand").toLowerCase().replace(/[^a-z0-9]/g, ""),
+        id: generatedId,
         fullName: data.fullName || "Candidate User",
         email: data.email,
-        isCompleted: false, // Setup Wizard pending
+        phone: "",
+        country: "United States",
+        timezone: "America/New_York",
+        currency: "USD",
+        compliance: "",
+        payroll: "",
+        companySize: "",
+        industry: "",
+        referralSource: "",
+        isCompleted: false,
+        currentStageId: "application",
+        companyId: companySlug,
+        registeredCompanyIds: [companySlug],
+        registeredCompanies: [
+          {
+            companyId: companySlug,
+            companyName: activeCompany?.name || companySlug,
+            registeredAt: new Date().toISOString(),
+          },
+        ],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
       setCandidateProfile(newCandDoc);
       localStorage.setItem("talentflow_candidate_profile", JSON.stringify(newCandDoc));
-      await CandidateApiService.saveCandidateToFirestore(newCandDoc);
+      await CandidateApiService.saveCandidate(newCandDoc);
 
       toast.info("Account verified! Please complete your candidate setup wizard.");
       navigateTo(`/candidates-portal/${companySlug}/wizard`);
@@ -345,7 +367,7 @@ export function App() {
       localStorage.setItem("talentflow_candidate_profile", JSON.stringify(updatedCandidate));
     }
 
-    await CandidateApiService.saveCandidateToFirestore(updatedCandidate);
+    await CandidateApiService.saveCandidate(updatedCandidate);
 
     const companySlug =
       activeCompany?.subdomain ||
@@ -363,7 +385,7 @@ export function App() {
     setActiveStageId(dynamicState.candidate.currentStageId || "application");
 
     toast.success(
-      `Candidate profile for ${completedCandidate.fullName} saved to Firestore & registered under company!`,
+      `Candidate profile for ${completedCandidate.fullName} saved to MongoDB Atlas & registered under company!`,
     );
     navigateTo(`/candidates-portal/${companySlug}/dashboard`);
   };
@@ -389,9 +411,9 @@ export function App() {
 
     if (updatedProfile.email || updatedProfile.id) {
       try {
-        await CandidateApiService.saveCandidateToFirestore(updatedProfile as CandidateDocument);
+        await CandidateApiService.saveCandidate(updatedProfile as CandidateDocument);
       } catch (err) {
-        console.warn("Failed to persist avatar to Firestore:", err);
+        console.warn("Failed to persist avatar to MongoDB Atlas:", err);
       }
     }
   };
@@ -501,18 +523,17 @@ export function App() {
                 className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-ember text-ember-foreground hover:bg-ember/90 font-semibold text-xs shadow-xs transition-colors cursor-pointer"
               >
                 <ArrowLeft className="size-4" />
-                <span>Available Companies</span>
+                <span>Available Portals</span>
               </button>
               <button
                 onClick={() => {
-                  if (typeof window !== "undefined") {
-                    window.location.href = "/companies/register";
-                  }
+                  const defaultSlug = "acme";
+                  navigateTo(`/candidates-portal/${defaultSlug}/login`);
                 }}
                 className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-surface border border-border hover:bg-accent text-foreground font-semibold text-xs transition-colors cursor-pointer"
               >
                 <Plus className="size-4 text-ember" />
-                <span>Register Company</span>
+                <span>Register Candidature</span>
               </button>
             </div>
           </div>
@@ -526,10 +547,9 @@ export function App() {
         <div className="talentflow-candidate-portal-scope min-h-screen bg-background font-sans text-foreground">
           <CandidateCompanySelector
             onSelectCompany={handleSelectCompanyFromList}
-            onCompanyOnboardingLink={() => {
-              if (typeof window !== "undefined") {
-                window.location.href = "/companies/register";
-              }
+            onRegisterCandidature={() => {
+              const defaultSlug = "acme";
+              navigateTo(`/candidates-portal/${defaultSlug}/login`);
             }}
           />
         </div>

@@ -3,16 +3,16 @@ import { useRef } from "react";
 
 const principles = [
   {
-    title: "Designed for Desirability",
-    desc: "Seamless integration between design and engineering, creating digital products and experiences people love.",
+    title: "Candidate-First Experience",
+    desc: "Intuitive self-service applicant tracking, transparent hiring stages, and real-time recruitment status updates.",
   },
   {
-    title: "Engineered for Excellence",
-    desc: "Pioneering and innovating engineering from chip to cloud.",
+    title: "Unified Employee Lifecycle",
+    desc: "Seamless transition from job offer to digital onboarding, appraisals, leave tracking, and career growth.",
   },
   {
-    title: "Curated for Intelligence",
-    desc: "Powering the intelligent enterprise with a formidable advantage in data + AI and content engineering.",
+    title: "Real-Time Dragonfly DB Architecture",
+    desc: "Sub-millisecond data fetching, instant multi-tenant sync, and bank-grade enterprise security.",
   },
 ];
 
@@ -33,8 +33,8 @@ export default function DesignPrinciplesSection() {
             className="w-1/3 max-w-162.5 shrink-0 "
           >
             <p className="text-xl sm:text-2xl text-black leading-relaxed">
-              Graviton provides unique experience and expertise at the intersection of data, design,
-              and Customer Relations
+              Graviton delivers complete portal software and HR services at the intersection of
+              candidate acquisition, employee management, and high-performance cloud architecture.
             </p>
           </motion.div>
 

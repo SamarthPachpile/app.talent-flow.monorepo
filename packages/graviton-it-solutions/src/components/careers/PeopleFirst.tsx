@@ -22,10 +22,10 @@ export default function PeopleFirst() {
         </p>
 
         <ul className="space-y-2 text-sm">
-          <li>• Learning budget for certifications and conferences</li>
-          <li>• Mentorship from CRM & AI architects with 15+ years of experience</li>
-          <li>• Flexible, remote-friendly work across India and APAC</li>
-          <li>• Health, wellness and family support that actually shows up</li>
+          <li>• Learning budget for HR Tech certifications and international conferences</li>
+          <li>• Mentorship from enterprise HR CRM & AI platform architects</li>
+          <li>• Flexible, remote-first autonomy across global innovation hubs</li>
+          <li>• Comprehensive health, wellness, ergonomic workstations and coworking stipends</li>
         </ul>
       </div>
     </section>

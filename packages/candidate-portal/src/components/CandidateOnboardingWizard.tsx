@@ -65,9 +65,9 @@ export const CandidateOnboardingWizard: React.FC<CandidateOnboardingWizardProps>
   const [avatarUrl, setAvatarUrl] = useState(initialAvatar);
   const [bio, setBio] = useState(candidateData.bio || savedProfile.bio || "");
 
-  // Step 2: Resume Details
+  // Step 2: Resume Details - Clean empty for fresh onboarding
   const [experienceYears, setExperienceYears] = useState(
-    candidateData.experienceYears || savedProfile.experienceYears || "3-5 Years",
+    candidateData.experienceYears || savedProfile.experienceYears || "",
   );
   const [skillsInput, setSkillsInput] = useState(
     candidateData.skills?.join(", ") || savedProfile.skills?.join(", ") || "",
@@ -82,11 +82,13 @@ export const CandidateOnboardingWizard: React.FC<CandidateOnboardingWizardProps>
     candidateData.portfolioUrl || savedProfile.portfolioUrl || "",
   );
   const [resumeFileName, setResumeFileName] = useState(
-    candidateData.resumeFileName || savedProfile.resumeFileName || "Candidate_Resume.pdf",
+    candidateData.resumeFileName || savedProfile.resumeFileName || "",
   );
-  const [resumeSummary, setResumeSummary] = useState(savedProfile.resumeSummary || "");
+  const [resumeSummary, setResumeSummary] = useState(
+    (candidateData as any).resumeSummary || savedProfile.resumeSummary || "",
+  );
 
-  // Step 3: Education & Experience
+  // Step 3: Education & Experience - Clean empty for fresh onboarding
   const [degree, setDegree] = useState(
     candidateData.education?.degree || savedProfile.education?.degree || "",
   );
@@ -200,11 +202,11 @@ export const CandidateOnboardingWizard: React.FC<CandidateOnboardingWizardProps>
       updatedAt: new Date().toISOString(),
     };
 
-    const res = await CandidateApiService.saveCandidateToFirestore(completedDoc);
+    const res = await CandidateApiService.saveCandidate(completedDoc);
     setIsSubmitting(false);
 
     if (res.success) {
-      toast.success("Candidate profile & setup saved to Firestore 'candidates' collection!");
+      toast.success("Candidate profile & setup saved to MongoDB Atlas!");
       onComplete(completedDoc);
     } else {
       toast.error("Failed to save candidate setup.");
@@ -599,7 +601,7 @@ export const CandidateOnboardingWizard: React.FC<CandidateOnboardingWizardProps>
         {currentStep === 4 && (
           <div className="space-y-5 animate-in fade-in duration-200">
             <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
-              <ShieldCheck className="size-5 text-ember" /> Final Profile Confirmation & Firestore
+              <ShieldCheck className="size-5 text-ember" /> Final Profile Confirmation & MongoDB
               Submit
             </h2>
 
@@ -627,9 +629,9 @@ export const CandidateOnboardingWizard: React.FC<CandidateOnboardingWizardProps>
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Firestore Collection:</span>
+                <span className="text-muted-foreground">Database Storage:</span>
                 <span className="font-mono text-ember font-bold bg-ember/15 px-2 py-0.5 rounded border border-ember/30">
-                  db/candidates/{fullName.toLowerCase().replace(/[^a-z0-9]/g, "")}
+                  mongodb/candidates/{fullName.toLowerCase().replace(/[^a-z0-9]/g, "")}
                 </span>
               </div>
             </div>
@@ -697,9 +699,7 @@ export const CandidateOnboardingWizard: React.FC<CandidateOnboardingWizardProps>
               className="px-7 py-3 rounded-xl bg-ember text-ember-foreground text-xs font-bold shadow-lifted hover:bg-ember/90 transition-colors flex items-center gap-2 cursor-pointer disabled:opacity-50"
             >
               <CheckCircle2 className="size-4" />
-              <span>
-                {isSubmitting ? "Saving to Firestore..." : "Complete Setup & Launch Dashboard"}
-              </span>
+              <span>{isSubmitting ? "Saving..." : "Complete Setup & Launch Dashboard"}</span>
             </button>
           )}
         </div>

@@ -31,6 +31,8 @@ import {
 } from "lucide-react";
 import { AppliedJob, AvailableJob, CandidateProfile, StageId } from "../../types/candidate";
 import { AppliedResumeModal } from "../AppliedResumeModal";
+import { formatSalaryRangeDisplay } from "@talent-flow/api";
+import { RichJobDescriptionRenderer } from "../RichJobDescriptionRenderer";
 
 interface JobDescriptionFullPageViewProps {
   job: AppliedJob | AvailableJob;
@@ -64,7 +66,16 @@ export const JobDescriptionFullPageView: React.FC<JobDescriptionFullPageViewProp
   const recruiterNotes = "recruiterNotes" in job ? job.recruiterNotes : undefined;
   const employmentType =
     "employmentType" in job ? job.employmentType : "type" in job ? job.type : "Full-time";
-  const salaryRange = job.salaryRange || "₹18,00,000 - ₹26,00,000 / yr";
+  const jobRecord = job as unknown as Record<string, unknown>;
+  const salaryRange =
+    job.salaryRange ||
+    (typeof jobRecord.salaryMin === "number" && typeof jobRecord.salaryMax === "number"
+      ? formatSalaryRangeDisplay(
+          jobRecord.salaryMin,
+          jobRecord.salaryMax,
+          (jobRecord.currency as string) || "INR",
+        )
+      : "₹18,00,000 - ₹26,00,000 / yr");
   const brandName =
     ("companyName" in job && job.companyName) || candidate.companyName || "Graviton IT Solutions";
   const department = job.department || "Platform Engineering";
@@ -325,181 +336,23 @@ export const JobDescriptionFullPageView: React.FC<JobDescriptionFullPageViewProp
 
       {/* 3. MAIN CONTENT: 2-COLUMN BALANCED GRID */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column: Job Description, Responsibilities, Requirements, Benefits (Col Span 2) */}
+        {/* Left Column: Comprehensive Generalized Job Description (Col Span 2) */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Section 1: Role Overview & Team Mission */}
-          <div className="bg-white dark:bg-slate-850 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs p-6 space-y-3.5">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-slate-100 flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-orange-500" />
-              <span>About the Role & Mission</span>
-            </h2>
-            <div className="space-y-3 text-xs sm:text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-              <p>
-                {job.description ||
-                  `As a ${jobTitle} at ${brandName}, you will play a pivotal role in designing, building, and deploying mission-critical software solutions. You'll partner closely with cross-functional product designers, domain specialists, and fellow engineers to craft delightful user journeys and bulletproof scalable infrastructure.`}
-              </p>
-              <p>
-                Our engineering culture champions high agency, autonomous problem-solving, and
-                continuous learning. We value clean code, automated testing, and thoughtful system
-                design over bureaucracy.
-              </p>
+          <div className="bg-white dark:bg-slate-850 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs p-6 sm:p-8 space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-orange-500" />
+                <span>Job Description & Role Overview</span>
+              </h2>
+              <span className="text-[11px] font-medium text-slate-400 font-mono">
+                {brandName} · {department}
+              </span>
             </div>
-          </div>
 
-          {/* Section 2: Key Responsibilities */}
-          <div className="bg-white dark:bg-slate-850 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs p-6 space-y-4">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-slate-100 flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-              <span>Key Responsibilities</span>
-            </h2>
-            <div className="grid grid-cols-1 gap-3">
-              {[
-                "Architect, code, and deploy resilient web services and responsive user interfaces with high performance and accessibility.",
-                "Collaborate with product managers and UX teams to translate business requirements into technical execution plans and sprints.",
-                "Champion code quality, automated test coverage, peer reviews, and continuous integration workflows.",
-                "Proactively identify bottlenecks, optimize latency, and scale distributed database models and API endpoints.",
-                "Mentor teammates, participate in architecture discussions, and contribute to shared design system token libraries.",
-              ].map((item, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-start gap-3 p-3 rounded-xl bg-slate-50/70 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800"
-                >
-                  <div className="w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 text-xs font-bold mt-0.5">
-                    ✓
-                  </div>
-                  <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-normal">
-                    {item}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Section 3: Requirements & Qualifications */}
-          <div className="bg-white dark:bg-slate-850 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs p-6 space-y-4">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-slate-100 flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-[#ff5a1f]" />
-              <span>Qualifications & Requirements</span>
-            </h2>
-            <div className="space-y-2.5">
-              {(requirements.length > 0
-                ? requirements
-                : [
-                    "3+ years of professional full-stack or frontend development experience with TypeScript, React, and modern web frameworks.",
-                    "Strong background in modular CSS architecture, responsive design patterns, and cross-browser optimization.",
-                    "Experience integrating RESTful & GraphQL APIs, websockets, and relational/document databases (PostgreSQL, Firestore).",
-                    "Familiarity with containerized workflows (Docker), automated CI/CD pipelines, and cloud hosting (AWS / GCP / Vercel).",
-                    "Excellent problem-solving acumen, written communication skills, and an empathetic team-first approach.",
-                  ]
-              ).map((req, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-start gap-3 text-xs sm:text-sm text-slate-700 dark:text-slate-300"
-                >
-                  <div className="w-2 h-2 rounded-full bg-[#ff5a1f] mt-2 shrink-0" />
-                  <span className="leading-relaxed">{req}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Section 4: Tech Stack & Tools Matrix */}
-          <div className="bg-white dark:bg-slate-850 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs p-6 space-y-4">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-slate-100 flex items-center gap-2">
-              <Zap className="w-4 h-4 text-amber-500" />
-              <span>Technology Stack & Tools</span>
-            </h2>
-            <div className="flex flex-wrap gap-2">
-              {(skills.length > 0
-                ? skills
-                : [
-                    "TypeScript",
-                    "React",
-                    "Node.js",
-                    "TailwindCSS",
-                    "Next.js",
-                    "PostgreSQL",
-                    "Firebase",
-                    "GraphQL",
-                    "Docker",
-                    "Git & GitHub Actions",
-                    "Jest / Vitest",
-                    "Figma",
-                  ]
-              ).map((skill, idx) => (
-                <span
-                  key={idx}
-                  className="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-750 text-slate-800 dark:text-slate-200 text-xs font-semibold border border-slate-200/80 dark:border-slate-700 transition-colors shadow-2xs"
-                >
-                  {skill}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          {/* Section 5: Benefits & Perks Grid */}
-          <div className="bg-white dark:bg-slate-850 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs p-6 space-y-4">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-slate-100 flex items-center gap-2">
-              <HeartHandshake className="w-4 h-4 text-rose-500" />
-              <span>Benefits, Growth & Perks</span>
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 flex items-start gap-3">
-                <div className="p-2 rounded-lg bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 shrink-0">
-                  <HeartHandshake className="w-4 h-4" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-xs text-slate-800 dark:text-slate-100">
-                    Comprehensive Healthcare
-                  </h4>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
-                    100% premium coverage for medical, dental, vision, and mental wellness.
-                  </p>
-                </div>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 flex items-start gap-3">
-                <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 shrink-0">
-                  <Laptop className="w-4 h-4" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-xs text-slate-800 dark:text-slate-100">
-                    $2,500 Home Office Stipend
-                  </h4>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
-                    Brand new Apple M-series hardware + monitor and ergonomic desk budget.
-                  </p>
-                </div>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 flex items-start gap-3">
-                <div className="p-2 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 shrink-0">
-                  <GraduationCap className="w-4 h-4" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-xs text-slate-800 dark:text-slate-100">
-                    Learning & Conference Budget
-                  </h4>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
-                    $1,500 annual stipend for courses, books, certifications, and conferences.
-                  </p>
-                </div>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 flex items-start gap-3">
-                <div className="p-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 shrink-0">
-                  <Plane className="w-4 h-4" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-xs text-slate-800 dark:text-slate-100">
-                    Flexible PTO & Offsites
-                  </h4>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
-                    Unlimited paid time off with mandatory minimums + biannual team retreats.
-                  </p>
-                </div>
-              </div>
-            </div>
+            <RichJobDescriptionRenderer
+              content={job.description}
+              fallbackText={`As a ${jobTitle} at ${brandName}, you will play a pivotal role in designing, building, and deploying mission-critical software solutions. You will partner closely with cross-functional teams to craft delightful user journeys and bulletproof scalable infrastructure.`}
+            />
           </div>
         </div>
 

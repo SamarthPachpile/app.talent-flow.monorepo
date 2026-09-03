@@ -2,10 +2,10 @@ import { motion } from "framer-motion";
 const statsBg = "/assets/analytics bg.jpg";
 
 const stats = [
-  { number: "67", label: "product engineering centers" },
-  { number: "587", label: "active clients" },
-  { number: "32,000+", label: "professionals in 26 countries" },
-  { number: "2,100+", label: "product releases per year" },
+  { number: "2M+", label: "candidates & applications processed" },
+  { number: "850+", label: "enterprise employers & HR teams" },
+  { number: "45%", label: "reduction in hiring cycle time" },
+  { number: "99.8%", label: "onboarding & candidature compliance" },
 ];
 
 const container = {
@@ -128,7 +128,7 @@ export default function StatsSection() {
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             className="text-6xl font-light text-[#111625] tracking-[-0.03em] leading-tight"
           >
-            Key Impact Metrics
+            Workforce Metrics
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 15 }}
@@ -137,7 +137,7 @@ export default function StatsSection() {
             transition={{ duration: 0.8, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
             className="mt-2 text-15px text-[#33456b]"
           >
-            Driving digital transformation and measurable outcomes globally.
+            Powering talent acquisition and employee management worldwide.
           </motion.p>
         </div>
 

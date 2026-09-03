@@ -342,16 +342,43 @@
   font-family: var(--font-sans);
   background-color: var(--color-background);
   color: var(--color-foreground);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-.talentflow-candidate-portal-scope h1,
-.talentflow-candidate-portal-scope h2,
-.talentflow-candidate-portal-scope h3,
+/* Typography Hierarchy & Weight Scaling (aligned with Graviton IT Solutions) */
+.talentflow-candidate-portal-scope h1 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+
+.talentflow-candidate-portal-scope h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.talentflow-candidate-portal-scope h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.35;
+}
+
 .talentflow-candidate-portal-scope h4,
 .talentflow-candidate-portal-scope h5,
 .talentflow-candidate-portal-scope h6 {
   font-family: var(--font-display);
+  font-weight: 600;
   letter-spacing: -0.01em;
+}
+
+.talentflow-candidate-portal-scope p {
+  font-weight: 400;
 }
 
 @layer base {

@@ -14,7 +14,6 @@
     "format": "prettier --write ."
   },
   "dependencies": {
-    "@talent-flow/api": "*",
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-alert-dialog": "^1.1.15",
@@ -46,6 +45,9 @@
     "@react-three/fiber": "^9.6.0",
     "@studio-freight/lenis": "^1.0.42",
     "@tailwindcss/vite": "^4.2.1",
+    "@talent-flow/api": "*",
+    "@talent-flow/schema-types": "*",
+    "@talent-flow/utilities": "*",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",

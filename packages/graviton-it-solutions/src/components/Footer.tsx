@@ -54,14 +54,14 @@ export default function Footer() {
           {/* CTA Section */}
           <div className="flex flex-col justify-between gap-6">
             <p className="text-2xl sm:text-3xl md:text-4xl leading-tight text-white/80 max-w-md">
-              Let's start engineering impact for your business
+              Let's unify your HR services, candidate tracking, and employee lifecycle
             </p>
 
             <Link
               to="/contact"
               className="inline-flex items-center bg-orange-500 hover:bg-orange-600 transition rounded-full px-6 py-3 w-fit"
             >
-              <span className="font-medium">Get in touch</span>
+              <span className="font-medium">Get in touch with HR Sales</span>
 
               {/* Circular Arrow */}
               <span className="ml-4 bg-white text-black rounded-full p-2 flex items-center justify-center">

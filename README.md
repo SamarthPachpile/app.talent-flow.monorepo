@@ -108,3 +108,38 @@ npm run build:api                   # Build API package
 ```
 
 ---
+
+## 🐳 Docker Containerization
+
+The monorepo employs an **individual container per deployable package** architecture with multi-stage Docker builds.
+
+### Architecture Overview
+
+| Service                     | Technology               | Port (Host:Container) | Description                      |
+| :-------------------------- | :----------------------- | :-------------------- | :------------------------------- |
+| **`dragonfly`**             | Dragonfly DB (Redis API) | `6379:6379`           | In-memory cache & fast datastore |
+| **`api`**                   | Node 22 + Express        | `5000:5000`           | Core backend REST API & Auth     |
+| **`graviton-it-solutions`** | Vite React SPA + Nginx   | `3000:80`             | Main Website Portal              |
+| **`admin-panel`**           | TanStack Start + Nitro   | `3001:3001`           | Core Admin Dashboard             |
+| **`company-portal`**        | Vite React SPA + Nginx   | `3002:80`             | Client Company Onboarding Portal |
+| **`candidate-portal`**      | Vite React SPA + Nginx   | `3003:80`             | Applicant & Candidate Portal     |
+
+### Running with Docker Compose
+
+```sh
+# Build all container images
+npm run docker:build
+# or: docker compose build
+
+# Start all services in background
+npm run docker:up
+# or: docker compose up -d
+
+# View live aggregate logs
+npm run docker:logs
+# or: docker compose logs -f
+
+# Stop all services
+npm run docker:down
+# or: docker compose down
+```

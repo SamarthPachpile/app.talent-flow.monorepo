@@ -15,9 +15,10 @@ import { usePageMeta } from "@graviton/lib/use-page-meta";
 
 export default function Index() {
   usePageMeta(
-    "Graviton — CRM Consultancy & Applied AI",
-    "Graviton, a Tapasys Group company, is a CRM consultancy and applied-AI partner helping revenue, marketing and service teams turn customer data into measurable growth.",
+    "Graviton — Enterprise HR CRM, Candidate Tracking & Workforce Solutions",
+    "Graviton is an enterprise HR CRM and workforce software partner providing complete applications for candidate tracking, employee management, automated onboarding, and multi-tenant portals.",
   );
+
   return (
     <div className="min-h-screen bg-background">
       <Header />

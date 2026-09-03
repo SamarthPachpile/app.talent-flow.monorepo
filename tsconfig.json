@@ -2,46 +2,32 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@admin-panel/*": ["packages/admin-panel/src/*"],
-      "@admin-panel": ["packages/admin-panel/src"],
-      "@admin/*": ["packages/admin-panel/src/*"],
-      "@admin": ["packages/admin-panel/src"],
-      "@talent-flow/admin-panel/*": ["packages/admin-panel/src/*"],
-      "@talent-flow/admin-panel": ["packages/admin-panel/src/components/AdminPanelContainer.tsx"],
-
-      "@api/*": ["packages/api/src/*"],
-      "@api": ["packages/api/src/index.ts"],
-      "@talent-flow/api/*": ["packages/api/src/*"],
-      "@talent-flow/api": ["packages/api/src/index.ts"],
-
-      "@candidate-portal/*": ["packages/candidate-portal/src/*"],
-      "@candidate-portal": ["packages/candidate-portal/src"],
-      "@candidate/*": ["packages/candidate-portal/src/*"],
-      "@candidate": ["packages/candidate-portal/src"],
-      "@talent-flow/candidate-portal/*": ["packages/candidate-portal/src/*"],
-      "@talent-flow/candidate-portal": ["packages/candidate-portal/src/App.tsx"],
-
-      "@company-onboarding/*": ["packages/company-onboarding/src/*"],
-      "@company-onboarding": ["packages/company-onboarding/src"],
-      "@onboarding/*": ["packages/company-onboarding/src/*"],
-      "@onboarding": ["packages/company-onboarding/src"],
-      "@talent-flow/company-onboarding/*": ["packages/company-onboarding/src/*"],
-      "@talent-flow/company-onboarding": ["packages/company-onboarding/src/App.tsx"],
-
-      "@graviton-it-solutions/*": ["packages/graviton-it-solutions/src/*"],
-      "@graviton-it-solutions": ["packages/graviton-it-solutions/src"],
-      "@graviton/*": ["packages/graviton-it-solutions/src/*"],
-      "@graviton": ["packages/graviton-it-solutions/src"],
-      "@talent-flow/graviton-it-solutions/*": ["packages/graviton-it-solutions/src/*"],
-      "@talent-flow/graviton-it-solutions": ["packages/graviton-it-solutions/src"]
+      "@talent-flow/schema-types": ["./packages/schema-types/src/index.ts"],
+      "@talent-flow/schema-types/*": ["./packages/schema-types/src/*"],
+      "@talent-flow/utilities": ["./packages/utilities/src/index.ts"],
+      "@talent-flow/utilities/*": ["./packages/utilities/src/*"],
+      "@talent-flow/api": ["./packages/api/src/index.ts"],
+      "@talent-flow/api/*": ["./packages/api/src/*"],
+      "@talent-flow/admin-panel": ["./packages/admin-panel/src/components/AdminPanelContainer.tsx"],
+      "@talent-flow/admin-panel/*": ["./packages/admin-panel/src/*"],
+      "@talent-flow/candidate-portal": ["./packages/candidate-portal/src/App.tsx"],
+      "@talent-flow/candidate-portal/*": ["./packages/candidate-portal/src/*"],
+      "@talent-flow/company-portal": ["./packages/company-portal/src/App.tsx"],
+      "@talent-flow/company-portal/*": ["./packages/company-portal/src/*"],
+      "@talent-flow/company-onboarding": ["./packages/company-portal/src/App.tsx"],
+      "@talent-flow/company-onboarding/*": ["./packages/company-portal/src/*"],
+      "@talent-flow/graviton-it-solutions": ["./packages/graviton-it-solutions/src/App.tsx"],
+      "@talent-flow/graviton-it-solutions/*": ["./packages/graviton-it-solutions/src/*"]
     }
   },
   "files": [],
   "references": [
+    { "path": "./packages/schema-types" },
+    { "path": "./packages/utilities" },
     { "path": "./packages/api" },
     { "path": "./packages/admin-panel" },
-    { "path": "./packages/company-onboarding" },
     { "path": "./packages/candidate-portal" },
+    { "path": "./packages/company-portal" },
     { "path": "./packages/graviton-it-solutions" }
   ]
 }

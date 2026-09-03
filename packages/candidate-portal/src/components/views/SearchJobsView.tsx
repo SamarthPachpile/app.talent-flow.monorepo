@@ -17,6 +17,7 @@ import {
 import { AvailableJob } from "../../types/candidate";
 import { OPEN_POSITIONS_CATALOG } from "../../data/mockCandidateData";
 import { toast } from "../../lib/sweetalert";
+import { formatSalaryRangeDisplay } from "@talent-flow/api";
 
 interface SearchJobsViewProps {
   availableJobs?: AvailableJob[];
@@ -222,7 +223,7 @@ export const SearchJobsView: React.FC<SearchJobsViewProps> = ({
                     {/* Bottom Details & Apply Button */}
                     <div className="pt-4 mt-2 border-t border-white/10 flex items-center justify-between gap-2">
                       <span className="text-xs text-white/80 font-mono">
-                        {job.salaryRange || "Competitive"}
+                        {formatSalaryRangeDisplay(job.salaryRange)}
                       </span>
 
                       <button
@@ -525,7 +526,7 @@ export const SearchJobsView: React.FC<SearchJobsViewProps> = ({
                     <div className="flex items-center gap-1">
                       <DollarSign className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                       <span className="font-semibold text-slate-700 dark:text-slate-300">
-                        {job.salaryRange}
+                        {formatSalaryRangeDisplay(job.salaryRange)}
                       </span>
                     </div>
                   </div>

@@ -1,0 +1,141 @@
+services:
+  # ============================================================================
+  # In-Memory Datastore / Cache (Dragonfly DB)
+  # ============================================================================
+  dragonfly:
+    image: "docker.dragonflydb.io/dragonflydb/dragonfly:latest"
+    container_name: talentflow-dragonfly
+    restart: always
+    ulimits:
+      memlock: -1
+    ports:
+      - "6379:6379"
+    volumes:
+      - dragonflydata:/data
+    command:
+      - "--cache_mode=true"
+      - "--keys_output_limit=10000"
+      - "--dbfilename=talentflow-dragonfly.rdb"
+      - "--dir=/data"
+    networks:
+      - talentflow-network
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============================================================================
+  # Backend API Server (Node.js / Express)
+  # ============================================================================
+  api:
+    build:
+      context: .
+      dockerfile: packages/api/Dockerfile
+    container_name: talentflow-api
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    environment:
+      - PORT=5000
+      - HOST=0.0.0.0
+      - DRAGONFLY_HOST=dragonfly
+      - DRAGONFLY_PORT=6379
+    depends_on:
+      dragonfly:
+        condition: service_healthy
+    networks:
+      - talentflow-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:5000/api/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  # ============================================================================
+  # Graviton IT Solutions Portal (Vite SPA + Nginx)
+  # ============================================================================
+  graviton-it-solutions:
+    build:
+      context: .
+      dockerfile: packages/graviton-it-solutions/Dockerfile
+      args:
+        - VITE_API_URL=${VITE_API_URL:-http://localhost:5000}
+    container_name: talentflow-graviton
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+    networks:
+      - talentflow-network
+
+  # ============================================================================
+  # Admin Panel (TanStack Start / Nitro Node.js Server)
+  # ============================================================================
+  admin-panel:
+    build:
+      context: .
+      dockerfile: packages/admin-panel/Dockerfile
+    container_name: talentflow-admin-panel
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    env_file:
+      - .env
+    environment:
+      - PORT=3001
+      - NITRO_PORT=3001
+      - NITRO_HOST=0.0.0.0
+      - VITE_API_URL=${VITE_API_URL:-http://localhost:5000}
+    depends_on:
+      - api
+    networks:
+      - talentflow-network
+
+  # ============================================================================
+  # Company Onboarding Portal (Vite SPA + Nginx)
+  # ============================================================================
+  company-portal:
+    build:
+      context: .
+      dockerfile: packages/company-portal/Dockerfile
+      args:
+        - VITE_API_URL=${VITE_API_URL:-http://localhost:5000}
+    container_name: talentflow-company-portal
+    restart: unless-stopped
+    ports:
+      - "3002:80"
+    depends_on:
+      - api
+    networks:
+      - talentflow-network
+
+  # ============================================================================
+  # Candidate Portal (Vite SPA + Nginx)
+  # ============================================================================
+  candidate-portal:
+    build:
+      context: .
+      dockerfile: packages/candidate-portal/Dockerfile
+      args:
+        - VITE_API_URL=${VITE_API_URL:-http://localhost:5000}
+    container_name: talentflow-candidate-portal
+    restart: unless-stopped
+    ports:
+      - "3003:80"
+    depends_on:
+      - api
+    networks:
+      - talentflow-network
+
+volumes:
+  dragonflydata:
+    driver: local
+
+networks:
+  talentflow-network:
+    driver: bridge

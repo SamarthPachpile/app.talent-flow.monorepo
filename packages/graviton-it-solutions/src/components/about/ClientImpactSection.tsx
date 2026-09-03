@@ -8,18 +8,18 @@ const case3 = "/assets/about-case-3.jpg";
 const cases = [
   {
     img: case1,
-    tag: "AI Lead Scoring on Salesforce",
-    title: "B2B SaaS firm cuts sales cycle by 38%",
+    tag: "AI Candidate Screening on TalentFlow",
+    title: "Global enterprise cuts hiring cycle by 45%",
   },
   {
     img: case2,
-    tag: "Healthcare CRM Modernization",
-    title: "Patient onboarding time reduced 4×",
+    tag: "Digital Onboarding & Candidature Verification",
+    title: "Healthcare system accelerates credentialing 4×",
   },
   {
     img: case3,
-    tag: "HubSpot + Zoho Migration",
-    title: "Fintech consolidates 3 CRMs into one",
+    tag: "Unified Employee CRM & HRMS",
+    title: "Fintech enterprise consolidates 4 HR systems into 1 portal",
   },
 ];
 
@@ -37,7 +37,7 @@ export default function ClientImpactSection() {
     >
       <div className="max-w-[1600px] mx-auto px-6">
         {/* Top Label */}
-        <p className="text-md text-gray-500 mb-6">Our case studies</p>
+        <p className="text-md text-gray-500 mb-6">HR Transformation Case Studies</p>
 
         {/* Header Row */}
         <div className="grid md:grid-cols-2 gap-90 mb-8 items-start">
@@ -48,7 +48,7 @@ export default function ClientImpactSection() {
             transition={{ duration: 0.6 }}
             className="text-4xl md:text-4xl leading-tight"
           >
-            Discover how we’re engineering impact with clients around the world
+            Discover how we’re transforming HR services and candidate management globally
           </motion.h2>
 
           {/* Right Content */}
@@ -59,8 +59,8 @@ export default function ClientImpactSection() {
             className="max-w-md"
           >
             <p className="text-gray-600 mb-6 leading-relaxed">
-              We work with the world’s largest and most innovative companies—forging deep
-              collaborations to create intelligent products, platforms, and services.
+              We partner with high-growth organizations to build intelligent HR CRM portals,
+              streamline candidate application workflows, and elevate the employee experience.
             </p>
 
             <a

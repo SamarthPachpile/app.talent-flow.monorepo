@@ -44,11 +44,11 @@ export default function MakeImpactSection() {
           transition={{ duration: 0.8 }}
         >
           <p className="text-10px sm:text-xs uppercase tracking-[0.35em] text-[#fcfcfc]">
-            The Tapasys Group Company
+            Next-Gen HR & Workforce CRM
           </p>
 
           <h2 className="text-[3rem] sm:text-[5rem] lg:text-[10rem] font-semibold text-white leading-[0.95] tracking-[-0.03em]">
-            Pull <span className="text-white/80">Customers</span> Closer
+            Unify <span className="text-white/80">Talent</span> & Teams
           </h2>
         </motion.div>
 
@@ -59,13 +59,16 @@ export default function MakeImpactSection() {
           transition={{ delay: 0.4 }}
           className="absolute bottom-[100px] left-8"
         >
-          <button className="flex items-center gap-4 bg-white rounded-full px-6 py-3 shadow-lg hover:scale-105 transition">
-            <span className="text-[#111625] text-2xl">Join our team</span>
+          <a
+            href="/careers"
+            className="flex items-center gap-4 bg-white rounded-full px-6 py-3 shadow-lg hover:scale-105 transition"
+          >
+            <span className="text-[#111625] text-2xl">Explore Careers & Portals</span>
 
             <span className="w-10 h-10 rounded-full bg-[#ff5a1f] flex items-center justify-center">
               <ArrowRight className="text-white w-5 h-5" />
             </span>
-          </button>
+          </a>
         </motion.div>
       </div>
     </section>
