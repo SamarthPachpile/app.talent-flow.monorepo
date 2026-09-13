@@ -34,15 +34,15 @@ const navItems = [
     label: "Portals",
     href: "#",
     dropdown: [
-      { label: "Candidate Portal (Port 3003)", href: "http://localhost:3003", external: true },
+      { label: "Candidate Career Portal", href: "/candidate-portal" },
       {
-        label: "Company Onboarding & Workspace (Port 3002)",
-        href: "http://localhost:3002",
-        external: true,
+        label: "Company Onboarding & Workspace",
+        href: "/companies",
       },
-      { label: "Super Admin Panel (Port 3001)", href: "http://localhost:3001", external: true },
+      { label: "Super Admin Panel", href: "/admin-panel" },
     ],
   },
+
   { label: "HR AI Assistant", href: "/velocity-ai", highlight: true },
   { label: "Insights", href: "/insights" },
   { label: "About Us", href: "/about" },

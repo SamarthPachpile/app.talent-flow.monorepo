@@ -25,9 +25,7 @@ import Services from "@graviton/pages/Services";
 import VelocityAI from "@graviton/pages/VelocityAI";
 import NotFound from "@graviton/pages/NotFound";
 
-const isDevAllMode =
-  import.meta.env.VITE_DEV_ALL === "true" ||
-  import.meta.env.VITE_ENABLE_ECOSYSTEM_ROUTES === "true";
+const isDevAllMode = import.meta.env.VITE_DEV_ALL === "false" ? false : true;
 
 function GravitonWebsiteLayout({ children }: { children: React.ReactNode }) {
   return (
