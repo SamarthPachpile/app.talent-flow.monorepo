@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import "./styles.css";
 
 import ScrollToTop from "@graviton/components/ScrollToTop";
@@ -25,15 +25,15 @@ import Services from "@graviton/pages/Services";
 import VelocityAI from "@graviton/pages/VelocityAI";
 import NotFound from "@graviton/pages/NotFound";
 
-const isDevAllMode = import.meta.env.VITE_DEV_ALL === "false" ? false : true;
-
-function GravitonWebsiteLayout({ children }: { children: React.ReactNode }) {
+function GravitonWebsiteLayout() {
   return (
     <div className="graviton-scope min-h-screen bg-background text-foreground font-sans">
       <SplashScreen>
         <CustomCursor />
         <SectionNavigator />
-        <PageTransition>{children}</PageTransition>
+        <PageTransition>
+          <Outlet />
+        </PageTransition>
         <AskAIButton />
       </SplashScreen>
     </div>
@@ -46,54 +46,38 @@ export default function App() {
       <BrowserRouter>
         <ScrollToTop />
         <Routes>
-          {/* Ecosystem Package Routes — Enabled ONLY when full project (npm run dev:all) is running */}
-          {isDevAllMode && (
-            <>
-              <Route path="/admin-panel/*" element={<AdminPortalWrapper />} />
-              <Route
-                path="/companies/*"
-                element={<EcosystemPortalWrapper routePath="/companies" />}
-              />
-              <Route
-                path="/company/*"
-                element={<EcosystemPortalWrapper routePath="/companies" />}
-              />
-              <Route
-                path="/candidates/*"
-                element={<EcosystemPortalWrapper routePath="/candidates" />}
-              />
-              <Route
-                path="/candidates-portal/*"
-                element={<EcosystemPortalWrapper routePath="/candidates-portal" />}
-              />
-              <Route
-                path="/candidate-portal/*"
-                element={<EcosystemPortalWrapper routePath="/candidate-portal" />}
-              />
-            </>
-          )}
+          {/* Ecosystem Package Routes */}
+          <Route path="/admin-panel/*" element={<AdminPortalWrapper />} />
+          <Route path="/companies/*" element={<EcosystemPortalWrapper routePath="/companies" />} />
+          <Route path="/company/*" element={<EcosystemPortalWrapper routePath="/companies" />} />
+          <Route
+            path="/candidates/*"
+            element={<EcosystemPortalWrapper routePath="/candidates" />}
+          />
+          <Route
+            path="/candidates-portal/*"
+            element={<EcosystemPortalWrapper routePath="/candidates-portal" />}
+          />
+          <Route
+            path="/candidate-portal/*"
+            element={<EcosystemPortalWrapper routePath="/candidate-portal" />}
+          />
 
           {/* Graviton Landing Website Routes */}
-          <Route
-            path="/*"
-            element={
-              <GravitonWebsiteLayout>
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/careers" element={<Careers />} />
-                  <Route path="/contact" element={<Contact />} />
-                  <Route path="/industries" element={<Industries />} />
-                  <Route path="/industries/:slug" element={<IndustryDetail />} />
-                  <Route path="/insights" element={<Insights />} />
-                  <Route path="/services" element={<Services />} />
-                  <Route path="/velocity-ai" element={<VelocityAI />} />
-                  <Route path="/chatbot-test" element={<ChatbotTest />} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </GravitonWebsiteLayout>
-            }
-          />
+          <Route element={<GravitonWebsiteLayout />}>
+            <Route index element={<Index />} />
+            <Route path="/" element={<Index />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/careers" element={<Careers />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/industries" element={<Industries />} />
+            <Route path="/industries/:slug" element={<IndustryDetail />} />
+            <Route path="/insights" element={<Insights />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/velocity-ai" element={<VelocityAI />} />
+            <Route path="/chatbot-test" element={<ChatbotTest />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </SmoothScrollProvider>
