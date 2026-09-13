@@ -19,8 +19,9 @@ This monorepo consists of four packages in the [`packages/`](file:///home/samart
    - Includes application tracking, multi-stage candidate onboarding flow (Application, Interview, Offer Signing, Background Check, Hardware Setup, Credentials, Day 1 Checklist), Notification Center, and Helpdesk.
 
 4. **[`packages/api`](file:///home/samarthpachpile/CRM/app.talent-flow.monorepo/packages/api)** (`@talent-flow/api`)
-   - The **Shared API & Data Layer** shared package used across front-end applications.
-   - Firebase SDK configuration (Firestore, Auth, Storage, Analytics), core domain services (`AdminApiService`, `CompanyApiService`, `CandidateApiService`, `SettingsBackendService`, `FirebaseAuthService`), SMTP email service, and shared TypeScript types.
+   - The **Shared API & Data Layer** REST API server powering all applications.
+   - Built with Express 5, TypeScript, MongoDB (Mongoose), Dragonfly DB / Redis in-memory datastore, Passport.js, and **JWT (JSON Web Tokens)** authentication.
+   - Full API endpoint listings and cURL testing guide: [**`API_DOCUMENTATION.md`**](file:///home/samarthpachpile/CRM/app.talent-flow.monorepo/API_DOCUMENTATION.md) and [`packages/api/README.md`](file:///home/samarthpachpile/CRM/app.talent-flow.monorepo/packages/api/README.md).
 
 ---
 

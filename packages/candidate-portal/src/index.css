@@ -338,6 +338,11 @@
   --sidebar-ring: oklch(0.637 0.194 29);
 }
 
+/* Clean Enterprise Base Typography Scaling */
+html {
+  font-size: 15px;
+}
+
 .talentflow-candidate-portal-scope {
   font-family: var(--font-sans);
   background-color: var(--color-background);
@@ -345,6 +350,8 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  width: 100%;
+  min-height: 100%;
 }
 
 /* Typography Hierarchy & Weight Scaling (aligned with Graviton IT Solutions) */

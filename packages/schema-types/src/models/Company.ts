@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
+import bcrypt from "bcryptjs";
 import type { CompanyDocument } from "../types";
 
 export interface ICompany extends Document, Omit<CompanyDocument, "id"> {
@@ -26,11 +27,14 @@ export interface ICompany extends Document, Omit<CompanyDocument, "id"> {
     avatarUrl?: string;
     uid?: string;
   };
+  password?: string;
+  googleId?: string;
   status?: string;
   isCompleted?: boolean;
   emailVerified?: boolean;
   registeredCandidates?: any[];
   candidateIds?: string[];
+  comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
 const CompanySchema = new Schema<ICompany>(
@@ -111,6 +115,15 @@ const CompanySchema = new Schema<ICompany>(
       avatarUrl: { type: String, default: "" },
       uid: { type: String, default: "" },
     },
+    password: {
+      type: String,
+      required: false,
+    },
+    googleId: {
+      type: String,
+      sparse: true,
+      index: true,
+    },
     status: {
       type: String,
       default: "Active",
@@ -128,8 +141,33 @@ const CompanySchema = new Schema<ICompany>(
   },
   {
     timestamps: true,
+    toJSON: {
+      transform(_doc, ret: Record<string, unknown>) {
+        delete ret.password;
+        ret.id = ret.id || (ret._id ? String(ret._id) : undefined);
+        delete ret.__v;
+        return ret;
+      },
+    },
   },
 );
+
+// Hash password before saving if modified
+CompanySchema.pre("save", async function () {
+  if (!this.isModified("password") || !this.password) {
+    return;
+  }
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+});
+
+// Compare password method
+CompanySchema.methods.comparePassword = async function (
+  candidatePassword: string,
+): Promise<boolean> {
+  if (!this.password) return false;
+  return bcrypt.compare(candidatePassword, this.password);
+};
 
 export const Company: Model<ICompany> =
   mongoose.models.Company || mongoose.model<ICompany>("Company", CompanySchema);

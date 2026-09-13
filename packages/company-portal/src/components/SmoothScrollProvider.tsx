@@ -30,10 +30,7 @@ export default function SmoothScrollProvider({ children }: { children: React.Rea
         infinite: false,
         prevent: (node) => {
           return (
-            node?.hasAttribute?.("data-lenis-prevent") ||
-            !!node?.closest?.("[data-lenis-prevent]") ||
-            !!node?.closest?.(".overflow-y-auto") ||
-            !!node?.closest?.(".overflow-auto")
+            node?.hasAttribute?.("data-lenis-prevent") || !!node?.closest?.("[data-lenis-prevent]")
           );
         },
       });
@@ -48,17 +45,42 @@ export default function SmoothScrollProvider({ children }: { children: React.Rea
       };
       rafId = requestAnimationFrame(raf);
 
-      const handleNavigation = () => {
-        setTimeout(() => {
+      let resizeTimeout: ReturnType<typeof setTimeout> | null = null;
+      const debouncedResize = () => {
+        if (resizeTimeout) clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
           lenis.resize();
-        }, 60);
+        }, 50);
       };
 
-      window.addEventListener("popstate", handleNavigation);
+      // Watch for layout & content dimension changes dynamically
+      const resizeObserver = new ResizeObserver(() => {
+        debouncedResize();
+      });
+
+      if (document.body) {
+        resizeObserver.observe(document.body);
+      }
+      if (document.documentElement) {
+        resizeObserver.observe(document.documentElement);
+      }
+
+      window.addEventListener("popstate", debouncedResize);
+      window.addEventListener("resize", debouncedResize);
+      window.addEventListener("lenis-resize", debouncedResize);
+
+      // Trigger initial resize after elements settle
+      setTimeout(() => {
+        lenis.resize();
+      }, 100);
 
       return () => {
         cancelAnimationFrame(rafId);
-        window.removeEventListener("popstate", handleNavigation);
+        if (resizeTimeout) clearTimeout(resizeTimeout);
+        resizeObserver.disconnect();
+        window.removeEventListener("popstate", debouncedResize);
+        window.removeEventListener("resize", debouncedResize);
+        window.removeEventListener("lenis-resize", debouncedResize);
         lenis.destroy();
         if (window.__lenis === lenis) {
           window.__lenis = undefined;

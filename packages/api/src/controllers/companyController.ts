@@ -43,14 +43,14 @@ export const CompanyController = {
         return;
       }
 
-      const query: Record<string, unknown>[] = [];
+      let company = null;
       if (email) {
-        query.push({ "profile.senderAddress": email });
-        query.push({ email });
+        company = await CompanyService.getCompanyByEmail(email);
       }
-      if (uid) query.push({ uid });
+      if (!company && uid) {
+        company = await CompanyService.getCompany(uid);
+      }
 
-      const company = await Company.findOne({ $or: query }).lean();
       if (!company) {
         errorResponse(res, httpStatusCodes.DATA_NOT_FOUND, "Company workspace not found");
         return;
@@ -65,7 +65,12 @@ export const CompanyController = {
   async saveCompany(req: Request, res: Response): Promise<void> {
     try {
       const saved = await CompanyService.saveCompany(req.body);
-      successResponse(res, httpStatusCodes.SUCCESS, "Company saved successfully", saved);
+      successResponse(
+        res,
+        httpStatusCodes.SUCCESS,
+        "Company saved in Dragonfly DB successfully",
+        saved,
+      );
     } catch (err) {
       errorResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, "Failed to save company", err);
     }
@@ -74,19 +79,20 @@ export const CompanyController = {
   async registerCandidate(req: Request, res: Response): Promise<void> {
     try {
       const companyId = (req.params.companyId || "") as string;
-      const cleanCompId = companyId.toLowerCase().replace(/[^a-z0-9]/g, "");
       const { candidate } = req.body;
 
-      await Company.updateOne(
-        { $or: [{ id: cleanCompId }, { subdomain: cleanCompId }] },
-        {
-          $addToSet: { registeredCandidateIds: candidate?.id || candidate?.email },
-          $inc: { "stats.totalCandidates": 1 },
-          $set: { updatedAt: new Date().toISOString() },
-        },
-      );
+      const updated = await CompanyService.registerCandidate(companyId, candidate);
+      if (!updated) {
+        errorResponse(res, httpStatusCodes.DATA_NOT_FOUND, "Company not found");
+        return;
+      }
 
-      successResponse(res, httpStatusCodes.SUCCESS, "Candidate registered to company workspace");
+      successResponse(
+        res,
+        httpStatusCodes.SUCCESS,
+        "Candidate registered to company workspace in Dragonfly DB",
+        updated,
+      );
     } catch (err) {
       errorResponse(
         res,
@@ -101,7 +107,12 @@ export const CompanyController = {
     try {
       const companyId = (req.params.companyId || "company") as string;
       const settings = await CompanyService.fetchSettings(companyId);
-      successResponse(res, httpStatusCodes.SUCCESS, "Company settings fetched", settings);
+      successResponse(
+        res,
+        httpStatusCodes.SUCCESS,
+        "Company settings fetched from Dragonfly DB",
+        settings,
+      );
     } catch (err) {
       errorResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, "Failed to get settings", err);
     }
@@ -111,7 +122,12 @@ export const CompanyController = {
     try {
       const companyId = (req.params.companyId || "company") as string;
       const settings = await CompanyService.saveSettings(req.body, companyId);
-      successResponse(res, httpStatusCodes.SUCCESS, "Company settings saved", settings);
+      successResponse(
+        res,
+        httpStatusCodes.SUCCESS,
+        "Company settings saved to Dragonfly DB",
+        settings,
+      );
     } catch (err) {
       errorResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, "Failed to save settings", err);
     }

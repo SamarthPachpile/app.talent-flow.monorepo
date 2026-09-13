@@ -40,6 +40,7 @@ interface CandidateAuthScreenProps {
   onBackToHome?: () => void;
   company?: CompanyDocument | null;
   onBackToCompanies?: () => void;
+  initialMode?: "login" | "signup";
 }
 
 export function CandidateAuthScreen({
@@ -47,8 +48,25 @@ export function CandidateAuthScreen({
   onBackToHome,
   company,
   onBackToCompanies,
+  initialMode = "login",
 }: CandidateAuthScreenProps) {
-  const [mode, setMode] = useState<"login" | "signup">("login");
+  const [mode, setMode] = useState<"login" | "signup">(() => {
+    if (initialMode) return initialMode;
+    if (typeof window !== "undefined") {
+      const path = window.location.pathname;
+      if (path.endsWith("/signup") || path.endsWith("/register")) return "signup";
+      const search = new URLSearchParams(window.location.search);
+      if (search.get("mode") === "signup" || search.get("mode") === "register") return "signup";
+    }
+    return "login";
+  });
+
+  useEffect(() => {
+    if (initialMode) {
+      setMode(initialMode);
+    }
+  }, [initialMode]);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -82,11 +100,13 @@ export function CandidateAuthScreen({
     displayName: string;
     photoURL?: string;
     googleId: string;
+    id?: string;
   }) => {
     setIsSubmitting(true);
     const userEmail = googleData.email.trim().toLowerCase();
     const userDisplayName = googleData.displayName || userEmail.split("@")[0];
     const uid = googleData.googleId;
+    const candIdFromAuth = googleData.id || uid;
     const companySlug =
       company?.subdomain ||
       company?.id ||
@@ -94,7 +114,7 @@ export function CandidateAuthScreen({
 
     try {
       // CROSS-PORTAL CHECK: Check if this user is a Company Workspace Admin
-      let candDoc = await CandidateApiService.getCandidateByEmailOrUid(userEmail, uid);
+      let candDoc = await CandidateApiService.getCandidateByEmailOrUid(userEmail, candIdFromAuth);
       const companyDoc = await CompanyApiService.getCompanyByEmailOrUid(userEmail, uid);
 
       if (companyDoc && !candDoc) {
@@ -150,7 +170,9 @@ export function CandidateAuthScreen({
         });
       } else {
         // Register new candidate document with auto ID for Google Sign Up
-        const cleanCandId = `cand-${Date.now().toString().slice(-6)}-${userEmail.replace(/[^a-z0-9]/g, "").slice(0, 8)}`;
+        const cleanCandId =
+          candIdFromAuth ||
+          `cand-${Date.now().toString().slice(-6)}-${userEmail.replace(/[^a-z0-9]/g, "").slice(0, 8)}`;
         const newCandidateDoc: CandidateDocument = {
           id: cleanCandId,
           fullName: userDisplayName,
@@ -270,6 +292,7 @@ export function CandidateAuthScreen({
         displayName: result.user.fullName || result.user.displayName,
         photoURL: result.user.photoURL,
         googleId: result.user.uid || result.user.id,
+        id: result.user.id || result.user.uid,
       });
     } catch (err) {
       setIsSubmitting(false);
@@ -520,7 +543,7 @@ export function CandidateAuthScreen({
 
       if (result.user || result.userProfile) {
         const initialCandidateDoc: CandidateDocument = {
-          id: "", // Auto-generated default ID in saveCandidate
+          id: result.user?.id || result.user?.uid || "",
           fullName,
           email: result.user?.email || email,
           phone: mobileNumber,
@@ -670,10 +693,7 @@ export function CandidateAuthScreen({
   };
 
   return (
-    <div
-      data-lenis-prevent
-      className="min-h-screen lg:h-screen lg:overflow-hidden bg-background text-foreground grid grid-cols-1 lg:grid-cols-2 font-sans relative"
-    >
+    <div className="min-h-screen lg:h-screen lg:overflow-hidden bg-background text-foreground grid grid-cols-1 lg:grid-cols-2 font-sans relative">
       {/* Left Section: Cover Background Image & Candidate Roadmap Showcase */}
       <div className="relative hidden lg:flex flex-col justify-between p-10 xl:p-14 text-white overflow-hidden h-full">
         {/* Background Image with Overlay */}

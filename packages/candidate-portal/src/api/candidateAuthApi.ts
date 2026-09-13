@@ -106,7 +106,7 @@ export const CandidateAuthService = {
           role?: string;
         };
         token?: string;
-      }>("/api/auth/google", {
+      }>("/api/candidates-auth/google-auth", {
         email,
         fullName: displayName,
         googleId,
@@ -153,7 +153,7 @@ export const CandidateAuthService = {
           role?: string;
         };
         token?: string;
-      }>("/api/auth/signup", {
+      }>("/api/candidates-auth/candidate-signup", {
         email,
         password,
         fullName: displayName || email.split("@")[0],
@@ -196,7 +196,7 @@ export const CandidateAuthService = {
         userProfile?: Record<string, unknown>;
         verificationSent?: boolean;
         token?: string;
-      }>("/api/auth/signup/full", {
+      }>("/api/candidates-auth/signup-details", {
         ...data,
         role: "candidate",
       });
@@ -233,9 +233,12 @@ export const CandidateAuthService = {
   ): Promise<{ success: boolean; message?: string }> {
     try {
       const targetEmail = customEmail || currentCandidateAuthUser?.email || "";
-      const res = await candidateHttpClient.post<{ message?: string }>("/api/auth/verify-email", {
-        email: targetEmail,
-      });
+      const res = await candidateHttpClient.post<{ message?: string }>(
+        "/api/candidates-auth/send-verification",
+        {
+          email: targetEmail,
+        },
+      );
       return {
         success: true,
         message: res.data?.message || `Verification link dispatched to ${targetEmail}.`,
@@ -253,10 +256,13 @@ export const CandidateAuthService = {
   ): Promise<{ success: boolean; message?: string }> {
     try {
       const currentEmail = currentCandidateAuthUser?.email || "";
-      const res = await candidateHttpClient.post<{ message?: string }>("/api/auth/update-email", {
-        currentEmail,
-        newEmail,
-      });
+      const res = await candidateHttpClient.post<{ message?: string }>(
+        "/api/candidates-auth/change-email",
+        {
+          currentEmail,
+          newEmail,
+        },
+      );
 
       if (currentCandidateAuthUser) {
         currentCandidateAuthUser.email = newEmail;
@@ -279,7 +285,7 @@ export const CandidateAuthService = {
     try {
       if (!currentCandidateAuthUser?.email) return true;
       const res = await candidateHttpClient.get<{ verified?: boolean }>(
-        "/api/auth/check-verified",
+        "/api/candidates-auth/verify-status",
         {
           params: { email: currentCandidateAuthUser.email },
         },
@@ -302,7 +308,7 @@ export const CandidateAuthService = {
           role?: string;
         };
         token?: string;
-      }>("/api/auth/signin", {
+      }>("/api/candidates-auth/candidate-signin", {
         email,
         password,
       });
@@ -340,7 +346,7 @@ export const CandidateAuthService = {
         localStorage.removeItem("talentflow_candidate_auth");
       }
       notifyCandidateAuthChange(null);
-      await candidateHttpClient.post("/api/auth/signout", {}).catch(() => {});
+      await candidateHttpClient.post("/api/candidates-auth/candidate-signout", {}).catch(() => {});
       return { success: true };
     } catch {
       return { success: true };

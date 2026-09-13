@@ -1,7 +1,12 @@
 import type { Request, Response } from "express";
 import { AdminService } from "../services/adminService";
-import { Company, Candidate, User, Job } from "@talent-flow/schema-types/models";
-import { DragonflyCacheService, DragonflySessionService } from "@talent-flow/utilities/dragonfly";
+import { Company, Candidate, Job } from "@talent-flow/schema-types/models";
+import {
+  DragonflyCacheService,
+  DragonflySessionService,
+  DragonflyCronSyncService,
+} from "@talent-flow/utilities/dragonfly";
+
 import { successResponse, errorResponse } from "@talent-flow/utilities";
 import { httpStatusCodes } from "@talent-flow/schema-types";
 
@@ -60,17 +65,15 @@ export const AdminController = {
 
   async getStats(_req: Request, res: Response): Promise<void> {
     try {
-      const [companiesCount, candidatesCount, usersCount, jobsCount] = await Promise.all([
+      const [companiesCount, candidatesCount, jobsCount] = await Promise.all([
         Company.countDocuments().catch(() => 0),
         Candidate.countDocuments().catch(() => 0),
-        User.countDocuments().catch(() => 0),
         Job.countDocuments().catch(() => 0),
       ]);
 
       successResponse(res, httpStatusCodes.SUCCESS, "Platform stats fetched", {
         companies: companiesCount,
         candidates: candidatesCount,
-        users: usersCount,
         jobs: jobsCount,
         dragonflyActive: true,
         timestamp: new Date().toISOString(),
@@ -101,6 +104,39 @@ export const AdminController = {
       successResponse(res, httpStatusCodes.SUCCESS, "Session revoked successfully");
     } catch (err) {
       errorResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, "Failed to revoke session", err);
+    }
+  },
+
+  async getCronSyncStatus(_req: Request, res: Response): Promise<void> {
+    try {
+      const stats = await DragonflyCronSyncService.getStats();
+      successResponse(
+        res,
+        httpStatusCodes.SUCCESS,
+        "Dragonfly -> MongoDB Cron Sync status retrieved",
+        stats,
+      );
+    } catch (err) {
+      errorResponse(
+        res,
+        httpStatusCodes.INTERNAL_SERVER_ERROR,
+        "Failed to get cron sync status",
+        err,
+      );
+    }
+  },
+
+  async triggerCronSync(_req: Request, res: Response): Promise<void> {
+    try {
+      const result = await DragonflyCronSyncService.forceFlush();
+      successResponse(
+        res,
+        httpStatusCodes.SUCCESS,
+        "Dragonfly -> MongoDB Cron Sync executed successfully",
+        result,
+      );
+    } catch (err) {
+      errorResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, "Failed to execute cron sync", err);
     }
   },
 };

@@ -4,7 +4,9 @@ import type { EcosystemHealth, ContactLead } from "@talent-flow/schema-types";
 export class GravitonApiService {
   static async getHealth(): Promise<EcosystemHealth> {
     try {
-      const res = await gravitonHttpClient.get<EcosystemHealth>("/api/graviton/health");
+      const res = await gravitonHttpClient.get<EcosystemHealth>(
+        "/api/graviton-services/service-health",
+      );
       return res.data;
     } catch {
       return {
@@ -18,7 +20,10 @@ export class GravitonApiService {
 
   static async submitLead(lead: ContactLead): Promise<{ success: boolean; id: string }> {
     try {
-      const res = await gravitonHttpClient.post<{ id: string }>("/api/graviton/leads", lead);
+      const res = await gravitonHttpClient.post<{ id: string }>(
+        "/api/graviton-services/submit-lead",
+        lead,
+      );
       return { success: true, id: res.data?.id || `lead_${Date.now()}` };
     } catch {
       return { success: true, id: `lead_${Date.now()}` };

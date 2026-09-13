@@ -33,7 +33,11 @@ const getRouteInfo = (pathname: string) => {
         segments[0] === "candidate-portal" ||
         segments[0] === "candidates"))
   ) {
-    return { targetView: "companies_list" as CandidatePortalView, companySlug: null };
+    return {
+      targetView: "companies_list" as CandidatePortalView,
+      companySlug: null,
+      authMode: "login" as "login" | "signup",
+    };
   }
 
   if (
@@ -42,33 +46,79 @@ const getRouteInfo = (pathname: string) => {
     segments[0] === "candidates"
   ) {
     if (segments[1] === "login" || segments[1] === "auth") {
-      return { targetView: "auth" as CandidatePortalView, companySlug: null };
+      return {
+        targetView: "auth" as CandidatePortalView,
+        companySlug: null,
+        authMode: "login" as "login" | "signup",
+      };
+    }
+    if (segments[1] === "signup" || segments[1] === "register") {
+      return {
+        targetView: "auth" as CandidatePortalView,
+        companySlug: null,
+        authMode: "signup" as "login" | "signup",
+      };
     }
     if (segments[1] === "dashboard") {
-      return { targetView: "dashboard" as CandidatePortalView, companySlug: null };
+      return {
+        targetView: "dashboard" as CandidatePortalView,
+        companySlug: null,
+        authMode: "login" as "login" | "signup",
+      };
     }
     if (segments[1] === "wizard") {
-      return { targetView: "wizard" as CandidatePortalView, companySlug: null };
+      return {
+        targetView: "wizard" as CandidatePortalView,
+        companySlug: null,
+        authMode: "login" as "login" | "signup",
+      };
     }
 
     const companySlug = segments[1];
     const action = segments[2];
 
     if (action === "login" || action === "auth") {
-      return { targetView: "auth" as CandidatePortalView, companySlug };
+      return {
+        targetView: "auth" as CandidatePortalView,
+        companySlug,
+        authMode: "login" as "login" | "signup",
+      };
+    }
+    if (action === "signup" || action === "register") {
+      return {
+        targetView: "auth" as CandidatePortalView,
+        companySlug,
+        authMode: "signup" as "login" | "signup",
+      };
     }
     if (action === "wizard") {
-      return { targetView: "wizard" as CandidatePortalView, companySlug };
+      return {
+        targetView: "wizard" as CandidatePortalView,
+        companySlug,
+        authMode: "login" as "login" | "signup",
+      };
     }
     if (action === "dashboard") {
-      return { targetView: "dashboard" as CandidatePortalView, companySlug };
+      return {
+        targetView: "dashboard" as CandidatePortalView,
+        companySlug,
+        authMode: "login" as "login" | "signup",
+      };
     }
 
     // Default root route for company portal: /candidates-portal/<company_name>/
-    return { targetView: "company_root" as CandidatePortalView, companySlug };
+    return {
+      targetView: "company_root" as CandidatePortalView,
+      companySlug,
+      authMode: "login" as "login" | "signup",
+    };
   }
 
-  return { targetView: "companies_list" as CandidatePortalView, companySlug: null };
+  return {
+    targetView: "companies_list" as CandidatePortalView,
+    companySlug: null,
+    authMode: "login" as "login" | "signup",
+  };
 };
 
 export function App() {
@@ -299,65 +349,15 @@ export function App() {
     const companySlug =
       activeCompany?.subdomain ||
       activeCompany?.id ||
-      (activeCompany?.name
-        ? activeCompany.name.toLowerCase().replace(/[^a-z0-9]/g, "-")
-        : "company");
+      (activeCompany?.name ? activeCompany.name.toLowerCase().replace(/[^a-z0-9]/g, "-") : null);
 
+    await loadAuthenticatedCandidateData(data.email);
     if (data.isNewAccount) {
-      const generatedId = `cand-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
-      const newCandDoc: CandidateDocument = {
-        id: generatedId,
-        fullName: data.fullName || "Candidate User",
-        email: data.email,
-        phone: "",
-        country: "United States",
-        timezone: "America/New_York",
-        currency: "USD",
-        compliance: "",
-        payroll: "",
-        companySize: "",
-        industry: "",
-        referralSource: "",
-        isCompleted: false,
-        currentStageId: "application",
-        companyId: companySlug,
-        registeredCompanyIds: [companySlug],
-        registeredCompanies: [
-          {
-            companyId: companySlug,
-            companyName: activeCompany?.name || companySlug,
-            registeredAt: new Date().toISOString(),
-          },
-        ],
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-      setCandidateProfile(newCandDoc);
-      localStorage.setItem("talentflow_candidate_profile", JSON.stringify(newCandDoc));
-      await CandidateApiService.saveCandidate(newCandDoc);
-
-      toast.info("Account verified! Please complete your candidate setup wizard.");
-      navigateTo(`/candidates-portal/${companySlug}/wizard`);
-    } else {
-      await loadAuthenticatedCandidateData(data.email);
-      const stored = localStorage.getItem("talentflow_candidate_profile");
-      let isComp = true;
-      if (stored) {
-        try {
-          const parsed = JSON.parse(stored);
-          isComp = parsed.isCompleted ?? true;
-        } catch {
-          // ignore
-        }
-      }
-
-      if (!isComp) {
-        toast.warning("Mandatory Step: Please complete your candidate setup wizard.");
-        navigateTo(`/candidates-portal/${companySlug}/wizard`);
-      } else {
-        navigateTo(`/candidates-portal/${companySlug}/dashboard`);
-      }
+      toast.success("Welcome! You are now logged in to the Candidate Dashboard.");
     }
+    navigateTo(
+      companySlug ? `/candidates-portal/${companySlug}/dashboard` : "/candidates-portal/dashboard",
+    );
   };
 
   const handleWizardCompleted = async (completedCandidate: CandidateDocument) => {
@@ -549,14 +549,20 @@ export function App() {
             onSelectCompany={handleSelectCompanyFromList}
             onRegisterCandidature={() => {
               const defaultSlug = "acme";
-              navigateTo(`/candidates-portal/${defaultSlug}/login`);
+              navigateTo(`/candidates-portal/${defaultSlug}/signup`);
+            }}
+            onLogin={() => {
+              navigateTo("/candidates-portal/login");
+            }}
+            onSignup={() => {
+              navigateTo("/candidates-portal/signup");
             }}
           />
         </div>
       );
     }
 
-    // 2. Candidate Auth Screen View (/candidates-portal/<company_name>/login)
+    // 2. Candidate Auth Screen View (/candidates-portal/<company_name>/login or /signup)
     if (
       routeInfo.targetView === "auth" ||
       ((routeInfo.targetView === "dashboard" ||
@@ -568,6 +574,7 @@ export function App() {
         <div className="talentflow-candidate-portal-scope min-h-screen bg-background font-sans text-foreground">
           <CandidateAuthScreen
             company={activeCompany}
+            initialMode={routeInfo.authMode}
             onSuccess={handleAuthSuccess}
             onBackToCompanies={() => navigateTo("/candidates-portal")}
             onBackToHome={() => navigateTo("/candidates-portal")}
@@ -605,6 +612,18 @@ export function App() {
           onAcceptOffer={handleAcceptOffer}
           onUpdateHardware={handleUpdateHardware}
           onUpdateAvatar={handleUpdateCandidateAvatar}
+          onSelectCompanyContext={(newComp) => {
+            setActiveCompany(newComp);
+            if (newComp) {
+              const slug = (newComp.subdomain || newComp.id || newComp.name)
+                .toLowerCase()
+                .replace(/[^a-z0-9]/g, "-")
+                .replace(/-+/g, "-");
+              navigateTo(`/candidates-portal/${slug}/dashboard`);
+            } else {
+              navigateTo("/candidates-portal/dashboard");
+            }
+          }}
         />
       </div>
     );

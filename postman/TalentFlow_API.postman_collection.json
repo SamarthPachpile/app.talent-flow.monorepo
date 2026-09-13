@@ -1,0 +1,1030 @@
+{
+  "info": {
+    "_postman_id": "7f8b912a-319c-482a-a92c-8d19762df1b9",
+    "name": "TalentFlow Unified API & JWT Suite",
+    "description": "Comprehensive Postman collection for TalentFlow Core REST APIs, covering System Health, JWT Authentication, Platform Admin, Candidates, Companies, Jobs & ATS, Graviton Solutions, and Settings.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{jwtToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "jwtToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "candidateId",
+      "value": "cand-alex-01",
+      "type": "string"
+    },
+    {
+      "key": "companyId",
+      "value": "comp-acme-corp",
+      "type": "string"
+    },
+    {
+      "key": "jobId",
+      "value": "job-101",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. System Health",
+      "description": "System readiness, MongoDB Atlas connection, Dragonfly DB status, and authentication engine health.",
+      "item": [
+        {
+          "name": "System Health Status",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "health"]
+            },
+            "description": "Retrieves API status, MongoDB connection state, Dragonfly cache status, and JWT engine state."
+          }
+        },
+        {
+          "name": "Server Health Alias",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/system-health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "system-health"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Authentication & JWT",
+      "description": "Registration, sign in, JWT token generation, profile retrieval, OTP codes, and session termination.",
+      "item": [
+        {
+          "name": "Sign In (Generates JWT Token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.token) {",
+                  "    pm.environment.set('jwtToken', res.data.token);",
+                  "    pm.collectionVariables.set('jwtToken', res.data.token);",
+                  "    console.log('JWT Token stored successfully:', res.data.token);",
+                  "}",
+                  "if (res.data && res.data.user && res.data.user.id) {",
+                  "    if (res.data.user.role === 'candidate') {",
+                  "        pm.environment.set('candidateId', res.data.user.id);",
+                  "        pm.collectionVariables.set('candidateId', res.data.user.id);",
+                  "    } else if (res.data.user.role === 'company') {",
+                  "        pm.environment.set('companyId', res.data.user.id);",
+                  "        pm.collectionVariables.set('companyId', res.data.user.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@talentflow.io\",\n  \"password\": \"Admin@1234\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/signin",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "signin"]
+            },
+            "description": "Authenticates user credentials, sets session in Dragonfly DB, and returns a signed JWT token."
+          }
+        },
+        {
+          "name": "Sign Up - Quick Registration",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.token) {",
+                  "    pm.environment.set('jwtToken', res.data.token);",
+                  "    pm.collectionVariables.set('jwtToken', res.data.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"candidate.test@example.com\",\n  \"password\": \"CandidatePass@123\",\n  \"fullName\": \"Alex Test Candidate\",\n  \"role\": \"candidate\",\n  \"phone\": \"+1-555-0199\",\n  \"country\": \"United States\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/signup",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "signup"]
+            },
+            "description": "Creates a new Candidate or Company account and issues an authentication JWT."
+          }
+        },
+        {
+          "name": "Sign Up - Full Onboarding Details",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.token) {",
+                  "    pm.environment.set('jwtToken', res.data.token);",
+                  "    pm.collectionVariables.set('jwtToken', res.data.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"talent.hr@acmetech.io\",\n  \"password\": \"CompanyPass@123\",\n  \"fullName\": \"Sarah HR Manager\",\n  \"role\": \"company\",\n  \"companyName\": \"Acme Technology Inc\",\n  \"phone\": \"+1-555-0188\",\n  \"industry\": \"Technology & Software\",\n  \"companySize\": \"51-200 Employees\",\n  \"timezone\": \"America/New_York\",\n  \"currency\": \"USD\",\n  \"termsAccepted\": true,\n  \"captchaVerified\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/signup-details",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "signup-details"]
+            }
+          }
+        },
+        {
+          "name": "Google Social Authentication",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.token) {",
+                  "    pm.environment.set('jwtToken', res.data.token);",
+                  "    pm.collectionVariables.set('jwtToken', res.data.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"google.user@example.com\",\n  \"fullName\": \"Google Verified User\",\n  \"googleId\": \"google-oauth2-1092837461928374\",\n  \"avatarUrl\": \"https://lh3.googleusercontent.com/a/default-user\",\n  \"role\": \"candidate\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/google",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "google"]
+            }
+          }
+        },
+        {
+          "name": "Get Current Authenticated User (/me)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "me"]
+            },
+            "description": "Verifies the Bearer JWT token from Authorization header and returns the user payload and database profile."
+          }
+        },
+        {
+          "name": "Validate Session / Token Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/session/validate",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "session", "validate"]
+            }
+          }
+        },
+        {
+          "name": "Send Verification Email",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"candidate.test@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/verify-email",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "verify-email"]
+            }
+          }
+        },
+        {
+          "name": "Check Email Verification Status",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/check-verified?email=candidate.test@example.com",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "check-verified"],
+              "query": [
+                {
+                  "key": "email",
+                  "value": "candidate.test@example.com"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Email Address",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentEmail\": \"candidate.test@example.com\",\n  \"newEmail\": \"candidate.updated@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/update-email",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "update-email"]
+            }
+          }
+        },
+        {
+          "name": "Send 6-Digit OTP Code",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"destination\": \"+15550199\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/otp/send",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "otp", "send"]
+            }
+          }
+        },
+        {
+          "name": "Verify 6-Digit OTP Code",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userEnteredOtp\": \"123456\",\n  \"expectedOtp\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/otp/verify",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "otp", "verify"]
+            }
+          }
+        },
+        {
+          "name": "Google OAuth Client Config",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/google/config",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "google", "config"]
+            }
+          }
+        },
+        {
+          "name": "Sign Out & Invalidate Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/signout",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "signout"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Platform Admin",
+      "description": "Platform management, telemetry, settings, and cache administration.",
+      "item": [
+        {
+          "name": "Get Platform Statistics",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "stats"]
+            }
+          }
+        },
+        {
+          "name": "Get Admin Settings",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/settings",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "settings"]
+            }
+          }
+        },
+        {
+          "name": "Update Admin Settings",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"platformName\": \"TalentFlow Enterprise\",\n  \"maintenanceMode\": false,\n  \"allowSignups\": true,\n  \"defaultCurrency\": \"USD\",\n  \"supportEmail\": \"support@talentflow.io\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/settings",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "settings"]
+            }
+          }
+        },
+        {
+          "name": "Get Admin Health & Metrics",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "health"]
+            }
+          }
+        },
+        {
+          "name": "Get Platform Audit Logs",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/audit-logs",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "audit-logs"]
+            }
+          }
+        },
+        {
+          "name": "Clear Cache Keys",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pattern\": \"*\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/cache/clear",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "cache", "clear"]
+            }
+          }
+        },
+        {
+          "name": "Revoke User Session",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sessionId\": \"sess_candidate_12345\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/session/revoke",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "session", "revoke"]
+            }
+          }
+        },
+        {
+          "name": "Get Dragonfly-to-Mongo Cron Sync Status",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/sync/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "sync", "status"]
+            },
+            "description": "Returns the live status of the write-behind background Cron sync queue (pending items, sync interval, worker running state, and recent batch audit log)."
+          }
+        },
+        {
+          "name": "Trigger Manual Dragonfly-to-Mongo Cron Sync",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/sync/trigger",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "sync", "trigger"]
+            },
+            "description": "Manually triggers an immediate batch sync from Dragonfly write-behind queue to MongoDB Atlas."
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Candidate Portal",
+      "description": "Candidate profile operations, settings, and company association.",
+      "item": [
+        {
+          "name": "Get All Candidates",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/candidates",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "candidates"]
+            }
+          }
+        },
+        {
+          "name": "Save / Update Candidate Profile",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"cand-alex-01\",\n  \"fullName\": \"Alex Morgan\",\n  \"email\": \"alex.morgan@talentflow.io\",\n  \"headline\": \"Senior Full-Stack Cloud Architect\",\n  \"location\": \"San Francisco, CA\",\n  \"phone\": \"+1-415-555-0142\",\n  \"skills\": [\"React\", \"TypeScript\", \"Node.js\", \"MongoDB\", \"Redis\", \"Docker\"],\n  \"experienceYears\": 7,\n  \"stage\": \"offer_signing\",\n  \"isCompleted\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/candidates",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "candidates"]
+            }
+          }
+        },
+        {
+          "name": "Get Candidate by ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/candidates/{{candidateId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "candidates", "{{candidateId}}"]
+            }
+          }
+        },
+        {
+          "name": "Search Candidate by Email",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/candidates/search/email?email=alex.morgan@talentflow.io",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "candidates", "search", "email"],
+              "query": [
+                {
+                  "key": "email",
+                  "value": "alex.morgan@talentflow.io"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Link Company to Candidate",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companyId\": \"comp-acme-corp\",\n  \"companyName\": \"Acme Corp\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/candidates/{{candidateId}}/add-company",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "candidates", "{{candidateId}}", "add-company"]
+            }
+          }
+        },
+        {
+          "name": "Get Candidate Settings",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/candidates/{{candidateId}}/settings",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "candidates", "{{candidateId}}", "settings"]
+            }
+          }
+        },
+        {
+          "name": "Save Candidate Settings",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"emailNotifications\": true,\n  \"smsNotifications\": true,\n  \"jobAlerts\": true,\n  \"privacyMode\": \"recruiters_only\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/candidates/{{candidateId}}/settings",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "candidates", "{{candidateId}}", "settings"]
+            }
+          }
+        },
+        {
+          "name": "Delete Candidate Profile",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/candidates/{{candidateId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "candidates", "{{candidateId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Company Workspace",
+      "description": "Company registration, branding settings, and candidate enrollment.",
+      "item": [
+        {
+          "name": "Get All Companies",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/companies",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "companies"]
+            }
+          }
+        },
+        {
+          "name": "Save / Update Company Workspace",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"comp-acme-corp\",\n  \"name\": \"Acme Global Corporation\",\n  \"subdomain\": \"acme\",\n  \"domain\": \"acme.com\",\n  \"industry\": \"Enterprise Software\",\n  \"size\": \"201-500 Employees\",\n  \"brandColor\": \"#4f46e5\",\n  \"headquarters\": \"New York, NY\",\n  \"admin\": {\n    \"fullName\": \"Sarah HR Director\",\n    \"workEmail\": \"sarah.hr@acme.com\",\n    \"phone\": \"+1-212-555-0188\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/companies",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "companies"]
+            }
+          }
+        },
+        {
+          "name": "Get Company by ID or Subdomain",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/companies/{{companyId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "companies", "{{companyId}}"]
+            }
+          }
+        },
+        {
+          "name": "Search Company by Email",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/companies/search/email?email=sarah.hr@acme.com",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "companies", "search", "email"],
+              "query": [
+                {
+                  "key": "email",
+                  "value": "sarah.hr@acme.com"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Enroll Candidate to Company Workspace",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"candidate\": {\n    \"id\": \"cand-alex-01\",\n    \"email\": \"alex.morgan@talentflow.io\",\n    \"name\": \"Alex Morgan\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/companies/{{companyId}}/register-candidate",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "companies", "{{companyId}}", "register-candidate"]
+            }
+          }
+        },
+        {
+          "name": "Get Company Workspace Settings",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/companies/{{companyId}}/settings",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "companies", "{{companyId}}", "settings"]
+            }
+          }
+        },
+        {
+          "name": "Save Company Workspace Settings",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"allowCandidateSelfRegistration\": true,\n  \"requireOfferEsign\": true,\n  \"enableSmsAlerts\": true,\n  \"primaryThemeColor\": \"#6366f1\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/companies/{{companyId}}/settings",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "companies", "{{companyId}}", "settings"]
+            }
+          }
+        },
+        {
+          "name": "Schedule Credentials Dispatch Email",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companySlug\": \"acme\",\n  \"recipients\": [\n    {\n      \"email\": \"newhire.john@example.com\",\n      \"name\": \"John Newhire\",\n      \"role\": \"Software Engineer\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/companies/schedule-credentials-email",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "companies", "schedule-credentials-email"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Job Postings & ATS",
+      "description": "Job openings creation, status updates, listings, and deletion.",
+      "item": [
+        {
+          "name": "Get All Job Postings",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "jobs"]
+            }
+          }
+        },
+        {
+          "name": "Create New Job Opening",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.id) {",
+                  "    pm.environment.set('jobId', res.data.id);",
+                  "    pm.collectionVariables.set('jobId', res.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Principal Cloud Infrastructure Engineer\",\n  \"companyId\": \"comp-acme-corp\",\n  \"companyName\": \"Acme Corp\",\n  \"department\": \"Infrastructure & Reliability\",\n  \"location\": \"San Francisco, CA (or Remote)\",\n  \"type\": \"Full-Time\",\n  \"salary\": \"$160,000 - $210,000\",\n  \"status\": \"published\",\n  \"requirements\": [\"Kubernetes\", \"Terraform\", \"AWS\", \"Go\", \"TypeScript\"],\n  \"description\": \"Lead next generation cloud native infrastructure deployments and site reliability initiatives.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "jobs"]
+            }
+          }
+        },
+        {
+          "name": "Get Job Postings by Company",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs/company/{{companyId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "jobs", "company", "{{companyId}}"]
+            }
+          }
+        },
+        {
+          "name": "Get Job by ID",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs/{{jobId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "jobs", "{{jobId}}"]
+            }
+          }
+        },
+        {
+          "name": "Update Job Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"published\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs/{{jobId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "jobs", "{{jobId}}", "status"]
+            }
+          }
+        },
+        {
+          "name": "Delete Job Posting",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs/{{jobId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "jobs", "{{jobId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Graviton Solutions",
+      "description": "Graviton enterprise microservice status and prospective business lead submission.",
+      "item": [
+        {
+          "name": "Graviton Ecosystem Health",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/graviton/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "graviton", "health"]
+            }
+          }
+        },
+        {
+          "name": "Submit Consultation Lead",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"David Johnson\",\n  \"email\": \"david.j@techstart.com\",\n  \"company\": \"TechStart Labs\",\n  \"serviceNeeded\": \"Custom Cloud CRM & ATS Implementation\",\n  \"message\": \"We are looking to migrate our hiring workflow to a dedicated multi-tenant TalentFlow workspace.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/graviton/leads",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "graviton", "leads"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Unified Settings",
+      "description": "Unified settings routes across admin, company, and candidate entities.",
+      "item": [
+        {
+          "name": "Get Admin Unified Settings",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/settings/admin",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "settings", "admin"]
+            }
+          }
+        },
+        {
+          "name": "Update Admin Unified Settings",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"platformName\": \"TalentFlow Unified Hub\",\n  \"defaultLanguage\": \"en-US\",\n  \"enableDragonflyCaching\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/settings/admin",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "settings", "admin"]
+            }
+          }
+        },
+        {
+          "name": "Get Company Unified Settings",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/settings/company/{{companyId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "settings", "company", "{{companyId}}"]
+            }
+          }
+        },
+        {
+          "name": "Save Company Unified Settings",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"brandColor\": \"#6366f1\",\n  \"interviewReminderMinutes\": 30\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/settings/company/{{companyId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "settings", "company", "{{companyId}}"]
+            }
+          }
+        },
+        {
+          "name": "Get Candidate Unified Settings",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/settings/candidate/{{candidateId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "settings", "candidate", "{{candidateId}}"]
+            }
+          }
+        },
+        {
+          "name": "Save Candidate Unified Settings",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jobMatchNotifications\": true,\n  \"weeklyDigest\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/settings/candidate/{{candidateId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "settings", "candidate", "{{candidateId}}"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

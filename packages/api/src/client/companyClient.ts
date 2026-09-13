@@ -31,7 +31,7 @@ export class CompanyApiService {
     company: Partial<CompanyDocument>,
   ): Promise<ApiResponse<CompanyDocument>> {
     try {
-      const res = await companyHttpClient.post<CompanyDocument>("/api/companies", company);
+      const res = await companyHttpClient.post<CompanyDocument>("/api/companies-profile", company);
       return res as ApiResponse<CompanyDocument>;
     } catch {
       return { success: true, data: company as CompanyDocument, message: "Company saved locally" };
@@ -40,7 +40,9 @@ export class CompanyApiService {
 
   static async getCompany(companyId: string): Promise<CompanyDocument | null> {
     try {
-      const res = await companyHttpClient.get<CompanyDocument>(`/api/companies/${companyId}`);
+      const res = await companyHttpClient.get<CompanyDocument>(
+        `/api/companies-profile/${companyId}`,
+      );
       return res.data || null;
     } catch {
       return null;
@@ -59,7 +61,7 @@ export class CompanyApiService {
 
   static async getAllCompanies(): Promise<CompanyDocument[]> {
     try {
-      const res = await companyHttpClient.get<CompanyDocument[]>("/api/companies");
+      const res = await companyHttpClient.get<CompanyDocument[]>("/api/companies-profile");
       return res.data || [];
     } catch {
       return [];
@@ -71,9 +73,12 @@ export class CompanyApiService {
     uid?: string,
   ): Promise<CompanyDocument | null> {
     try {
-      const res = await companyHttpClient.get<CompanyDocument>("/api/companies/search/email", {
-        params: { email, uid: uid || "" },
-      });
+      const res = await companyHttpClient.get<CompanyDocument>(
+        "/api/companies-profile/search-email",
+        {
+          params: { email, uid: uid || "" },
+        },
+      );
       return res.data || null;
     } catch {
       return null;
@@ -85,9 +90,12 @@ export class CompanyApiService {
     candidate: any,
   ): Promise<ApiResponse<unknown>> {
     try {
-      const res = await companyHttpClient.post(`/api/companies/${companyId}/register-candidate`, {
-        candidate,
-      });
+      const res = await companyHttpClient.post(
+        `/api/companies-profile/${companyId}/enroll-candidate`,
+        {
+          candidate,
+        },
+      );
       return res as ApiResponse<unknown>;
     } catch {
       return { success: true, data: { companyId, candidate } };
@@ -113,7 +121,7 @@ export class CompanyApiService {
     ..._args: unknown[]
   ): Promise<ApiResponse<unknown>> {
     try {
-      const res = await companyHttpClient.post("/api/companies/schedule-credentials-email", {
+      const res = await companyHttpClient.post("/api/companies-profile/schedule-email", {
         companySlug,
         recipients,
       });
@@ -149,7 +157,7 @@ export class JobApiService {
     }
 
     try {
-      const res = await companyHttpClient.post<JobPosting>("/api/jobs", payload);
+      const res = await companyHttpClient.post<JobPosting>("/api/job-postings", payload);
       return res as ApiResponse<JobPosting>;
     } catch {
       return { success: true, data: payload as JobPosting, message: "Job created locally" };
@@ -167,7 +175,9 @@ export class JobApiService {
 
   static async getJobsForCompany(companyId: string): Promise<JobPosting[]> {
     try {
-      const res = await companyHttpClient.get<JobPosting[]>(`/api/jobs/company/${companyId}`);
+      const res = await companyHttpClient.get<JobPosting[]>(
+        `/api/job-postings/company-jobs/${companyId}`,
+      );
       return res.data || [];
     } catch {
       return [];
@@ -195,7 +205,7 @@ export class JobApiService {
 
   static async getAllJobsAcrossCompanies(): Promise<JobPosting[]> {
     try {
-      const res = await companyHttpClient.get<JobPosting[]>("/api/jobs");
+      const res = await companyHttpClient.get<JobPosting[]>("/api/job-postings");
       return res.data || [];
     } catch {
       return [];
@@ -204,7 +214,7 @@ export class JobApiService {
 
   static async getJob(jobId: string): Promise<JobPosting | null> {
     try {
-      const res = await companyHttpClient.get<JobPosting>(`/api/jobs/${jobId}`);
+      const res = await companyHttpClient.get<JobPosting>(`/api/job-postings/${jobId}`);
       return res.data || null;
     } catch {
       return null;
@@ -220,7 +230,9 @@ export class JobApiService {
     const jobId = arg3 ? arg2 : arg1;
     const status = arg3 ? arg3 : arg2;
     try {
-      const res = await companyHttpClient.patch(`/api/jobs/${jobId}/status`, { status });
+      const res = await companyHttpClient.patch(`/api/job-postings/${jobId}/update-status`, {
+        status,
+      });
       return res as unknown as ApiResponse<unknown>;
     } catch {
       return { success: true, data: { jobId, status } };
@@ -229,7 +241,7 @@ export class JobApiService {
 
   static async deleteJob(jobId: string): Promise<boolean> {
     try {
-      await companyHttpClient.delete(`/api/jobs/${jobId}`);
+      await companyHttpClient.delete(`/api/job-postings/${jobId}`);
       return true;
     } catch {
       return true;
@@ -273,7 +285,7 @@ export class CompanyAuthService {
         profile.photoURL ||
         `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(displayName)}`;
 
-      const res = await companyHttpClient.post<any>("/api/auth/google", {
+      const res = await companyHttpClient.post<any>("/api/companies-auth/google-auth", {
         email,
         fullName: displayName,
         googleId,
@@ -323,7 +335,7 @@ export class CompanyAuthService {
     userProfile?: any;
   }> {
     try {
-      const res = await companyHttpClient.post<any>("/api/auth/signup/full", {
+      const res = await companyHttpClient.post<any>("/api/companies-auth/signup-details", {
         ...data,
         role: "company",
       });
@@ -367,7 +379,10 @@ export class CompanyAuthService {
     password: string,
   ): Promise<{ user: any; error?: string; token?: string; sessionId?: string }> {
     try {
-      const res = await companyHttpClient.post<any>("/api/auth/signin", { email, password });
+      const res = await companyHttpClient.post<any>("/api/companies-auth/company-signin", {
+        email,
+        password,
+      });
       const user = {
         uid: res.data?.user?.uid || res.data?.user?.id || "",
         id: res.data?.user?.id,
@@ -401,9 +416,12 @@ export class CompanyAuthService {
   ): Promise<{ success: boolean; message?: string }> {
     try {
       const targetEmail = customEmail || currentAuthUser?.email || "";
-      const res = await companyHttpClient.post<{ message?: string }>("/api/auth/verify-email", {
-        email: targetEmail,
-      });
+      const res = await companyHttpClient.post<{ message?: string }>(
+        "/api/companies-auth/send-verification",
+        {
+          email: targetEmail,
+        },
+      );
       return {
         success: true,
         message: res.data?.message || `Verification link sent to ${targetEmail}`,
@@ -418,10 +436,13 @@ export class CompanyAuthService {
   ): Promise<{ success: boolean; message?: string }> {
     try {
       const currentEmail = currentAuthUser?.email || "";
-      const res = await companyHttpClient.post<{ message?: string }>("/api/auth/update-email", {
-        currentEmail,
-        newEmail,
-      });
+      const res = await companyHttpClient.post<{ message?: string }>(
+        "/api/companies-auth/change-email",
+        {
+          currentEmail,
+          newEmail,
+        },
+      );
       if (currentAuthUser) {
         currentAuthUser.email = newEmail;
         notifyAuthChange(currentAuthUser);
@@ -435,9 +456,12 @@ export class CompanyAuthService {
   static async checkEmailVerified(): Promise<boolean> {
     try {
       if (!currentAuthUser?.email) return true;
-      const res = await companyHttpClient.get<{ verified?: boolean }>("/api/auth/check-verified", {
-        params: { email: currentAuthUser.email },
-      });
+      const res = await companyHttpClient.get<{ verified?: boolean }>(
+        "/api/companies-auth/verify-status",
+        {
+          params: { email: currentAuthUser.email },
+        },
+      );
       return res.data?.verified ?? true;
     } catch {
       return true;
@@ -454,7 +478,7 @@ export class CompanyAuthService {
       sessionStorage.removeItem("talentflow_company_auth");
     }
     notifyAuthChange(null);
-    await companyHttpClient.post("/api/auth/signout", {}).catch(() => {});
+    await companyHttpClient.post("/api/companies-auth/company-signout", {}).catch(() => {});
     return { success: true };
   }
 

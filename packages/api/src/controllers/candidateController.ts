@@ -53,11 +53,14 @@ export const CandidateController = {
         return;
       }
 
-      const query: Record<string, unknown>[] = [];
-      if (email) query.push({ email });
-      if (uid) query.push({ uid });
+      let candidate = null;
+      if (email) {
+        candidate = await CandidateService.getCandidateByEmail(email);
+      }
+      if (!candidate && uid) {
+        candidate = await CandidateService.getCandidate(uid);
+      }
 
-      const candidate = await Candidate.findOne({ $or: query }).lean();
       if (!candidate) {
         errorResponse(res, httpStatusCodes.DATA_NOT_FOUND, "Candidate not found");
         return;
@@ -72,7 +75,12 @@ export const CandidateController = {
   async saveCandidate(req: Request, res: Response): Promise<void> {
     try {
       const saved = await CandidateService.saveCandidate(req.body);
-      successResponse(res, httpStatusCodes.SUCCESS, "Candidate stored successfully", saved);
+      successResponse(
+        res,
+        httpStatusCodes.SUCCESS,
+        "Candidate stored in Dragonfly DB successfully",
+        saved,
+      );
     } catch (err) {
       errorResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, "Failed to save candidate", err);
     }
@@ -82,34 +90,17 @@ export const CandidateController = {
     try {
       const id = (req.params.id || "") as string;
       const { companyId, companyName } = req.body;
-      const cleanCompId = companyId?.toLowerCase().replace(/[^a-z0-9]/g, "");
-
-      const candidate = await Candidate.findOne({ id });
-      if (!candidate) {
+      const updated = await CandidateService.linkCompany(id, companyId, companyName);
+      if (!updated) {
         errorResponse(res, httpStatusCodes.DATA_NOT_FOUND, "Candidate not found");
         return;
       }
-
-      const regObj = {
-        companyId: cleanCompId,
-        companyName: companyName || cleanCompId,
-        registeredAt: new Date().toISOString(),
-        status: "active",
-      };
-
-      await Candidate.updateOne(
-        { id },
-        {
-          $addToSet: {
-            registeredCompanyIds: cleanCompId,
-            registeredCompanies: regObj,
-          },
-          $set: { updatedAt: new Date().toISOString() },
-        },
+      successResponse(
+        res,
+        httpStatusCodes.SUCCESS,
+        "Company linked to candidate in Dragonfly DB",
+        updated,
       );
-
-      const updated = await CandidateService.getCandidate(id);
-      successResponse(res, httpStatusCodes.SUCCESS, "Company linked to candidate", updated);
     } catch (err) {
       errorResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, "Failed to link company", err);
     }
@@ -119,7 +110,12 @@ export const CandidateController = {
     try {
       const candidateId = (req.params.candidateId || "cand-alex") as string;
       const settings = await CandidateService.fetchSettings(candidateId);
-      successResponse(res, httpStatusCodes.SUCCESS, "Candidate settings fetched", settings);
+      successResponse(
+        res,
+        httpStatusCodes.SUCCESS,
+        "Candidate settings fetched from Dragonfly DB",
+        settings,
+      );
     } catch (err) {
       errorResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, "Failed to get settings", err);
     }
@@ -129,7 +125,12 @@ export const CandidateController = {
     try {
       const candidateId = (req.params.candidateId || "cand-alex") as string;
       const settings = await CandidateService.saveSettings(req.body, candidateId);
-      successResponse(res, httpStatusCodes.SUCCESS, "Candidate settings saved", settings);
+      successResponse(
+        res,
+        httpStatusCodes.SUCCESS,
+        "Candidate settings saved to Dragonfly DB",
+        settings,
+      );
     } catch (err) {
       errorResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, "Failed to save settings", err);
     }
@@ -138,8 +139,12 @@ export const CandidateController = {
   async deleteCandidate(req: Request, res: Response): Promise<void> {
     try {
       const id = (req.params.id || "") as string;
-      await Candidate.deleteOne({ id });
-      successResponse(res, httpStatusCodes.SUCCESS, "Candidate deleted successfully");
+      await CandidateService.deleteCandidate(id);
+      successResponse(
+        res,
+        httpStatusCodes.SUCCESS,
+        "Candidate deleted from Dragonfly DB successfully",
+      );
     } catch (err) {
       errorResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, "Failed to delete candidate", err);
     }

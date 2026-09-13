@@ -50,7 +50,7 @@ export class JobApiService {
     };
 
     try {
-      const res = await companyHttpClient.post<JobPosting>("/api/jobs", payload);
+      const res = await companyHttpClient.post<JobPosting>("/api/job-postings", payload);
       if (res.data) {
         return {
           success: true,
@@ -74,7 +74,9 @@ export class JobApiService {
     const cleanId = companyId.toLowerCase().replace(/[^a-z0-9]/g, "");
 
     try {
-      const res = await companyHttpClient.get<JobPosting[]>(`/api/jobs/company/${cleanId}`);
+      const res = await companyHttpClient.get<JobPosting[]>(
+        `/api/job-postings/company-jobs/${cleanId}`,
+      );
       if (res.data && Array.isArray(res.data)) {
         return res.data;
       }
@@ -87,7 +89,7 @@ export class JobApiService {
   static async getJob(jobId: string): Promise<JobPosting | null> {
     if (!jobId) return null;
     try {
-      const res = await companyHttpClient.get<JobPosting>(`/api/jobs/${jobId}`);
+      const res = await companyHttpClient.get<JobPosting>(`/api/job-postings/${jobId}`);
       if (res.data) return res.data;
     } catch (err) {
       console.warn("[JobApiService] getJob error:", err);
@@ -98,7 +100,7 @@ export class JobApiService {
   static async deleteJob(jobId: string): Promise<boolean> {
     if (!jobId) return false;
     try {
-      const res = await companyHttpClient.delete(`/api/jobs/${jobId}`);
+      const res = await companyHttpClient.delete(`/api/job-postings/${jobId}`);
       return res.success;
     } catch (err) {
       return false;

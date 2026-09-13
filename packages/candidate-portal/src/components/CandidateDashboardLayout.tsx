@@ -17,6 +17,7 @@ import {
   Menu,
   X,
   ChevronRight,
+  ChevronLeft,
   LogOut,
   Settings,
   Bell,
@@ -38,6 +39,7 @@ import { OPEN_POSITIONS_CATALOG } from "../data/mockCandidateData";
 import { CompanyDocument, uploadCandidateFileToStorage, JobApiService } from "@talent-flow/api";
 import { DashboardJobListView } from "./views/DashboardJobListView";
 import { SearchJobsView } from "./views/SearchJobsView";
+import { ExploreCompaniesView } from "./views/ExploreCompaniesView";
 import { CandidateProfileView } from "./views/CandidateProfileView";
 import { GdprStatusView } from "./views/GdprStatusView";
 import { MyApplicationRoadmapView } from "./views/MyApplicationRoadmapView";
@@ -47,8 +49,10 @@ import { HelpdeskModal } from "./HelpdeskModal";
 import { CandidateSettingsComponent } from "./CandidateSettings";
 import { Footer } from "./Footer";
 import { toast } from "../lib/sweetalert";
+import { CompanyApiService } from "@talent-flow/api";
 
-export type SidebarTab = "search_jobs" | "my_applications" | "profile" | "gdpr" | "my_application";
+export type SidebarTab =
+  "search_jobs" | "companies" | "my_applications" | "profile" | "gdpr" | "my_application";
 
 interface CandidateDashboardLayoutProps {
   portalState: CandidatePortalState;
@@ -62,6 +66,7 @@ interface CandidateDashboardLayoutProps {
   onAcceptOffer: (signedName: string) => void;
   onUpdateHardware: (updated: Partial<HardwareSelection>) => void;
   onUpdateAvatar?: (avatarUrl: string) => void;
+  onSelectCompanyContext?: (company: CompanyDocument | null) => void;
 }
 
 export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> = ({
@@ -76,6 +81,7 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
   onAcceptOffer,
   onUpdateHardware,
   onUpdateAvatar,
+  onSelectCompanyContext,
 }) => {
   const [activeTab, setActiveTab] = useState<SidebarTab>("search_jobs");
   const [selectedJobForFullPage, setSelectedJobForFullPage] = useState<
@@ -125,6 +131,17 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
   const brandName = company?.name || portalState.candidate.companyName || "Graviton";
 
   const [dynamicJobs, setDynamicJobs] = useState<AvailableJob[]>(OPEN_POSITIONS_CATALOG);
+  const [availableCompaniesList, setAvailableCompaniesList] = useState<CompanyDocument[]>([]);
+  const [selectedCompanyFilterForJobs, setSelectedCompanyFilterForJobs] = useState<string | null>(
+    null,
+  );
+
+  useEffect(() => {
+    const unsubscribe = CompanyApiService.subscribeToAvailableCompanies((list) => {
+      setAvailableCompaniesList(list);
+    });
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     JobApiService.getAllJobsAcrossCompanies()
@@ -144,6 +161,8 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
             requirements: j.requirements || [],
             benefits: j.benefits || [],
             skills: j.skills || [],
+            companyName: j.companyName,
+            companyId: j.companyId,
           }));
 
           const existingIds = new Set(mapped.map((m) => m.id));
@@ -174,7 +193,7 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
       department: availJob.department,
       employmentType: availJob.type,
       salaryRange: availJob.salaryRange,
-      companyName: brandName,
+      companyName: availJob.companyName || brandName,
       description: availJob.description,
       requirements: availJob.requirements,
       recruiterNotes: "Application received and under review by talent acquisition team.",
@@ -194,6 +213,12 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
       badge: dynamicJobs.length > 0 ? dynamicJobs.length : undefined,
     },
     {
+      id: "companies" as SidebarTab,
+      label: "Explore Companies",
+      icon: Building2,
+      badge: availableCompaniesList.length > 0 ? availableCompaniesList.length : undefined,
+    },
+    {
       id: "my_applications" as SidebarTab,
       label: "My Applications",
       icon: Briefcase,
@@ -201,7 +226,7 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
     },
     {
       id: "my_application" as SidebarTab,
-      label: "My Application",
+      label: "My Application Roadmap",
       icon: GitBranch,
     },
     {
@@ -235,50 +260,62 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
         } ${mobileSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
       >
         {/* Sidebar Brand Header */}
-        <div
-          className={`h-14 min-h-[56px] flex items-center border-b border-white/10 bg-[#464D67] ${
-            sidebarOpen ? "justify-between px-3.5" : "justify-center px-2"
-          }`}
-        >
-          <div className="flex items-center gap-2.5 min-w-0">
-            {company?.logoUrl && !companyLogoError ? (
-              <img
-                src={company.logoUrl}
-                alt={brandName}
-                className="h-8 w-auto max-w-[120px] object-contain shrink-0 block"
-                onError={() => setCompanyLogoError(true)}
-              />
-            ) : (
-              <div className="w-8.5 h-8.5 min-w-[34px] min-h-[34px] rounded-lg bg-gradient-to-br from-orange-500 to-amber-600 text-white flex items-center justify-center font-bold text-xs uppercase tracking-wider shrink-0 shadow-xs">
-                {brandName ? brandName.substring(0, 2).toUpperCase() : "TF"}
-              </div>
-            )}
+        <div className="h-14 min-h-[56px] flex items-center justify-between px-3.5 border-b border-white/10 bg-[#464D67] transition-all duration-300 ease-in-out overflow-hidden">
+          <div
+            onClick={() => {
+              if (!sidebarOpen) setSidebarOpen(true);
+            }}
+            className={`flex items-center min-w-0 flex-1 ${!sidebarOpen ? "cursor-pointer" : ""}`}
+            title={!sidebarOpen ? "Click to expand sidebar" : undefined}
+          >
+            <div className="w-9 h-9 min-w-[36px] min-h-[36px] flex items-center justify-center shrink-0">
+              {company?.logoUrl && !companyLogoError ? (
+                <img
+                  src={company.logoUrl}
+                  alt={brandName}
+                  className="h-8 w-auto max-w-[120px] object-contain shrink-0 block"
+                  onError={() => setCompanyLogoError(true)}
+                />
+              ) : (
+                <div className="w-8.5 h-8.5 min-w-[34px] min-h-[34px] rounded-lg bg-gradient-to-br from-orange-500 to-amber-600 text-white flex items-center justify-center font-bold text-xs uppercase tracking-wider shrink-0 shadow-xs">
+                  {brandName ? brandName.substring(0, 2).toUpperCase() : "TF"}
+                </div>
+              )}
+            </div>
 
-            {sidebarOpen && (
-              <div className="min-w-0 flex-1">
-                <span className="font-bold text-sm text-white tracking-tight truncate block leading-tight">
-                  {brandName}
-                </span>
-                <span className="text-[10px] text-white/70 font-mono truncate block leading-tight">
-                  Candidate Portal
-                </span>
-              </div>
-            )}
+            <div
+              className={`transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap min-w-0 flex-1 ${
+                sidebarOpen
+                  ? "opacity-100 max-w-[170px] ml-2.5 translate-x-0"
+                  : "opacity-0 max-w-0 ml-0 -translate-x-3 pointer-events-none"
+              }`}
+            >
+              <span className="font-bold text-sm text-white tracking-tight truncate block leading-tight">
+                {brandName}
+              </span>
+              <span className="text-[10px] text-white/70 font-mono truncate block leading-tight">
+                Candidate Portal
+              </span>
+            </div>
           </div>
 
-          {sidebarOpen && (
+          <div
+            className={`transition-all duration-300 ease-in-out overflow-hidden shrink-0 ${
+              sidebarOpen ? "opacity-100 max-w-[30px]" : "opacity-0 max-w-0 pointer-events-none"
+            }`}
+          >
             <button
               onClick={() => setMobileSidebarOpen(false)}
-              className="lg:hidden text-white/70 hover:text-white p-1 cursor-pointer"
+              className="lg:hidden text-white/70 hover:text-white p-1 cursor-pointer transition-opacity duration-300"
               aria-label="Close mobile navigation"
             >
               <X className="w-4 h-4" />
             </button>
-          )}
+          </div>
         </div>
 
         {/* Sidebar User Profile Badge & Photo Upload */}
-        <div className="p-3 border-b border-white/10 bg-[#4D5570]/50 flex items-center gap-2.5">
+        <div className="p-3 px-3.5 border-b border-white/10 bg-[#4D5570]/50 flex items-center transition-all duration-300 ease-in-out overflow-hidden">
           <div
             onClick={() => fileInputRef.current?.click()}
             className="relative group w-9 h-9 min-w-[36px] min-h-[36px] rounded-full overflow-hidden ring-2 ring-orange-400/50 bg-orange-950/30 shrink-0 flex items-center justify-center cursor-pointer shadow-xs"
@@ -300,29 +337,36 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
                   : "U"}
               </div>
             )}
-            <div className="absolute inset-0 bg-black/55 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+            <div className="absolute inset-0 bg-black/55 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-200">
               <Camera className="w-3.5 h-3.5 text-white" />
             </div>
           </div>
 
-          {sidebarOpen && (
-            <div className="min-w-0 flex-1">
-              <div className="text-xs font-semibold text-white truncate leading-tight">
-                {portalState.candidate.name}
-              </div>
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                className="text-[10px] text-[#e6ea9c] hover:underline truncate leading-tight mt-0.5 font-medium flex items-center gap-1 cursor-pointer"
-              >
-                <Camera className="w-2.5 h-2.5" />
-                <span>Upload Photo</span>
-              </button>
+          <div
+            className={`transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap min-w-0 flex-1 ${
+              sidebarOpen
+                ? "opacity-100 max-w-[170px] ml-2.5 translate-x-0"
+                : "opacity-0 max-w-0 ml-0 -translate-x-3 pointer-events-none"
+            }`}
+          >
+            <div className="text-xs font-semibold text-white truncate leading-tight">
+              {portalState.candidate.name}
             </div>
-          )}
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="text-[10px] text-[#e6ea9c] hover:underline truncate leading-tight mt-0.5 font-medium flex items-center gap-1 cursor-pointer"
+            >
+              <Camera className="w-2.5 h-2.5" />
+              <span>Upload Photo</span>
+            </button>
+          </div>
         </div>
 
         {/* Sidebar Navigation Items */}
-        <nav data-lenis-prevent className="flex-1 px-2.5 py-3 space-y-1.5 overflow-y-auto">
+        <nav
+          data-lenis-prevent
+          className="flex-1 px-2.5 py-3 space-y-1.5 overflow-y-auto transition-all duration-300 ease-in-out"
+        >
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
@@ -335,14 +379,14 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
                   setActiveTab(item.id);
                   setMobileSidebarOpen(false);
                 }}
-                className={`clip-path-button-sm w-full flex items-center justify-between px-3 py-2.5 text-xs font-semibold transition-all cursor-pointer group ${
+                className={`clip-path-button-sm w-full flex items-center px-3 py-2.5 text-xs font-semibold transition-all duration-300 ease-in-out cursor-pointer group overflow-hidden ${
                   isActive
                     ? "bg-[#ff5f2e] text-white shadow-md font-bold scale-[1.02]"
                     : "text-white/85 hover:bg-[#5B6381] hover:text-white"
-                } ${!sidebarOpen ? "justify-center px-0" : ""}`}
+                }`}
                 title={item.label}
               >
-                <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-5 h-5 flex items-center justify-center shrink-0">
                   <Icon
                     className={`w-4 h-4 shrink-0 transition-colors ${
                       isActive
@@ -350,11 +394,23 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
                         : "text-orange-400 group-hover:text-orange-300"
                     }`}
                   />
-                  {sidebarOpen && <span className="truncate">{item.label}</span>}
                 </div>
-                {sidebarOpen && item.badge !== undefined && (
+                <span
+                  className={`transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap text-left min-w-0 flex-1 ${
+                    sidebarOpen
+                      ? "opacity-100 max-w-[140px] ml-2.5 translate-x-0"
+                      : "opacity-0 max-w-0 ml-0 -translate-x-3 pointer-events-none"
+                  }`}
+                >
+                  {item.label}
+                </span>
+                {item.badge !== undefined && (
                   <span
-                    className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold leading-none shrink-0 ${
+                    className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold leading-none shrink-0 transition-all duration-300 ease-in-out overflow-hidden ${
+                      sidebarOpen
+                        ? "opacity-100 max-w-[40px] ml-auto scale-100"
+                        : "opacity-0 max-w-0 ml-0 scale-50 pointer-events-none"
+                    } ${
                       isActive
                         ? "bg-white/25 text-white"
                         : "bg-white/10 text-white/80 group-hover:bg-white/20"
@@ -368,17 +424,49 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
           })}
         </nav>
 
-        {/* Sidebar Footer */}
-        <div className="p-2.5 border-t border-white/10 bg-[#464D67]">
+        {/* Sidebar Footer with Expand/Collapse & Sign Out */}
+        <div className="p-2.5 border-t border-white/10 bg-[#464D67] space-y-1 transition-all duration-300 ease-in-out overflow-hidden">
+          {/* Desktop Expand / Collapse Toggle Button */}
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="hidden lg:flex items-center w-full px-2.5 py-1.5 rounded-lg text-[11px] text-white/80 hover:bg-white/10 hover:text-white transition-all duration-300 ease-in-out cursor-pointer overflow-hidden"
+            title={sidebarOpen ? "Collapse Sidebar" : "Expand Sidebar"}
+          >
+            <div className="w-5 h-5 flex items-center justify-center shrink-0">
+              <ChevronLeft
+                className={`w-3.5 h-3.5 shrink-0 transition-transform duration-300 ${
+                  !sidebarOpen ? "rotate-180 text-orange-400" : ""
+                }`}
+              />
+            </div>
+            <span
+              className={`transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap text-left min-w-0 flex-1 ${
+                sidebarOpen
+                  ? "opacity-100 max-w-[140px] ml-2 translate-x-0"
+                  : "opacity-0 max-w-0 ml-0 -translate-x-3 pointer-events-none"
+              }`}
+            >
+              Collapse Sidebar
+            </span>
+          </button>
+
           <button
             onClick={onLogout}
-            className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[11px] text-rose-200 hover:bg-rose-500/20 hover:text-rose-100 transition-colors cursor-pointer ${
-              !sidebarOpen ? "justify-center px-0" : ""
-            }`}
+            className="flex items-center w-full px-2.5 py-1.5 rounded-lg text-[11px] text-rose-200 hover:bg-rose-500/20 hover:text-rose-100 transition-all duration-300 ease-in-out cursor-pointer overflow-hidden"
             title="Sign Out"
           >
-            <LogOut className="w-3.5 h-3.5 shrink-0 text-rose-300" />
-            {sidebarOpen && <span>Sign Out</span>}
+            <div className="w-5 h-5 flex items-center justify-center shrink-0">
+              <LogOut className="w-3.5 h-3.5 shrink-0 text-rose-300" />
+            </div>
+            <span
+              className={`transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap text-left min-w-0 flex-1 ${
+                sidebarOpen
+                  ? "opacity-100 max-w-[140px] ml-2 translate-x-0"
+                  : "opacity-0 max-w-0 ml-0 -translate-x-3 pointer-events-none"
+              }`}
+            >
+              Sign Out
+            </span>
           </button>
         </div>
       </aside>
@@ -386,13 +474,13 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
       {/* 2. MAIN CONTENT AREA (Dynamic left padding to offset fixed sidebar) */}
       <div
         className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${
-          sidebarOpen ? "lg:pl-60 xl:lg:pl-64" : "lg:pl-16"
+          sidebarOpen ? "pl-0 lg:pl-60 xl:pl-64" : "pl-0 lg:pl-16"
         }`}
       >
         {/* Top Header Bar (Fixed at top) */}
         <header
-          className={`fixed top-0 right-0 left-0 lg:left-auto h-12 min-h-[48px] bg-white/95 dark:bg-slate-850/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between px-4 sm:px-6 shrink-0 z-30 transition-all duration-300 ${
-            sidebarOpen ? "lg:left-60 xl:lg:left-64" : "lg:left-16"
+          className={`fixed top-0 right-0 h-12 min-h-[48px] bg-white/95 dark:bg-slate-850/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between px-4 sm:px-6 shrink-0 z-30 transition-all duration-300 ${
+            sidebarOpen ? "left-0 lg:left-60 xl:left-64" : "left-0 lg:left-16"
           }`}
         >
           {/* Left: Sidebar Toggle Button & Current View Breadcrumbs */}
@@ -406,6 +494,7 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
                 }
               }}
               className="p-1.5 rounded-md text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+              title={sidebarOpen ? "Collapse Sidebar" : "Expand Sidebar"}
               aria-label="Toggle navigation"
             >
               <Menu className="w-4 h-4" />
@@ -416,6 +505,7 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
               <span className="text-xs font-bold text-slate-800 dark:text-slate-100">
                 {activeTab === "search_jobs" &&
                   (selectedJobForFullPage ? "Job Details & Overview" : "Explore Vacancies")}
+                {activeTab === "companies" && "Explore Available Companies & Employers"}
                 {activeTab === "my_applications" &&
                   (selectedJobForFullPage
                     ? `Application Details: ${
@@ -518,30 +608,36 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
                     <button
                       onClick={() => {
                         setSelectedJobForFullPage(null);
+                        setActiveTab("companies");
+                      }}
+                      className="w-full text-left px-3.5 py-1.5 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2 cursor-pointer"
+                    >
+                      <Building2 className="w-3.5 h-3.5 text-ember" />
+                      <span>Explore Companies</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setSelectedJobForFullPage(null);
                         setActiveTab("profile");
                       }}
                       className="w-full text-left px-3.5 py-1.5 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2 cursor-pointer"
                     >
-                      <User className="w-3.5 h-3.5 text-slate-400" />
-                      <span>Candidate Profile</span>
-                    </button>
-                    <button
-                      onClick={() => setShowSettings(true)}
-                      className="w-full text-left px-3.5 py-1.5 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2 cursor-pointer"
-                    >
                       <Settings className="w-3.5 h-3.5 text-slate-400" />
-                      <span>Preferences & Settings</span>
+                      <span>Profile & Settings</span>
                     </button>
                     <button
                       onClick={() => setShowHelpdesk(true)}
                       className="w-full text-left px-3.5 py-1.5 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2 cursor-pointer"
                     >
                       <HelpCircle className="w-3.5 h-3.5 text-slate-400" />
-                      <span>HR Helpdesk & Support</span>
+                      <span>Helpdesk & Support</span>
                     </button>
+                  </div>
+
+                  <div className="border-t border-slate-100 dark:border-slate-800 pt-1">
                     <button
                       onClick={onLogout}
-                      className="w-full text-left px-3.5 py-1.5 text-xs text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 flex items-center gap-2 cursor-pointer border-t border-slate-100 dark:border-slate-800 mt-1"
+                      className="w-full text-left px-3.5 py-1.5 text-xs text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 flex items-center gap-2 cursor-pointer"
                     >
                       <LogOut className="w-3.5 h-3.5" />
                       <span>Sign Out</span>
@@ -557,8 +653,8 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
         <div className="h-12 min-h-[48px] shrink-0" aria-hidden="true" />
 
         {/* Main Content Viewport */}
-        <main className="flex-1 p-3.5 sm:p-4.5 lg:p-5">
-          <div className="max-w-[1400px] mx-auto">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 w-full max-w-[1700px] mx-auto min-w-0">
+          <div className="min-w-0">
             {showSettings ? (
               <CandidateSettingsComponent onClose={() => setShowSettings(false)} />
             ) : selectedJobForFullPage ? (
@@ -618,11 +714,40 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
                       setSelectedJobForFullPage(job);
                       setFullPageSourceTab("search_jobs");
                     }}
+                    onBrowseCompanies={() => {
+                      setSelectedJobForFullPage(null);
+                      setActiveTab("companies");
+                    }}
                     brandName={brandName}
+                    companyFilter={selectedCompanyFilterForJobs || undefined}
+                    onClearCompanyFilter={() => setSelectedCompanyFilterForJobs(null)}
                   />
                 )}
 
-                {/* 2. My Applications View */}
+                {/* 2. Explore Companies View */}
+                {activeTab === "companies" && (
+                  <ExploreCompaniesView
+                    activeCompany={company}
+                    appliedJobIds={appliedJobsList.map((j) => j.jobCode || j.id)}
+                    onApplyJob={handleApplyNewJob}
+                    onSelectJobForFullPage={(job) => {
+                      setSelectedJobForFullPage(job);
+                      setFullPageSourceTab("search_jobs");
+                    }}
+                    onSelectCompanyForJobs={(comp) => {
+                      setSelectedJobForFullPage(null);
+                      setSelectedCompanyFilterForJobs(comp.name);
+                      setActiveTab("search_jobs");
+                    }}
+                    onSwitchCompanyContext={(comp) => {
+                      if (onSelectCompanyContext) {
+                        onSelectCompanyContext(comp);
+                      }
+                    }}
+                  />
+                )}
+
+                {/* 3. My Applications View */}
                 {activeTab === "my_applications" && (
                   <DashboardJobListView
                     appliedJobs={appliedJobsList}
@@ -638,7 +763,7 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
                   />
                 )}
 
-                {/* 3. Candidate Profile View */}
+                {/* 4. Candidate Profile View */}
                 {activeTab === "profile" && (
                   <CandidateProfileView
                     candidate={portalState.candidate}
@@ -652,10 +777,10 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
                   />
                 )}
 
-                {/* 4. GDPR Status View */}
+                {/* 5. GDPR Status View */}
                 {activeTab === "gdpr" && <GdprStatusView candidate={portalState.candidate} />}
 
-                {/* 5. My Application Roadmap View */}
+                {/* 6. My Application Roadmap View */}
                 {activeTab === "my_application" && (
                   <MyApplicationRoadmapView
                     portalState={portalState}
@@ -675,10 +800,10 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
         <Footer
           linksCol1={[
             {
-              label: "My Application Roadmap",
+              label: "Explore Companies",
               href: "#",
               onClick: () => {
-                setActiveTab("my_application");
+                setActiveTab("companies");
                 setSelectedJobForFullPage(null);
               },
             },
@@ -687,6 +812,14 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
               href: "#",
               onClick: () => {
                 setActiveTab("search_jobs");
+                setSelectedJobForFullPage(null);
+              },
+            },
+            {
+              label: "My Application Roadmap",
+              href: "#",
+              onClick: () => {
+                setActiveTab("my_application");
                 setSelectedJobForFullPage(null);
               },
             },

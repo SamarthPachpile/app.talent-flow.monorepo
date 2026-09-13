@@ -13,6 +13,7 @@ import {
   Globe2,
   ShieldCheck,
   X,
+  Building2,
 } from "lucide-react";
 import { AvailableJob } from "../../types/candidate";
 import { OPEN_POSITIONS_CATALOG } from "../../data/mockCandidateData";
@@ -25,7 +26,10 @@ interface SearchJobsViewProps {
   onApplyJob: (job: AvailableJob) => void;
   onGoToMyApplications: () => void;
   onSelectJobForFullPage: (job: AvailableJob) => void;
+  onBrowseCompanies?: () => void;
   brandName?: string;
+  companyFilter?: string;
+  onClearCompanyFilter?: () => void;
 }
 
 export const SearchJobsView: React.FC<SearchJobsViewProps> = ({
@@ -34,13 +38,33 @@ export const SearchJobsView: React.FC<SearchJobsViewProps> = ({
   onApplyJob,
   onGoToMyApplications,
   onSelectJobForFullPage,
+  onBrowseCompanies,
   brandName = "Graviton",
+  companyFilter,
+  onClearCompanyFilter,
 }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [selectedCompany, setSelectedCompany] = useState<string>(companyFilter || "All");
   const [selectedExperience, setSelectedExperience] = useState<string>("All");
   const [selectedDepartment, setSelectedDepartment] = useState<string>("All");
   const [selectedLocation, setSelectedLocation] = useState<string>("All");
   const [selectedWorkModes, setSelectedWorkModes] = useState<string[]>([]);
+
+  // Update selectedCompany when companyFilter prop changes
+  React.useEffect(() => {
+    if (companyFilter) {
+      setSelectedCompany(companyFilter);
+    }
+  }, [companyFilter]);
+
+  // Companies list
+  const companiesList = useMemo(() => {
+    const set = new Set<string>();
+    availableJobs.forEach((j) => {
+      if (j.companyName) set.add(j.companyName);
+    });
+    return ["All", ...Array.from(set)];
+  }, [availableJobs]);
 
   // Departments list
   const departments = useMemo(() => {
@@ -102,7 +126,15 @@ export const SearchJobsView: React.FC<SearchJobsViewProps> = ({
         job.location.toLowerCase().includes(selectedLocation.toLowerCase()) ||
         (job.country && job.country.toLowerCase().includes(selectedLocation.toLowerCase()));
 
-      // 5. Work Mode Match
+      // 5. Company Match
+      const matchCompany =
+        selectedCompany === "All" ||
+        (job.companyName && job.companyName.toLowerCase() === selectedCompany.toLowerCase()) ||
+        (!job.companyName &&
+          (selectedCompany.toLowerCase() === "graviton" ||
+            selectedCompany.toLowerCase() === brandName.toLowerCase()));
+
+      // 6. Work Mode Match
       const matchWorkMode =
         selectedWorkModes.length === 0 ||
         selectedWorkModes.some((mode) => {
@@ -129,15 +161,17 @@ export const SearchJobsView: React.FC<SearchJobsViewProps> = ({
           return true;
         });
 
-      return matchSearch && matchExp && matchDept && matchLocation && matchWorkMode;
+      return matchSearch && matchExp && matchDept && matchLocation && matchCompany && matchWorkMode;
     });
   }, [
     availableJobs,
     searchTerm,
+    selectedCompany,
     selectedExperience,
     selectedDepartment,
     selectedLocation,
     selectedWorkModes,
+    brandName,
   ]);
 
   const handleApplyClick = (job: AvailableJob) => {
@@ -147,14 +181,17 @@ export const SearchJobsView: React.FC<SearchJobsViewProps> = ({
 
   const handleResetFilters = () => {
     setSearchTerm("");
+    setSelectedCompany("All");
     setSelectedExperience("All");
     setSelectedDepartment("All");
     setSelectedLocation("All");
     setSelectedWorkModes([]);
+    if (onClearCompanyFilter) onClearCompanyFilter();
   };
 
   const isFiltered =
     Boolean(searchTerm) ||
+    selectedCompany !== "All" ||
     selectedExperience !== "All" ||
     selectedDepartment !== "All" ||
     selectedLocation !== "All" ||
@@ -163,108 +200,7 @@ export const SearchJobsView: React.FC<SearchJobsViewProps> = ({
   return (
     <div className="space-y-8 animate-fadeIn font-sans text-slate-800 dark:text-slate-100 pb-12">
       {/* =========================================================================
-          1. NEWEST POSTINGS SECTION (AT TOP - WITH CLIP-PATH-CARD)
-         ========================================================================= */}
-      <div className="clip-path-card bg-[#545C78] dark:bg-slate-900 p-6 sm:p-10 text-white shadow-md">
-        <div className="grid lg:grid-cols-[360px_1fr] gap-8 lg:gap-10 items-start">
-          {/* Left Sticky Intro Section */}
-          <div className="lg:sticky lg:top-6 space-y-4">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-[#e6ea9c] text-xs font-semibold">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Featured Opportunities</span>
-            </div>
-
-            <h2 className="text-3xl sm:text-5xl font-medium leading-tight">Newest Postings</h2>
-
-            <p className="text-white/80 text-sm sm:text-base leading-relaxed max-w-sm">
-              Discover latest career opportunities in {brandName}. Join engineering, product, and AI
-              squads building for global scale.
-            </p>
-
-            <button
-              onClick={onGoToMyApplications}
-              className="inline-flex items-center gap-2 text-sm sm:text-base font-semibold text-[#e6ea9c] hover:text-white hover:underline transition-all cursor-pointer pt-2"
-            >
-              <span>View your submitted applications ({appliedJobIds.length})</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-
-          {/* Right Postings Cards Grid (WITH CLIP-SERVICE) */}
-          <div className="space-y-4">
-            <div className="grid sm:grid-cols-2 gap-4 sm:gap-5">
-              {availableJobs.slice(0, 4).map((job) => {
-                const isApplied = appliedJobIds.includes(job.id);
-
-                return (
-                  <div
-                    key={job.id}
-                    className="clip-service group relative bg-[#5B6381] hover:bg-[#ff5f2e] dark:bg-slate-800 dark:hover:bg-[#ff5f2e] transition-all duration-300 p-6 sm:p-7 cursor-pointer text-white shadow-sm flex flex-col justify-between min-h-[190px]"
-                    onClick={() => onSelectJobForFullPage(job)}
-                  >
-                    <div>
-                      {/* Country / Location header */}
-                      <div className="flex items-center justify-between text-xs text-white/80 mb-3 uppercase tracking-wider font-semibold">
-                        <span>{job.country || job.location}</span>
-                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/20">
-                          {job.type}
-                        </span>
-                      </div>
-
-                      {/* Big Job Title */}
-                      <h3 className="text-lg sm:text-xl font-medium leading-snug max-w-[85%] text-white group-hover:text-white">
-                        {job.title}
-                      </h3>
-                    </div>
-
-                    {/* Top Right Arrow Icon */}
-                    <ArrowRight className="absolute top-6 right-6 w-5 h-5 sm:w-6 sm:h-6 text-white group-hover:translate-x-1.5 transition-transform" />
-
-                    {/* Bottom Details & Apply Button */}
-                    <div className="pt-4 mt-2 border-t border-white/10 flex items-center justify-between gap-2">
-                      <span className="text-xs text-white/80 font-mono">
-                        {formatSalaryRangeDisplay(job.salaryRange)}
-                      </span>
-
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (!isApplied) {
-                            handleApplyClick(job);
-                          } else {
-                            onSelectJobForFullPage(job);
-                          }
-                        }}
-                        className={`clip-path-button-sm px-3.5 py-1.5 text-xs font-bold transition-colors cursor-pointer flex items-center gap-1 ${
-                          isApplied
-                            ? "bg-emerald-500 text-white"
-                            : "bg-white text-slate-900 group-hover:bg-slate-900 group-hover:text-white"
-                        }`}
-                      >
-                        {isApplied ? (
-                          <>
-                            <Check className="w-3 h-3" />
-                            <span>Applied ✓</span>
-                          </>
-                        ) : (
-                          <>
-                            <span>Quick Apply</span>
-                            <ArrowRight className="w-3 h-3" />
-                          </>
-                        )}
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* =========================================================================
-          2. "FIND YOUR MATCH" SEARCH & FILTER (WITH CLIP-PATH-CARD)
+          "FIND YOUR MATCH" SEARCH & FILTER (WITH CLIP-PATH-CARD)
          ========================================================================= */}
       <div className="clip-path-card bg-white dark:bg-slate-900 p-6 sm:p-10 relative border border-slate-200/80 dark:border-slate-800 shadow-sm transition-all">
         {/* Top Right Results Count Badge */}
@@ -307,7 +243,23 @@ export const SearchJobsView: React.FC<SearchJobsViewProps> = ({
         </div>
 
         {/* Dropdown Filters Row */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-5 sm:mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-5 sm:mb-6">
+          {/* Company Filter */}
+          <select
+            value={selectedCompany}
+            onChange={(e) => setSelectedCompany(e.target.value)}
+            className="px-4 py-3 sm:py-3.5 bg-[#f1f2f4] dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 text-xs sm:text-sm text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-400 cursor-pointer font-medium"
+          >
+            <option value="All">All Companies ({availableJobs.length} roles)</option>
+            {companiesList
+              .filter((c) => c !== "All")
+              .map((comp) => (
+                <option key={comp} value={comp}>
+                  {comp}
+                </option>
+              ))}
+          </select>
+
           {/* Experience Filter */}
           <select
             value={selectedExperience}
@@ -382,6 +334,16 @@ export const SearchJobsView: React.FC<SearchJobsViewProps> = ({
               </button>
             )}
 
+            {onBrowseCompanies && (
+              <button
+                onClick={onBrowseCompanies}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-300 border border-orange-200/60 dark:border-orange-800/60 text-xs font-semibold hover:bg-orange-100 transition-colors cursor-pointer"
+              >
+                <Building2 className="w-3.5 h-3.5" />
+                <span>View All Companies</span>
+              </button>
+            )}
+
             <button
               onClick={() => {
                 toast.info(`Showing ${filteredJobs.length} matching vacancies`);
@@ -400,6 +362,21 @@ export const SearchJobsView: React.FC<SearchJobsViewProps> = ({
         {isFiltered && (
           <div className="flex flex-wrap items-center gap-2 pt-3 mt-3 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
             <span className="text-slate-400 font-medium">Active filters:</span>
+            {selectedCompany !== "All" && (
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-orange-50 dark:bg-orange-950/60 border border-orange-200 dark:border-orange-800 text-orange-700 dark:text-orange-300 rounded-full font-semibold">
+                <Building2 className="w-3 h-3" />
+                Company: {selectedCompany}
+                <button
+                  onClick={() => {
+                    setSelectedCompany("All");
+                    if (onClearCompanyFilter) onClearCompanyFilter();
+                  }}
+                  className="hover:text-rose-500 cursor-pointer ml-0.5"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            )}
             {searchTerm && (
               <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#f1f2f4] dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full font-medium">
                 Keyword: "{searchTerm}"
@@ -499,10 +476,16 @@ export const SearchJobsView: React.FC<SearchJobsViewProps> = ({
               >
                 <div className="space-y-3">
                   {/* Top metadata row */}
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-semibold bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800">
-                      {job.department || "Engineering"}
-                    </span>
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-semibold bg-orange-50 dark:bg-orange-950/60 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800 flex items-center gap-1">
+                        <Building2 className="w-3 h-3" />
+                        <span>{job.companyName || brandName}</span>
+                      </span>
+                      <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-semibold bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800">
+                        {job.department || "Engineering"}
+                      </span>
+                    </div>
                     <span className="text-[11px] text-slate-400 font-medium">
                       {job.postedDate || "Recently posted"}
                     </span>

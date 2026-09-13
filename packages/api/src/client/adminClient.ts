@@ -15,7 +15,9 @@ export class AdminApiService {
 
   static async fetchSettingsFromDb(): Promise<PlatformAdminSettings> {
     try {
-      const res = await adminHttpClient.get<PlatformAdminSettings>("/api/admin/settings");
+      const res = await adminHttpClient.get<PlatformAdminSettings>(
+        "/api/admin-portal/admin-settings",
+      );
       return res.data || defaultAdminSettings;
     } catch {
       return defaultAdminSettings;
@@ -27,7 +29,7 @@ export class AdminApiService {
   ): Promise<{ success: boolean; data: PlatformAdminSettings }> {
     try {
       const res = await adminHttpClient.post<PlatformAdminSettings>(
-        "/api/admin/settings",
+        "/api/admin-portal/admin-settings",
         settings,
       );
       return { success: true, data: res.data };

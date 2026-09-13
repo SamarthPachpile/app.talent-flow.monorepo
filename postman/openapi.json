@@ -1,0 +1,137 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "TalentFlow Core REST API",
+    "description": "Unified REST API specification for TalentFlow Monorepo covering JWT Authentication, Platform Administration, Candidate Onboarding, Company Workspaces, Jobs/ATS, and Graviton Solutions.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000",
+      "description": "Local Development Server"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Pass your JWT token returned from /api/auth/signin or /api/auth/signup"
+      }
+    }
+  },
+  "paths": {
+    "/api/health": {
+      "get": {
+        "summary": "Check API and Database Health",
+        "responses": {
+          "200": { "description": "System is operational" }
+        }
+      }
+    },
+    "/api/auth/signin": {
+      "post": {
+        "summary": "Sign In (Generates JWT Token)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string", "example": "admin@talentflow.io" },
+                  "password": { "type": "string", "example": "Admin@1234" }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Sign in successful, returns JWT token" }
+        }
+      }
+    },
+    "/api/auth/signup": {
+      "post": {
+        "summary": "Fast Account Registration",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string", "example": "candidate.test@example.com" },
+                  "password": { "type": "string", "example": "CandidatePass@123" },
+                  "fullName": { "type": "string", "example": "Alex Morgan" },
+                  "role": {
+                    "type": "string",
+                    "enum": ["candidate", "company"],
+                    "example": "candidate"
+                  }
+                },
+                "required": ["email", "password", "fullName"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "User created, returns JWT token" }
+        }
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "summary": "Verify JWT & Get Current User Profile",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Authenticated user profile returned" },
+          "401": { "description": "Unauthorized / Invalid JWT" }
+        }
+      }
+    },
+    "/api/candidates": {
+      "get": {
+        "summary": "List all candidates",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "List of candidates" } }
+      },
+      "post": {
+        "summary": "Save or update candidate",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "Candidate saved" } }
+      }
+    },
+    "/api/companies": {
+      "get": {
+        "summary": "List all companies",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "List of companies" } }
+      },
+      "post": {
+        "summary": "Save or update company workspace",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "Company workspace saved" } }
+      }
+    },
+    "/api/jobs": {
+      "get": {
+        "summary": "Retrieve all job openings",
+        "responses": { "200": { "description": "List of job openings" } }
+      },
+      "post": {
+        "summary": "Create new job opening",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "Job created" } }
+      }
+    },
+    "/api/graviton/leads": {
+      "post": {
+        "summary": "Submit lead inquiry",
+        "responses": { "200": { "description": "Lead captured successfully" } }
+      }
+    }
+  }
+}

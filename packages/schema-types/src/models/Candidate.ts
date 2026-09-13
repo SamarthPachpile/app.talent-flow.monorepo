@@ -1,8 +1,11 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
+import bcrypt from "bcryptjs";
 import type { CandidateDocument } from "../types";
 
 export interface ICandidate extends Document, Omit<CandidateDocument, "id"> {
   id: string;
+  password?: string;
+  googleId?: string;
   avatarUrl?: string;
   compliance?: string;
   payroll?: string;
@@ -22,6 +25,7 @@ export interface ICandidate extends Document, Omit<CandidateDocument, "id"> {
   status?: string;
   isCompleted?: boolean;
   emailVerified?: boolean;
+  comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
 const CandidateSchema = new Schema<ICandidate>(
@@ -42,6 +46,15 @@ const CandidateSchema = new Schema<ICandidate>(
       required: true,
       lowercase: true,
       trim: true,
+      index: true,
+    },
+    password: {
+      type: String,
+      required: false,
+    },
+    googleId: {
+      type: String,
+      sparse: true,
       index: true,
     },
     phone: {
@@ -115,8 +128,33 @@ const CandidateSchema = new Schema<ICandidate>(
   },
   {
     timestamps: true,
+    toJSON: {
+      transform(_doc, ret: Record<string, unknown>) {
+        delete ret.password;
+        ret.id = ret.id || (ret._id ? String(ret._id) : undefined);
+        delete ret.__v;
+        return ret;
+      },
+    },
   },
 );
+
+// Hash password before saving if modified
+CandidateSchema.pre("save", async function () {
+  if (!this.isModified("password") || !this.password) {
+    return;
+  }
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+});
+
+// Compare password method
+CandidateSchema.methods.comparePassword = async function (
+  candidatePassword: string,
+): Promise<boolean> {
+  if (!this.password) return false;
+  return bcrypt.compare(candidatePassword, this.password);
+};
 
 export const Candidate: Model<ICandidate> =
   mongoose.models.Candidate || mongoose.model<ICandidate>("Candidate", CandidateSchema);
