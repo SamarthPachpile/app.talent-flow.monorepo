@@ -1,6 +1,6 @@
 import type { CompanyDocument, CompanySettings } from "@talent-flow/schema-types";
 import { defaultCompanySettings } from "@talent-flow/schema-types";
-import { Company, Settings } from "@talent-flow/schema-types/models";
+import { Company, Settings } from "@talent-flow/schema-types";
 import { DragonflyCacheService } from "@talent-flow/utilities/dragonfly";
 import { logger } from "@talent-flow/utilities";
 import bcrypt from "bcryptjs";

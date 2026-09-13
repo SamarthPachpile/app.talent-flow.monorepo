@@ -1,6 +1,6 @@
 import type { CandidateDocument, CandidateSettings } from "@talent-flow/schema-types";
 import { defaultCandidateSettings } from "@talent-flow/schema-types";
-import { Candidate, Settings } from "@talent-flow/schema-types/models";
+import { Candidate, Settings } from "@talent-flow/schema-types";
 import { DragonflyCacheService } from "@talent-flow/utilities/dragonfly";
 import { logger } from "@talent-flow/utilities";
 import bcrypt from "bcryptjs";
