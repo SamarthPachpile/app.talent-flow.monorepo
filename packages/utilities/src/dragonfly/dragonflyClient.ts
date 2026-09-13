@@ -58,21 +58,25 @@ export async function getDragonflyClient(): Promise<RedisInstance | null> {
     const Redis =
       ioredisModule.default || (ioredisModule as unknown as typeof import("ioredis").default);
 
-    const client = new Redis({
+    const clientOptions: Record<string, unknown> = {
       host: config.host,
       port: config.port,
       username: config.username || undefined,
       password: config.password || undefined,
-      family: 4, // Explicit IPv4
-      connectTimeout: 2000,
+      connectTimeout: 5000,
       maxRetriesPerRequest: 1,
       retryStrategy() {
-        // Return null to disable infinite background reconnection attempts
         return null;
       },
       lazyConnect: true,
       enableOfflineQueue: false,
-    });
+    };
+
+    if (config.tls) {
+      clientOptions.tls = {};
+    }
+
+    const client = new Redis(clientOptions as any);
 
     client.on("connect", () => {
       console.log(`[Dragonfly DB] Connected to ${config.host}:${config.port}`);

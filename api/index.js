@@ -1107,17 +1107,36 @@ import passport2 from "passport";
 
 // packages/utilities/src/dragonfly/config.ts
 function getDragonflyConfig() {
-  const host = process.env.DRAGONFLY_HOST || process.env.DRAGONFLY_URL || process.env.REDIS_HOST || "127.0.0.1";
-  const port = Number(process.env.DRAGONFLY_PORT || process.env.REDIS_PORT || 6379);
-  const password = process.env.DRAGONFLY_PASSWORD || process.env.REDIS_PASSWORD || "";
-  const username = process.env.DRAGONFLY_USERNAME || process.env.REDIS_USERNAME || "default";
+  const url = process.env.DRAGONFLY_URL || process.env.REDIS_URL;
+  let host = process.env.DRAGONFLY_HOST || process.env.REDIS_HOST || "127.0.0.1";
+  let port = Number(process.env.DRAGONFLY_PORT || process.env.REDIS_PORT || 6379);
+  let password = process.env.DRAGONFLY_PASSWORD || process.env.REDIS_PASSWORD || "";
+  let username = process.env.DRAGONFLY_USERNAME || process.env.REDIS_USERNAME || "default";
+  let tls = process.env.DRAGONFLY_TLS === "true" || process.env.REDIS_TLS === "true";
+  if (url) {
+    try {
+      const parsed = new URL(url);
+      host = parsed.hostname;
+      port = parsed.port ? Number(parsed.port) : parsed.protocol === "rediss:" ? 6380 : 6379;
+      if (parsed.password) password = decodeURIComponent(parsed.password);
+      if (parsed.username) username = decodeURIComponent(parsed.username);
+      if (parsed.protocol === "rediss:" || host.includes("dragonflydb.cloud") || host.includes("upstash.io")) {
+        tls = true;
+      }
+    } catch {
+    }
+  } else if (host.includes("dragonflydb.cloud") || host.includes("upstash.io")) {
+    tls = true;
+  }
   const ttl = Number(process.env.DRAGONFLY_CACHE_TTL || process.env.REDIS_CACHE_TTL || 3600);
-  const isConfigured = Boolean(host);
+  const isConfigured = Boolean(host || url);
   return {
     host,
     port,
     password,
     username,
+    url,
+    tls,
     isConfigured,
     ttl,
     engine: "Dragonfly DB"
@@ -1157,21 +1176,23 @@ async function getDragonflyClient() {
     }
     const ioredisModule = await new Function('return import("ioredis")')();
     const Redis = ioredisModule.default || ioredisModule;
-    const client = new Redis({
+    const clientOptions = {
       host: config2.host,
       port: config2.port,
       username: config2.username || void 0,
       password: config2.password || void 0,
-      family: 4,
-      // Explicit IPv4
-      connectTimeout: 2e3,
+      connectTimeout: 5e3,
       maxRetriesPerRequest: 1,
       retryStrategy() {
         return null;
       },
       lazyConnect: true,
       enableOfflineQueue: false
-    });
+    };
+    if (config2.tls) {
+      clientOptions.tls = {};
+    }
+    const client = new Redis(clientOptions);
     client.on("connect", () => {
       console.log(`[Dragonfly DB] Connected to ${config2.host}:${config2.port}`);
     });
