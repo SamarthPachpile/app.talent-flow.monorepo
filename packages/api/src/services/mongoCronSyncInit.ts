@@ -6,7 +6,7 @@
  */
 
 import { DragonflyCronSyncService, DragonflyMutationTask } from "@talent-flow/utilities/dragonfly";
-import { Candidate, Company, Job, Settings } from "@talent-flow/schema-types/models";
+import { Candidate, Company, Job, Settings } from "@talent-flow/schema-types";
 import { logger } from "@talent-flow/utilities";
 
 let isInitialized = false;

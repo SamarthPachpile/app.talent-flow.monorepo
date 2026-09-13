@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { AdminService } from "../services/adminService";
-import { Company, Candidate, Job } from "@talent-flow/schema-types/models";
+import { Company, Candidate, Job } from "@talent-flow/schema-types";
 import {
   DragonflyCacheService,
   DragonflySessionService,
