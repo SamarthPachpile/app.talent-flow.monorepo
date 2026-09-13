@@ -150,23 +150,31 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
           {/* Navigation Links Scrollable Area */}
           <div
             data-lenis-prevent
-            className="flex-1 overflow-y-auto py-3 px-2 space-y-1.5 scrollbar-thin scrollbar-thumb-white/20 overscroll-contain"
+            className="flex-1 overflow-y-auto py-3 px-2 space-y-1.5 scrollbar-thin scrollbar-thumb-white/20 overscroll-contain transition-all duration-300 ease-in-out"
           >
             {/* 1. Dashboard (Active) */}
             <button
               onClick={() => handleTabChange("dashboard")}
-              className={`clip-path-button-sm w-full flex items-center justify-between px-3 py-2 text-xs font-semibold transition-all cursor-pointer group ${
+              className={`clip-path-button-sm w-full flex items-center justify-between px-3 py-2 text-xs font-semibold transition-all duration-300 ease-in-out cursor-pointer group ${
                 currentTab === "dashboard"
                   ? "bg-[#ff5f2e] text-white shadow-md font-bold scale-[1.02]"
                   : "text-white/85 hover:bg-[#5B6381] hover:text-white"
               }`}
               title="Dashboard"
             >
-              <div className="flex items-center gap-3 truncate">
+              <div className="flex items-center min-w-0">
                 <LayoutDashboard
                   className={`w-4 h-4 shrink-0 transition-colors ${currentTab === "dashboard" ? "text-white fill-white/20" : "text-orange-400 group-hover:text-orange-300"}`}
                 />
-                {isSidebarOpen && <span className="truncate">Dashboard</span>}
+                <span
+                  className={`transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap text-left ${
+                    isSidebarOpen
+                      ? "opacity-100 max-w-[140px] ml-3 translate-x-0"
+                      : "opacity-0 max-w-0 ml-0 -translate-x-2 pointer-events-none"
+                  }`}
+                >
+                  Dashboard
+                </span>
               </div>
             </button>
 
@@ -174,14 +182,14 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
             <div>
               <button
                 onClick={() => handleParentMenuClick("jobs")}
-                className={`clip-path-button-sm w-full flex items-center justify-between px-3 py-2 text-xs font-semibold transition-all cursor-pointer group ${
+                className={`clip-path-button-sm w-full flex items-center justify-between px-3 py-2 text-xs font-semibold transition-all duration-300 ease-in-out cursor-pointer group ${
                   currentTab === "jobs-list" || currentTab === "jobs" || currentTab === "create-job"
                     ? "bg-[#ff5f2e] text-white shadow-md font-bold scale-[1.02]"
                     : "text-white/85 hover:bg-[#5B6381] hover:text-white"
                 }`}
                 title="Jobs & Requisitions"
               >
-                <div className="flex items-center gap-3 truncate">
+                <div className="flex items-center min-w-0">
                   <Briefcase
                     className={`w-4 h-4 shrink-0 transition-colors ${
                       currentTab === "jobs-list" ||
@@ -191,22 +199,32 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
                         : "text-orange-400 group-hover:text-orange-300"
                     }`}
                   />
-                  {isSidebarOpen && <span className="truncate">Jobs</span>}
+                  <span
+                    className={`transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap text-left ${
+                      isSidebarOpen
+                        ? "opacity-100 max-w-[140px] ml-3 translate-x-0"
+                        : "opacity-0 max-w-0 ml-0 -translate-x-2 pointer-events-none"
+                    }`}
+                  >
+                    Jobs
+                  </span>
                 </div>
-                {isSidebarOpen && (
-                  <ChevronRight
-                    className={`w-3.5 h-3.5 ${
-                      currentTab === "jobs-list" ||
-                      currentTab === "jobs" ||
-                      currentTab === "create-job"
-                        ? "text-white"
-                        : "text-orange-400/80"
-                    } transition-transform ${expandedMenus.jobs ? "rotate-90" : ""}`}
-                  />
-                )}
+                <ChevronRight
+                  className={`w-3.5 h-3.5 transition-all duration-300 ease-in-out shrink-0 ${
+                    currentTab === "jobs-list" ||
+                    currentTab === "jobs" ||
+                    currentTab === "create-job"
+                      ? "text-white"
+                      : "text-orange-400/80"
+                  } ${expandedMenus.jobs ? "rotate-90" : ""} ${
+                    isSidebarOpen
+                      ? "opacity-100 scale-100"
+                      : "opacity-0 scale-75 pointer-events-none"
+                  }`}
+                />
               </button>
               {isSidebarOpen && expandedMenus.jobs && (
-                <div className="ml-7 mt-0.5 space-y-0.5 border-l border-white/20 pl-2">
+                <div className="ml-7 mt-0.5 space-y-0.5 border-l border-white/20 pl-2 animate-fadeIn">
                   <button
                     onClick={() => handleTabChange("jobs-list")}
                     className={`w-full text-left py-1.5 px-2 rounded-md text-[11px] font-semibold cursor-pointer transition-colors ${
@@ -225,14 +243,14 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
             <div>
               <button
                 onClick={() => handleParentMenuClick("candidates")}
-                className={`clip-path-button-sm w-full flex items-center justify-between px-3 py-2 text-xs font-semibold transition-all cursor-pointer group ${
+                className={`clip-path-button-sm w-full flex items-center justify-between px-3 py-2 text-xs font-semibold transition-all duration-300 ease-in-out cursor-pointer group ${
                   currentTab === "pipeline" || currentTab === "connectors"
                     ? "bg-[#ff5f2e] text-white shadow-md font-bold scale-[1.02]"
                     : "text-white/85 hover:bg-[#5B6381] hover:text-white"
                 }`}
                 title="Candidates"
               >
-                <div className="flex items-center gap-3 truncate">
+                <div className="flex items-center min-w-0">
                   <Users
                     className={`w-4 h-4 shrink-0 transition-colors ${
                       currentTab === "pipeline" || currentTab === "connectors"
@@ -240,20 +258,30 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
                         : "text-orange-400 group-hover:text-orange-300"
                     }`}
                   />
-                  {isSidebarOpen && <span className="truncate">Candidates</span>}
+                  <span
+                    className={`transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap text-left ${
+                      isSidebarOpen
+                        ? "opacity-100 max-w-[140px] ml-3 translate-x-0"
+                        : "opacity-0 max-w-0 ml-0 -translate-x-2 pointer-events-none"
+                    }`}
+                  >
+                    Candidates
+                  </span>
                 </div>
-                {isSidebarOpen && (
-                  <ChevronRight
-                    className={`w-3.5 h-3.5 ${
-                      currentTab === "pipeline" || currentTab === "connectors"
-                        ? "text-white"
-                        : "text-orange-400/80"
-                    } transition-transform ${expandedMenus.candidates ? "rotate-90" : ""}`}
-                  />
-                )}
+                <ChevronRight
+                  className={`w-3.5 h-3.5 transition-all duration-300 ease-in-out shrink-0 ${
+                    currentTab === "pipeline" || currentTab === "connectors"
+                      ? "text-white"
+                      : "text-orange-400/80"
+                  } ${expandedMenus.candidates ? "rotate-90" : ""} ${
+                    isSidebarOpen
+                      ? "opacity-100 scale-100"
+                      : "opacity-0 scale-75 pointer-events-none"
+                  }`}
+                />
               </button>
               {isSidebarOpen && expandedMenus.candidates && (
-                <div className="ml-7 mt-0.5 space-y-0.5 border-l border-white/20 pl-2">
+                <div className="ml-7 mt-0.5 space-y-0.5 border-l border-white/20 pl-2 animate-fadeIn">
                   <button
                     onClick={() => handleTabChange("pipeline")}
                     className={`w-full text-left py-1.5 px-2 rounded-md text-[11px] font-semibold cursor-pointer transition-colors ${
@@ -282,21 +310,29 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
             <div>
               <button
                 onClick={() => handleParentMenuClick("support")}
-                className="clip-path-button-sm w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-white/85 hover:bg-[#5B6381] hover:text-white transition-all cursor-pointer group"
+                className="clip-path-button-sm w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-white/85 hover:bg-[#5B6381] hover:text-white transition-all duration-300 ease-in-out cursor-pointer group"
                 title="Support"
               >
-                <div className="flex items-center gap-3 truncate">
+                <div className="flex items-center min-w-0">
                   <Headphones className="w-4 h-4 text-orange-400 group-hover:text-orange-300 shrink-0 transition-colors" />
-                  {isSidebarOpen && <span className="truncate">Support</span>}
+                  <span
+                    className={`transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap text-left ${
+                      isSidebarOpen
+                        ? "opacity-100 max-w-[140px] ml-3 translate-x-0"
+                        : "opacity-0 max-w-0 ml-0 -translate-x-2 pointer-events-none"
+                    }`}
+                  >
+                    Support
+                  </span>
                 </div>
-                {isSidebarOpen && (
-                  <ChevronRight
-                    className={`w-3.5 h-3.5 text-orange-400/80 transition-transform ${expandedMenus.support ? "rotate-90" : ""}`}
-                  />
-                )}
+                <ChevronRight
+                  className={`w-3.5 h-3.5 text-orange-400/80 transition-all duration-300 ease-in-out shrink-0 ${
+                    expandedMenus.support ? "rotate-90" : ""
+                  } ${isSidebarOpen ? "opacity-100 scale-100" : "opacity-0 scale-75 pointer-events-none"}`}
+                />
               </button>
               {isSidebarOpen && expandedMenus.support && (
-                <div className="ml-7 mt-0.5 space-y-0.5 border-l border-white/20 pl-2">
+                <div className="ml-7 mt-0.5 space-y-0.5 border-l border-white/20 pl-2 animate-fadeIn">
                   <button
                     onClick={() => toast.info("EmployX Help Center & Documentation")}
                     className="w-full text-left py-1.5 px-2 rounded-md text-[11px] font-semibold text-white/80 hover:text-white hover:bg-white/10 cursor-pointer transition-colors"
@@ -314,37 +350,55 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
             </div>
 
             {/* Section Header: Components */}
-            {isSidebarOpen && (
-              <div className="pt-3 pb-1 px-3 text-[10px] font-bold uppercase tracking-wider text-white/50">
+            <div
+              className={`transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap ${
+                isSidebarOpen
+                  ? "opacity-100 max-h-8 pt-3 pb-1 px-3"
+                  : "opacity-0 max-h-0 py-0 px-0 pointer-events-none"
+              }`}
+            >
+              <span className="text-[10px] font-bold uppercase tracking-wider text-white/50">
                 Components
-              </div>
-            )}
+              </span>
+            </div>
 
             {/* 5. Features (Connectors) */}
             <div>
               <button
                 onClick={() => handleParentMenuClick("features")}
-                className={`clip-path-button-sm w-full flex items-center justify-between px-3 py-2 text-xs font-semibold transition-all cursor-pointer group ${
+                className={`clip-path-button-sm w-full flex items-center justify-between px-3 py-2 text-xs font-semibold transition-all duration-300 ease-in-out cursor-pointer group ${
                   currentTab === "connectors"
                     ? "bg-[#ff5f2e] text-white shadow-md font-bold scale-[1.02]"
                     : "text-white/85 hover:bg-[#5B6381] hover:text-white"
                 }`}
                 title="Features & Connectors"
               >
-                <div className="flex items-center gap-3 truncate">
+                <div className="flex items-center min-w-0">
                   <Sliders
                     className={`w-4 h-4 shrink-0 transition-colors ${currentTab === "connectors" ? "text-white fill-white/20" : "text-orange-400 group-hover:text-orange-300"}`}
                   />
-                  {isSidebarOpen && <span className="truncate">Features</span>}
+                  <span
+                    className={`transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap text-left ${
+                      isSidebarOpen
+                        ? "opacity-100 max-w-[140px] ml-3 translate-x-0"
+                        : "opacity-0 max-w-0 ml-0 -translate-x-2 pointer-events-none"
+                    }`}
+                  >
+                    Features
+                  </span>
                 </div>
-                {isSidebarOpen && (
-                  <ChevronRight
-                    className={`w-3.5 h-3.5 ${currentTab === "connectors" ? "text-white" : "text-orange-400/80"} transition-transform ${expandedMenus.features ? "rotate-90" : ""}`}
-                  />
-                )}
+                <ChevronRight
+                  className={`w-3.5 h-3.5 transition-all duration-300 ease-in-out shrink-0 ${
+                    currentTab === "connectors" ? "text-white" : "text-orange-400/80"
+                  } ${expandedMenus.features ? "rotate-90" : ""} ${
+                    isSidebarOpen
+                      ? "opacity-100 scale-100"
+                      : "opacity-0 scale-75 pointer-events-none"
+                  }`}
+                />
               </button>
               {isSidebarOpen && expandedMenus.features && (
-                <div className="ml-7 mt-0.5 space-y-0.5 border-l border-white/20 pl-2">
+                <div className="ml-7 mt-0.5 space-y-0.5 border-l border-white/20 pl-2 animate-fadeIn">
                   <button
                     onClick={() => handleTabChange("connectors")}
                     className={`w-full text-left py-1.5 px-2 rounded-md text-[11px] font-semibold cursor-pointer transition-colors ${
@@ -372,14 +426,14 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
             <div>
               <button
                 onClick={() => handleParentMenuClick("forms")}
-                className={`clip-path-button-sm w-full flex items-center justify-between px-3 py-2 text-xs font-semibold transition-all cursor-pointer group ${
+                className={`clip-path-button-sm w-full flex items-center justify-between px-3 py-2 text-xs font-semibold transition-all duration-300 ease-in-out cursor-pointer group ${
                   currentTab === "dashboard" || currentTab === "pipeline"
                     ? "bg-[#ff5f2e] text-white shadow-md font-bold scale-[1.02]"
                     : "text-white/85 hover:bg-[#5B6381] hover:text-white"
                 }`}
                 title="Forms & Charts"
               >
-                <div className="flex items-center gap-3 truncate">
+                <div className="flex items-center min-w-0">
                   <BarChart3
                     className={`w-4 h-4 shrink-0 transition-colors ${
                       currentTab === "dashboard" || currentTab === "pipeline"
@@ -387,20 +441,30 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
                         : "text-orange-400 group-hover:text-orange-300"
                     }`}
                   />
-                  {isSidebarOpen && <span className="truncate">Forms & Charts</span>}
+                  <span
+                    className={`transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap text-left ${
+                      isSidebarOpen
+                        ? "opacity-100 max-w-[140px] ml-3 translate-x-0"
+                        : "opacity-0 max-w-0 ml-0 -translate-x-2 pointer-events-none"
+                    }`}
+                  >
+                    Forms & Charts
+                  </span>
                 </div>
-                {isSidebarOpen && (
-                  <ChevronRight
-                    className={`w-3.5 h-3.5 ${
-                      currentTab === "dashboard" || currentTab === "pipeline"
-                        ? "text-white"
-                        : "text-orange-400/80"
-                    } transition-transform ${expandedMenus.forms ? "rotate-90" : ""}`}
-                  />
-                )}
+                <ChevronRight
+                  className={`w-3.5 h-3.5 transition-all duration-300 ease-in-out shrink-0 ${
+                    currentTab === "dashboard" || currentTab === "pipeline"
+                      ? "text-white"
+                      : "text-orange-400/80"
+                  } ${expandedMenus.forms ? "rotate-90" : ""} ${
+                    isSidebarOpen
+                      ? "opacity-100 scale-100"
+                      : "opacity-0 scale-75 pointer-events-none"
+                  }`}
+                />
               </button>
               {isSidebarOpen && expandedMenus.forms && (
-                <div className="ml-7 mt-0.5 space-y-0.5 border-l border-white/20 pl-2">
+                <div className="ml-7 mt-0.5 space-y-0.5 border-l border-white/20 pl-2 animate-fadeIn">
                   <button
                     onClick={() => handleTabChange("dashboard")}
                     className={`w-full text-left py-1.5 px-2 rounded-md text-[11px] font-semibold cursor-pointer transition-colors ${
@@ -429,14 +493,14 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
             <div>
               <button
                 onClick={() => handleParentMenuClick("tables")}
-                className={`clip-path-button-sm w-full flex items-center justify-between px-3 py-2 text-xs font-semibold transition-all cursor-pointer group ${
+                className={`clip-path-button-sm w-full flex items-center justify-between px-3 py-2 text-xs font-semibold transition-all duration-300 ease-in-out cursor-pointer group ${
                   currentTab === "interactions" || currentTab === "jobs-list"
                     ? "bg-[#ff5f2e] text-white shadow-md font-bold scale-[1.02]"
                     : "text-white/85 hover:bg-[#5B6381] hover:text-white"
                 }`}
                 title="Tables & Audit Log"
               >
-                <div className="flex items-center gap-3 truncate">
+                <div className="flex items-center min-w-0">
                   <Table2
                     className={`w-4 h-4 shrink-0 transition-colors ${
                       currentTab === "interactions" || currentTab === "jobs-list"
@@ -444,20 +508,30 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
                         : "text-orange-400 group-hover:text-orange-300"
                     }`}
                   />
-                  {isSidebarOpen && <span className="truncate">Tables</span>}
+                  <span
+                    className={`transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap text-left ${
+                      isSidebarOpen
+                        ? "opacity-100 max-w-[140px] ml-3 translate-x-0"
+                        : "opacity-0 max-w-0 ml-0 -translate-x-2 pointer-events-none"
+                    }`}
+                  >
+                    Tables
+                  </span>
                 </div>
-                {isSidebarOpen && (
-                  <ChevronRight
-                    className={`w-3.5 h-3.5 ${
-                      currentTab === "interactions" || currentTab === "jobs-list"
-                        ? "text-white"
-                        : "text-orange-400/80"
-                    } transition-transform ${expandedMenus.tables ? "rotate-90" : ""}`}
-                  />
-                )}
+                <ChevronRight
+                  className={`w-3.5 h-3.5 transition-all duration-300 ease-in-out shrink-0 ${
+                    currentTab === "interactions" || currentTab === "jobs-list"
+                      ? "text-white"
+                      : "text-orange-400/80"
+                  } ${expandedMenus.tables ? "rotate-90" : ""} ${
+                    isSidebarOpen
+                      ? "opacity-100 scale-100"
+                      : "opacity-0 scale-75 pointer-events-none"
+                  }`}
+                />
               </button>
               {isSidebarOpen && expandedMenus.tables && (
-                <div className="ml-7 mt-0.5 space-y-0.5 border-l border-white/20 pl-2">
+                <div className="ml-7 mt-0.5 space-y-0.5 border-l border-white/20 pl-2 animate-fadeIn">
                   <button
                     onClick={() => handleTabChange("interactions")}
                     className={`w-full text-left py-1.5 px-2 rounded-md text-[11px] font-semibold cursor-pointer transition-colors ${
@@ -486,14 +560,14 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
             <div>
               <button
                 onClick={() => handleParentMenuClick("apps")}
-                className={`clip-path-button-sm w-full flex items-center justify-between px-3 py-2 text-xs font-semibold transition-all cursor-pointer group ${
+                className={`clip-path-button-sm w-full flex items-center justify-between px-3 py-2 text-xs font-semibold transition-all duration-300 ease-in-out cursor-pointer group ${
                   currentTab === "team" || currentTab === "connectors"
                     ? "bg-[#ff5f2e] text-white shadow-md font-bold scale-[1.02]"
                     : "text-white/85 hover:bg-[#5B6381] hover:text-white"
                 }`}
                 title="Apps & Team Management"
               >
-                <div className="flex items-center gap-3 truncate">
+                <div className="flex items-center min-w-0">
                   <Smartphone
                     className={`w-4 h-4 shrink-0 transition-colors ${
                       currentTab === "team" || currentTab === "connectors"
@@ -501,20 +575,30 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
                         : "text-orange-400 group-hover:text-orange-300"
                     }`}
                   />
-                  {isSidebarOpen && <span className="truncate">Apps & Widgets</span>}
+                  <span
+                    className={`transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap text-left ${
+                      isSidebarOpen
+                        ? "opacity-100 max-w-[140px] ml-3 translate-x-0"
+                        : "opacity-0 max-w-0 ml-0 -translate-x-2 pointer-events-none"
+                    }`}
+                  >
+                    Apps & Widgets
+                  </span>
                 </div>
-                {isSidebarOpen && (
-                  <ChevronRight
-                    className={`w-3.5 h-3.5 ${
-                      currentTab === "team" || currentTab === "connectors"
-                        ? "text-white"
-                        : "text-orange-400/80"
-                    } transition-transform ${expandedMenus.apps ? "rotate-90" : ""}`}
-                  />
-                )}
+                <ChevronRight
+                  className={`w-3.5 h-3.5 transition-all duration-300 ease-in-out shrink-0 ${
+                    currentTab === "team" || currentTab === "connectors"
+                      ? "text-white"
+                      : "text-orange-400/80"
+                  } ${expandedMenus.apps ? "rotate-90" : ""} ${
+                    isSidebarOpen
+                      ? "opacity-100 scale-100"
+                      : "opacity-0 scale-75 pointer-events-none"
+                  }`}
+                />
               </button>
               {isSidebarOpen && expandedMenus.apps && (
-                <div className="ml-7 mt-0.5 space-y-0.5 border-l border-white/20 pl-2">
+                <div className="ml-7 mt-0.5 space-y-0.5 border-l border-white/20 pl-2 animate-fadeIn">
                   <button
                     onClick={() => handleTabChange("team")}
                     className={`w-full text-left py-1.5 px-2 rounded-md text-[11px] font-semibold cursor-pointer transition-colors ${
@@ -543,27 +627,39 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
             <div>
               <button
                 onClick={() => handleParentMenuClick("auth")}
-                className={`clip-path-button-sm w-full flex items-center justify-between px-3 py-2 text-xs font-semibold transition-all cursor-pointer group ${
+                className={`clip-path-button-sm w-full flex items-center justify-between px-3 py-2 text-xs font-semibold transition-all duration-300 ease-in-out cursor-pointer group ${
                   currentTab === "settings"
                     ? "bg-[#ff5f2e] text-white shadow-md font-bold scale-[1.02]"
                     : "text-white/85 hover:bg-[#5B6381] hover:text-white"
                 }`}
                 title="Authentication & Security"
               >
-                <div className="flex items-center gap-3 truncate">
+                <div className="flex items-center min-w-0">
                   <Lock
                     className={`w-4 h-4 shrink-0 transition-colors ${currentTab === "settings" ? "text-white fill-white/20" : "text-orange-400 group-hover:text-orange-300"}`}
                   />
-                  {isSidebarOpen && <span className="truncate">Authentication</span>}
+                  <span
+                    className={`transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap text-left ${
+                      isSidebarOpen
+                        ? "opacity-100 max-w-[140px] ml-3 translate-x-0"
+                        : "opacity-0 max-w-0 ml-0 -translate-x-2 pointer-events-none"
+                    }`}
+                  >
+                    Authentication
+                  </span>
                 </div>
-                {isSidebarOpen && (
-                  <ChevronRight
-                    className={`w-3.5 h-3.5 ${currentTab === "settings" ? "text-white" : "text-orange-400/80"} transition-transform ${expandedMenus.auth ? "rotate-90" : ""}`}
-                  />
-                )}
+                <ChevronRight
+                  className={`w-3.5 h-3.5 transition-all duration-300 ease-in-out shrink-0 ${
+                    currentTab === "settings" ? "text-white" : "text-orange-400/80"
+                  } ${expandedMenus.auth ? "rotate-90" : ""} ${
+                    isSidebarOpen
+                      ? "opacity-100 scale-100"
+                      : "opacity-0 scale-75 pointer-events-none"
+                  }`}
+                />
               </button>
               {isSidebarOpen && expandedMenus.auth && (
-                <div className="ml-7 mt-0.5 space-y-0.5 border-l border-white/20 pl-2">
+                <div className="ml-7 mt-0.5 space-y-0.5 border-l border-white/20 pl-2 animate-fadeIn">
                   <button
                     onClick={() => handleTabChange("settings")}
                     className={`w-full text-left py-1.5 px-2 rounded-md text-[11px] font-semibold cursor-pointer transition-colors ${
@@ -591,21 +687,29 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
             <div>
               <button
                 onClick={() => handleParentMenuClick("misc")}
-                className="clip-path-button-sm w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-white/85 hover:bg-[#5B6381] hover:text-white transition-all cursor-pointer group"
+                className="clip-path-button-sm w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-white/85 hover:bg-[#5B6381] hover:text-white transition-all duration-300 ease-in-out cursor-pointer group"
                 title="Miscellaneous"
               >
-                <div className="flex items-center gap-3 truncate">
+                <div className="flex items-center min-w-0">
                   <AlertTriangle className="w-4 h-4 text-orange-400 group-hover:text-orange-300 shrink-0 transition-colors" />
-                  {isSidebarOpen && <span className="truncate">Miscellaneous</span>}
+                  <span
+                    className={`transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap text-left ${
+                      isSidebarOpen
+                        ? "opacity-100 max-w-[140px] ml-3 translate-x-0"
+                        : "opacity-0 max-w-0 ml-0 -translate-x-2 pointer-events-none"
+                    }`}
+                  >
+                    Miscellaneous
+                  </span>
                 </div>
-                {isSidebarOpen && (
-                  <ChevronRight
-                    className={`w-3.5 h-3.5 text-orange-400/80 transition-transform ${expandedMenus.misc ? "rotate-90" : ""}`}
-                  />
-                )}
+                <ChevronRight
+                  className={`w-3.5 h-3.5 text-orange-400/80 transition-all duration-300 ease-in-out shrink-0 ${
+                    expandedMenus.misc ? "rotate-90" : ""
+                  } ${isSidebarOpen ? "opacity-100 scale-100" : "opacity-0 scale-75 pointer-events-none"}`}
+                />
               </button>
               {isSidebarOpen && expandedMenus.misc && (
-                <div className="ml-7 mt-0.5 space-y-0.5 border-l border-white/20 pl-2">
+                <div className="ml-7 mt-0.5 space-y-0.5 border-l border-white/20 pl-2 animate-fadeIn">
                   <button
                     onClick={() => handleTabChange("settings")}
                     className={`w-full text-left py-1.5 px-2 rounded-md text-[11px] font-semibold cursor-pointer transition-colors ${
@@ -632,18 +736,18 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
           </div>
 
           {/* Bottom Settings & User Profile Section */}
-          <div className="border-t border-white/10 p-2.5 space-y-1.5 bg-[#545C78] shrink-0 relative">
+          <div className="border-t border-white/10 p-2.5 space-y-1.5 bg-[#545C78] shrink-0 relative transition-all duration-300 ease-in-out">
             {/* Settings Link */}
             <button
               onClick={() => handleTabChange("settings")}
-              className={`clip-path-button-sm w-full flex items-center justify-between px-3 py-2 text-xs font-semibold transition-all cursor-pointer group ${
+              className={`clip-path-button-sm w-full flex items-center justify-between px-3 py-2 text-xs font-semibold transition-all duration-300 ease-in-out cursor-pointer group ${
                 currentTab === "settings"
                   ? "bg-[#ff5f2e] text-white shadow-md font-bold scale-[1.02]"
                   : "text-white/85 hover:bg-[#5B6381] hover:text-white"
               }`}
               title="Workspace Settings"
             >
-              <div className="flex items-center gap-3 truncate">
+              <div className="flex items-center min-w-0">
                 <Settings
                   className={`w-4 h-4 shrink-0 transition-colors ${
                     currentTab === "settings"
@@ -651,15 +755,21 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
                       : "text-orange-400 group-hover:text-orange-300"
                   }`}
                 />
-                {isSidebarOpen && <span className="truncate">Settings</span>}
-              </div>
-              {isSidebarOpen && (
-                <ChevronRight
-                  className={`w-3.5 h-3.5 ${
-                    currentTab === "settings" ? "text-white" : "text-orange-400/80"
+                <span
+                  className={`transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap text-left ${
+                    isSidebarOpen
+                      ? "opacity-100 max-w-[140px] ml-3 translate-x-0"
+                      : "opacity-0 max-w-0 ml-0 -translate-x-2 pointer-events-none"
                   }`}
-                />
-              )}
+                >
+                  Settings
+                </span>
+              </div>
+              <ChevronRight
+                className={`w-3.5 h-3.5 transition-all duration-300 ease-in-out shrink-0 ${
+                  currentTab === "settings" ? "text-white" : "text-orange-400/80"
+                } ${isSidebarOpen ? "opacity-100 scale-100" : "opacity-0 scale-75 pointer-events-none"}`}
+              />
             </button>
 
             {/* User Profile Card / Trigger */}
@@ -668,7 +778,7 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
                 onClick={() => setShowProfileMenu(!showProfileMenu)}
                 className={`w-full flex items-center ${
                   isSidebarOpen ? "justify-between px-2 py-1.5" : "justify-center py-1"
-                } rounded-xl hover:bg-white/10 transition-colors cursor-pointer group`}
+                } rounded-xl hover:bg-white/10 transition-all duration-300 ease-in-out cursor-pointer group`}
                 title={`${state?.admin?.fullName || "Nil Yeager"} (${state?.admin?.workEmail || "recruiter@employx.io"})`}
               >
                 <div className="flex items-center gap-2.5 truncate">
@@ -689,16 +799,20 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
                     </svg>
                     <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-500 ring-1 ring-white" />
                   </div>
-                  {isSidebarOpen && (
-                    <div className="flex flex-col text-left overflow-hidden">
-                      <span className="text-white font-semibold text-xs tracking-tight truncate">
-                        {state?.admin?.fullName || "Nil Yeager"}
-                      </span>
-                      <span className="text-white/70 text-[10.5px] truncate">
-                        {state?.admin?.jobTitle || state?.admin?.workEmail || "HR Admin"}
-                      </span>
-                    </div>
-                  )}
+                  <div
+                    className={`flex flex-col text-left overflow-hidden transition-all duration-300 ease-in-out ${
+                      isSidebarOpen
+                        ? "opacity-100 max-w-[140px] translate-x-0"
+                        : "opacity-0 max-w-0 -translate-x-2 pointer-events-none"
+                    }`}
+                  >
+                    <span className="text-white font-semibold text-xs tracking-tight truncate whitespace-nowrap">
+                      {state?.admin?.fullName || "Nil Yeager"}
+                    </span>
+                    <span className="text-white/70 text-[10.5px] truncate whitespace-nowrap">
+                      {state?.admin?.jobTitle || state?.admin?.workEmail || "HR Admin"}
+                    </span>
+                  </div>
                 </div>
                 {isSidebarOpen && (
                   <span
@@ -902,7 +1016,7 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
 
         {/* Viewport Content */}
         <main className="flex-1 p-3.5 sm:p-4.5 lg:p-5">
-          <div className="max-w-[1500px] mx-auto">
+          <div className="w-full max-w-[1750px] mx-auto">
             {currentTab === "dashboard" && (
               <EmployXDashboardOverview
                 state={state}

@@ -96,10 +96,10 @@ export async function deleteCache(key: string): Promise<boolean> {
 }
 
 /**
- * Set user session key in Dragonfly DB
+ * Set entity session key in Dragonfly DB
  */
 export async function setUserSession(
-  role: "candidate" | "company" | "admin" | "user",
+  role: "candidate" | "company" | "admin",
   userId: string,
   sessionId: string,
   ttlSeconds: number = 6 * 3600,
@@ -109,10 +109,10 @@ export async function setUserSession(
 }
 
 /**
- * Get user active session ID from Dragonfly DB
+ * Get entity active session ID from Dragonfly DB
  */
 export async function getUserSession(
-  role: "candidate" | "company" | "admin" | "user",
+  role: "candidate" | "company" | "admin",
   userId: string,
 ): Promise<string | null> {
   const key = `session:${role}:${userId}`;
@@ -120,10 +120,10 @@ export async function getUserSession(
 }
 
 /**
- * Invalidate user active session in Dragonfly DB
+ * Invalidate entity active session in Dragonfly DB
  */
 export async function deleteUserSession(
-  role: "candidate" | "company" | "admin" | "user",
+  role: "candidate" | "company" | "admin",
   userId: string,
 ): Promise<boolean> {
   const key = `session:${role}:${userId}`;

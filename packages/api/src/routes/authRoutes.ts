@@ -1,21 +1,31 @@
 import { Router } from "express";
 import passport from "passport";
 import { AuthController, validateSessionEndpoint } from "../controllers/authController";
-import { sessionValidation } from "../middlewares/sessionMiddleware";
 
 export const authRouter = Router();
 
 // Standard Auth Endpoints
-authRouter.post("/signup", AuthController.signUp);
-authRouter.post("/signup/full", AuthController.signUpWithFullDetails);
-authRouter.post("/signin", AuthController.signIn);
-authRouter.post("/login", AuthController.signIn);
-authRouter.post("/google", AuthController.googleAuth);
-authRouter.post("/signout", AuthController.signOut);
-authRouter.post("/logout", AuthController.signOut);
+authRouter.post(
+  ["/signup", "/candidate-signup", "/company-signup", "/register"],
+  AuthController.signUp,
+);
+authRouter.post(
+  ["/signup-details", "/signup-full", "/register-full", "/signup/full"],
+  AuthController.signUpWithFullDetails,
+);
+authRouter.post(
+  ["/signin", "/candidate-signin", "/company-signin", "/admin-signin", "/login"],
+  AuthController.signIn,
+);
+authRouter.post(["/google", "/google-auth", "/google-signin"], AuthController.googleAuth);
+authRouter.get(["/me", "/verify-token", "/current-user"], AuthController.getMe);
+authRouter.post(
+  ["/signout", "/candidate-signout", "/company-signout", "/admin-signout", "/logout"],
+  AuthController.signOut,
+);
 
 // Google OAuth Configuration
-authRouter.get("/google/config", (req, res) => {
+authRouter.get(["/google/config", "/google-config"], (req, res) => {
   const clientId = process.env.VITE_GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID || "";
   const isConfigured = Boolean(clientId && !clientId.startsWith("mock_"));
   res.json({
@@ -25,15 +35,21 @@ authRouter.get("/google/config", (req, res) => {
 });
 
 // Session Verification
-authRouter.get("/session/validate", validateSessionEndpoint);
-authRouter.post("/session/validate", validateSessionEndpoint);
+authRouter.get(
+  ["/session/validate", "/validate-session", "/session-check"],
+  validateSessionEndpoint,
+);
+authRouter.post(
+  ["/session/validate", "/validate-session", "/session-check"],
+  validateSessionEndpoint,
+);
 
 // Verification & Security
-authRouter.post("/verify-email", AuthController.sendVerificationEmail);
-authRouter.get("/check-verified", AuthController.checkEmailVerified);
-authRouter.post("/update-email", AuthController.updateUserEmailAndResend);
-authRouter.post("/otp/send", AuthController.sendOtpCode);
-authRouter.post("/otp/verify", AuthController.verifyOtpCode);
+authRouter.post(["/verify-email", "/send-verification"], AuthController.sendVerificationEmail);
+authRouter.get(["/check-verified", "/verify-status"], AuthController.checkEmailVerified);
+authRouter.post(["/update-email", "/change-email"], AuthController.updateUserEmailAndResend);
+authRouter.post(["/otp/send", "/send-otp"], AuthController.sendOtpCode);
+authRouter.post(["/otp/verify", "/verify-otp"], AuthController.verifyOtpCode);
 
 // Passport Google OAuth Redirect Routes (for browser redirect flow if needed)
 authRouter.get("/google/redirect", (req, res, next) => {

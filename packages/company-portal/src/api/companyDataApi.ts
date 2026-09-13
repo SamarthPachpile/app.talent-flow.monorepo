@@ -39,7 +39,10 @@ export class CompanyApiService {
 
       let serverSaved: CompanyDocument | null = null;
       try {
-        const res = await companyHttpClient.post<CompanyDocument>("/api/companies", payload);
+        const res = await companyHttpClient.post<CompanyDocument>(
+          "/api/companies-profile",
+          payload,
+        );
         if (res.data) {
           serverSaved = normalizeCompanyDoc(res.data);
         }
@@ -80,7 +83,7 @@ export class CompanyApiService {
     const cleanId = companyId.toLowerCase().replace(/[^a-z0-9]/g, "");
 
     try {
-      const res = await companyHttpClient.get<CompanyDocument>(`/api/companies/${cleanId}`);
+      const res = await companyHttpClient.get<CompanyDocument>(`/api/companies-profile/${cleanId}`);
       if (res.data) {
         return normalizeCompanyDoc(res.data);
       }
@@ -103,7 +106,7 @@ export class CompanyApiService {
 
   static async getAllCompanies(): Promise<CompanyDocument[]> {
     try {
-      const res = await companyHttpClient.get<CompanyDocument[]>("/api/companies");
+      const res = await companyHttpClient.get<CompanyDocument[]>("/api/companies-profile");
       if (res.data && Array.isArray(res.data) && res.data.length > 0) {
         return res.data.map(normalizeCompanyDoc);
       }
@@ -120,9 +123,12 @@ export class CompanyApiService {
     const cleanEmail = email.trim().toLowerCase();
 
     try {
-      const res = await companyHttpClient.get<CompanyDocument>("/api/companies/search/email", {
-        params: { email: cleanEmail, uid },
-      });
+      const res = await companyHttpClient.get<CompanyDocument>(
+        "/api/companies-profile/search-email",
+        {
+          params: { email: cleanEmail, uid },
+        },
+      );
       if (res.data) {
         return normalizeCompanyDoc(res.data);
       }
@@ -154,7 +160,7 @@ export class CompanyApiService {
 
     try {
       const res = await companyHttpClient.post<{ success: boolean }>(
-        `/api/companies/${cleanCompId}/register-candidate`,
+        `/api/companies-profile/${cleanCompId}/enroll-candidate`,
         { candidate },
       );
       return res.success;

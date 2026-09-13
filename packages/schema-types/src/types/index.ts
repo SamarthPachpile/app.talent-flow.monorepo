@@ -440,6 +440,8 @@ export interface CandidateDocument {
   id: string;
   uid?: string;
   email: string;
+  password?: string;
+  googleId?: string;
   fullName?: string;
   phone?: string;
   location?: string;

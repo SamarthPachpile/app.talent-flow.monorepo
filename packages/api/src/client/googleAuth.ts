@@ -69,9 +69,9 @@ export async function getGoogleClientId(): Promise<string> {
     // localStorage may be restricted in sandboxed environments
   }
 
-  // 3. Fetch from backend /api/auth/google/config
+  // 3. Fetch from backend /api/candidates-auth/google-config
   try {
-    const res = await fetch("/api/auth/google/config");
+    const res = await fetch("/api/candidates-auth/google-config");
     if (res.ok) {
       const data = await res.json();
       if (data.clientId && !data.clientId.startsWith("mock_")) {

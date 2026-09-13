@@ -14,7 +14,7 @@ export interface UserSessionData {
   token: string;
   userId: string;
   email: string;
-  role: "admin" | "company" | "candidate" | "recruiter" | "user";
+  role: "admin" | "company" | "candidate";
   displayName?: string;
   companyId?: string;
   companyName?: string;
@@ -30,7 +30,7 @@ export interface UserSessionData {
 export interface CreateSessionOptions {
   userId: string;
   email: string;
-  role: "admin" | "company" | "candidate" | "recruiter" | "user";
+  role: "admin" | "company" | "candidate";
   displayName?: string;
   companyId?: string;
   companyName?: string;

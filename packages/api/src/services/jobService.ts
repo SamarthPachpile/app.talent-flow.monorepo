@@ -5,15 +5,23 @@ import { logger } from "@talent-flow/utilities";
 
 export class JobService {
   static async getAllJobs(): Promise<JobPosting[]> {
-    const cacheKey = "tf:df:jobs:all";
+    const cacheKey = DragonflyCacheService.keys.jobsAll();
+
+    // 1. Strict Dragonfly DB Read First
     return DragonflyCacheService.fetchFromDragonflyOrDb<JobPosting[]>(
       cacheKey,
       async () => {
+        // 2. MongoDB Fallback
         try {
           const docs = await Job.find({ status: { $ne: "archived" } })
             .sort({ createdAt: -1 })
             .limit(100)
             .lean();
+          for (const job of docs) {
+            if (job.id) {
+              await DragonflyCacheService.set(DragonflyCacheService.keys.job(job.id), job, 3600);
+            }
+          }
           return docs as unknown as JobPosting[];
         } catch (err) {
           logger.warn("[JobService] DB getAllJobs error:", err);
@@ -26,10 +34,13 @@ export class JobService {
 
   static async getJobsForCompany(companyId: string): Promise<JobPosting[]> {
     const cleanCompId = companyId.toLowerCase().replace(/[^a-z0-9-]/g, "");
-    const cacheKey = `tf:df:jobs:company:${cleanCompId}`;
+    const cacheKey = DragonflyCacheService.keys.jobs(cleanCompId);
+
+    // 1. Strict Dragonfly DB Read First
     return DragonflyCacheService.fetchFromDragonflyOrDb<JobPosting[]>(
       cacheKey,
       async () => {
+        // 2. MongoDB Fallback
         try {
           const docs = await Job.find({
             $or: [{ companyId: cleanCompId }, { subdomain: cleanCompId }],
@@ -47,10 +58,13 @@ export class JobService {
   }
 
   static async getJobById(jobId: string): Promise<JobPosting | null> {
-    const cacheKey = `tf:df:job:${jobId}`;
+    const cacheKey = DragonflyCacheService.keys.job(jobId);
+
+    // 1. Strict Dragonfly DB Read First
     return DragonflyCacheService.fetchFromDragonflyOrDb<JobPosting | null>(
       cacheKey,
       async () => {
+        // 2. MongoDB Fallback
         try {
           const doc = await Job.findOne({ id: jobId }).lean();
           return doc as unknown as JobPosting | null;
@@ -78,24 +92,17 @@ export class JobService {
       updatedAt: new Date().toISOString(),
     };
 
-    const cacheKey = `tf:df:job:${jobId}`;
-    return DragonflyCacheService.writeToDragonflyAndSyncDb<JobPosting>(
-      cacheKey,
-      payload,
-      async () => {
-        try {
-          await Job.findOneAndUpdate(
-            { id: jobId },
-            { $set: payload },
-            { returnDocument: "after", upsert: true, setDefaultsOnInsert: true },
-          );
-          await DragonflyCacheService.del("tf:df:jobs:all");
-          await DragonflyCacheService.del(`tf:df:jobs:company:${cleanCompId}`);
-        } catch (err) {
-          logger.error("[JobService] DB createJob error:", err);
-        }
-      },
-    );
+    const cacheKey = DragonflyCacheService.keys.job(jobId);
+
+    // 1. Write strictly to Dragonfly DB immediately
+    await DragonflyCacheService.set(cacheKey, payload, 3600);
+    await DragonflyCacheService.del(DragonflyCacheService.keys.jobsAll());
+    await DragonflyCacheService.del(DragonflyCacheService.keys.jobs(cleanCompId));
+
+    // 2. Enqueue mutation into Dragonfly Cron Sync Queue for MongoDB writing
+    await DragonflyCacheService.writeToDragonflyAndEnqueueSync("job", cacheKey, payload, jobId);
+
+    return payload;
   }
 
   static async updateJobStatus(jobId: string, status: string): Promise<JobPosting | null> {
@@ -105,36 +112,35 @@ export class JobService {
     job.status = status;
     job.updatedAt = new Date().toISOString();
 
-    const cacheKey = `tf:df:job:${jobId}`;
-    return DragonflyCacheService.writeToDragonflyAndSyncDb<JobPosting>(cacheKey, job, async () => {
-      try {
-        await Job.updateOne(
-          { id: jobId },
-          { $set: { status, updatedAt: new Date().toISOString() } },
-        );
-        await DragonflyCacheService.del("tf:df:jobs:all");
-        if (job.companyId) {
-          await DragonflyCacheService.del(`tf:df:jobs:company:${job.companyId}`);
-        }
-      } catch (err) {
-        logger.error("[JobService] DB updateJobStatus error:", err);
-      }
-    });
+    const cacheKey = DragonflyCacheService.keys.job(jobId);
+
+    // 1. Update strictly in Dragonfly DB immediately
+    await DragonflyCacheService.set(cacheKey, job, 3600);
+    await DragonflyCacheService.del(DragonflyCacheService.keys.jobsAll());
+    if (job.companyId) {
+      await DragonflyCacheService.del(DragonflyCacheService.keys.jobs(job.companyId));
+    }
+
+    // 2. Enqueue mutation to Cron Sync Queue
+    await DragonflyCacheService.writeToDragonflyAndEnqueueSync("job", cacheKey, job, jobId);
+
+    return job;
   }
 
   static async deleteJob(jobId: string): Promise<boolean> {
-    try {
-      const job = await this.getJobById(jobId);
-      await Job.deleteOne({ id: jobId });
-      await DragonflyCacheService.del(`tf:df:job:${jobId}`);
-      await DragonflyCacheService.del("tf:df:jobs:all");
-      if (job?.companyId) {
-        await DragonflyCacheService.del(`tf:df:jobs:company:${job.companyId}`);
-      }
-      return true;
-    } catch (err) {
-      logger.error("[JobService] DB deleteJob error:", err);
-      return false;
+    const job = await this.getJobById(jobId);
+    const cacheKey = DragonflyCacheService.keys.job(jobId);
+
+    // 1. Delete strictly from Dragonfly DB immediately
+    await DragonflyCacheService.del(cacheKey);
+    await DragonflyCacheService.del(DragonflyCacheService.keys.jobsAll());
+    if (job?.companyId) {
+      await DragonflyCacheService.del(DragonflyCacheService.keys.jobs(job.companyId));
     }
+
+    // 2. Enqueue deletion to Cron Sync Queue
+    await DragonflyCacheService.deleteFromDragonflyAndEnqueueSync("job", cacheKey, jobId);
+
+    return true;
   }
 }

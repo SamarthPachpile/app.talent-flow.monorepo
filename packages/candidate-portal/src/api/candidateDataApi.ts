@@ -28,7 +28,10 @@ export class CandidateApiService {
 
       let serverSaved: CandidateDocument | null = null;
       try {
-        const res = await candidateHttpClient.post<CandidateDocument>("/api/candidates", payload);
+        const res = await candidateHttpClient.post<CandidateDocument>(
+          "/api/candidates-profile",
+          payload,
+        );
         if (res.data) {
           serverSaved = res.data;
         }
@@ -70,7 +73,7 @@ export class CandidateApiService {
 
     try {
       const res = await candidateHttpClient.get<CandidateDocument>(
-        `/api/candidates/${candidateId}`,
+        `/api/candidates-profile/${candidateId}`,
       );
       if (res.data) {
         return res.data;
@@ -94,7 +97,7 @@ export class CandidateApiService {
 
   static async getAllCandidates(): Promise<CandidateDocument[]> {
     try {
-      const res = await candidateHttpClient.get<CandidateDocument[]>("/api/candidates");
+      const res = await candidateHttpClient.get<CandidateDocument[]>("/api/candidates-profile");
       if (res.data && Array.isArray(res.data) && res.data.length > 0) {
         return res.data;
       }
@@ -111,9 +114,12 @@ export class CandidateApiService {
     const cleanEmail = email.trim().toLowerCase();
 
     try {
-      const res = await candidateHttpClient.get<CandidateDocument>("/api/candidates/search/email", {
-        params: { email: cleanEmail, uid },
-      });
+      const res = await candidateHttpClient.get<CandidateDocument>(
+        "/api/candidates-profile/search-email",
+        {
+          params: { email: cleanEmail, uid },
+        },
+      );
       if (res.data) {
         return res.data;
       }
@@ -162,7 +168,7 @@ export class CandidateApiService {
 
     try {
       const res = await candidateHttpClient.post<CandidateDocument>(
-        `/api/candidates/${candidateId}/add-company`,
+        `/api/candidates-profile/${candidateId}/link-company`,
         { companyId, companyName },
       );
       if (res.data) {

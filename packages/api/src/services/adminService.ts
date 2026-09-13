@@ -38,21 +38,25 @@ export class AdminService {
   ): Promise<PlatformAdminSettings> {
     const current = await this.fetchAdminSettings();
     const merged: PlatformAdminSettings = { ...current, ...settings };
-    return DragonflyCacheService.writeToDragonflyAndSyncDb<PlatformAdminSettings>(
+    const settingsPayload = {
+      scope: "admin",
+      targetId: "platform",
+      data: merged,
+      updatedAt: new Date().toISOString(),
+    };
+
+    // 1. Write strictly to Dragonfly DB immediately
+    await DragonflyCacheService.set(CACHE_KEY_ADMIN_SETTINGS, merged, 86400);
+
+    // 2. Enqueue mutation to Cron Sync Queue for MongoDB persistence
+    await DragonflyCacheService.writeToDragonflyAndEnqueueSync(
+      "settings",
       CACHE_KEY_ADMIN_SETTINGS,
-      merged,
-      async () => {
-        try {
-          await Settings.findOneAndUpdate(
-            { scope: "admin", targetId: "platform" },
-            { $set: { data: merged, updatedAt: new Date() } },
-            { returnDocument: "after", upsert: true, setDefaultsOnInsert: true },
-          );
-        } catch (err) {
-          logger.error("[AdminService] Database write error:", err);
-        }
-      },
+      settingsPayload,
+      "admin:platform",
     );
+
+    return merged;
   }
 
   static getHealthMetrics(): SystemHealthMetric[] {

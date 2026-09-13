@@ -9,6 +9,7 @@
 import { getDragonflyConfig } from "./config";
 import { getDragonflyClient, isNodeRuntime } from "./dragonflyClient";
 import { DragonflyWebhookSyncService, DragonflyEventType } from "./dragonflyWebhookSync";
+import { DragonflyCronSyncService, MutationEntity } from "./dragonflyCronSync";
 
 export interface DragonflyHealthStatus {
   connected: boolean;
@@ -320,9 +321,51 @@ export class DragonflyCacheService {
   }
 
   /**
-   * Strict Dragonfly Write-First & Simultaneous DB Sync Webhook:
+   * Strict Dragonfly Write-First & Cron Sync Queue:
    * Data is ALWAYS written directly to Dragonfly DB first for instantaneous response,
-   * then simultaneously dispatches a webhook/event to update MongoDB Atlas.
+   * and simultaneously queued for the background Cron job to synchronize it to MongoDB Atlas.
+   */
+  static async writeToDragonflyAndEnqueueSync<T>(
+    entity: MutationEntity,
+    key: string,
+    data: T,
+    targetId?: string,
+    ttlSeconds = 3600,
+  ): Promise<T> {
+    await this.set(key, data, ttlSeconds);
+
+    DragonflyCronSyncService.enqueueMutation<T>(entity, "UPSERT", key, data, targetId).catch(
+      (err) => {
+        console.warn(`[Dragonfly Cron Queue] Failed to enqueue mutation task:`, err);
+      },
+    );
+
+    return data;
+  }
+
+  /**
+   * Strict Dragonfly Delete-First & Cron Sync Queue Deletion:
+   * Key is deleted directly from Dragonfly DB first,
+   * and queued for the background Cron job to delete from MongoDB Atlas.
+   */
+  static async deleteFromDragonflyAndEnqueueSync(
+    entity: MutationEntity,
+    key: string,
+    targetId?: string,
+  ): Promise<boolean> {
+    await this.del(key);
+
+    DragonflyCronSyncService.enqueueMutation(entity, "DELETE", key, undefined, targetId).catch(
+      (err) => {
+        console.warn(`[Dragonfly Cron Queue] Failed to enqueue delete mutation task:`, err);
+      },
+    );
+
+    return true;
+  }
+
+  /**
+   * Strict Dragonfly Write-First & Simultaneous DB Sync Webhook + Cron Fallback
    */
   static async writeToDragonflyAndSyncDb<T>(
     key: string,

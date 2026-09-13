@@ -232,6 +232,8 @@ export interface AvailableJob {
   requirements: string[];
   benefits: string[];
   skills: string[];
+  companyName?: string;
+  companyId?: string;
 }
 
 export interface CandidatePortalState {

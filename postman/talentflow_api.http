@@ -1,0 +1,312 @@
+### TalentFlow API & JWT HTTP Request Collection
+### For VS Code REST Client, Thunder Client, or JetBrains HTTP Client
+
+@baseUrl = http://localhost:5000
+@jwtToken = 
+
+###############################################################################
+### 1. SYSTEM HEALTH
+###############################################################################
+
+### Health Check
+GET {{baseUrl}}/api/health
+Accept: application/json
+
+### System Health Alias
+GET {{baseUrl}}/api/system-health
+Accept: application/json
+
+
+###############################################################################
+### 2. AUTHENTICATION & JWT
+###############################################################################
+
+### 1. Sign In (Returns JWT Token & Session)
+# @name signIn
+POST {{baseUrl}}/api/auth/signin
+Content-Type: application/json
+
+{
+  "email": "admin@talentflow.io",
+  "password": "Admin@1234"
+}
+
+### 2. Candidate Quick Registration
+POST {{baseUrl}}/api/auth/signup
+Content-Type: application/json
+
+{
+  "email": "candidate.test@example.com",
+  "password": "CandidatePass@123",
+  "fullName": "Alex Test Candidate",
+  "role": "candidate",
+  "phone": "+1-555-0199",
+  "country": "United States"
+}
+
+### 3. Full Onboarding Registration
+POST {{baseUrl}}/api/auth/signup-details
+Content-Type: application/json
+
+{
+  "email": "talent.hr@acmetech.io",
+  "password": "CompanyPass@123",
+  "fullName": "Sarah HR Manager",
+  "role": "company",
+  "companyName": "Acme Technology Inc",
+  "phone": "+1-555-0188",
+  "industry": "Technology & Software",
+  "companySize": "51-200 Employees",
+  "timezone": "America/New_York",
+  "currency": "USD",
+  "termsAccepted": true,
+  "captchaVerified": true
+}
+
+### 4. Get Current User Profile via Bearer JWT (/me)
+GET {{baseUrl}}/api/auth/me
+Authorization: Bearer {{jwtToken}}
+Accept: application/json
+
+### 5. Validate Session
+GET {{baseUrl}}/api/auth/session/validate
+Authorization: Bearer {{jwtToken}}
+Accept: application/json
+
+### 6. Send Verification Email
+POST {{baseUrl}}/api/auth/verify-email
+Content-Type: application/json
+
+{
+  "email": "candidate.test@example.com"
+}
+
+### 7. Check Email Verification Status
+GET {{baseUrl}}/api/auth/check-verified?email=candidate.test@example.com
+Accept: application/json
+
+### 8. Send OTP Code
+POST {{baseUrl}}/api/auth/otp/send
+Content-Type: application/json
+
+{
+  "destination": "+15550199"
+}
+
+### 9. Verify OTP Code
+POST {{baseUrl}}/api/auth/otp/verify
+Content-Type: application/json
+
+{
+  "userEnteredOtp": "123456",
+  "expectedOtp": "123456"
+}
+
+### 10. Sign Out
+POST {{baseUrl}}/api/auth/signout
+Authorization: Bearer {{jwtToken}}
+
+
+###############################################################################
+### 3. PLATFORM ADMIN
+###############################################################################
+
+### Platform Stats
+GET {{baseUrl}}/api/admin/stats
+Authorization: Bearer {{jwtToken}}
+Accept: application/json
+
+### Admin Settings
+GET {{baseUrl}}/api/admin/settings
+Authorization: Bearer {{jwtToken}}
+Accept: application/json
+
+### Update Admin Settings
+POST {{baseUrl}}/api/admin/settings
+Authorization: Bearer {{jwtToken}}
+Content-Type: application/json
+
+{
+  "platformName": "TalentFlow Enterprise",
+  "maintenanceMode": false,
+  "allowSignups": true,
+  "defaultCurrency": "USD"
+}
+
+### Admin Operational Health
+GET {{baseUrl}}/api/admin/health
+Authorization: Bearer {{jwtToken}}
+Accept: application/json
+
+### Platform Audit Logs
+GET {{baseUrl}}/api/admin/audit-logs
+Authorization: Bearer {{jwtToken}}
+Accept: application/json
+
+### Clear Dragonfly Cache
+POST {{baseUrl}}/api/admin/cache/clear
+Authorization: Bearer {{jwtToken}}
+Content-Type: application/json
+
+{
+  "pattern": "*"
+}
+
+### Get Dragonfly-to-Mongo Cron Sync Status
+GET {{baseUrl}}/api/admin/sync/status
+Authorization: Bearer {{jwtToken}}
+Accept: application/json
+
+### Trigger Immediate Manual Cron Sync (Dragonfly -> MongoDB)
+POST {{baseUrl}}/api/admin/sync/trigger
+Authorization: Bearer {{jwtToken}}
+Accept: application/json
+
+
+###############################################################################
+### 4. CANDIDATES
+###############################################################################
+
+### Get All Candidates
+GET {{baseUrl}}/api/candidates
+Authorization: Bearer {{jwtToken}}
+Accept: application/json
+
+### Save / Update Candidate Profile
+POST {{baseUrl}}/api/candidates
+Authorization: Bearer {{jwtToken}}
+Content-Type: application/json
+
+{
+  "id": "cand-alex-01",
+  "fullName": "Alex Morgan",
+  "email": "alex.morgan@talentflow.io",
+  "headline": "Senior Full-Stack Cloud Architect",
+  "location": "San Francisco, CA",
+  "skills": ["React", "TypeScript", "Node.js", "MongoDB", "Redis"],
+  "experienceYears": 7,
+  "stage": "offer_signing"
+}
+
+### Get Candidate by ID
+GET {{baseUrl}}/api/candidates/cand-alex-01
+Authorization: Bearer {{jwtToken}}
+Accept: application/json
+
+### Search Candidate by Email
+GET {{baseUrl}}/api/candidates/search/email?email=alex.morgan@talentflow.io
+Authorization: Bearer {{jwtToken}}
+Accept: application/json
+
+### Link Company to Candidate
+POST {{baseUrl}}/api/candidates/cand-alex-01/add-company
+Authorization: Bearer {{jwtToken}}
+Content-Type: application/json
+
+{
+  "companyId": "comp-acme-corp",
+  "companyName": "Acme Corp"
+}
+
+
+###############################################################################
+### 5. COMPANIES
+###############################################################################
+
+### Get All Companies
+GET {{baseUrl}}/api/companies
+Authorization: Bearer {{jwtToken}}
+Accept: application/json
+
+### Save / Update Company
+POST {{baseUrl}}/api/companies
+Authorization: Bearer {{jwtToken}}
+Content-Type: application/json
+
+{
+  "id": "comp-acme-corp",
+  "name": "Acme Global Corporation",
+  "subdomain": "acme",
+  "domain": "acme.com",
+  "industry": "Enterprise Software",
+  "size": "201-500 Employees",
+  "brandColor": "#4f46e5"
+}
+
+### Get Company by ID
+GET {{baseUrl}}/api/companies/comp-acme-corp
+Authorization: Bearer {{jwtToken}}
+Accept: application/json
+
+### Enroll Candidate into Company Pipeline
+POST {{baseUrl}}/api/companies/comp-acme-corp/register-candidate
+Authorization: Bearer {{jwtToken}}
+Content-Type: application/json
+
+{
+  "candidate": {
+    "id": "cand-alex-01",
+    "email": "alex.morgan@talentflow.io",
+    "name": "Alex Morgan"
+  }
+}
+
+
+###############################################################################
+### 6. JOBS & ATS
+###############################################################################
+
+### Get All Jobs
+GET {{baseUrl}}/api/jobs
+Accept: application/json
+
+### Create Job Opening
+POST {{baseUrl}}/api/jobs
+Authorization: Bearer {{jwtToken}}
+Content-Type: application/json
+
+{
+  "title": "Principal Cloud Infrastructure Engineer",
+  "companyId": "comp-acme-corp",
+  "companyName": "Acme Corp",
+  "department": "Infrastructure & Reliability",
+  "location": "Remote",
+  "type": "Full-Time",
+  "salary": "$160,000 - $210,000",
+  "status": "published",
+  "description": "Lead next generation cloud native infrastructure deployments."
+}
+
+### Get Jobs for Company
+GET {{baseUrl}}/api/jobs/company/comp-acme-corp
+Accept: application/json
+
+### Update Job Status
+PATCH {{baseUrl}}/api/jobs/job-101/status
+Authorization: Bearer {{jwtToken}}
+Content-Type: application/json
+
+{
+  "status": "published"
+}
+
+
+###############################################################################
+### 7. GRAVITON SOLUTIONS & LEADS
+###############################################################################
+
+### Graviton Health
+GET {{baseUrl}}/api/graviton/health
+Accept: application/json
+
+### Submit Consultation Lead
+POST {{baseUrl}}/api/graviton/leads
+Content-Type: application/json
+
+{
+  "name": "David Johnson",
+  "email": "david.j@techstart.com",
+  "company": "TechStart Labs",
+  "serviceNeeded": "Custom Cloud CRM Implementation",
+  "message": "We are looking to migrate our hiring workflow to a dedicated multi-tenant TalentFlow workspace."
+}

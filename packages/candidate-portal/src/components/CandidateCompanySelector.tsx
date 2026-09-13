@@ -20,6 +20,8 @@ import {
   ListFilter,
   Check,
   Lock,
+  LogIn,
+  UserPlus,
 } from "lucide-react";
 import { CompanyApiService, CompanyDocument, JobApiService } from "@talent-flow/api";
 import CTASection from "./CTASection";
@@ -28,11 +30,15 @@ import { Footer } from "./Footer";
 interface CandidateCompanySelectorProps {
   onSelectCompany: (company: CompanyDocument) => void;
   onRegisterCandidature?: () => void;
+  onLogin?: () => void;
+  onSignup?: () => void;
 }
 
 export const CandidateCompanySelector: React.FC<CandidateCompanySelectorProps> = ({
   onSelectCompany,
   onRegisterCandidature,
+  onLogin,
+  onSignup,
 }) => {
   const [companies, setCompanies] = useState<CompanyDocument[]>([]);
   const [loading, setLoading] = useState(true);
@@ -124,6 +130,28 @@ export const CandidateCompanySelector: React.FC<CandidateCompanySelectorProps> =
       .replace(/-+/g, "-");
   };
 
+  const handleLogin = () => {
+    if (onLogin) {
+      onLogin();
+    } else {
+      if (typeof window !== "undefined") {
+        window.history.pushState({}, "", "/candidates-portal/login");
+        window.dispatchEvent(new PopStateEvent("popstate"));
+      }
+    }
+  };
+
+  const handleSignup = () => {
+    if (onSignup) {
+      onSignup();
+    } else {
+      if (typeof window !== "undefined") {
+        window.history.pushState({}, "", "/candidates-portal/signup");
+        window.dispatchEvent(new PopStateEvent("popstate"));
+      }
+    }
+  };
+
   const handleRegisterCandidature = () => {
     if (onRegisterCandidature) {
       onRegisterCandidature();
@@ -199,20 +227,23 @@ export const CandidateCompanySelector: React.FC<CandidateCompanySelectorProps> =
             </nav>
 
             {/* Right Side Buttons */}
-            <div className="hidden lg:flex items-center gap-3">
-              <a
-                href="/companies"
-                className="px-3.5 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+            <div className="hidden lg:flex items-center gap-2.5">
+              <button
+                type="button"
+                onClick={handleLogin}
+                className="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-accent border border-transparent hover:border-border transition-all flex items-center gap-1.5 cursor-pointer"
               >
-                Employer Portal
-              </a>
+                <LogIn className="size-3.5 text-ember" />
+                <span>Login</span>
+              </button>
 
               <button
-                onClick={handleRegisterCandidature}
-                className="clip-path-button-sm bg-ember text-ember-foreground px-6 py-2.5 text-xs font-semibold hover:bg-ember/90 shadow-lifted transition-all flex items-center gap-2 cursor-pointer transform hover:-translate-y-0.5 active:scale-95"
+                type="button"
+                onClick={handleSignup}
+                className="clip-path-button-sm bg-ember text-ember-foreground px-5 py-2 text-xs font-semibold hover:bg-ember/90 shadow-lifted transition-all flex items-center gap-1.5 cursor-pointer transform hover:-translate-y-0.5 active:scale-95"
               >
-                <Users className="size-3.5" />
-                <span>Register Candidature</span>
+                <UserPlus className="size-3.5" />
+                <span>Sign Up</span>
                 <ArrowRight className="size-3.5" />
               </button>
             </div>
@@ -274,21 +305,27 @@ export const CandidateCompanySelector: React.FC<CandidateCompanySelectorProps> =
             </div>
 
             <div className="pt-3 border-t border-border/60 flex flex-col gap-2">
-              <a
-                href="/companies"
-                className="py-2.5 rounded-xl bg-surface border border-border text-xs font-semibold text-center text-foreground hover:bg-accent"
-              >
-                Employer Portal
-              </a>
               <button
+                type="button"
                 onClick={() => {
                   setMobileNavOpen(false);
-                  handleRegisterCandidature();
+                  handleLogin();
+                }}
+                className="w-full py-2.5 rounded-xl bg-surface border border-border text-xs font-semibold text-center text-foreground hover:bg-accent flex items-center justify-center gap-2 cursor-pointer transition-colors"
+              >
+                <LogIn className="size-3.5 text-ember" />
+                <span>Login</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileNavOpen(false);
+                  handleSignup();
                 }}
                 className="w-full clip-path-button-sm bg-ember text-ember-foreground py-2.5 text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer shadow-xs"
               >
-                <Users className="size-3.5" />
-                <span>Register Candidature</span>
+                <UserPlus className="size-3.5" />
+                <span>Sign Up</span>
                 <ArrowRight className="size-3.5" />
               </button>
             </div>

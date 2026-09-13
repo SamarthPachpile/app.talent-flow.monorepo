@@ -80,7 +80,9 @@ export class AdminApiService {
 
   static async fetchSettingsFromDb(): Promise<PlatformAdminSettings> {
     try {
-      const res = await adminHttpClient.get<PlatformAdminSettings>("/api/settings/admin");
+      const res = await adminHttpClient.get<PlatformAdminSettings>(
+        "/api/system-settings/admin-settings",
+      );
       if (res.data) {
         if (typeof window !== "undefined") {
           localStorage.setItem(STORAGE_KEY_ADMIN_SETTINGS, JSON.stringify(res.data));
@@ -100,7 +102,10 @@ export class AdminApiService {
     const updated = { ...current, ...settings };
 
     try {
-      const res = await adminHttpClient.post<PlatformAdminSettings>("/api/settings/admin", updated);
+      const res = await adminHttpClient.post<PlatformAdminSettings>(
+        "/api/system-settings/admin-settings",
+        updated,
+      );
       if (res.data) {
         if (typeof window !== "undefined") {
           localStorage.setItem(STORAGE_KEY_ADMIN_SETTINGS, JSON.stringify(res.data));

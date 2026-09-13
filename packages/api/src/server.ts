@@ -20,6 +20,11 @@ export async function startServer() {
       logger.warn(`Dragonfly initialization notice: ${err?.message || err}`);
     });
 
+    // Initialize Dragonfly -> MongoDB Background Cron Synchronization Worker
+    const { initializeDragonflyMongoCronSync } = await import("./services/mongoCronSyncInit");
+    initializeDragonflyMongoCronSync(3000);
+    logger.info("Dragonfly -> MongoDB Atlas background Cron Worker initialized.");
+
     const app = createApp();
 
     const server = app.listen(PORT, HOST, () => {

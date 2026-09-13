@@ -37,39 +37,42 @@ export function createApp(): Express {
   const passport = configurePassport();
   app.use(passport.initialize());
 
-  app.get("/api/health", (_req: Request, res: Response) => {
-    const dbStatus = getDbStatus();
-    const dragonflyConfig = getDragonflyConfig();
+  app.get(
+    ["/api/system-health", "/api/server-health", "/api/health"],
+    (_req: Request, res: Response) => {
+      const dbStatus = getDbStatus();
+      const dragonflyConfig = getDragonflyConfig();
 
-    return successResponse(
-      res,
-      httpStatusCodes.SUCCESS,
-      "TalentFlow API Server is healthy and operational",
-      {
-        service: "TalentFlow Core API",
-        status: "healthy",
-        timestamp: new Date().toISOString(),
-        environment: config.environment,
-        database: {
-          engine: "MongoDB Atlas",
-          connected: dbStatus.connected,
-          readyState: dbStatus.readyState,
-          name: dbStatus.database,
-          host: dbStatus.host,
+      return successResponse(
+        res,
+        httpStatusCodes.SUCCESS,
+        "TalentFlow API Server is healthy and operational",
+        {
+          service: "TalentFlow Core API",
+          status: "healthy",
+          timestamp: new Date().toISOString(),
+          environment: config.environment,
+          database: {
+            engine: "MongoDB Atlas",
+            connected: dbStatus.connected,
+            readyState: dbStatus.readyState,
+            name: dbStatus.database,
+            host: dbStatus.host,
+          },
+          cache: {
+            engine: "Dragonfly DB",
+            configured: dragonflyConfig.isConfigured,
+            host: dragonflyConfig.host,
+            port: dragonflyConfig.port,
+          },
+          auth: {
+            engine: "Passport.js + JWT",
+            googleAuthEnabled: Boolean(config.GOOGLE_CLIENT_ID),
+          },
         },
-        cache: {
-          engine: "Dragonfly DB",
-          configured: dragonflyConfig.isConfigured,
-          host: dragonflyConfig.host,
-          port: dragonflyConfig.port,
-        },
-        auth: {
-          engine: "Passport.js + JWT",
-          googleAuthEnabled: Boolean(config.GOOGLE_CLIENT_ID),
-        },
-      },
-    );
-  });
+      );
+    },
+  );
 
   app.use("/api", apiRouter);
 

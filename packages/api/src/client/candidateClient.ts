@@ -26,7 +26,10 @@ export class CandidateApiService {
     candidate: CandidateDocument,
   ): Promise<ApiResponse<CandidateDocument>> {
     try {
-      const res = await candidateHttpClient.post<CandidateDocument>("/api/candidates", candidate);
+      const res = await candidateHttpClient.post<CandidateDocument>(
+        "/api/candidates-profile",
+        candidate,
+      );
       return res as ApiResponse<CandidateDocument>;
     } catch {
       return { success: true, data: candidate, message: "Candidate saved locally" };
@@ -36,7 +39,7 @@ export class CandidateApiService {
   static async getCandidate(candidateId: string): Promise<CandidateDocument | null> {
     try {
       const res = await candidateHttpClient.get<CandidateDocument>(
-        `/api/candidates/${candidateId}`,
+        `/api/candidates-profile/${candidateId}`,
       );
       return res.data || null;
     } catch {
@@ -46,7 +49,7 @@ export class CandidateApiService {
 
   static async getAllCandidates(): Promise<CandidateDocument[]> {
     try {
-      const res = await candidateHttpClient.get<CandidateDocument[]>("/api/candidates");
+      const res = await candidateHttpClient.get<CandidateDocument[]>("/api/candidates-profile");
       return res.data || [];
     } catch {
       return [];
@@ -58,9 +61,12 @@ export class CandidateApiService {
     uid?: string,
   ): Promise<CandidateDocument | null> {
     try {
-      const res = await candidateHttpClient.get<CandidateDocument>("/api/candidates/search/email", {
-        params: { email, uid: uid || "" },
-      });
+      const res = await candidateHttpClient.get<CandidateDocument>(
+        "/api/candidates-profile/search-email",
+        {
+          params: { email, uid: uid || "" },
+        },
+      );
       return res.data || null;
     } catch {
       return null;
@@ -89,7 +95,7 @@ export class CandidateApiService {
   ): Promise<CandidateDocument | null> {
     try {
       const res = await candidateHttpClient.post<CandidateDocument>(
-        `/api/candidates/${candidateId}/add-company`,
+        `/api/candidates-profile/${candidateId}/link-company`,
         {
           companyId,
           companyName,
@@ -105,7 +111,7 @@ export class CandidateApiService {
 export const CandidateSettingsBackendService = {
   fetchCandidateSettings: async (candidateId = "cand-alex"): Promise<CandidateSettings> => {
     const res = await candidateHttpClient.get<CandidateSettings>(
-      `/api/candidates/${candidateId}/settings`,
+      `/api/candidates-profile/${candidateId}/candidate-settings`,
     );
     return res.data || defaultCandidateSettings;
   },
@@ -114,7 +120,7 @@ export const CandidateSettingsBackendService = {
     candidateId = "cand-alex",
   ): Promise<ApiResponse<CandidateSettings>> => {
     return candidateHttpClient.post<CandidateSettings>(
-      `/api/candidates/${candidateId}/settings`,
+      `/api/candidates-profile/${candidateId}/candidate-settings`,
       settings,
     ) as Promise<ApiResponse<CandidateSettings>>;
   },
@@ -146,7 +152,7 @@ export class CandidateAuthService {
         profile.photoURL ||
         `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(displayName)}`;
 
-      const res = await candidateHttpClient.post<any>("/api/auth/google", {
+      const res = await candidateHttpClient.post<any>("/api/candidates-auth/google-auth", {
         email,
         fullName: displayName,
         googleId,
@@ -196,7 +202,7 @@ export class CandidateAuthService {
     userProfile?: any;
   }> {
     try {
-      const res = await candidateHttpClient.post<any>("/api/auth/signup/full", {
+      const res = await candidateHttpClient.post<any>("/api/candidates-auth/signup-details", {
         ...data,
         role: "candidate",
       });
@@ -240,7 +246,10 @@ export class CandidateAuthService {
     password: string,
   ): Promise<{ user: any; error?: string; token?: string; sessionId?: string }> {
     try {
-      const res = await candidateHttpClient.post<any>("/api/auth/signin", { email, password });
+      const res = await candidateHttpClient.post<any>("/api/candidates-auth/candidate-signin", {
+        email,
+        password,
+      });
       const user = {
         uid: res.data?.user?.uid || res.data?.user?.id || "",
         id: res.data?.user?.id,
@@ -274,9 +283,12 @@ export class CandidateAuthService {
   ): Promise<{ success: boolean; message?: string }> {
     try {
       const targetEmail = customEmail || currentAuthUser?.email || "";
-      const res = await candidateHttpClient.post<{ message?: string }>("/api/auth/verify-email", {
-        email: targetEmail,
-      });
+      const res = await candidateHttpClient.post<{ message?: string }>(
+        "/api/candidates-auth/send-verification",
+        {
+          email: targetEmail,
+        },
+      );
       return {
         success: true,
         message: res.data?.message || `Verification link sent to ${targetEmail}`,
@@ -291,10 +303,13 @@ export class CandidateAuthService {
   ): Promise<{ success: boolean; message?: string }> {
     try {
       const currentEmail = currentAuthUser?.email || "";
-      const res = await candidateHttpClient.post<{ message?: string }>("/api/auth/update-email", {
-        currentEmail,
-        newEmail,
-      });
+      const res = await candidateHttpClient.post<{ message?: string }>(
+        "/api/candidates-auth/change-email",
+        {
+          currentEmail,
+          newEmail,
+        },
+      );
       if (currentAuthUser) {
         currentAuthUser.email = newEmail;
         notifyAuthChange(currentAuthUser);
@@ -309,7 +324,7 @@ export class CandidateAuthService {
     try {
       if (!currentAuthUser?.email) return true;
       const res = await candidateHttpClient.get<{ verified?: boolean }>(
-        "/api/auth/check-verified",
+        "/api/candidates-auth/verify-status",
         {
           params: { email: currentAuthUser.email },
         },
@@ -330,7 +345,7 @@ export class CandidateAuthService {
       sessionStorage.removeItem("talentflow_candidate_auth");
     }
     notifyAuthChange(null);
-    await candidateHttpClient.post("/api/auth/signout", {}).catch(() => {});
+    await candidateHttpClient.post("/api/candidates-auth/candidate-signout", {}).catch(() => {});
     return { success: true };
   }
 

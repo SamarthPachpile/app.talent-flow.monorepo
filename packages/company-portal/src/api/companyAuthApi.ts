@@ -106,7 +106,7 @@ export const CompanyAuthService = {
           role?: string;
         };
         token?: string;
-      }>("/api/auth/google", {
+      }>("/api/companies-auth/google-auth", {
         email,
         fullName: displayName,
         googleId,
@@ -149,7 +149,7 @@ export const CompanyAuthService = {
           role?: string;
         };
         token?: string;
-      }>("/api/auth/signup", {
+      }>("/api/companies-auth/company-signup", {
         email,
         password,
         fullName: displayName || email.split("@")[0],
@@ -192,7 +192,7 @@ export const CompanyAuthService = {
         userProfile?: Record<string, unknown>;
         verificationSent?: boolean;
         token?: string;
-      }>("/api/auth/signup/full", {
+      }>("/api/companies-auth/signup-details", {
         ...data,
         role: "company",
       });
@@ -229,9 +229,12 @@ export const CompanyAuthService = {
   ): Promise<{ success: boolean; message?: string }> {
     try {
       const targetEmail = customEmail || currentAuthUser?.email || "";
-      const res = await companyHttpClient.post<{ message?: string }>("/api/auth/verify-email", {
-        email: targetEmail,
-      });
+      const res = await companyHttpClient.post<{ message?: string }>(
+        "/api/companies-auth/send-verification",
+        {
+          email: targetEmail,
+        },
+      );
       return {
         success: true,
         message: res.data?.message || `Verification link dispatched to ${targetEmail}.`,
@@ -249,10 +252,13 @@ export const CompanyAuthService = {
   ): Promise<{ success: boolean; message?: string }> {
     try {
       const currentEmail = currentAuthUser?.email || "";
-      const res = await companyHttpClient.post<{ message?: string }>("/api/auth/update-email", {
-        currentEmail,
-        newEmail,
-      });
+      const res = await companyHttpClient.post<{ message?: string }>(
+        "/api/companies-auth/change-email",
+        {
+          currentEmail,
+          newEmail,
+        },
+      );
 
       if (currentAuthUser) {
         currentAuthUser.email = newEmail;
@@ -274,9 +280,12 @@ export const CompanyAuthService = {
   async checkEmailVerified(): Promise<boolean> {
     try {
       if (!currentAuthUser?.email) return true;
-      const res = await companyHttpClient.get<{ verified?: boolean }>("/api/auth/check-verified", {
-        params: { email: currentAuthUser.email },
-      });
+      const res = await companyHttpClient.get<{ verified?: boolean }>(
+        "/api/companies-auth/verify-status",
+        {
+          params: { email: currentAuthUser.email },
+        },
+      );
       return res.data?.verified ?? true;
     } catch {
       return true;
@@ -295,7 +304,7 @@ export const CompanyAuthService = {
           role?: string;
         };
         token?: string;
-      }>("/api/auth/signin", {
+      }>("/api/companies-auth/company-signin", {
         email,
         password,
       });
@@ -307,7 +316,7 @@ export const CompanyAuthService = {
         displayName: res.data?.user?.fullName,
         fullName: res.data?.user?.fullName,
         emailVerified: res.data?.user?.emailVerified ?? true,
-        role: res.data?.user?.role || "company",
+        role: "company",
       };
 
       if (res.data?.token && typeof window !== "undefined") {
@@ -332,7 +341,7 @@ export const CompanyAuthService = {
         localStorage.removeItem("talentflow_company_auth");
       }
       notifyAuthChange(null);
-      await companyHttpClient.post("/api/auth/signout", {}).catch(() => {});
+      await companyHttpClient.post("/api/companies-auth/company-signout", {}).catch(() => {});
       return { success: true };
     } catch {
       return { success: true };
