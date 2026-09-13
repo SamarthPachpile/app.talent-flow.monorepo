@@ -9,25 +9,24 @@ const app = createApp();
 
 async function bootstrap() {
   if (!isInitialized) {
-    try {
-      await connectToDatabase();
-    } catch (err) {
-      console.error("[Vercel API] MongoDB connection error:", err);
+    isInitialized = true;
+    if (process.env.MONGODB_URI) {
+      connectToDatabase().catch((err) => {
+        console.warn("[Vercel API] MongoDB initial connection notice:", err?.message || err);
+      });
     }
 
-    try {
-      await getDragonflyClient();
-    } catch (err) {
-      console.warn("[Vercel API] Dragonfly / Redis init notice:", err);
+    if (process.env.DRAGONFLY_HOST || process.env.REDIS_HOST) {
+      getDragonflyClient().catch((err) => {
+        console.warn("[Vercel API] Dragonfly / Redis initial connection notice:", err?.message || err);
+      });
     }
 
     try {
       initializeDragonflyMongoCronSync(3000);
     } catch (err) {
-      console.error("[Vercel API] Cron Sync initialization error:", err);
+      console.warn("[Vercel API] Cron Sync initialization notice:", err);
     }
-
-    isInitialized = true;
   }
 }
 
