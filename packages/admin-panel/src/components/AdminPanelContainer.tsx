@@ -15,13 +15,13 @@ export function AdminPanelContainer() {
     if (typeof window !== "undefined") {
       return window.location.pathname;
     }
-    return "/admin-panel/login";
+    return "/dashboard";
   });
 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
     if (typeof window !== "undefined") {
       const cleanPath = window.location.pathname.split("?")[0].replace(/\/+$/, "");
-      if (cleanPath.endsWith("/login")) {
+      if (cleanPath.endsWith("/login") || cleanPath === "/login") {
         return false;
       }
       return !!localStorage.getItem("talentflow_admin_auth");

@@ -3,4 +3,4 @@ export * from "./c-types";
 export * from "./enums";
 export * from "./constants";
 export * as constants from "./constants";
-export * from "./models";
+export type * from "./models";

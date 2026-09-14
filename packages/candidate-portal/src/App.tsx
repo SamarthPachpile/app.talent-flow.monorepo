@@ -22,17 +22,37 @@ import {
 
 type CandidatePortalView = "companies_list" | "auth" | "wizard" | "dashboard" | "company_root";
 
+export const getCandidateBasePath = () => {
+  if (typeof window === "undefined") return "";
+  const p = window.location.pathname;
+  if (p.startsWith("/candidates-portal")) return "/candidates-portal";
+  if (p.startsWith("/candidate-portal")) return "/candidate-portal";
+  if (p.startsWith("/candidates")) return "/candidates";
+  return "";
+};
+
+export const buildCandidateUrl = (subpath: string) => {
+  const base = getCandidateBasePath();
+  const cleanSub = subpath.startsWith("/") ? subpath : `/${subpath}`;
+  if (!base) return cleanSub;
+  if (cleanSub === "/" || cleanSub === "") return base;
+  return `${base}${cleanSub}`;
+};
+
 const getRouteInfo = (pathname: string) => {
   const clean = pathname.split("?")[0].replace(/\/+$/, "");
-  const segments = clean.split("/").filter(Boolean);
+  let segments = clean.split("/").filter(Boolean);
 
   if (
-    segments.length === 0 ||
-    (segments.length === 1 &&
-      (segments[0] === "candidates-portal" ||
-        segments[0] === "candidate-portal" ||
-        segments[0] === "candidates"))
+    segments.length > 0 &&
+    (segments[0] === "candidates-portal" ||
+      segments[0] === "candidate-portal" ||
+      segments[0] === "candidates")
   ) {
+    segments = segments.slice(1);
+  }
+
+  if (segments.length === 0) {
     return {
       targetView: "companies_list" as CandidatePortalView,
       companySlug: null,
@@ -40,83 +60,71 @@ const getRouteInfo = (pathname: string) => {
     };
   }
 
-  if (
-    segments[0] === "candidates-portal" ||
-    segments[0] === "candidate-portal" ||
-    segments[0] === "candidates"
-  ) {
-    if (segments[1] === "login" || segments[1] === "auth") {
-      return {
-        targetView: "auth" as CandidatePortalView,
-        companySlug: null,
-        authMode: "login" as "login" | "signup",
-      };
-    }
-    if (segments[1] === "signup" || segments[1] === "register") {
-      return {
-        targetView: "auth" as CandidatePortalView,
-        companySlug: null,
-        authMode: "signup" as "login" | "signup",
-      };
-    }
-    if (segments[1] === "dashboard") {
-      return {
-        targetView: "dashboard" as CandidatePortalView,
-        companySlug: null,
-        authMode: "login" as "login" | "signup",
-      };
-    }
-    if (segments[1] === "wizard") {
-      return {
-        targetView: "wizard" as CandidatePortalView,
-        companySlug: null,
-        authMode: "login" as "login" | "signup",
-      };
-    }
-
-    const companySlug = segments[1];
-    const action = segments[2];
-
-    if (action === "login" || action === "auth") {
-      return {
-        targetView: "auth" as CandidatePortalView,
-        companySlug,
-        authMode: "login" as "login" | "signup",
-      };
-    }
-    if (action === "signup" || action === "register") {
-      return {
-        targetView: "auth" as CandidatePortalView,
-        companySlug,
-        authMode: "signup" as "login" | "signup",
-      };
-    }
-    if (action === "wizard") {
-      return {
-        targetView: "wizard" as CandidatePortalView,
-        companySlug,
-        authMode: "login" as "login" | "signup",
-      };
-    }
-    if (action === "dashboard") {
-      return {
-        targetView: "dashboard" as CandidatePortalView,
-        companySlug,
-        authMode: "login" as "login" | "signup",
-      };
-    }
-
-    // Default root route for company portal: /candidates-portal/<company_name>/
+  if (segments[0] === "login" || segments[0] === "auth") {
     return {
-      targetView: "company_root" as CandidatePortalView,
+      targetView: "auth" as CandidatePortalView,
+      companySlug: null,
+      authMode: "login" as "login" | "signup",
+    };
+  }
+  if (segments[0] === "signup" || segments[0] === "register") {
+    return {
+      targetView: "auth" as CandidatePortalView,
+      companySlug: null,
+      authMode: "signup" as "login" | "signup",
+    };
+  }
+  if (segments[0] === "dashboard") {
+    return {
+      targetView: "dashboard" as CandidatePortalView,
+      companySlug: null,
+      authMode: "login" as "login" | "signup",
+    };
+  }
+  if (segments[0] === "wizard") {
+    return {
+      targetView: "wizard" as CandidatePortalView,
+      companySlug: null,
+      authMode: "login" as "login" | "signup",
+    };
+  }
+
+  const companySlug = segments[0];
+  const action = segments[1];
+
+  if (action === "login" || action === "auth") {
+    return {
+      targetView: "auth" as CandidatePortalView,
+      companySlug,
+      authMode: "login" as "login" | "signup",
+    };
+  }
+  if (action === "signup" || action === "register") {
+    return {
+      targetView: "auth" as CandidatePortalView,
+      companySlug,
+      authMode: "signup" as "login" | "signup",
+    };
+  }
+  if (action === "wizard") {
+    return {
+      targetView: "wizard" as CandidatePortalView,
+      companySlug,
+      authMode: "login" as "login" | "signup",
+    };
+  }
+  if (action === "dashboard") {
+    return {
+      targetView: "dashboard" as CandidatePortalView,
       companySlug,
       authMode: "login" as "login" | "signup",
     };
   }
 
+  // Default root route for company portal: /:companySlug
   return {
-    targetView: "companies_list" as CandidatePortalView,
-    companySlug: null,
+    targetView: "company_root" as CandidatePortalView,
+    companySlug,
     authMode: "login" as "login" | "signup",
   };
 };
@@ -126,7 +134,7 @@ export function App() {
     if (typeof window !== "undefined") {
       return window.location.pathname;
     }
-    return "/candidates-portal";
+    return "/";
   });
 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
@@ -294,8 +302,9 @@ export function App() {
     ) {
       const slug = route.companySlug || "company";
       if (typeof window !== "undefined" && !window.location.pathname.endsWith("/login")) {
-        window.history.pushState({}, "", `/candidates-portal/${slug}/login`);
-        setCurrentPath(`/candidates-portal/${slug}/login`);
+        const loginUrl = buildCandidateUrl(`/${slug}/login`);
+        window.history.pushState({}, "", loginUrl);
+        setCurrentPath(loginUrl);
       }
     }
   }, [currentPath, isAuthenticated]);
@@ -311,10 +320,11 @@ export function App() {
   }, []);
 
   const navigateTo = (path: string) => {
+    const targetUrl = buildCandidateUrl(path);
     if (typeof window !== "undefined") {
-      window.history.pushState({}, "", path);
+      window.history.pushState({}, "", targetUrl);
     }
-    setCurrentPath(path);
+    setCurrentPath(targetUrl);
   };
 
   const handleSelectCompanyFromList = (company: CompanyDocument) => {
@@ -327,7 +337,7 @@ export function App() {
       ...prev,
       candidate: { ...prev.candidate, companyName: company.name },
     }));
-    navigateTo(`/candidates-portal/${slug}/login`);
+    navigateTo(`/${slug}/login`);
   };
 
   const handleAuthSuccess = async (data: CandidateAuthSuccessData) => {
@@ -355,9 +365,7 @@ export function App() {
     if (data.isNewAccount) {
       toast.success("Welcome! You are now logged in to the Candidate Dashboard.");
     }
-    navigateTo(
-      companySlug ? `/candidates-portal/${companySlug}/dashboard` : "/candidates-portal/dashboard",
-    );
+    navigateTo(companySlug ? `/${companySlug}/dashboard` : "/dashboard");
   };
 
   const handleWizardCompleted = async (completedCandidate: CandidateDocument) => {
@@ -387,7 +395,7 @@ export function App() {
     toast.success(
       `Candidate profile for ${completedCandidate.fullName} saved to MongoDB Atlas & registered under company!`,
     );
-    navigateTo(`/candidates-portal/${companySlug}/dashboard`);
+    navigateTo(companySlug ? `/${companySlug}/dashboard` : "/dashboard");
   };
 
   const handleUpdateCandidateAvatar = async (newAvatarUrl: string) => {
@@ -431,9 +439,9 @@ export function App() {
       (activeCompany?.name ? activeCompany.name.toLowerCase().replace(/[^a-z0-9]/g, "-") : null);
 
     if (companySlug) {
-      navigateTo(`/candidates-portal/${companySlug}/login`);
+      navigateTo(`/${companySlug}/login`);
     } else {
-      navigateTo("/candidates-portal");
+      navigateTo("/");
     }
   };
 
@@ -519,7 +527,7 @@ export function App() {
 
             <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <button
-                onClick={() => navigateTo("/candidates-portal")}
+                onClick={() => navigateTo("/")}
                 className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-ember text-ember-foreground hover:bg-ember/90 font-semibold text-xs shadow-xs transition-colors cursor-pointer"
               >
                 <ArrowLeft className="size-4" />
@@ -528,7 +536,7 @@ export function App() {
               <button
                 onClick={() => {
                   const defaultSlug = "acme";
-                  navigateTo(`/candidates-portal/${defaultSlug}/login`);
+                  navigateTo(`/${defaultSlug}/login`);
                 }}
                 className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-surface border border-border hover:bg-accent text-foreground font-semibold text-xs transition-colors cursor-pointer"
               >
@@ -549,13 +557,13 @@ export function App() {
             onSelectCompany={handleSelectCompanyFromList}
             onRegisterCandidature={() => {
               const defaultSlug = "acme";
-              navigateTo(`/candidates-portal/${defaultSlug}/signup`);
+              navigateTo(`/${defaultSlug}/signup`);
             }}
             onLogin={() => {
-              navigateTo("/candidates-portal/login");
+              navigateTo("/login");
             }}
             onSignup={() => {
-              navigateTo("/candidates-portal/signup");
+              navigateTo("/signup");
             }}
           />
         </div>
@@ -576,8 +584,8 @@ export function App() {
             company={activeCompany}
             initialMode={routeInfo.authMode}
             onSuccess={handleAuthSuccess}
-            onBackToCompanies={() => navigateTo("/candidates-portal")}
-            onBackToHome={() => navigateTo("/candidates-portal")}
+            onBackToCompanies={() => navigateTo("/")}
+            onBackToHome={() => navigateTo("/")}
           />
         </div>
       );
@@ -619,9 +627,9 @@ export function App() {
                 .toLowerCase()
                 .replace(/[^a-z0-9]/g, "-")
                 .replace(/-+/g, "-");
-              navigateTo(`/candidates-portal/${slug}/dashboard`);
+              navigateTo(`/${slug}/dashboard`);
             } else {
-              navigateTo("/candidates-portal/dashboard");
+              navigateTo("/dashboard");
             }
           }}
         />

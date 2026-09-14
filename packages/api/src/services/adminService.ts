@@ -5,7 +5,7 @@ import type {
   BackendStatus,
 } from "@talent-flow/schema-types";
 import { defaultAdminSettings } from "@talent-flow/schema-types";
-import { Settings } from "@talent-flow/schema-types";
+import { Settings } from "@talent-flow/schema-types/models";
 import { DragonflyCacheService, getDragonflyConfig } from "@talent-flow/utilities/dragonfly";
 import { logger } from "@talent-flow/utilities";
 import { getDbStatus } from "../db/connection";

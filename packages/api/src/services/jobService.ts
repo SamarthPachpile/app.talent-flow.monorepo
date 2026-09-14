@@ -1,5 +1,5 @@
 import type { JobPosting } from "@talent-flow/schema-types";
-import { Job } from "@talent-flow/schema-types";
+import { Job } from "@talent-flow/schema-types/models";
 import { DragonflyCacheService } from "@talent-flow/utilities/dragonfly";
 import { logger } from "@talent-flow/utilities";
 

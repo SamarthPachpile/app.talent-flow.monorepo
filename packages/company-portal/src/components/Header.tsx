@@ -42,8 +42,9 @@ export const Header: React.FC<HeaderProps> = ({
   onNavigateRoute,
   onLogout,
 }) => {
-  const companySlug = companyName ? companyName.toLowerCase().replace(/[^a-z0-9]/g, "") : "company";
-  const dynamicDashPath = `/companies/${companySlug}/dashboard`;
+  const companySlug =
+    subdomain || (companyName ? companyName.toLowerCase().replace(/[^a-z0-9]/g, "") : "company");
+  const dynamicDashPath = `/${companySlug}/dashboard`;
 
   const navItems = isCompleted
     ? [
@@ -83,8 +84,10 @@ export const Header: React.FC<HeaderProps> = ({
     toast.info("Company workspace session signed out");
     if (onLogout) {
       onLogout();
+    } else if (onNavigateRoute) {
+      onNavigateRoute("/login", "auth");
     } else {
-      window.location.href = "/companies/login";
+      window.location.href = "/login";
     }
   };
 
@@ -96,7 +99,7 @@ export const Header: React.FC<HeaderProps> = ({
           <div
             onClick={() => {
               if (onNavigateRoute) {
-                onNavigateRoute("/companies", "home");
+                onNavigateRoute("/", "home");
               } else {
                 setActiveTab("home");
               }
