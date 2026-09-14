@@ -13,9 +13,6 @@ export interface GravitonApiResponse<T = unknown> {
   error?: unknown;
 }
 
-export const PRODUCTION_API_URL = "https://app-talent-flow-monorepo-api.vercel.app";
-export const DEVELOPMENT_API_URL = "http://localhost:5000";
-
 function getBaseUrl(): string {
   try {
     // @ts-ignore
@@ -27,8 +24,8 @@ function getBaseUrl(): string {
     // Fall back to process.env if import.meta is unavailable
   }
 
-  if (typeof process !== "undefined" && process.env?.VITE_API_URL) {
-    return String(process.env.VITE_API_URL).replace(/\/+$/, "");
+  if (typeof process !== "undefined" && (process.env?.VITE_API_URL || process.env?.API_URL)) {
+    return String(process.env.VITE_API_URL || process.env.API_URL).replace(/\/+$/, "");
   }
 
   const isProd =
@@ -36,7 +33,7 @@ function getBaseUrl(): string {
     (typeof import.meta !== "undefined" && Boolean(import.meta.env?.PROD)) ||
     (typeof process !== "undefined" && process.env?.NODE_ENV === "production");
 
-  return isProd ? PRODUCTION_API_URL : DEVELOPMENT_API_URL;
+  return isProd ? "" : "http://localhost:5000";
 }
 
 export async function gravitonApiRequest<T = unknown>(

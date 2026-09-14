@@ -9,15 +9,14 @@ const GOOGLE_CLIENT_ID =
   process.env.GOOGLE_CLIENT_ID || "mock_google_client_id.apps.googleusercontent.com";
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || "mock_google_client_secret";
 const isProd = process.env.NODE_ENV === "production" || Boolean(process.env.VERCEL);
-const defaultBaseUrl = isProd
-  ? "https://app-talent-flow-monorepo-api.vercel.app"
-  : "http://localhost:5000";
+const apiBase =
+  process.env.VITE_API_URL || process.env.API_URL || (isProd ? "" : "http://localhost:5000");
 
 const GOOGLE_CALLBACK_URL =
   process.env.GOOGLE_CALLBACK_URL ||
-  (process.env.VITE_API_URL
-    ? `${process.env.VITE_API_URL.replace(/\/+$/, "")}/api/auth/google/callback`
-    : `${defaultBaseUrl}/api/auth/google/callback`);
+  (apiBase
+    ? `${apiBase.replace(/\/+$/, "")}/api/auth/google/callback`
+    : "/api/auth/google/callback");
 
 export function configurePassport(): typeof passport {
   passport.serializeUser((entity: { id?: string; _id?: unknown }, done) => {

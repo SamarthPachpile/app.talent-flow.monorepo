@@ -6,21 +6,20 @@ import { logger } from "@talent-flow/utilities";
 const nodeEnv = process.env.NODE_ENV || "development";
 const isProduction = nodeEnv === "production" || Boolean(process.env.VERCEL);
 
-// Load env files in priority order:
-// 1. .env.local
-// 2. .env.production or .env.development
-// 3. .env
+// Load env files strictly in priority order:
+// 1. .env.[mode].local / .env.local
+// 2. .env.production (if production) or .env.development (if development)
 const searchDirs = [
   process.cwd(),
-  path.resolve(process.cwd(), "../../"),
-  path.resolve(process.cwd(), "../../../"),
+  path.resolve(process.cwd(), ".."),
+  path.resolve(process.cwd(), "../.."),
+  path.resolve(process.cwd(), "../../.."),
 ];
 
 const envFileNames = [
   `.env.${nodeEnv}.local`,
   ".env.local",
   isProduction ? ".env.production" : ".env.development",
-  ".env",
 ];
 
 for (const dir of searchDirs) {
@@ -32,16 +31,7 @@ for (const dir of searchDirs) {
   }
 }
 
-// Fallback constants
-export const PRODUCTION_API_URL = "https://app-talent-flow-monorepo-api.vercel.app";
-export const PRODUCTION_ADMIN_URL = "https://app-talent-flow-monorepo-admin-pane.vercel.app";
-export const PRODUCTION_CANDIDATE_URL = "https://app-talent-flow-monorepo-candidate.vercel.app";
-export const PRODUCTION_COMPANY_URL = "https://app-talent-flow-monorepo-company-po.vercel.app";
-export const PRODUCTION_LANDING_URL = "https://app-talent-flow-monorepo-graviton-i.vercel.app";
-export const PRODUCTION_GRAVITON_URL = "https://app-talent-flow-monorepo-graviton-i.vercel.app";
-export const DEVELOPMENT_API_URL = "http://localhost:5000";
-
-const defaultApiUrl = isProduction ? PRODUCTION_API_URL : DEVELOPMENT_API_URL;
+const defaultApiUrl = isProduction ? "" : "http://localhost:5000";
 const apiUrl = (process.env.VITE_API_URL || process.env.API_URL || defaultApiUrl).replace(
   /\/+$/,
   "",
@@ -102,23 +92,16 @@ export const config: ConfigType = {
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || "",
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET || "",
   GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL || `${apiUrl}/api/auth/google/callback`,
-  CLIENT_DOMAIN_URL:
-    process.env.CLIENT_DOMAIN_URL ||
-    (isProduction ? PRODUCTION_LANDING_URL : "http://localhost:3000"),
-  ADMIN_DOMAIN_URL:
-    process.env.ADMIN_DOMAIN_URL || (isProduction ? PRODUCTION_ADMIN_URL : "http://localhost:3001"),
+  CLIENT_DOMAIN_URL: process.env.CLIENT_DOMAIN_URL || (isProduction ? "" : "http://localhost:3000"),
+  ADMIN_DOMAIN_URL: process.env.ADMIN_DOMAIN_URL || (isProduction ? "" : "http://localhost:3001"),
   CANDIDATE_DOMAIN_URL:
-    process.env.CANDIDATE_DOMAIN_URL ||
-    (isProduction ? PRODUCTION_CANDIDATE_URL : "http://localhost:3003"),
+    process.env.CANDIDATE_DOMAIN_URL || (isProduction ? "" : "http://localhost:3003"),
   COMPANY_DOMAIN_URL:
-    process.env.COMPANY_DOMAIN_URL ||
-    (isProduction ? PRODUCTION_COMPANY_URL : "http://localhost:3002"),
+    process.env.COMPANY_DOMAIN_URL || (isProduction ? "" : "http://localhost:3002"),
   LANDING_DOMAIN_URL:
-    process.env.LANDING_DOMAIN_URL ||
-    (isProduction ? PRODUCTION_LANDING_URL : "http://localhost:3000"),
+    process.env.LANDING_DOMAIN_URL || (isProduction ? "" : "http://localhost:3000"),
   GRAVITON_DOMAIN_URL:
-    process.env.GRAVITON_DOMAIN_URL ||
-    (isProduction ? PRODUCTION_GRAVITON_URL : "http://localhost:3000"),
+    process.env.GRAVITON_DOMAIN_URL || (isProduction ? "" : "http://localhost:3000"),
 };
 
 export { logger };

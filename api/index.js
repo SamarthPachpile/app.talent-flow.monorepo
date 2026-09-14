@@ -469,14 +469,14 @@ var nodeEnv = process.env.NODE_ENV || "development";
 var isProduction = nodeEnv === "production" || Boolean(process.env.VERCEL);
 var searchDirs = [
   process.cwd(),
-  path.resolve(process.cwd(), "../../"),
-  path.resolve(process.cwd(), "../../../")
+  path.resolve(process.cwd(), ".."),
+  path.resolve(process.cwd(), "../.."),
+  path.resolve(process.cwd(), "../../..")
 ];
 var envFileNames = [
   `.env.${nodeEnv}.local`,
   ".env.local",
-  isProduction ? ".env.production" : ".env.development",
-  ".env"
+  isProduction ? ".env.production" : ".env.development"
 ];
 for (const dir of searchDirs) {
   for (const envFileName of envFileNames) {
@@ -486,14 +486,7 @@ for (const dir of searchDirs) {
     }
   }
 }
-var PRODUCTION_API_URL = "https://app-talent-flow-monorepo-api.vercel.app";
-var PRODUCTION_ADMIN_URL = "https://app-talent-flow-monorepo-admin-pane.vercel.app";
-var PRODUCTION_CANDIDATE_URL = "https://app-talent-flow-monorepo-candidate.vercel.app";
-var PRODUCTION_COMPANY_URL = "https://app-talent-flow-monorepo-company-po.vercel.app";
-var PRODUCTION_LANDING_URL = "https://app-talent-flow-monorepo-graviton-i.vercel.app";
-var PRODUCTION_GRAVITON_URL = "https://app-talent-flow-monorepo-graviton-i.vercel.app";
-var DEVELOPMENT_API_URL = "http://localhost:5000";
-var defaultApiUrl = isProduction ? PRODUCTION_API_URL : DEVELOPMENT_API_URL;
+var defaultApiUrl = isProduction ? "" : "http://localhost:5000";
 var apiUrl = (process.env.VITE_API_URL || process.env.API_URL || defaultApiUrl).replace(
   /\/+$/,
   ""
@@ -523,12 +516,12 @@ var config = {
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || "",
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET || "",
   GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL || `${apiUrl}/api/auth/google/callback`,
-  CLIENT_DOMAIN_URL: process.env.CLIENT_DOMAIN_URL || (isProduction ? PRODUCTION_LANDING_URL : "http://localhost:3000"),
-  ADMIN_DOMAIN_URL: process.env.ADMIN_DOMAIN_URL || (isProduction ? PRODUCTION_ADMIN_URL : "http://localhost:3001"),
-  CANDIDATE_DOMAIN_URL: process.env.CANDIDATE_DOMAIN_URL || (isProduction ? PRODUCTION_CANDIDATE_URL : "http://localhost:3003"),
-  COMPANY_DOMAIN_URL: process.env.COMPANY_DOMAIN_URL || (isProduction ? PRODUCTION_COMPANY_URL : "http://localhost:3002"),
-  LANDING_DOMAIN_URL: process.env.LANDING_DOMAIN_URL || (isProduction ? PRODUCTION_LANDING_URL : "http://localhost:3000"),
-  GRAVITON_DOMAIN_URL: process.env.GRAVITON_DOMAIN_URL || (isProduction ? PRODUCTION_GRAVITON_URL : "http://localhost:3000")
+  CLIENT_DOMAIN_URL: process.env.CLIENT_DOMAIN_URL || (isProduction ? "" : "http://localhost:3000"),
+  ADMIN_DOMAIN_URL: process.env.ADMIN_DOMAIN_URL || (isProduction ? "" : "http://localhost:3001"),
+  CANDIDATE_DOMAIN_URL: process.env.CANDIDATE_DOMAIN_URL || (isProduction ? "" : "http://localhost:3003"),
+  COMPANY_DOMAIN_URL: process.env.COMPANY_DOMAIN_URL || (isProduction ? "" : "http://localhost:3002"),
+  LANDING_DOMAIN_URL: process.env.LANDING_DOMAIN_URL || (isProduction ? "" : "http://localhost:3000"),
+  GRAVITON_DOMAIN_URL: process.env.GRAVITON_DOMAIN_URL || (isProduction ? "" : "http://localhost:3000")
 };
 var config_default = config;
 
@@ -958,8 +951,8 @@ var JWT_SECRET2 = process.env.JWT_SECRET || "talentflow_super_secret_jwt_key_202
 var GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "mock_google_client_id.apps.googleusercontent.com";
 var GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || "mock_google_client_secret";
 var isProd = process.env.NODE_ENV === "production" || Boolean(process.env.VERCEL);
-var defaultBaseUrl = isProd ? "https://app-talent-flow-monorepo-api.vercel.app" : "http://localhost:5000";
-var GOOGLE_CALLBACK_URL = process.env.GOOGLE_CALLBACK_URL || (process.env.VITE_API_URL ? `${process.env.VITE_API_URL.replace(/\/+$/, "")}/api/auth/google/callback` : `${defaultBaseUrl}/api/auth/google/callback`);
+var apiBase = process.env.VITE_API_URL || process.env.API_URL || (isProd ? "" : "http://localhost:5000");
+var GOOGLE_CALLBACK_URL = process.env.GOOGLE_CALLBACK_URL || (apiBase ? `${apiBase.replace(/\/+$/, "")}/api/auth/google/callback` : "/api/auth/google/callback");
 function configurePassport() {
   passport.serializeUser((entity, done) => {
     done(null, entity.id || (entity._id ? String(entity._id) : void 0));

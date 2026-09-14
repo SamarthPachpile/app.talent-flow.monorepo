@@ -2976,11 +2976,21 @@ export const OnboardingWizard: React.FC<WizardProps> = ({ state, setState, onCom
                   state.profile.subdomain?.trim() ||
                   state.profile.name.toLowerCase().replace(/[^a-z0-9]/g, "") ||
                   "company";
+                const isProdHost =
+                  typeof window !== "undefined" &&
+                  window.location.hostname !== "localhost" &&
+                  window.location.hostname !== "127.0.0.1";
+                const candidatePortalEnv =
+                  // @ts-ignore
+                  typeof import.meta !== "undefined" && import.meta.env?.VITE_CANDIDATE_URL;
                 const candidatePortalOrigin =
-                  typeof window !== "undefined"
-                    ? `${window.location.protocol}//${window.location.hostname}:3003`
-                    : "http://localhost:3003";
-                const liveCandidatePortalUrl = `${candidatePortalOrigin}/candidates-portal/${companySlug}`;
+                  candidatePortalEnv ||
+                  (typeof window !== "undefined"
+                    ? isProdHost
+                      ? `${window.location.protocol}//${window.location.hostname.replace(/^companies\./, "candidates.")}`
+                      : `${window.location.protocol}//${window.location.hostname}:3003`
+                    : "http://localhost:3003");
+                const liveCandidatePortalUrl = `${candidatePortalOrigin.replace(/\/+$/, "")}/${companySlug}`;
 
                 return (
                   <div className="p-6 rounded-3xl bg-gradient-to-br from-ember/10 via-background to-amber-500/10 border-2 border-ember/30 space-y-4 shadow-md">
