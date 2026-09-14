@@ -121,7 +121,7 @@ The monorepo employs an **individual container per deployable package** architec
 | **`dragonfly`**             | Dragonfly DB (Redis API) | `6379:6379`           | In-memory cache & fast datastore |
 | **`api`**                   | Node 22 + Express        | `5000:5000`           | Core backend REST API & Auth     |
 | **`graviton-it-solutions`** | Vite React SPA + Nginx   | `3000:80`             | Main Website Portal              |
-| **`admin-panel`**           | TanStack Start + Nitro   | `3001:3001`           | Core Admin Dashboard             |
+| **`admin-panel`**           | Vite React SPA + Nginx   | `3001:80`             | Core Admin Dashboard             |
 | **`company-portal`**        | Vite React SPA + Nginx   | `3002:80`             | Client Company Onboarding Portal |
 | **`candidate-portal`**      | Vite React SPA + Nginx   | `3003:80`             | Applicant & Candidate Portal     |
 

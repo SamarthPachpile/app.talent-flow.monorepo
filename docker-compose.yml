@@ -74,23 +74,18 @@ services:
       - talentflow-network
 
   # ============================================================================
-  # Admin Panel (TanStack Start / Nitro Node.js Server)
+  # Admin Panel (Vite SPA + Nginx)
   # ============================================================================
   admin-panel:
     build:
       context: .
       dockerfile: packages/admin-panel/Dockerfile
+      args:
+        - VITE_API_URL=${VITE_API_URL:-http://localhost:5000}
     container_name: talentflow-admin-panel
     restart: unless-stopped
     ports:
-      - "3001:3001"
-    env_file:
-      - .env
-    environment:
-      - PORT=3001
-      - NITRO_PORT=3001
-      - NITRO_HOST=0.0.0.0
-      - VITE_API_URL=${VITE_API_URL:-http://localhost:5000}
+      - "3001:80"
     depends_on:
       - api
     networks:
