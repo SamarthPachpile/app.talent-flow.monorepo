@@ -3,20 +3,30 @@ export interface RequestOptions {
   params?: Record<string, string>;
 }
 
+export const PRODUCTION_API_URL = "https://app-talent-flow-monorepo-api.vercel.app";
+export const DEVELOPMENT_API_URL = "http://localhost:5000";
+
 function getDefaultApiBaseUrl(): string {
   try {
     // @ts-ignore
     if (typeof import.meta !== "undefined" && import.meta.env?.VITE_API_URL) {
       // @ts-ignore
-      return import.meta.env.VITE_API_URL;
+      return String(import.meta.env.VITE_API_URL).replace(/\/+$/, "");
     }
   } catch {
     // Fall back to process.env if import.meta is unavailable
   }
+
   if (typeof process !== "undefined" && process.env?.VITE_API_URL) {
-    return process.env.VITE_API_URL;
+    return String(process.env.VITE_API_URL).replace(/\/+$/, "");
   }
-  return "";
+
+  const isProd =
+    // @ts-ignore
+    (typeof import.meta !== "undefined" && Boolean(import.meta.env?.PROD)) ||
+    (typeof process !== "undefined" && process.env?.NODE_ENV === "production");
+
+  return isProd ? PRODUCTION_API_URL : DEVELOPMENT_API_URL;
 }
 
 export class HttpClient {

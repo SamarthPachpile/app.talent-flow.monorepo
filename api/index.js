@@ -5,6 +5,7 @@ import cors from "cors";
 // packages/api/src/config.ts
 import dotenv from "dotenv";
 import path from "path";
+import fs from "fs";
 
 // packages/utilities/src/logger.ts
 var LogLevel = /* @__PURE__ */ ((LogLevel2) => {
@@ -464,26 +465,51 @@ function errorResponse(res, statusCode = httpStatusCodes.INTERNAL_SERVER_ERROR, 
 }
 
 // packages/api/src/config.ts
-if (typeof process !== "undefined" && process.env) {
-  dotenv.config({ path: path.resolve(process.cwd(), ".env") });
-  dotenv.config({ path: path.resolve(process.cwd(), "../../.env") });
-  dotenv.config({ path: path.resolve(process.cwd(), "../../../.env") });
+var nodeEnv = process.env.NODE_ENV || "development";
+var isProduction = nodeEnv === "production" || Boolean(process.env.VERCEL);
+var searchDirs = [
+  process.cwd(),
+  path.resolve(process.cwd(), "../../"),
+  path.resolve(process.cwd(), "../../../")
+];
+var envFileNames = [
+  `.env.${nodeEnv}.local`,
+  ".env.local",
+  isProduction ? ".env.production" : ".env.development",
+  ".env"
+];
+for (const dir of searchDirs) {
+  for (const envFileName of envFileNames) {
+    const fullPath = path.resolve(dir, envFileName);
+    if (fs.existsSync(fullPath)) {
+      dotenv.config({ path: fullPath, override: false });
+    }
+  }
 }
+var PRODUCTION_API_URL = "https://app-talent-flow-monorepo-api.vercel.app";
+var DEVELOPMENT_API_URL = "http://localhost:5000";
+var defaultApiUrl = isProduction ? PRODUCTION_API_URL : DEVELOPMENT_API_URL;
+var apiUrl = (process.env.VITE_API_URL || process.env.API_URL || defaultApiUrl).replace(
+  /\/+$/,
+  ""
+);
 var dragonflyHost = process.env.DRAGONFLY_HOST || process.env.REDIS_HOST || "127.0.0.1";
 var dragonflyPort = Number(process.env.DRAGONFLY_PORT || process.env.REDIS_PORT) || 6379;
 var dragonflyPassword = process.env.DRAGONFLY_PASSWORD || process.env.REDIS_PASSWORD || "";
 var dragonflyUsername = process.env.DRAGONFLY_USERNAME || process.env.REDIS_USERNAME || "default";
 var dragonflyCacheTtl = Number(process.env.DRAGONFLY_CACHE_TTL || process.env.REDIS_CACHE_TTL) || 3600;
 var config = {
-  environment: process.env.NODE_ENV || "development",
+  environment: nodeEnv,
+  isProduction,
   PORT: Number(process.env.PORT || process.env.VITE_PORT_API || process.env.VITE_API_PORT || 5e3),
   HOST: process.env.HOST || "0.0.0.0",
+  API_URL: apiUrl,
   MONGODB_URI: process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/talentflow",
   MONGODB_DATABASE: process.env.MONGODB_DATABASE || "talentflow",
   MONGO_MAX_POOL_SIZE: Number(process.env.MONGO_MAX_POOL_SIZE) || 20,
   MONGO_MIN_POOL_SIZE: Number(process.env.MONGO_MIN_POOL_SIZE) || 5,
-  JWT_SECRET: process.env.JWT_SECRET || "talentflow_super_secret_jwt_key_2026_production",
-  SESSION_SECRET: process.env.SESSION_SECRET || "talentflow_session_secret_2026_secure",
+  JWT_SECRET: process.env.JWT_SECRET || "",
+  SESSION_SECRET: process.env.SESSION_SECRET || "",
   DRAGONFLY_USERNAME: dragonflyUsername,
   DRAGONFLY_HOST: dragonflyHost,
   DRAGONFLY_PORT: dragonflyPort,
@@ -491,9 +517,9 @@ var config = {
   DRAGONFLY_CACHE_TTL: dragonflyCacheTtl,
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || "",
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET || "",
-  GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL || "http://localhost:5000/api/auth/google/callback",
-  CLIENT_DOMAIN_URL: process.env.CLIENT_DOMAIN_URL || "http://localhost:3000",
-  ADMIN_DOMAIN_URL: process.env.ADMIN_DOMAIN_URL || "http://localhost:3001"
+  GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL || `${apiUrl}/api/auth/google/callback`,
+  CLIENT_DOMAIN_URL: process.env.CLIENT_DOMAIN_URL || (isProduction ? apiUrl : "http://localhost:3000"),
+  ADMIN_DOMAIN_URL: process.env.ADMIN_DOMAIN_URL || (isProduction ? apiUrl : "http://localhost:3001")
 };
 var config_default = config;
 
@@ -922,7 +948,9 @@ var Settings_default = Settings;
 var JWT_SECRET2 = process.env.JWT_SECRET || "talentflow_super_secret_jwt_key_2026_production";
 var GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "mock_google_client_id.apps.googleusercontent.com";
 var GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || "mock_google_client_secret";
-var GOOGLE_CALLBACK_URL = process.env.GOOGLE_CALLBACK_URL || "http://localhost:5000/api/auth/google/callback";
+var isProd = process.env.NODE_ENV === "production" || Boolean(process.env.VERCEL);
+var defaultBaseUrl = isProd ? "https://app-talent-flow-monorepo-api.vercel.app" : "http://localhost:5000";
+var GOOGLE_CALLBACK_URL = process.env.GOOGLE_CALLBACK_URL || (process.env.VITE_API_URL ? `${process.env.VITE_API_URL.replace(/\/+$/, "")}/api/auth/google/callback` : `${defaultBaseUrl}/api/auth/google/callback`);
 function configurePassport() {
   passport.serializeUser((entity, done) => {
     done(null, entity.id || (entity._id ? String(entity._id) : void 0));

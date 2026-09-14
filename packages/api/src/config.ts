@@ -1,17 +1,53 @@
 import dotenv from "dotenv";
 import path from "path";
+import fs from "fs";
 import { logger } from "@talent-flow/utilities";
 
-if (typeof process !== "undefined" && process.env) {
-  dotenv.config({ path: path.resolve(process.cwd(), ".env") });
-  dotenv.config({ path: path.resolve(process.cwd(), "../../.env") });
-  dotenv.config({ path: path.resolve(process.cwd(), "../../../.env") });
+const nodeEnv = process.env.NODE_ENV || "development";
+const isProduction = nodeEnv === "production" || Boolean(process.env.VERCEL);
+
+// Load env files in priority order:
+// 1. .env.local
+// 2. .env.production or .env.development
+// 3. .env
+const searchDirs = [
+  process.cwd(),
+  path.resolve(process.cwd(), "../../"),
+  path.resolve(process.cwd(), "../../../"),
+];
+
+const envFileNames = [
+  `.env.${nodeEnv}.local`,
+  ".env.local",
+  isProduction ? ".env.production" : ".env.development",
+  ".env",
+];
+
+for (const dir of searchDirs) {
+  for (const envFileName of envFileNames) {
+    const fullPath = path.resolve(dir, envFileName);
+    if (fs.existsSync(fullPath)) {
+      dotenv.config({ path: fullPath, override: false });
+    }
+  }
 }
+
+// Fallback constants
+export const PRODUCTION_API_URL = "https://app-talent-flow-monorepo-api.vercel.app";
+export const DEVELOPMENT_API_URL = "http://localhost:5000";
+
+const defaultApiUrl = isProduction ? PRODUCTION_API_URL : DEVELOPMENT_API_URL;
+const apiUrl = (process.env.VITE_API_URL || process.env.API_URL || defaultApiUrl).replace(
+  /\/+$/,
+  "",
+);
 
 export type ConfigType = {
   environment: string;
+  isProduction: boolean;
   PORT: number;
   HOST: string;
+  API_URL: string;
   MONGODB_URI: string;
   MONGODB_DATABASE: string;
   MONGO_MAX_POOL_SIZE: number;
@@ -38,15 +74,17 @@ const dragonflyCacheTtl =
   Number(process.env.DRAGONFLY_CACHE_TTL || process.env.REDIS_CACHE_TTL) || 3600;
 
 export const config: ConfigType = {
-  environment: process.env.NODE_ENV || "development",
+  environment: nodeEnv,
+  isProduction,
   PORT: Number(process.env.PORT || process.env.VITE_PORT_API || process.env.VITE_API_PORT || 5000),
   HOST: process.env.HOST || "0.0.0.0",
+  API_URL: apiUrl,
   MONGODB_URI: process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/talentflow",
   MONGODB_DATABASE: process.env.MONGODB_DATABASE || "talentflow",
   MONGO_MAX_POOL_SIZE: Number(process.env.MONGO_MAX_POOL_SIZE) || 20,
   MONGO_MIN_POOL_SIZE: Number(process.env.MONGO_MIN_POOL_SIZE) || 5,
-  JWT_SECRET: process.env.JWT_SECRET || "talentflow_super_secret_jwt_key_2026_production",
-  SESSION_SECRET: process.env.SESSION_SECRET || "talentflow_session_secret_2026_secure",
+  JWT_SECRET: process.env.JWT_SECRET || "",
+  SESSION_SECRET: process.env.SESSION_SECRET || "",
   DRAGONFLY_USERNAME: dragonflyUsername,
   DRAGONFLY_HOST: dragonflyHost,
   DRAGONFLY_PORT: dragonflyPort,
@@ -54,10 +92,11 @@ export const config: ConfigType = {
   DRAGONFLY_CACHE_TTL: dragonflyCacheTtl,
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || "",
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET || "",
-  GOOGLE_CALLBACK_URL:
-    process.env.GOOGLE_CALLBACK_URL || "http://localhost:5000/api/auth/google/callback",
-  CLIENT_DOMAIN_URL: process.env.CLIENT_DOMAIN_URL || "http://localhost:3000",
-  ADMIN_DOMAIN_URL: process.env.ADMIN_DOMAIN_URL || "http://localhost:3001",
+  GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL || `${apiUrl}/api/auth/google/callback`,
+  CLIENT_DOMAIN_URL:
+    process.env.CLIENT_DOMAIN_URL || (isProduction ? apiUrl : "http://localhost:3000"),
+  ADMIN_DOMAIN_URL:
+    process.env.ADMIN_DOMAIN_URL || (isProduction ? apiUrl : "http://localhost:3001"),
 };
 
 export { logger };

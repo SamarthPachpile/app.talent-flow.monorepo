@@ -74,7 +74,7 @@ Each frontend application includes automatic dynamic routing:
 - **Output Directory**: `dist`
 - **Domain Assignment**: `admin.yourdomain.com` (or `admin.<your-vercel-app>.vercel.app`)
 - **Environment Variables**:
-  - `VITE_API_URL`: `https://api.yourdomain.com` (or your backend API URL)
+  - `VITE_API_URL`: `https://app-talent-flow-monorepo-api.vercel.app` (or your backend API URL)
 
 #### 2. Candidate Portal
 
@@ -85,7 +85,7 @@ Each frontend application includes automatic dynamic routing:
 - **Output Directory**: `dist`
 - **Domain Assignment**: `candidates.yourdomain.com` (or `candidates.<your-vercel-app>.vercel.app`)
 - **Environment Variables**:
-  - `VITE_API_URL`: `https://api.yourdomain.com`
+  - `VITE_API_URL`: `https://app-talent-flow-monorepo-api.vercel.app`
 
 #### 3. Company Portal
 
@@ -96,7 +96,7 @@ Each frontend application includes automatic dynamic routing:
 - **Output Directory**: `dist`
 - **Domain Assignment**: `companies.yourdomain.com` (or `companies.<your-vercel-app>.vercel.app`)
 - **Environment Variables**:
-  - `VITE_API_URL`: `https://api.yourdomain.com`
+  - `VITE_API_URL`: `https://app-talent-flow-monorepo-api.vercel.app`
 
 #### 4. Landing / Main Site
 
@@ -107,7 +107,7 @@ Each frontend application includes automatic dynamic routing:
 - **Output Directory**: `dist`
 - **Domain Assignment**: `yourdomain.com`
 - **Environment Variables**:
-  - `VITE_API_URL`: `https://api.yourdomain.com`
+  - `VITE_API_URL`: `https://app-talent-flow-monorepo-api.vercel.app`
 
 #### 5. Serverless API (Backend)
 
