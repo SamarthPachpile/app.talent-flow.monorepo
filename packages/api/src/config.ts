@@ -35,6 +35,7 @@ for (const dir of searchDirs) {
 // Fallback constants
 export const PRODUCTION_API_URL = "https://app-talent-flow-monorepo-api.vercel.app";
 export const PRODUCTION_ADMIN_URL = "https://app-talent-flow-monorepo-admin-pane.vercel.app";
+export const PRODUCTION_CANDIDATE_URL = "https://app-talent-flow-monorepo-candidate.vercel.app";
 export const DEVELOPMENT_API_URL = "http://localhost:5000";
 
 const defaultApiUrl = isProduction ? PRODUCTION_API_URL : DEVELOPMENT_API_URL;
@@ -65,6 +66,7 @@ export type ConfigType = {
   GOOGLE_CALLBACK_URL: string;
   CLIENT_DOMAIN_URL: string;
   ADMIN_DOMAIN_URL: string;
+  CANDIDATE_DOMAIN_URL: string;
 };
 
 const dragonflyHost = process.env.DRAGONFLY_HOST || process.env.REDIS_HOST || "127.0.0.1";
@@ -95,9 +97,13 @@ export const config: ConfigType = {
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET || "",
   GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL || `${apiUrl}/api/auth/google/callback`,
   CLIENT_DOMAIN_URL:
-    process.env.CLIENT_DOMAIN_URL || (isProduction ? apiUrl : "http://localhost:3000"),
+    process.env.CLIENT_DOMAIN_URL ||
+    (isProduction ? PRODUCTION_CANDIDATE_URL : "http://localhost:3000"),
   ADMIN_DOMAIN_URL:
     process.env.ADMIN_DOMAIN_URL || (isProduction ? PRODUCTION_ADMIN_URL : "http://localhost:3001"),
+  CANDIDATE_DOMAIN_URL:
+    process.env.CANDIDATE_DOMAIN_URL ||
+    (isProduction ? PRODUCTION_CANDIDATE_URL : "http://localhost:3003"),
 };
 
 export { logger };

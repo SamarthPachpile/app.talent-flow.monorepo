@@ -488,6 +488,7 @@ for (const dir of searchDirs) {
 }
 var PRODUCTION_API_URL = "https://app-talent-flow-monorepo-api.vercel.app";
 var PRODUCTION_ADMIN_URL = "https://app-talent-flow-monorepo-admin-pane.vercel.app";
+var PRODUCTION_CANDIDATE_URL = "https://app-talent-flow-monorepo-candidate.vercel.app";
 var DEVELOPMENT_API_URL = "http://localhost:5000";
 var defaultApiUrl = isProduction ? PRODUCTION_API_URL : DEVELOPMENT_API_URL;
 var apiUrl = (process.env.VITE_API_URL || process.env.API_URL || defaultApiUrl).replace(
@@ -519,8 +520,9 @@ var config = {
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || "",
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET || "",
   GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL || `${apiUrl}/api/auth/google/callback`,
-  CLIENT_DOMAIN_URL: process.env.CLIENT_DOMAIN_URL || (isProduction ? apiUrl : "http://localhost:3000"),
-  ADMIN_DOMAIN_URL: process.env.ADMIN_DOMAIN_URL || (isProduction ? PRODUCTION_ADMIN_URL : "http://localhost:3001")
+  CLIENT_DOMAIN_URL: process.env.CLIENT_DOMAIN_URL || (isProduction ? PRODUCTION_CANDIDATE_URL : "http://localhost:3000"),
+  ADMIN_DOMAIN_URL: process.env.ADMIN_DOMAIN_URL || (isProduction ? PRODUCTION_ADMIN_URL : "http://localhost:3001"),
+  CANDIDATE_DOMAIN_URL: process.env.CANDIDATE_DOMAIN_URL || (isProduction ? PRODUCTION_CANDIDATE_URL : "http://localhost:3003")
 };
 var config_default = config;
 
@@ -4570,6 +4572,7 @@ function createApp() {
       origin: [
         config_default.CLIENT_DOMAIN_URL,
         config_default.ADMIN_DOMAIN_URL,
+        config_default.CANDIDATE_DOMAIN_URL,
         "http://localhost:3000",
         "http://localhost:3001",
         "http://localhost:3002",
