@@ -4,7 +4,7 @@
   "framework": "vite",
   "buildCommand": "npm run build",
   "installCommand": "npm install",
-  "outputDirectory": "packages/graviton-it-solutions/dist",
+  "outputDirectory": "dist",
   "rewrites": [
     {
       "source": "/api/(.*)",
