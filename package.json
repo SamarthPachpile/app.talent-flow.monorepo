@@ -28,7 +28,7 @@
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",
     "docker:logs": "docker compose logs -f",
-    "prepare": "husky"
+    "prepare": "node -e \"if (process.env.NODE_ENV !== 'production' && !process.env.CI) { try { (await import('husky')).default(); } catch {} }\""
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",
