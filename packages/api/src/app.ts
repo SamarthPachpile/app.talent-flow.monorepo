@@ -21,6 +21,8 @@ export function createApp(): Express {
         config.ADMIN_DOMAIN_URL,
         config.CANDIDATE_DOMAIN_URL,
         config.COMPANY_DOMAIN_URL,
+        config.LANDING_DOMAIN_URL,
+        config.GRAVITON_DOMAIN_URL,
         "http://localhost:3000",
         "http://localhost:3001",
         "http://localhost:3002",

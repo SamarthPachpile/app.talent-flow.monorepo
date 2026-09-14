@@ -490,6 +490,8 @@ var PRODUCTION_API_URL = "https://app-talent-flow-monorepo-api.vercel.app";
 var PRODUCTION_ADMIN_URL = "https://app-talent-flow-monorepo-admin-pane.vercel.app";
 var PRODUCTION_CANDIDATE_URL = "https://app-talent-flow-monorepo-candidate.vercel.app";
 var PRODUCTION_COMPANY_URL = "https://app-talent-flow-monorepo-company-po.vercel.app";
+var PRODUCTION_LANDING_URL = "https://app-talent-flow-monorepo-graviton-i.vercel.app";
+var PRODUCTION_GRAVITON_URL = "https://app-talent-flow-monorepo-graviton-i.vercel.app";
 var DEVELOPMENT_API_URL = "http://localhost:5000";
 var defaultApiUrl = isProduction ? PRODUCTION_API_URL : DEVELOPMENT_API_URL;
 var apiUrl = (process.env.VITE_API_URL || process.env.API_URL || defaultApiUrl).replace(
@@ -521,10 +523,12 @@ var config = {
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || "",
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET || "",
   GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL || `${apiUrl}/api/auth/google/callback`,
-  CLIENT_DOMAIN_URL: process.env.CLIENT_DOMAIN_URL || (isProduction ? PRODUCTION_CANDIDATE_URL : "http://localhost:3000"),
+  CLIENT_DOMAIN_URL: process.env.CLIENT_DOMAIN_URL || (isProduction ? PRODUCTION_LANDING_URL : "http://localhost:3000"),
   ADMIN_DOMAIN_URL: process.env.ADMIN_DOMAIN_URL || (isProduction ? PRODUCTION_ADMIN_URL : "http://localhost:3001"),
   CANDIDATE_DOMAIN_URL: process.env.CANDIDATE_DOMAIN_URL || (isProduction ? PRODUCTION_CANDIDATE_URL : "http://localhost:3003"),
-  COMPANY_DOMAIN_URL: process.env.COMPANY_DOMAIN_URL || (isProduction ? PRODUCTION_COMPANY_URL : "http://localhost:3002")
+  COMPANY_DOMAIN_URL: process.env.COMPANY_DOMAIN_URL || (isProduction ? PRODUCTION_COMPANY_URL : "http://localhost:3002"),
+  LANDING_DOMAIN_URL: process.env.LANDING_DOMAIN_URL || (isProduction ? PRODUCTION_LANDING_URL : "http://localhost:3000"),
+  GRAVITON_DOMAIN_URL: process.env.GRAVITON_DOMAIN_URL || (isProduction ? PRODUCTION_GRAVITON_URL : "http://localhost:3000")
 };
 var config_default = config;
 
@@ -4576,6 +4580,8 @@ function createApp() {
         config_default.ADMIN_DOMAIN_URL,
         config_default.CANDIDATE_DOMAIN_URL,
         config_default.COMPANY_DOMAIN_URL,
+        config_default.LANDING_DOMAIN_URL,
+        config_default.GRAVITON_DOMAIN_URL,
         "http://localhost:3000",
         "http://localhost:3001",
         "http://localhost:3002",
