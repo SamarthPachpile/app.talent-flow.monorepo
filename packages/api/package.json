@@ -78,6 +78,7 @@
     "@types/passport-jwt": "^4.0.1",
     "@types/passport-local": "^1.0.38",
     "tsx": "^4.23.13",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vite": "^8.1.5"
   }
 }

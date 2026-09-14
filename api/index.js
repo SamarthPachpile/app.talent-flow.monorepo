@@ -447,6 +447,78 @@ var defaultCandidateSettings = {
   }
 };
 
+// packages/utilities/src/responseHelper.ts
+function successResponse(res, statusCode = httpStatusCodes.SUCCESS, message = "Request was successful", data = {}) {
+  return res.status(statusCode).json({
+    success: true,
+    message,
+    data
+  });
+}
+function errorResponse(res, statusCode = httpStatusCodes.INTERNAL_SERVER_ERROR, message = "Request failed", error = null) {
+  return res.status(statusCode).json({
+    success: false,
+    message,
+    error
+  });
+}
+
+// packages/api/src/config.ts
+if (typeof process !== "undefined" && process.env) {
+  dotenv.config({ path: path.resolve(process.cwd(), ".env") });
+  dotenv.config({ path: path.resolve(process.cwd(), "../../.env") });
+  dotenv.config({ path: path.resolve(process.cwd(), "../../../.env") });
+}
+var dragonflyHost = process.env.DRAGONFLY_HOST || process.env.REDIS_HOST || "127.0.0.1";
+var dragonflyPort = Number(process.env.DRAGONFLY_PORT || process.env.REDIS_PORT) || 6379;
+var dragonflyPassword = process.env.DRAGONFLY_PASSWORD || process.env.REDIS_PASSWORD || "";
+var dragonflyUsername = process.env.DRAGONFLY_USERNAME || process.env.REDIS_USERNAME || "default";
+var dragonflyCacheTtl = Number(process.env.DRAGONFLY_CACHE_TTL || process.env.REDIS_CACHE_TTL) || 3600;
+var config = {
+  environment: process.env.NODE_ENV || "development",
+  PORT: Number(process.env.PORT || process.env.VITE_PORT_API || process.env.VITE_API_PORT || 5e3),
+  HOST: process.env.HOST || "0.0.0.0",
+  MONGODB_URI: process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/talentflow",
+  MONGODB_DATABASE: process.env.MONGODB_DATABASE || "talentflow",
+  MONGO_MAX_POOL_SIZE: Number(process.env.MONGO_MAX_POOL_SIZE) || 20,
+  MONGO_MIN_POOL_SIZE: Number(process.env.MONGO_MIN_POOL_SIZE) || 5,
+  JWT_SECRET: process.env.JWT_SECRET || "talentflow_super_secret_jwt_key_2026_production",
+  SESSION_SECRET: process.env.SESSION_SECRET || "talentflow_session_secret_2026_secure",
+  DRAGONFLY_USERNAME: dragonflyUsername,
+  DRAGONFLY_HOST: dragonflyHost,
+  DRAGONFLY_PORT: dragonflyPort,
+  DRAGONFLY_PASSWORD: dragonflyPassword,
+  DRAGONFLY_CACHE_TTL: dragonflyCacheTtl,
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || "",
+  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET || "",
+  GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL || "http://localhost:5000/api/auth/google/callback",
+  CLIENT_DOMAIN_URL: process.env.CLIENT_DOMAIN_URL || "http://localhost:3000",
+  ADMIN_DOMAIN_URL: process.env.ADMIN_DOMAIN_URL || "http://localhost:3001"
+};
+var config_default = config;
+
+// packages/utilities/src/auth/jwt.ts
+import jwt from "jsonwebtoken";
+var JWT_SECRET = process.env.JWT_SECRET || "talentflow_super_secret_jwt_key_2026_production";
+var JWT_EXPIRES_IN = "7d";
+function generateToken(payload, options) {
+  const expiresIn = options?.expiresIn || JWT_EXPIRES_IN;
+  return jwt.sign(payload, JWT_SECRET, { expiresIn });
+}
+function verifyToken(token) {
+  try {
+    return jwt.verify(token, JWT_SECRET);
+  } catch {
+    return null;
+  }
+}
+
+// packages/utilities/src/auth/passport.ts
+import passport from "passport";
+import { Strategy as LocalStrategy } from "passport-local";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
+
 // packages/schema-types/src/models/Company.ts
 import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcryptjs";
@@ -846,77 +918,7 @@ var CompanySettingsModel = mongoose4.models.CompanySettings || mongoose4.model("
 var CandidateSettingsModel = mongoose4.models.CandidateSettings || mongoose4.model("CandidateSettings", SettingsSchema);
 var Settings_default = Settings;
 
-// packages/utilities/src/responseHelper.ts
-function successResponse(res, statusCode = httpStatusCodes.SUCCESS, message = "Request was successful", data = {}) {
-  return res.status(statusCode).json({
-    success: true,
-    message,
-    data
-  });
-}
-function errorResponse(res, statusCode = httpStatusCodes.INTERNAL_SERVER_ERROR, message = "Request failed", error = null) {
-  return res.status(statusCode).json({
-    success: false,
-    message,
-    error
-  });
-}
-
-// packages/api/src/config.ts
-if (typeof process !== "undefined" && process.env) {
-  dotenv.config({ path: path.resolve(process.cwd(), ".env") });
-  dotenv.config({ path: path.resolve(process.cwd(), "../../.env") });
-  dotenv.config({ path: path.resolve(process.cwd(), "../../../.env") });
-}
-var dragonflyHost = process.env.DRAGONFLY_HOST || process.env.REDIS_HOST || "127.0.0.1";
-var dragonflyPort = Number(process.env.DRAGONFLY_PORT || process.env.REDIS_PORT) || 6379;
-var dragonflyPassword = process.env.DRAGONFLY_PASSWORD || process.env.REDIS_PASSWORD || "";
-var dragonflyUsername = process.env.DRAGONFLY_USERNAME || process.env.REDIS_USERNAME || "default";
-var dragonflyCacheTtl = Number(process.env.DRAGONFLY_CACHE_TTL || process.env.REDIS_CACHE_TTL) || 3600;
-var config = {
-  environment: process.env.NODE_ENV || "development",
-  PORT: Number(process.env.PORT || process.env.VITE_PORT_API || process.env.VITE_API_PORT || 5e3),
-  HOST: process.env.HOST || "0.0.0.0",
-  MONGODB_URI: process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/talentflow",
-  MONGODB_DATABASE: process.env.MONGODB_DATABASE || "talentflow",
-  MONGO_MAX_POOL_SIZE: Number(process.env.MONGO_MAX_POOL_SIZE) || 20,
-  MONGO_MIN_POOL_SIZE: Number(process.env.MONGO_MIN_POOL_SIZE) || 5,
-  JWT_SECRET: process.env.JWT_SECRET || "talentflow_super_secret_jwt_key_2026_production",
-  SESSION_SECRET: process.env.SESSION_SECRET || "talentflow_session_secret_2026_secure",
-  DRAGONFLY_USERNAME: dragonflyUsername,
-  DRAGONFLY_HOST: dragonflyHost,
-  DRAGONFLY_PORT: dragonflyPort,
-  DRAGONFLY_PASSWORD: dragonflyPassword,
-  DRAGONFLY_CACHE_TTL: dragonflyCacheTtl,
-  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || "",
-  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET || "",
-  GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL || "http://localhost:5000/api/auth/google/callback",
-  CLIENT_DOMAIN_URL: process.env.CLIENT_DOMAIN_URL || "http://localhost:3000",
-  ADMIN_DOMAIN_URL: process.env.ADMIN_DOMAIN_URL || "http://localhost:3001"
-};
-var config_default = config;
-
-// packages/utilities/src/auth/jwt.ts
-import jwt from "jsonwebtoken";
-var JWT_SECRET = process.env.JWT_SECRET || "talentflow_super_secret_jwt_key_2026_production";
-var JWT_EXPIRES_IN = "7d";
-function generateToken(payload, options) {
-  const expiresIn = options?.expiresIn || JWT_EXPIRES_IN;
-  return jwt.sign(payload, JWT_SECRET, { expiresIn });
-}
-function verifyToken(token) {
-  try {
-    return jwt.verify(token, JWT_SECRET);
-  } catch {
-    return null;
-  }
-}
-
 // packages/utilities/src/auth/passport.ts
-import passport from "passport";
-import { Strategy as LocalStrategy } from "passport-local";
-import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
 var JWT_SECRET2 = process.env.JWT_SECRET || "talentflow_super_secret_jwt_key_2026_production";
 var GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "mock_google_client_id.apps.googleusercontent.com";
 var GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || "mock_google_client_secret";

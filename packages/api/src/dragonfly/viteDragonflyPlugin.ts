@@ -2,9 +2,22 @@
  * Vite REST API & MongoDB Database Middleware Plugin with Dragonfly DB Datastore
  * Bridges browser client requests directly to MongoDB Atlas and Dragonfly DB during local development.
  */
-import type { Plugin, ViteDevServer } from "vite";
 import type { ServerResponse } from "http";
 import type { Express } from "express";
+
+export interface ViteDevServerLike {
+  middlewares: {
+    use: (fn: (req: any, res: any, next: (err?: any) => any) => any) => any;
+  };
+  [key: string]: any;
+}
+
+export interface VitePluginLike {
+  name: string;
+  apply?: "serve" | "build" | ((config: any, env: any) => boolean);
+  configureServer?: (server: ViteDevServerLike | any) => void | Promise<void> | (() => void);
+  [key: string]: any;
+}
 
 let expressAppInstance: Express | null = null;
 let dbConnected = false;
@@ -21,11 +34,11 @@ function sendJson(res: ServerResponse, statusCode: number, data: unknown) {
   res.end(JSON.stringify(data));
 }
 
-export function viteDragonflyPlugin(): Plugin {
+export function viteDragonflyPlugin(): VitePluginLike {
   return {
     name: "vite-plugin-talentflow-api",
     apply: "serve",
-    configureServer(server: ViteDevServer) {
+    configureServer(server: ViteDevServerLike) {
       server.middlewares.use(async (req, res, next) => {
         const url = req.url || "";
 
