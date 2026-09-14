@@ -94,7 +94,7 @@ Each frontend application includes automatic dynamic routing:
 - **Framework Preset**: `Vite`
 - **Build Command**: `npm run build`
 - **Output Directory**: `dist`
-- **Domain Assignment**: `companies.yourdomain.com` (or `companies.<your-vercel-app>.vercel.app`)
+- **Domain Assignment**: `https://app-talent-flow-monorepo-company-po.vercel.app` (or custom subdomain `companies.yourdomain.com`)
 - **Environment Variables**:
   - `VITE_API_URL`: `https://app-talent-flow-monorepo-api.vercel.app`
 
@@ -165,6 +165,7 @@ Configure these in the **Environment Variables** tab of your Vercel Project sett
 | `CLIENT_DOMAIN_URL`    | `https://app-talent-flow-monorepo-candidate.vercel.app`  | Candidate portal URL for CORS whitelist         |
 | `CANDIDATE_DOMAIN_URL` | `https://app-talent-flow-monorepo-candidate.vercel.app`  | Candidate portal URL for CORS whitelist         |
 | `ADMIN_DOMAIN_URL`     | `https://app-talent-flow-monorepo-admin-pane.vercel.app` | Admin panel URL for CORS whitelist              |
+| `COMPANY_DOMAIN_URL`   | `https://app-talent-flow-monorepo-company-po.vercel.app` | Company portal URL for CORS whitelist           |
 | `VITE_API_URL`         | `https://app-talent-flow-monorepo-api.vercel.app`        | Base API URL configured across frontend portals |
 
 ---

@@ -20,6 +20,7 @@ export function createApp(): Express {
         config.CLIENT_DOMAIN_URL,
         config.ADMIN_DOMAIN_URL,
         config.CANDIDATE_DOMAIN_URL,
+        config.COMPANY_DOMAIN_URL,
         "http://localhost:3000",
         "http://localhost:3001",
         "http://localhost:3002",

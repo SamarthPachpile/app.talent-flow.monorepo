@@ -36,6 +36,7 @@ for (const dir of searchDirs) {
 export const PRODUCTION_API_URL = "https://app-talent-flow-monorepo-api.vercel.app";
 export const PRODUCTION_ADMIN_URL = "https://app-talent-flow-monorepo-admin-pane.vercel.app";
 export const PRODUCTION_CANDIDATE_URL = "https://app-talent-flow-monorepo-candidate.vercel.app";
+export const PRODUCTION_COMPANY_URL = "https://app-talent-flow-monorepo-company-po.vercel.app";
 export const DEVELOPMENT_API_URL = "http://localhost:5000";
 
 const defaultApiUrl = isProduction ? PRODUCTION_API_URL : DEVELOPMENT_API_URL;
@@ -67,6 +68,7 @@ export type ConfigType = {
   CLIENT_DOMAIN_URL: string;
   ADMIN_DOMAIN_URL: string;
   CANDIDATE_DOMAIN_URL: string;
+  COMPANY_DOMAIN_URL: string;
 };
 
 const dragonflyHost = process.env.DRAGONFLY_HOST || process.env.REDIS_HOST || "127.0.0.1";
@@ -104,6 +106,9 @@ export const config: ConfigType = {
   CANDIDATE_DOMAIN_URL:
     process.env.CANDIDATE_DOMAIN_URL ||
     (isProduction ? PRODUCTION_CANDIDATE_URL : "http://localhost:3003"),
+  COMPANY_DOMAIN_URL:
+    process.env.COMPANY_DOMAIN_URL ||
+    (isProduction ? PRODUCTION_COMPANY_URL : "http://localhost:3002"),
 };
 
 export { logger };
