@@ -34,6 +34,7 @@ for (const dir of searchDirs) {
 
 // Fallback constants
 export const PRODUCTION_API_URL = "https://app-talent-flow-monorepo-api.vercel.app";
+export const PRODUCTION_ADMIN_URL = "https://app-talent-flow-monorepo-admin-pane.vercel.app";
 export const DEVELOPMENT_API_URL = "http://localhost:5000";
 
 const defaultApiUrl = isProduction ? PRODUCTION_API_URL : DEVELOPMENT_API_URL;
@@ -96,7 +97,7 @@ export const config: ConfigType = {
   CLIENT_DOMAIN_URL:
     process.env.CLIENT_DOMAIN_URL || (isProduction ? apiUrl : "http://localhost:3000"),
   ADMIN_DOMAIN_URL:
-    process.env.ADMIN_DOMAIN_URL || (isProduction ? apiUrl : "http://localhost:3001"),
+    process.env.ADMIN_DOMAIN_URL || (isProduction ? PRODUCTION_ADMIN_URL : "http://localhost:3001"),
 };
 
 export { logger };

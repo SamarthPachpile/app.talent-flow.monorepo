@@ -487,6 +487,7 @@ for (const dir of searchDirs) {
   }
 }
 var PRODUCTION_API_URL = "https://app-talent-flow-monorepo-api.vercel.app";
+var PRODUCTION_ADMIN_URL = "https://app-talent-flow-monorepo-admin-pane.vercel.app";
 var DEVELOPMENT_API_URL = "http://localhost:5000";
 var defaultApiUrl = isProduction ? PRODUCTION_API_URL : DEVELOPMENT_API_URL;
 var apiUrl = (process.env.VITE_API_URL || process.env.API_URL || defaultApiUrl).replace(
@@ -519,7 +520,7 @@ var config = {
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET || "",
   GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL || `${apiUrl}/api/auth/google/callback`,
   CLIENT_DOMAIN_URL: process.env.CLIENT_DOMAIN_URL || (isProduction ? apiUrl : "http://localhost:3000"),
-  ADMIN_DOMAIN_URL: process.env.ADMIN_DOMAIN_URL || (isProduction ? apiUrl : "http://localhost:3001")
+  ADMIN_DOMAIN_URL: process.env.ADMIN_DOMAIN_URL || (isProduction ? PRODUCTION_ADMIN_URL : "http://localhost:3001")
 };
 var config_default = config;
 

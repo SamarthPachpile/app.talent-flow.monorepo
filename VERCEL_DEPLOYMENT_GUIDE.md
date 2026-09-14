@@ -72,7 +72,7 @@ Each frontend application includes automatic dynamic routing:
 - **Framework Preset**: `Vite`
 - **Build Command**: `npm run build`
 - **Output Directory**: `dist`
-- **Domain Assignment**: `admin.yourdomain.com` (or `admin.<your-vercel-app>.vercel.app`)
+- **Domain Assignment**: `https://app-talent-flow-monorepo-admin-pane.vercel.app` (or custom subdomain `admin.yourdomain.com`)
 - **Environment Variables**:
   - `VITE_API_URL`: `https://app-talent-flow-monorepo-api.vercel.app` (or your backend API URL)
 
@@ -160,11 +160,11 @@ Configure these in the **Environment Variables** tab of your Vercel Project sett
 
 ### 4. Client Domain Cross-Origin URLs
 
-| Variable            | Example Value                      | Description                                     |
-| :------------------ | :--------------------------------- | :---------------------------------------------- |
-| `CLIENT_DOMAIN_URL` | `https://candidate.yourdomain.com` | Primary client frontend URL for CORS whitelist  |
-| `ADMIN_DOMAIN_URL`  | `https://admin.yourdomain.com`     | Admin panel URL for CORS whitelist              |
-| `VITE_API_URL`      | `https://api.yourdomain.com`       | Base API URL configured across frontend portals |
+| Variable            | Example Value                                            | Description                                     |
+| :------------------ | :------------------------------------------------------- | :---------------------------------------------- |
+| `CLIENT_DOMAIN_URL` | `https://app-talent-flow-monorepo-api.vercel.app`        | Primary client frontend URL for CORS whitelist  |
+| `ADMIN_DOMAIN_URL`  | `https://app-talent-flow-monorepo-admin-pane.vercel.app` | Admin panel URL for CORS whitelist              |
+| `VITE_API_URL`      | `https://app-talent-flow-monorepo-api.vercel.app`        | Base API URL configured across frontend portals |
 
 ---
 
