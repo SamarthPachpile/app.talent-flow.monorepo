@@ -1,7 +1,7 @@
 import type { CandidateDocument, CandidateSettings } from "@talent-flow/schema-types";
 import { defaultCandidateSettings } from "@talent-flow/schema-types";
 import { Candidate, Settings } from "@talent-flow/schema-types/models";
-import { DragonflyCacheService } from "@talent-flow/utilities/dragonfly";
+import { DragonflyCacheService, DragonflyCronSyncService } from "@talent-flow/utilities/dragonfly";
 import { logger } from "@talent-flow/utilities";
 import bcrypt from "bcryptjs";
 
@@ -259,8 +259,9 @@ export class CandidateService {
 
     // 1. Write strictly to Dragonfly DB & Enqueue for Cron
     await DragonflyCacheService.set(cacheKey, merged, 86400);
-    await DragonflyCacheService.writeToDragonflyAndEnqueueSync(
+    await DragonflyCronSyncService.enqueueMutation(
       "settings",
+      "UPSERT",
       cacheKey,
       settingsPayload,
       `candidate:${cleanId}`,

@@ -6,7 +6,11 @@ import type {
 } from "@talent-flow/schema-types";
 import { defaultAdminSettings } from "@talent-flow/schema-types";
 import { Settings } from "@talent-flow/schema-types/models";
-import { DragonflyCacheService, getDragonflyConfig } from "@talent-flow/utilities/dragonfly";
+import {
+  DragonflyCacheService,
+  DragonflyCronSyncService,
+  getDragonflyConfig,
+} from "@talent-flow/utilities/dragonfly";
 import { logger } from "@talent-flow/utilities";
 import { getDbStatus } from "../db/connection";
 
@@ -25,11 +29,10 @@ export class AdminService {
             return { ...defaultAdminSettings, ...(doc.data as Partial<PlatformAdminSettings>) };
           }
         } catch (err) {
-          logger.warn("[AdminService] Database read fallback to defaults:", err);
+          logger.warn(`Failed to fetch admin settings from DB: ${err}`);
         }
         return defaultAdminSettings;
       },
-      86400,
     );
   }
 
@@ -49,8 +52,9 @@ export class AdminService {
     await DragonflyCacheService.set(CACHE_KEY_ADMIN_SETTINGS, merged, 86400);
 
     // 2. Enqueue mutation to Cron Sync Queue for MongoDB persistence
-    await DragonflyCacheService.writeToDragonflyAndEnqueueSync(
+    await DragonflyCronSyncService.enqueueMutation(
       "settings",
+      "UPSERT",
       CACHE_KEY_ADMIN_SETTINGS,
       settingsPayload,
       "admin:platform",

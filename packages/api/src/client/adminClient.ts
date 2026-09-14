@@ -90,18 +90,9 @@ export const AdminSettingsBackendService = {
 
 export const SettingsBackendService = AdminSettingsBackendService;
 
-export function getBackendStatus() {
-  return {
-    initialized: true,
-    connected: true,
-    engine: "MongoDB Atlas + Dragonfly DB",
-    database: "talentflow",
-    authStatus: "ready",
-    dbStatus: "active",
-    lastPing: new Date().toISOString(),
-  };
-}
-
-export const getAdminBackendStatus = getBackendStatus;
-export const getCompanyBackendStatus = getBackendStatus;
-export const getCandidateBackendStatus = getBackendStatus;
+export {
+  getBackendStatus,
+  getAdminBackendStatus,
+  getCompanyBackendStatus,
+  getCandidateBackendStatus,
+} from "../backend";

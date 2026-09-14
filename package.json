@@ -14,7 +14,7 @@
     "dev:company": "npm run dev --workspace=@talent-flow/company-portal",
     "dev:graviton": "npm run dev --workspace=@talent-flow/graviton-it-solutions",
     "build:serverless": "esbuild ./api-src/index.ts --bundle --platform=node --target=node22 --format=esm --outfile=api/index.js --packages=external",
-    "build": "lerna run build && npm run build:serverless && node -e \"const fs = require('fs'); fs.cpSync('packages/graviton-it-solutions/dist', './dist', { recursive: true });\"",
+    "build": "lerna run build && npm run build:serverless && node -e \"import('node:fs').then(fs => fs.cpSync('packages/graviton-it-solutions/dist', './dist', { recursive: true }));\"",
     "build:all": "npm run build",
     "start": "npm run start --workspace=@talent-flow/api",
     "lint": "lerna run lint",

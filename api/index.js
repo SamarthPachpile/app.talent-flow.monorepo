@@ -2380,8 +2380,9 @@ var CandidateService = class {
       updatedAt: (/* @__PURE__ */ new Date()).toISOString()
     };
     await DragonflyCacheService.set(cacheKey, merged, 86400);
-    await DragonflyCacheService.writeToDragonflyAndEnqueueSync(
+    await DragonflyCronSyncService.enqueueMutation(
       "settings",
+      "UPSERT",
       cacheKey,
       settingsPayload,
       `candidate:${cleanId}`
@@ -2578,8 +2579,9 @@ var CompanyService = class {
       updatedAt: (/* @__PURE__ */ new Date()).toISOString()
     };
     await DragonflyCacheService.set(cacheKey, merged, 86400);
-    await DragonflyCacheService.writeToDragonflyAndEnqueueSync(
+    await DragonflyCronSyncService.enqueueMutation(
       "settings",
+      "UPSERT",
       cacheKey,
       settingsPayload,
       `company:${cleanId}`
@@ -3698,11 +3700,10 @@ var AdminService = class {
             return { ...defaultAdminSettings, ...doc.data };
           }
         } catch (err) {
-          logger.warn("[AdminService] Database read fallback to defaults:", err);
+          logger.warn(`Failed to fetch admin settings from DB: ${err}`);
         }
         return defaultAdminSettings;
-      },
-      86400
+      }
     );
   }
   static async saveAdminSettings(settings) {
@@ -3715,8 +3716,9 @@ var AdminService = class {
       updatedAt: (/* @__PURE__ */ new Date()).toISOString()
     };
     await DragonflyCacheService.set(CACHE_KEY_ADMIN_SETTINGS, merged, 86400);
-    await DragonflyCacheService.writeToDragonflyAndEnqueueSync(
+    await DragonflyCronSyncService.enqueueMutation(
       "settings",
+      "UPSERT",
       CACHE_KEY_ADMIN_SETTINGS,
       settingsPayload,
       "admin:platform"

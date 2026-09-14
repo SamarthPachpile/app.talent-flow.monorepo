@@ -1,6 +1,5 @@
 import type { Request, Response } from "express";
 import { CandidateService } from "../services/candidateService";
-import { Candidate } from "@talent-flow/schema-types/models";
 import { successResponse, errorResponse } from "@talent-flow/utilities";
 import { httpStatusCodes } from "@talent-flow/schema-types";
 
