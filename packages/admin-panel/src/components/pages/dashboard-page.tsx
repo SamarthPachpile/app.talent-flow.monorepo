@@ -11,6 +11,7 @@ import { PHASES, RECRUITERS, ROLES, STAGES, phaseOfStage } from "../../lib/ats-d
 import { COMPANIES, OPERATOR } from "../../lib/workspace-data";
 import { AdminLoginPage } from "../admin-login-page";
 import { Footer } from "../Footer";
+import { getCompanyDomainUrl, getCandidateDomainUrl } from "@talent-flow/utilities";
 
 export function DashboardPage() {
   const { allCandidates, advanceCandidate } = useWorkspace();
@@ -66,7 +67,7 @@ export function DashboardPage() {
                   {OPERATOR.name} · Global CRM Operations
                 </p>
                 <span className="bg-ember/15 text-ember border border-ember/30 text-10px px-2 py-0.5 rounded font-semibold flex items-center gap-1">
-                  <Globe2 className="size-3" /> Route: /admin-panel/dashboard
+                  <Globe2 className="size-3" /> Route: /dashboard
                 </span>
               </div>
               <h1 className="mt-1 text-4xl leading-none font-display text-foreground font-semibold">
@@ -210,15 +211,15 @@ export function DashboardPage() {
 
       <Footer
         linksCol1={[
-          { label: "Admin Pipeline", href: "/admin-panel/dashboard" },
-          { label: "Onboarded Companies", href: "/admin-panel/companies" },
-          { label: "Interviews Control", href: "/admin-panel/interviews" },
-          { label: "Offers Central", href: "/admin-panel/offers" },
+          { label: "Admin Pipeline", href: "/dashboard" },
+          { label: "Onboarded Companies", href: "/companies" },
+          { label: "Interviews Control", href: "/interviews" },
+          { label: "Offers Central", href: "/offers" },
         ]}
         linksCol2={[
-          { label: "Company Portal", href: "/companies" },
-          { label: "Candidate Portal", href: "/candidates-portal" },
-          { label: "Admin Settings", href: "/admin-panel/settings" },
+          { label: "Company Portal", href: getCompanyDomainUrl() },
+          { label: "Candidate Portal", href: getCandidateDomainUrl() },
+          { label: "Admin Settings", href: "/settings" },
         ]}
       />
     </div>

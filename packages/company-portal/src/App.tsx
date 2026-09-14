@@ -11,6 +11,7 @@ import { toast } from "./lib/sweetalert";
 import { Building2, ArrowLeft, Plus } from "lucide-react";
 import { getDefaultOnboardingState } from "./lib/defaultOnboardingState";
 import { CompanyApiService, CompanyAuthService, CompanyDocument } from "@talent-flow/api";
+import { getCandidateDomainUrl } from "@talent-flow/utilities";
 
 import SmoothScrollProvider from "./components/SmoothScrollProvider";
 
@@ -24,10 +25,13 @@ export const getCompanyBasePath = () => {
 
 export const buildCompanyUrl = (subpath: string) => {
   const base = getCompanyBasePath();
-  const cleanSub = subpath.startsWith("/") ? subpath : `/${subpath}`;
-  if (!base) return cleanSub;
+  let cleanSub = subpath.startsWith("/") ? subpath : `/${subpath}`;
+  if (!base) {
+    cleanSub = cleanSub.replace(/^\/(companies|company)/, "") || "/";
+    return cleanSub;
+  }
   if (cleanSub === "/" || cleanSub === "") return base;
-  return `${base}${cleanSub}`;
+  return `${base}${cleanSub.replace(/^\/(companies|company)/, "")}`;
 };
 
 export const App: React.FC = () => {
@@ -170,7 +174,7 @@ export const App: React.FC = () => {
           careerPortal: {
             ...baseState.careerPortal,
             ...(fullDocState.careerPortal || {}),
-            url: `https://gravitonitsolutions.com/candidates-portal/${slug}`,
+            url: `${getCandidateDomainUrl()}/${slug}`,
           },
           admin: {
             ...baseState.admin,
@@ -843,7 +847,7 @@ export const App: React.FC = () => {
                   <button
                     onClick={() => {
                       setCompanyNotFound(false);
-                      navigateTo("/companies", "home");
+                      navigateTo("/", "home");
                     }}
                     className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-ember text-ember-foreground hover:bg-ember/90 font-semibold text-xs shadow-xs transition-colors cursor-pointer"
                   >
@@ -853,7 +857,7 @@ export const App: React.FC = () => {
                   <button
                     onClick={() => {
                       setCompanyNotFound(false);
-                      navigateTo("/companies/register", "auth");
+                      navigateTo("/register", "auth");
                     }}
                     className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-surface border border-border hover:bg-accent text-foreground font-semibold text-xs transition-colors cursor-pointer"
                   >
@@ -868,13 +872,13 @@ export const App: React.FC = () => {
               {activeTab === "home" && (
                 <HomePage
                   onGetStarted={() => {
-                    navigateTo("/companies/register", "auth");
+                    navigateTo("/register", "auth");
                   }}
                   onSignIn={() => {
-                    navigateTo("/companies/login", "auth");
+                    navigateTo("/login", "auth");
                   }}
                   onSelectPlan={() => {
-                    navigateTo("/companies/register", "auth");
+                    navigateTo("/register", "auth");
                   }}
                 />
               )}
@@ -884,7 +888,7 @@ export const App: React.FC = () => {
                   initialIsSignUp={authMode === "register"}
                   onSuccess={handleAuthSuccess}
                   onBackToHome={() => {
-                    navigateTo("/companies", "home");
+                    navigateTo("/", "home");
                   }}
                 />
               )}

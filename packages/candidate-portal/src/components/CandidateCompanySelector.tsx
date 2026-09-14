@@ -135,7 +135,7 @@ export const CandidateCompanySelector: React.FC<CandidateCompanySelectorProps> =
       onLogin();
     } else {
       if (typeof window !== "undefined") {
-        window.history.pushState({}, "", "/candidates-portal/login");
+        window.history.pushState({}, "", "/login");
         window.dispatchEvent(new PopStateEvent("popstate"));
       }
     }
@@ -146,7 +146,7 @@ export const CandidateCompanySelector: React.FC<CandidateCompanySelectorProps> =
       onSignup();
     } else {
       if (typeof window !== "undefined") {
-        window.history.pushState({}, "", "/candidates-portal/signup");
+        window.history.pushState({}, "", "/signup");
         window.dispatchEvent(new PopStateEvent("popstate"));
       }
     }
@@ -159,7 +159,7 @@ export const CandidateCompanySelector: React.FC<CandidateCompanySelectorProps> =
       onSelectCompany(companies[0]);
     } else {
       if (typeof window !== "undefined") {
-        window.location.href = "/candidates-portal/login";
+        window.location.href = "/login";
       }
     }
   };
@@ -167,7 +167,7 @@ export const CandidateCompanySelector: React.FC<CandidateCompanySelectorProps> =
   const faqs = [
     {
       q: "How do I access my specific company candidate portal?",
-      a: "Click on your employer's company card from the directory below or navigate directly to /candidates-portal/<company_slug>/login. You can sign in using your registered candidate email address.",
+      a: "Click on your employer's company card from the directory below or navigate directly to /<company_slug>/login. You can sign in using your registered candidate email address.",
     },
     {
       q: "Can I track multiple applications across different companies?",
@@ -659,7 +659,7 @@ export const CandidateCompanySelector: React.FC<CandidateCompanySelectorProps> =
                               {c.name}
                             </h3>
                             <p className="text-[11px] text-muted-foreground flex items-center gap-1 font-mono">
-                              /candidates-portal/{slug}/
+                              /{slug}/
                             </p>
                           </div>
                         </div>
@@ -754,9 +754,7 @@ export const CandidateCompanySelector: React.FC<CandidateCompanySelectorProps> =
                   </div>
 
                   <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end pt-2 sm:pt-0 border-t sm:border-t-0 border-border">
-                    <span className="text-xs font-mono text-muted-foreground">
-                      /candidates-portal/{slug}/
-                    </span>
+                    <span className="text-xs font-mono text-muted-foreground">/{slug}/</span>
                     <button className="px-4 py-2 rounded-xl bg-ember text-ember-foreground text-xs font-semibold flex items-center gap-1.5 shadow-xs group-hover:bg-ember/90">
                       <span>Explore Jobs</span>
                       <ArrowRight className="size-3.5" />

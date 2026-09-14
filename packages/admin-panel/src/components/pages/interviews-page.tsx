@@ -12,6 +12,7 @@ import { AuditTrail } from "../ats/audit-trail";
 import { useWorkspace } from "../../lib/workspace-store";
 import { AdminLoginPage } from "../admin-login-page";
 import { Footer } from "../Footer";
+import { getCompanyDomainUrl, getCandidateDomainUrl } from "@talent-flow/utilities";
 
 export function InterviewsPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
@@ -219,15 +220,15 @@ export function InterviewsPage() {
 
       <Footer
         linksCol1={[
-          { label: "Admin Pipeline", href: "/admin-panel/dashboard" },
-          { label: "Onboarded Companies", href: "/admin-panel/companies" },
-          { label: "Interviews Control", href: "/admin-panel/interviews" },
-          { label: "Offers Central", href: "/admin-panel/offers" },
+          { label: "Admin Pipeline", href: "/dashboard" },
+          { label: "Onboarded Companies", href: "/companies" },
+          { label: "Interviews Control", href: "/interviews" },
+          { label: "Offers Central", href: "/offers" },
         ]}
         linksCol2={[
-          { label: "Company Portal", href: "/companies" },
-          { label: "Candidate Portal", href: "/candidates-portal" },
-          { label: "Admin Settings", href: "/admin-panel/settings" },
+          { label: "Company Portal", href: getCompanyDomainUrl() },
+          { label: "Candidate Portal", href: getCandidateDomainUrl() },
+          { label: "Admin Settings", href: "/settings" },
         ]}
       />
     </div>

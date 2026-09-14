@@ -43,6 +43,7 @@ import {
   FileText,
 } from "lucide-react";
 import { toast } from "../lib/sweetalert";
+import { getCandidateDomainUrl } from "@talent-flow/utilities";
 
 interface WizardProps {
   state: OnboardingState;
@@ -158,7 +159,7 @@ export const OnboardingWizard: React.FC<WizardProps> = ({ state, setState, onCom
         profile: newProfile,
         careerPortal: {
           ...prev.careerPortal,
-          url: `https://gravitonitsolutions.com/candidates-portal/${slug}`,
+          url: `${getCandidateDomainUrl()}/${slug}`,
         },
       };
     });
@@ -649,7 +650,7 @@ export const OnboardingWizard: React.FC<WizardProps> = ({ state, setState, onCom
                 <span className="text-xs font-mono text-muted-foreground hidden sm:inline-block">
                   Portal URL:{" "}
                   <strong className="text-ember">
-                    gravitonitsolutions.com/candidates-portal/
+                    {getCandidateDomainUrl().replace(/^https?:\/\//, "")}/
                     {state.profile.subdomain ||
                       state.profile.name.toLowerCase().replace(/[^a-z0-9]/g, "")}
                   </strong>
@@ -2237,9 +2238,14 @@ export const OnboardingWizard: React.FC<WizardProps> = ({ state, setState, onCom
 
               {/* Career Page URL Box */}
               {(() => {
-                const careerUrl = state.careerPortal?.url
-                  ? state.careerPortal.url.replace("/companies/", "/candidates-portal/")
-                  : `https://gravitonitsolutions.com/candidates-portal/${state.profile.subdomain || state.profile.name.toLowerCase().replace(/[^a-z0-9]/g, "")}`;
+                const slug =
+                  state.profile.subdomain ||
+                  state.profile.name.toLowerCase().replace(/[^a-z0-9]/g, "");
+                const careerUrl =
+                  state.careerPortal?.url &&
+                  !state.careerPortal.url.includes("gravitonitsolutions.com")
+                    ? state.careerPortal.url
+                    : `${getCandidateDomainUrl()}/${slug}`;
                 return (
                   <div className="p-4 rounded-2xl bg-surface/70 border border-border flex items-center justify-between">
                     <div>
@@ -2920,9 +2926,10 @@ export const OnboardingWizard: React.FC<WizardProps> = ({ state, setState, onCom
                     <div className="flex justify-between border-b border-border/50 pb-1.5">
                       <span className="text-muted-foreground">Career Portal:</span>
                       <span className="font-bold text-ember font-mono">
-                        {state.careerPortal?.url
-                          ? state.careerPortal.url.replace("/companies/", "/candidates-portal/")
-                          : `https://gravitonitsolutions.com/candidates-portal/${state.profile.subdomain || state.profile.name.toLowerCase().replace(/[^a-z0-9]/g, "")}`}
+                        {state.careerPortal?.url &&
+                        !state.careerPortal.url.includes("gravitonitsolutions.com")
+                          ? state.careerPortal.url
+                          : `${getCandidateDomainUrl()}/${state.profile.subdomain || state.profile.name.toLowerCase().replace(/[^a-z0-9]/g, "")}`}
                       </span>
                     </div>
                   </div>

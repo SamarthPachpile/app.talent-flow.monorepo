@@ -27,6 +27,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { toast } from "@/lib/sweetalert";
 import { SettingsCard } from "../settings/settings-card";
 import { Footer } from "../Footer";
+import { getCompanyDomainUrl, getCandidateDomainUrl } from "@talent-flow/utilities";
 
 type TabType = "general" | "health" | "security" | "tenants" | "audit";
 
@@ -428,15 +429,15 @@ export function AdminSettingsPage() {
 
       <Footer
         linksCol1={[
-          { label: "Admin Pipeline", href: "/admin-panel/dashboard" },
-          { label: "Onboarded Companies", href: "/admin-panel/companies" },
-          { label: "Platform Settings", href: "/admin-panel/settings" },
-          { label: "Offers Central", href: "/admin-panel/offers" },
+          { label: "Admin Pipeline", href: "/dashboard" },
+          { label: "Onboarded Companies", href: "/companies" },
+          { label: "Platform Settings", href: "/settings" },
+          { label: "Offers Central", href: "/offers" },
         ]}
         linksCol2={[
-          { label: "Company Portal", href: "/companies" },
-          { label: "Candidate Portal", href: "/candidates-portal" },
-          { label: "System Health", href: "/admin-panel/settings" },
+          { label: "Company Portal", href: getCompanyDomainUrl() },
+          { label: "Candidate Portal", href: getCandidateDomainUrl() },
+          { label: "System Health", href: "/settings" },
         ]}
       />
     </div>

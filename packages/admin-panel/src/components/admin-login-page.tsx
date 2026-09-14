@@ -16,6 +16,7 @@ import {
   Users,
 } from "lucide-react";
 import { toast } from "@/lib/sweetalert";
+import { getCompanyDomainUrl, getCandidateDomainUrl } from "@talent-flow/utilities";
 
 interface AdminLoginPageProps {
   onSuccess?: () => void;
@@ -223,14 +224,14 @@ export function AdminLoginPage({ onSuccess }: AdminLoginPageProps = {}) {
             {/* Quick links to other portals */}
             <div className="flex items-center gap-2 ml-auto">
               <a
-                href="/companies"
+                href={getCompanyDomainUrl()}
                 className="px-3 py-1.5 rounded-lg bg-surface hover:bg-accent border border-border text-xs font-semibold text-foreground transition-colors flex items-center gap-1.5 cursor-pointer"
               >
                 <Building2 className="size-3.5 text-ember" />
                 <span>Company Portal</span>
               </a>
               <a
-                href="/candidates-portal"
+                href={getCandidateDomainUrl()}
                 className="px-3 py-1.5 rounded-lg bg-surface hover:bg-accent border border-border text-xs font-semibold text-foreground transition-colors flex items-center gap-1.5 cursor-pointer"
               >
                 <Users className="size-3.5 text-ember" />

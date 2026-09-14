@@ -33,6 +33,7 @@ import {
   REFERRAL_SOURCE_OPTIONS,
   type CompanyDocument,
 } from "@talent-flow/api";
+import { getCandidateDomainUrl, getAdminDomainUrl } from "@talent-flow/utilities";
 
 interface AuthSuccessData {
   email: string;
@@ -999,13 +1000,13 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
           <div className="pt-6 mt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between text-xs text-muted-foreground gap-3 shrink-0">
             <span>© {new Date().getFullYear()} TalentFlow Inc. All rights reserved.</span>
             <div className="flex items-center gap-4">
-              <a href="/companies" className="hover:text-foreground transition-colors">
+              <a href="/login" className="hover:text-foreground transition-colors">
                 Company Portal
               </a>
-              <a href="/candidates-portal" className="hover:text-foreground transition-colors">
+              <a href={getCandidateDomainUrl()} className="hover:text-foreground transition-colors">
                 Candidate Portal
               </a>
-              <a href="/admin-panel/login" className="hover:text-foreground transition-colors">
+              <a href={getAdminDomainUrl()} className="hover:text-foreground transition-colors">
                 Admin Suite
               </a>
             </div>

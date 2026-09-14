@@ -1,59 +1,75 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { Link } from "react-router-dom";
-import { ChevronDown, Globe, Menu, X } from "lucide-react";
+import { ChevronDown, Globe, Menu, X, ExternalLink } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-
-const navItems = [
-  {
-    label: "HR Solutions",
-    href: "/services",
-    dropdown: [
-      "Candidate Application & ATS CRM",
-      "Employee Lifecycle & HRMS Suite",
-      "Smart Onboarding & Candidature Verification",
-      "HR Helpdesk & Workforce Portal",
-      "Workforce Analytics & Dragonfly DB Engine",
-    ],
-  },
-  {
-    label: "Industries",
-    href: "/industries",
-    dropdown: [
-      { label: "SaaS & Technology", href: "/industries/saas-technology" },
-      { label: "Financial Services", href: "/industries/financial-services" },
-      { label: "Healthcare & Life Sciences", href: "/industries/healthcare-life-sciences" },
-      { label: "Manufacturing", href: "/industries/manufacturing" },
-      { label: "Retail & E-commerce", href: "/industries/retail-ecommerce" },
-      { label: "Real Estate", href: "/industries/real-estate" },
-      { label: "Education", href: "/industries/education" },
-      { label: "Professional Services", href: "/industries/professional-services" },
-    ],
-  },
-  {
-    label: "Portals",
-    href: "#",
-    dropdown: [
-      { label: "Candidate Career Portal", href: "/candidate-portal" },
-      {
-        label: "Company Onboarding & Workspace",
-        href: "/companies",
-      },
-      { label: "Super Admin Panel", href: "/admin-panel" },
-    ],
-  },
-
-  { label: "HR AI Assistant", href: "/velocity-ai", highlight: true },
-  { label: "Insights", href: "/insights" },
-  { label: "About Us", href: "/about" },
-  { label: "Careers", href: "/careers" },
-];
+import {
+  getAdminDomainUrl,
+  getCandidateDomainUrl,
+  getCompanyDomainUrl,
+} from "@talent-flow/utilities";
 
 export default function Header() {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const navRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const [mounted, setMounted] = useState(false);
+
+  const navItems = useMemo(
+    () => [
+      {
+        label: "HR Solutions",
+        href: "/services",
+        dropdown: [
+          "Candidate Application & ATS CRM",
+          "Employee Lifecycle & HRMS Suite",
+          "Smart Onboarding & Candidature Verification",
+          "HR Helpdesk & Workforce Portal",
+          "Workforce Analytics & Dragonfly DB Engine",
+        ],
+      },
+      {
+        label: "Industries",
+        href: "/industries",
+        dropdown: [
+          { label: "SaaS & Technology", href: "/industries/saas-technology" },
+          { label: "Financial Services", href: "/industries/financial-services" },
+          { label: "Healthcare & Life Sciences", href: "/industries/healthcare-life-sciences" },
+          { label: "Manufacturing", href: "/industries/manufacturing" },
+          { label: "Retail & E-commerce", href: "/industries/retail-ecommerce" },
+          { label: "Real Estate", href: "/industries/real-estate" },
+          { label: "Education", href: "/industries/education" },
+          { label: "Professional Services", href: "/industries/professional-services" },
+        ],
+      },
+      {
+        label: "Portals",
+        href: "#",
+        dropdown: [
+          {
+            label: "Candidate Career Portal",
+            href: getCandidateDomainUrl(),
+            external: true,
+          },
+          {
+            label: "Company Onboarding & Workspace",
+            href: getCompanyDomainUrl(),
+            external: true,
+          },
+          {
+            label: "Super Admin Panel",
+            href: getAdminDomainUrl(),
+            external: true,
+          },
+        ],
+      },
+      { label: "HR AI Assistant", href: "/velocity-ai", highlight: true },
+      { label: "Insights", href: "/insights" },
+      { label: "About Us", href: "/about" },
+      { label: "Careers", href: "/careers" },
+    ],
+    [],
+  );
 
   useEffect(() => {
     setMounted(true);
@@ -209,17 +225,59 @@ export default function Header() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="hidden max-lg:block fixed top-[70px] left-2 right-2 z-[999] border border-border bg-background rounded-xl shadow-xl p-4"
+            className="hidden max-lg:block fixed top-[70px] left-2 right-2 z-[999] border border-border bg-background rounded-xl shadow-xl p-4 max-h-[80vh] overflow-y-auto"
           >
             {navItems.map((item) => (
-              <Link
-                key={item.label}
-                to={item.href}
-                className="block py-3 text-sm border-b"
-                onClick={() => setMobileOpen(false)}
-              >
-                {item.label}
-              </Link>
+              <div key={item.label} className="border-b border-border/40 py-2">
+                {item.href !== "#" ? (
+                  <Link
+                    to={item.href}
+                    className="block py-1.5 text-sm font-semibold text-foreground hover:text-primary"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    {item.label}
+                  </Link>
+                ) : (
+                  <span className="block py-1.5 text-sm font-semibold text-foreground">
+                    {item.label}
+                  </span>
+                )}
+
+                {item.dropdown && (
+                  <div className="pl-3 pt-1 flex flex-col gap-1.5">
+                    {item.dropdown.map((sub) =>
+                      typeof sub === "string" ? (
+                        <span key={sub} className="text-xs text-muted-foreground py-0.5">
+                          {sub}
+                        </span>
+                      ) : "external" in sub && sub.external ? (
+                        <a
+                          key={sub.label}
+                          href={sub.href}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-xs text-primary font-medium flex items-center justify-between py-1"
+                          onClick={() => setMobileOpen(false)}
+                        >
+                          <span>{sub.label}</span>
+                          <span className="text-[10px] px-2 py-0.5 rounded bg-primary/10 font-bold">
+                            Open ↗
+                          </span>
+                        </a>
+                      ) : (
+                        <Link
+                          key={sub.label}
+                          to={sub.href}
+                          className="text-xs text-muted-foreground hover:text-primary py-1"
+                          onClick={() => setMobileOpen(false)}
+                        >
+                          {sub.label}
+                        </Link>
+                      ),
+                    )}
+                  </div>
+                )}
+              </div>
             ))}
           </motion.div>
         )}

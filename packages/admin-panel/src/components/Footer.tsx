@@ -10,7 +10,7 @@ export interface FooterProps {
 
 export const Footer: React.FC<FooterProps> = ({
   onContactClick,
-  contactHref = "/admin-panel/login",
+  contactHref = "/login",
   linksCol1 = [
     { label: "Services", href: "/services" },
     { label: "Industries", href: "/industries" },

@@ -34,6 +34,7 @@ import { EmployXDashboardOverview } from "./EmployXDashboardOverview";
 import { CompanyJobsList } from "./CompanyJobsList";
 import { CreateJobModal } from "./CreateJobModal";
 import { Footer } from "./Footer";
+import { getCandidateDomainUrl, getAdminDomainUrl } from "@talent-flow/utilities";
 
 interface CompanyDashboardLayoutProps {
   state: OnboardingState;
@@ -1145,9 +1146,9 @@ export const CompanyDashboardLayout: React.FC<CompanyDashboardLayoutProps> = ({
             { label: "Company Settings", href: "#", onClick: () => handleTabChange("settings") },
           ]}
           linksCol2={[
-            { label: "Candidate Portal", href: "/candidates-portal" },
-            { label: "Admin CRM Panel", href: "/admin-panel" },
-            { label: "Company Home", href: "/companies" },
+            { label: "Candidate Portal", href: getCandidateDomainUrl() },
+            { label: "Admin CRM Panel", href: getAdminDomainUrl() },
+            { label: "Company Home", href: "/" },
           ]}
         />
       </div>

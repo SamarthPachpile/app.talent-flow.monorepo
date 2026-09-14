@@ -18,6 +18,7 @@ import { useWorkspace } from "../../lib/workspace-store";
 import { PHASES, RECRUITERS, ROLES, phaseOfStage } from "../../lib/ats-data";
 import { AdminLoginPage } from "../admin-login-page";
 import { Footer } from "../Footer";
+import { getCompanyDomainUrl, getCandidateDomainUrl } from "@talent-flow/utilities";
 
 export function OnboardedCompaniesPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
@@ -173,7 +174,7 @@ export function OnboardedCompaniesPage() {
                       {c.industry} · {c.size || "Enterprise"}
                     </p>
                     <p className="text-xs font-mono text-ember font-medium mt-1">
-                      talentflow.hub/candidates-portal/{c.subdomain || c.id}
+                      {getCandidateDomainUrl().replace(/^https?:\/\//, "")}/{c.subdomain || c.id}
                     </p>
 
                     <div className="mt-4 pt-3 border-t border-border space-y-1.5 text-xs text-muted-foreground">
@@ -241,7 +242,8 @@ export function OnboardedCompaniesPage() {
                 </div>
                 <p className="text-xs text-muted-foreground mt-0.5">
                   <span className="font-mono text-ember">
-                    talentflow.hub/candidates-portal/{activeCompany.subdomain || activeCompany.id}
+                    {getCandidateDomainUrl().replace(/^https?:\/\//, "")}/
+                    {activeCompany.subdomain || activeCompany.id}
                   </span>
                   {" · "}
                   {activeCompany.industry} · Admin:{" "}
@@ -440,15 +442,15 @@ export function OnboardedCompaniesPage() {
 
       <Footer
         linksCol1={[
-          { label: "Admin Pipeline", href: "/admin-panel/dashboard" },
-          { label: "Onboarded Companies", href: "/admin-panel/companies" },
-          { label: "Interviews Control", href: "/admin-panel/interviews" },
-          { label: "Offers Central", href: "/admin-panel/offers" },
+          { label: "Admin Pipeline", href: "/dashboard" },
+          { label: "Onboarded Companies", href: "/companies" },
+          { label: "Interviews Control", href: "/interviews" },
+          { label: "Offers Central", href: "/offers" },
         ]}
         linksCol2={[
-          { label: "Company Portal", href: "/companies" },
-          { label: "Candidate Portal", href: "/candidates-portal" },
-          { label: "Admin Settings", href: "/admin-panel/settings" },
+          { label: "Company Portal", href: getCompanyDomainUrl() },
+          { label: "Candidate Portal", href: getCandidateDomainUrl() },
+          { label: "Admin Settings", href: "/settings" },
         ]}
       />
     </div>

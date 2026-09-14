@@ -13,7 +13,7 @@ export interface CTASectionProps {
 
 export const CTASection: React.FC<CTASectionProps> = ({
   buttonText = "Get in touch",
-  buttonHref = "/candidates-portal",
+  buttonHref = "/",
   onButtonClick,
   headingLine1 = "Let’s start",
   headingLine2 = "engineering impact",

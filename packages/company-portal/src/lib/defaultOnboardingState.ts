@@ -1,4 +1,5 @@
 import { OnboardingState } from "../types/onboarding";
+import { getCandidateDomainUrl } from "@talent-flow/utilities";
 
 export function getDefaultOnboardingState(
   initialCompanyName?: string,
@@ -291,7 +292,7 @@ export function getDefaultOnboardingState(
     },
 
     careerPortal: {
-      url: `https://gravitonitsolutions.com/candidates-portal/${cleanSlug}`,
+      url: `${getCandidateDomainUrl()}/${cleanSlug}`,
       logoUrl:
         "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=300&q=80",
       primaryColor: "#6366f1",

@@ -7,13 +7,20 @@ import path from "path";
 export default defineConfig(({ mode }) => {
   const envDir = path.resolve(__dirname, "../../");
   const env = loadEnv(mode || "development", envDir, "");
-  const portStr = env.VITE_PORT_ADMIN_PANEL || env.VITE_ADMIN_PORT || env.VITE_PORT || "3001";
+  let serverPort = 3001;
+  try {
+    const urlStr = env.VITE_ADMIN_DOMAIN_URL || env.ADMIN_DOMAIN_URL;
+    if (urlStr) {
+      const p = new URL(urlStr).port;
+      if (p) serverPort = Number(p);
+    }
+  } catch {}
 
   return {
     plugins: [react(), tailwindcss(), tsconfigPaths()],
     envDir,
     server: {
-      port: Number(portStr),
+      port: serverPort,
       host: true,
       open: false,
       proxy: {
@@ -40,7 +47,7 @@ export default defineConfig(({ mode }) => {
         "@talent-flow/admin-panel-api": path.resolve(__dirname, "../api/src/client/index.ts"),
         "@talent-flow/api": path.resolve(__dirname, "../api/src/client/index.ts"),
         "@talent-flow/schema-types": path.resolve(__dirname, "../schema-types/src/index.ts"),
-        "@talent-flow/utilities": path.resolve(__dirname, "../utilities/src/index.ts"),
+        "@talent-flow/utilities": path.resolve(__dirname, "../utilities/src"),
         "@api": path.resolve(__dirname, "../api/src/client/index.ts"),
         "@talent-flow/candidate-portal": path.resolve(__dirname, "../candidate-portal/src/App.tsx"),
         "@talent-flow/company-portal": path.resolve(__dirname, "../company-portal/src/App.tsx"),

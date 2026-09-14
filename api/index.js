@@ -464,679 +464,6 @@ function errorResponse(res, statusCode = httpStatusCodes.INTERNAL_SERVER_ERROR, 
   });
 }
 
-// packages/api/src/config.ts
-var nodeEnv = process.env.NODE_ENV || "development";
-var isProduction = nodeEnv === "production" || Boolean(process.env.VERCEL);
-var searchDirs = [
-  process.cwd(),
-  path.resolve(process.cwd(), ".."),
-  path.resolve(process.cwd(), "../.."),
-  path.resolve(process.cwd(), "../../..")
-];
-var envFileNames = [
-  `.env.${nodeEnv}.local`,
-  ".env.local",
-  isProduction ? ".env.production" : ".env.development"
-];
-for (const dir of searchDirs) {
-  for (const envFileName of envFileNames) {
-    const fullPath = path.resolve(dir, envFileName);
-    if (fs.existsSync(fullPath)) {
-      dotenv.config({ path: fullPath, override: false });
-    }
-  }
-}
-var defaultApiUrl = isProduction ? "" : "http://localhost:5000";
-var apiUrl = (process.env.VITE_API_URL || process.env.API_URL || defaultApiUrl).replace(
-  /\/+$/,
-  ""
-);
-var dragonflyHost = process.env.DRAGONFLY_HOST || process.env.REDIS_HOST || "127.0.0.1";
-var dragonflyPort = Number(process.env.DRAGONFLY_PORT || process.env.REDIS_PORT) || 6379;
-var dragonflyPassword = process.env.DRAGONFLY_PASSWORD || process.env.REDIS_PASSWORD || "";
-var dragonflyUsername = process.env.DRAGONFLY_USERNAME || process.env.REDIS_USERNAME || "default";
-var dragonflyCacheTtl = Number(process.env.DRAGONFLY_CACHE_TTL || process.env.REDIS_CACHE_TTL) || 3600;
-var config = {
-  environment: nodeEnv,
-  isProduction,
-  PORT: Number(process.env.PORT || process.env.VITE_PORT_API || process.env.VITE_API_PORT || 5e3),
-  HOST: process.env.HOST || "0.0.0.0",
-  API_URL: apiUrl,
-  MONGODB_URI: process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/talentflow",
-  MONGODB_DATABASE: process.env.MONGODB_DATABASE || "talentflow",
-  MONGO_MAX_POOL_SIZE: Number(process.env.MONGO_MAX_POOL_SIZE) || 20,
-  MONGO_MIN_POOL_SIZE: Number(process.env.MONGO_MIN_POOL_SIZE) || 5,
-  JWT_SECRET: process.env.JWT_SECRET || "",
-  SESSION_SECRET: process.env.SESSION_SECRET || "",
-  DRAGONFLY_USERNAME: dragonflyUsername,
-  DRAGONFLY_HOST: dragonflyHost,
-  DRAGONFLY_PORT: dragonflyPort,
-  DRAGONFLY_PASSWORD: dragonflyPassword,
-  DRAGONFLY_CACHE_TTL: dragonflyCacheTtl,
-  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || "",
-  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET || "",
-  GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL || `${apiUrl}/api/auth/google/callback`,
-  CLIENT_DOMAIN_URL: process.env.CLIENT_DOMAIN_URL || (isProduction ? "" : "http://localhost:3000"),
-  ADMIN_DOMAIN_URL: process.env.ADMIN_DOMAIN_URL || (isProduction ? "" : "http://localhost:3001"),
-  CANDIDATE_DOMAIN_URL: process.env.CANDIDATE_DOMAIN_URL || (isProduction ? "" : "http://localhost:3003"),
-  COMPANY_DOMAIN_URL: process.env.COMPANY_DOMAIN_URL || (isProduction ? "" : "http://localhost:3002"),
-  LANDING_DOMAIN_URL: process.env.LANDING_DOMAIN_URL || (isProduction ? "" : "http://localhost:3000"),
-  GRAVITON_DOMAIN_URL: process.env.GRAVITON_DOMAIN_URL || (isProduction ? "" : "http://localhost:3000")
-};
-var config_default = config;
-
-// packages/utilities/src/auth/jwt.ts
-import jwt from "jsonwebtoken";
-var JWT_SECRET = process.env.JWT_SECRET || "talentflow_super_secret_jwt_key_2026_production";
-var JWT_EXPIRES_IN = "7d";
-function generateToken(payload, options) {
-  const expiresIn = options?.expiresIn || JWT_EXPIRES_IN;
-  return jwt.sign(payload, JWT_SECRET, { expiresIn });
-}
-function verifyToken(token) {
-  try {
-    return jwt.verify(token, JWT_SECRET);
-  } catch {
-    return null;
-  }
-}
-
-// packages/utilities/src/auth/passport.ts
-import passport from "passport";
-import { Strategy as LocalStrategy } from "passport-local";
-import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
-
-// packages/schema-types/src/models/Company.ts
-import mongoose, { Schema } from "mongoose";
-import bcrypt from "bcryptjs";
-var CompanySchema = new Schema(
-  {
-    id: {
-      type: String,
-      required: true,
-      unique: true,
-      lowercase: true,
-      trim: true,
-      index: true
-    },
-    name: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    subdomain: {
-      type: String,
-      required: true,
-      lowercase: true,
-      trim: true,
-      index: true
-    },
-    domain: {
-      type: String,
-      default: ""
-    },
-    industry: {
-      type: String,
-      default: "Technology & Software"
-    },
-    size: {
-      type: String,
-      default: "51-200 Employees"
-    },
-    brandColor: {
-      type: String,
-      default: "#6366f1"
-    },
-    headquarters: {
-      type: String,
-      default: "Remote"
-    },
-    logoUrl: {
-      type: String,
-      default: ""
-    },
-    coverImageUrl: {
-      type: String,
-      default: ""
-    },
-    legalName: String,
-    gstNumber: String,
-    panNumber: String,
-    cinNumber: String,
-    registrationNumber: String,
-    timezone: {
-      type: String,
-      default: "Asia/Kolkata"
-    },
-    currency: {
-      type: String,
-      default: "INR"
-    },
-    website: {
-      type: String,
-      default: ""
-    },
-    description: {
-      type: String,
-      default: ""
-    },
-    admin: {
-      fullName: { type: String, default: "" },
-      workEmail: { type: String, lowercase: true, trim: true, default: "" },
-      phone: { type: String, default: "" },
-      avatarUrl: { type: String, default: "" },
-      uid: { type: String, default: "" }
-    },
-    password: {
-      type: String,
-      required: false
-    },
-    googleId: {
-      type: String,
-      sparse: true,
-      index: true
-    },
-    status: {
-      type: String,
-      default: "Active"
-    },
-    isCompleted: {
-      type: Boolean,
-      default: false
-    },
-    emailVerified: {
-      type: Boolean,
-      default: false
-    },
-    registeredCandidates: [Schema.Types.Mixed],
-    candidateIds: [String]
-  },
-  {
-    timestamps: true,
-    toJSON: {
-      transform(_doc, ret) {
-        delete ret.password;
-        ret.id = ret.id || (ret._id ? String(ret._id) : void 0);
-        delete ret.__v;
-        return ret;
-      }
-    }
-  }
-);
-CompanySchema.pre("save", async function() {
-  if (!this.isModified("password") || !this.password) {
-    return;
-  }
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
-});
-CompanySchema.methods.comparePassword = async function(candidatePassword) {
-  if (!this.password) return false;
-  return bcrypt.compare(candidatePassword, this.password);
-};
-var Company = mongoose.models.Company || mongoose.model("Company", CompanySchema);
-var Company_default = Company;
-
-// packages/schema-types/src/models/Job.ts
-import mongoose2, { Schema as Schema2 } from "mongoose";
-var JobSchema = new Schema2(
-  {
-    id: {
-      type: String,
-      required: true,
-      unique: true,
-      index: true
-    },
-    jobCode: {
-      type: String,
-      required: true,
-      index: true
-    },
-    title: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    companyId: {
-      type: String,
-      required: true,
-      lowercase: true,
-      index: true
-    },
-    companyName: {
-      type: String,
-      required: true
-    },
-    subdomain: {
-      type: String,
-      lowercase: true,
-      index: true
-    },
-    department: {
-      type: String,
-      default: "Engineering"
-    },
-    location: {
-      type: String,
-      default: "Remote"
-    },
-    country: {
-      type: String,
-      default: "United States"
-    },
-    workplaceType: {
-      type: String,
-      enum: ["Remote", "Hybrid", "On-site"],
-      default: "Remote"
-    },
-    employmentType: {
-      type: String,
-      default: "Full-time"
-    },
-    experienceLevel: {
-      type: String,
-      default: "Mid Level"
-    },
-    salaryMin: Number,
-    salaryMax: Number,
-    currency: {
-      type: String,
-      default: "INR"
-    },
-    salaryPeriod: {
-      type: String,
-      default: "year"
-    },
-    salaryRange: String,
-    ctcBreakdown: {
-      type: Schema2.Types.Mixed,
-      default: null
-    },
-    openings: {
-      type: Number,
-      default: 1
-    },
-    priority: {
-      type: String,
-      default: "Medium"
-    },
-    status: {
-      type: String,
-      default: "Active",
-      index: true
-    },
-    description: {
-      type: String,
-      default: ""
-    },
-    responsibilities: [String],
-    requirements: [String],
-    niceToHave: [String],
-    benefits: [String],
-    skills: [String],
-    applicationDeadline: String,
-    hiringManager: {
-      name: String,
-      email: String,
-      designation: String
-    },
-    recruiterEmail: String,
-    applicantsCount: {
-      type: Number,
-      default: 0
-    },
-    postedDate: String
-  },
-  {
-    timestamps: true,
-    toJSON: {
-      transform(_doc, ret) {
-        ret.id = ret.id || (ret._id ? String(ret._id) : "");
-        delete ret._id;
-        delete ret.__v;
-        return ret;
-      }
-    }
-  }
-);
-var Job = mongoose2.models.Job || mongoose2.model("Job", JobSchema);
-var Job_default = Job;
-
-// packages/schema-types/src/models/Candidate.ts
-import mongoose3, { Schema as Schema3 } from "mongoose";
-import bcrypt2 from "bcryptjs";
-var CandidateSchema = new Schema3(
-  {
-    id: {
-      type: String,
-      required: true,
-      unique: true,
-      index: true
-    },
-    fullName: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    email: {
-      type: String,
-      required: true,
-      lowercase: true,
-      trim: true,
-      index: true
-    },
-    password: {
-      type: String,
-      required: false
-    },
-    googleId: {
-      type: String,
-      sparse: true,
-      index: true
-    },
-    phone: {
-      type: String,
-      default: ""
-    },
-    avatarUrl: {
-      type: String,
-      default: ""
-    },
-    country: String,
-    timezone: String,
-    currency: String,
-    compliance: String,
-    payroll: String,
-    companySize: String,
-    industry: String,
-    referralSource: String,
-    uid: {
-      type: String,
-      index: true
-    },
-    currentStageId: {
-      type: String,
-      default: "stage-applied"
-    },
-    targetRole: String,
-    experienceYears: String,
-    skills: [String],
-    bio: String,
-    linkedInUrl: String,
-    linkedinUrl: String,
-    githubUrl: String,
-    portfolioUrl: String,
-    resumeUrl: String,
-    companyId: {
-      type: String,
-      index: true
-    },
-    registeredCompanyIds: {
-      type: [String],
-      default: []
-    },
-    registeredCompanies: {
-      type: [
-        {
-          companyId: String,
-          companyName: String,
-          registeredAt: String,
-          status: { type: String, default: "active" }
-        }
-      ],
-      default: []
-    },
-    roadmapStage: {
-      type: String,
-      default: "Applied"
-    },
-    status: {
-      type: String,
-      default: "Active"
-    },
-    isCompleted: {
-      type: Boolean,
-      default: false
-    },
-    emailVerified: {
-      type: Boolean,
-      default: false
-    }
-  },
-  {
-    timestamps: true,
-    toJSON: {
-      transform(_doc, ret) {
-        delete ret.password;
-        ret.id = ret.id || (ret._id ? String(ret._id) : void 0);
-        delete ret.__v;
-        return ret;
-      }
-    }
-  }
-);
-CandidateSchema.pre("save", async function() {
-  if (!this.isModified("password") || !this.password) {
-    return;
-  }
-  const salt = await bcrypt2.genSalt(10);
-  this.password = await bcrypt2.hash(this.password, salt);
-});
-CandidateSchema.methods.comparePassword = async function(candidatePassword) {
-  if (!this.password) return false;
-  return bcrypt2.compare(candidatePassword, this.password);
-};
-var Candidate = mongoose3.models.Candidate || mongoose3.model("Candidate", CandidateSchema);
-var Candidate_default = Candidate;
-
-// packages/schema-types/src/models/Settings.ts
-import mongoose4, { Schema as Schema4 } from "mongoose";
-var SettingsSchema = new Schema4(
-  {
-    scope: { type: String, required: true, index: true },
-    targetId: { type: String, required: true, index: true },
-    data: { type: Schema4.Types.Mixed, required: true }
-  },
-  { timestamps: true }
-);
-var Settings = mongoose4.models.Settings || mongoose4.model("Settings", SettingsSchema);
-var AdminSettingsModel = mongoose4.models.AdminSettings || mongoose4.model("AdminSettings", SettingsSchema);
-var CompanySettingsModel = mongoose4.models.CompanySettings || mongoose4.model("CompanySettings", SettingsSchema);
-var CandidateSettingsModel = mongoose4.models.CandidateSettings || mongoose4.model("CandidateSettings", SettingsSchema);
-var Settings_default = Settings;
-
-// packages/utilities/src/auth/passport.ts
-var JWT_SECRET2 = process.env.JWT_SECRET || "talentflow_super_secret_jwt_key_2026_production";
-var GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "mock_google_client_id.apps.googleusercontent.com";
-var GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || "mock_google_client_secret";
-var isProd = process.env.NODE_ENV === "production" || Boolean(process.env.VERCEL);
-var apiBase = process.env.VITE_API_URL || process.env.API_URL || (isProd ? "" : "http://localhost:5000");
-var GOOGLE_CALLBACK_URL = process.env.GOOGLE_CALLBACK_URL || (apiBase ? `${apiBase.replace(/\/+$/, "")}/api/auth/google/callback` : "/api/auth/google/callback");
-function configurePassport() {
-  passport.serializeUser((entity, done) => {
-    done(null, entity.id || (entity._id ? String(entity._id) : void 0));
-  });
-  passport.deserializeUser(async (id, done) => {
-    try {
-      const candidate = await Candidate_default.findOne({ $or: [{ id }, { _id: id }] });
-      if (candidate) return done(null, candidate);
-      const company = await Company_default.findOne({ $or: [{ id }, { _id: id }] });
-      if (company) return done(null, company);
-      done(null, null);
-    } catch (err) {
-      done(err, null);
-    }
-  });
-  passport.use(
-    new LocalStrategy(
-      {
-        usernameField: "email",
-        passwordField: "password",
-        session: false
-      },
-      async (email, password, done) => {
-        try {
-          const cleanEmail = email.trim().toLowerCase();
-          const candidate = await Candidate_default.findOne({ email: cleanEmail });
-          if (candidate) {
-            if (!candidate.password) {
-              return done(null, false, {
-                message: "Account was registered using Google OAuth. Please sign in with Google."
-              });
-            }
-            const isMatch = await candidate.comparePassword(password);
-            if (!isMatch) {
-              return done(null, false, {
-                message: "Invalid email or password. Please check your credentials."
-              });
-            }
-            return done(null, candidate);
-          }
-          const company = await Company_default.findOne({
-            $or: [{ "admin.workEmail": cleanEmail }, { subdomain: cleanEmail }, { id: cleanEmail }]
-          });
-          if (company) {
-            if (!company.password) {
-              return done(null, false, {
-                message: "Account was registered using Google OAuth. Please sign in with Google."
-              });
-            }
-            const isMatch = await company.comparePassword(password);
-            if (!isMatch) {
-              return done(null, false, {
-                message: "Invalid email or password. Please check your credentials."
-              });
-            }
-            return done(null, company);
-          }
-          return done(null, false, {
-            message: "Invalid email or password. Please check your credentials."
-          });
-        } catch (err) {
-          return done(err);
-        }
-      }
-    )
-  );
-  passport.use(
-    new GoogleStrategy(
-      {
-        clientID: GOOGLE_CLIENT_ID,
-        clientSecret: GOOGLE_CLIENT_SECRET,
-        callbackURL: GOOGLE_CALLBACK_URL,
-        passReqToCallback: true
-      },
-      async (req, _accessToken, _refreshToken, profile, done) => {
-        try {
-          const email = profile.emails?.[0]?.value?.toLowerCase() || "";
-          const fullName = profile.displayName || `${profile.name?.givenName || ""} ${profile.name?.familyName || ""}`.trim() || "Google Account";
-          const googleId = profile.id;
-          const avatarUrl = profile.photos?.[0]?.value || "";
-          const roleFromState = req.query?.state || "candidate";
-          if (!email) {
-            return done(new Error("No email returned from Google profile"), void 0);
-          }
-          if (roleFromState === "candidate") {
-            let candidate = await Candidate_default.findOne({ $or: [{ googleId }, { email }] });
-            if (candidate) {
-              if (!candidate.googleId) candidate.googleId = googleId;
-              if (!candidate.avatarUrl && avatarUrl) candidate.avatarUrl = avatarUrl;
-              candidate.emailVerified = true;
-              await candidate.save();
-              return done(null, candidate);
-            }
-            const cleanId = `cand-${Date.now().toString().slice(-6)}-${email.replace(/[^a-z0-9]/g, "").slice(0, 8)}`;
-            candidate = await Candidate_default.create({
-              id: cleanId,
-              fullName,
-              email,
-              avatarUrl,
-              googleId,
-              emailVerified: true,
-              isCompleted: false,
-              createdAt: (/* @__PURE__ */ new Date()).toISOString(),
-              updatedAt: (/* @__PURE__ */ new Date()).toISOString()
-            });
-            return done(null, candidate);
-          } else {
-            let company = await Company_default.findOne({
-              $or: [{ googleId }, { "admin.workEmail": email }]
-            });
-            if (company) {
-              if (!company.googleId) company.googleId = googleId;
-              company.emailVerified = true;
-              await company.save();
-              return done(null, company);
-            }
-            const compSlug = fullName.toLowerCase().replace(/[^a-z0-9]/g, "-").slice(0, 30);
-            const cleanCompSlug = `comp-${Date.now().toString().slice(-6)}-${compSlug}`;
-            company = await Company_default.create({
-              id: cleanCompSlug,
-              name: `${fullName}'s Workspace`,
-              subdomain: cleanCompSlug,
-              domain: email.split("@")[1] || "company.com",
-              googleId,
-              admin: {
-                fullName,
-                workEmail: email,
-                avatarUrl,
-                uid: cleanCompSlug
-              },
-              emailVerified: true,
-              isCompleted: false
-            });
-            return done(null, company);
-          }
-        } catch (err) {
-          return done(err, void 0);
-        }
-      }
-    )
-  );
-  passport.use(
-    new JwtStrategy(
-      {
-        jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-        secretOrKey: JWT_SECRET2
-      },
-      async (jwtPayload, done) => {
-        try {
-          if (jwtPayload.role === "candidate" || jwtPayload.candidateId) {
-            const candidate = await Candidate_default.findOne({
-              $or: [{ id: jwtPayload.candidateId || jwtPayload.id }, { email: jwtPayload.email }]
-            });
-            if (candidate) return done(null, candidate);
-          }
-          if (jwtPayload.role === "company" || jwtPayload.companyId) {
-            const company = await Company_default.findOne({
-              $or: [
-                { id: jwtPayload.companyId || jwtPayload.id },
-                { "admin.workEmail": jwtPayload.email }
-              ]
-            });
-            if (company) return done(null, company);
-          }
-          if (jwtPayload.role === "admin") {
-            return done(null, { id: jwtPayload.id, email: jwtPayload.email, role: "admin" });
-          }
-          return done(null, false);
-        } catch (err) {
-          return done(err, false);
-        }
-      }
-    )
-  );
-  return passport;
-}
-
-// packages/api/src/routes/index.ts
-import { Router as Router8 } from "express";
-
-// packages/api/src/routes/authRoutes.ts
-import { Router } from "express";
-import passport2 from "passport";
-
 // packages/utilities/src/dragonfly/config.ts
 function getDragonflyConfig() {
   const url = process.env.DRAGONFLY_URL || process.env.REDIS_URL;
@@ -2188,6 +1515,685 @@ async function deleteUserSession(role, userId) {
   const key = `session:${role}:${userId}`;
   return deleteCache(key);
 }
+
+// packages/api/src/config.ts
+var nodeEnv = process.env.NODE_ENV || "development";
+var isProduction = nodeEnv === "production" || Boolean(process.env.VERCEL);
+var searchDirs = [
+  process.cwd(),
+  path.resolve(process.cwd(), ".."),
+  path.resolve(process.cwd(), "../.."),
+  path.resolve(process.cwd(), "../../..")
+];
+var envFileNames = [
+  `.env.${nodeEnv}.local`,
+  ".env.local",
+  isProduction ? ".env.production" : ".env.development"
+];
+for (const dir of searchDirs) {
+  for (const envFileName of envFileNames) {
+    const fullPath = path.resolve(dir, envFileName);
+    if (fs.existsSync(fullPath)) {
+      dotenv.config({ path: fullPath, override: false });
+    }
+  }
+}
+var defaultApiUrl = isProduction ? "" : "http://localhost:5000";
+var apiUrl = (process.env.VITE_API_URL || process.env.API_URL || defaultApiUrl).replace(
+  /\/+$/,
+  ""
+);
+function getPortFromUrl(urlStr, fallback) {
+  try {
+    if (urlStr) {
+      const parsed = new URL(urlStr);
+      if (parsed.port) return Number(parsed.port);
+      if (parsed.protocol === "https:") return 443;
+      if (parsed.protocol === "http:") return 80;
+    }
+  } catch {
+  }
+  return fallback;
+}
+var dragonflyConfig = getDragonflyConfig();
+var config = {
+  environment: nodeEnv,
+  isProduction,
+  PORT: process.env.PORT ? Number(process.env.PORT) : getPortFromUrl(apiUrl, 5e3),
+  HOST: process.env.HOST || "0.0.0.0",
+  API_URL: apiUrl,
+  MONGODB_URI: process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/talentflow",
+  MONGODB_DATABASE: process.env.MONGODB_DATABASE || "talentflow",
+  MONGO_MAX_POOL_SIZE: Number(process.env.MONGO_MAX_POOL_SIZE) || 20,
+  MONGO_MIN_POOL_SIZE: Number(process.env.MONGO_MIN_POOL_SIZE) || 5,
+  JWT_SECRET: process.env.JWT_SECRET || "",
+  SESSION_SECRET: process.env.SESSION_SECRET || "",
+  DRAGONFLY_USERNAME: dragonflyConfig.username || "default",
+  DRAGONFLY_HOST: dragonflyConfig.host,
+  DRAGONFLY_PORT: dragonflyConfig.port,
+  DRAGONFLY_PASSWORD: dragonflyConfig.password || "",
+  DRAGONFLY_CACHE_TTL: dragonflyConfig.ttl,
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || "",
+  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET || "",
+  GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL || `${apiUrl}/api/auth/google/callback`,
+  ADMIN_DOMAIN_URL: process.env.VITE_ADMIN_DOMAIN_URL || process.env.ADMIN_DOMAIN_URL || (isProduction ? "" : "http://localhost:3001"),
+  CANDIDATE_DOMAIN_URL: process.env.VITE_CANDIDATE_DOMAIN_URL || process.env.CANDIDATE_DOMAIN_URL || (isProduction ? "" : "http://localhost:3003"),
+  COMPANY_DOMAIN_URL: process.env.VITE_COMPANY_DOMAIN_URL || process.env.COMPANY_DOMAIN_URL || (isProduction ? "" : "http://localhost:3002"),
+  LANDING_DOMAIN_URL: process.env.VITE_LANDING_DOMAIN_URL || process.env.LANDING_DOMAIN_URL || (isProduction ? "" : "http://localhost:3000")
+};
+var config_default = config;
+
+// packages/utilities/src/auth/jwt.ts
+import jwt from "jsonwebtoken";
+var JWT_SECRET = process.env.JWT_SECRET || "talentflow_super_secret_jwt_key_2026_production";
+var JWT_EXPIRES_IN = "7d";
+function generateToken(payload, options) {
+  const expiresIn = options?.expiresIn || JWT_EXPIRES_IN;
+  return jwt.sign(payload, JWT_SECRET, { expiresIn });
+}
+function verifyToken(token) {
+  try {
+    return jwt.verify(token, JWT_SECRET);
+  } catch {
+    return null;
+  }
+}
+
+// packages/utilities/src/auth/passport.ts
+import passport from "passport";
+import { Strategy as LocalStrategy } from "passport-local";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
+
+// packages/schema-types/src/models/Company.ts
+import mongoose, { Schema } from "mongoose";
+import bcrypt from "bcryptjs";
+var CompanySchema = new Schema(
+  {
+    id: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+      index: true
+    },
+    name: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    subdomain: {
+      type: String,
+      required: true,
+      lowercase: true,
+      trim: true,
+      index: true
+    },
+    domain: {
+      type: String,
+      default: ""
+    },
+    industry: {
+      type: String,
+      default: "Technology & Software"
+    },
+    size: {
+      type: String,
+      default: "51-200 Employees"
+    },
+    brandColor: {
+      type: String,
+      default: "#6366f1"
+    },
+    headquarters: {
+      type: String,
+      default: "Remote"
+    },
+    logoUrl: {
+      type: String,
+      default: ""
+    },
+    coverImageUrl: {
+      type: String,
+      default: ""
+    },
+    legalName: String,
+    gstNumber: String,
+    panNumber: String,
+    cinNumber: String,
+    registrationNumber: String,
+    timezone: {
+      type: String,
+      default: "Asia/Kolkata"
+    },
+    currency: {
+      type: String,
+      default: "INR"
+    },
+    website: {
+      type: String,
+      default: ""
+    },
+    description: {
+      type: String,
+      default: ""
+    },
+    admin: {
+      fullName: { type: String, default: "" },
+      workEmail: { type: String, lowercase: true, trim: true, default: "" },
+      phone: { type: String, default: "" },
+      avatarUrl: { type: String, default: "" },
+      uid: { type: String, default: "" }
+    },
+    password: {
+      type: String,
+      required: false
+    },
+    googleId: {
+      type: String,
+      sparse: true,
+      index: true
+    },
+    status: {
+      type: String,
+      default: "Active"
+    },
+    isCompleted: {
+      type: Boolean,
+      default: false
+    },
+    emailVerified: {
+      type: Boolean,
+      default: false
+    },
+    registeredCandidates: [Schema.Types.Mixed],
+    candidateIds: [String]
+  },
+  {
+    timestamps: true,
+    toJSON: {
+      transform(_doc, ret) {
+        delete ret.password;
+        ret.id = ret.id || (ret._id ? String(ret._id) : void 0);
+        delete ret.__v;
+        return ret;
+      }
+    }
+  }
+);
+CompanySchema.pre("save", async function() {
+  if (!this.isModified("password") || !this.password) {
+    return;
+  }
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+});
+CompanySchema.methods.comparePassword = async function(candidatePassword) {
+  if (!this.password) return false;
+  return bcrypt.compare(candidatePassword, this.password);
+};
+var Company = mongoose.models.Company || mongoose.model("Company", CompanySchema);
+var Company_default = Company;
+
+// packages/schema-types/src/models/Job.ts
+import mongoose2, { Schema as Schema2 } from "mongoose";
+var JobSchema = new Schema2(
+  {
+    id: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true
+    },
+    jobCode: {
+      type: String,
+      required: true,
+      index: true
+    },
+    title: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    companyId: {
+      type: String,
+      required: true,
+      lowercase: true,
+      index: true
+    },
+    companyName: {
+      type: String,
+      required: true
+    },
+    subdomain: {
+      type: String,
+      lowercase: true,
+      index: true
+    },
+    department: {
+      type: String,
+      default: "Engineering"
+    },
+    location: {
+      type: String,
+      default: "Remote"
+    },
+    country: {
+      type: String,
+      default: "United States"
+    },
+    workplaceType: {
+      type: String,
+      enum: ["Remote", "Hybrid", "On-site"],
+      default: "Remote"
+    },
+    employmentType: {
+      type: String,
+      default: "Full-time"
+    },
+    experienceLevel: {
+      type: String,
+      default: "Mid Level"
+    },
+    salaryMin: Number,
+    salaryMax: Number,
+    currency: {
+      type: String,
+      default: "INR"
+    },
+    salaryPeriod: {
+      type: String,
+      default: "year"
+    },
+    salaryRange: String,
+    ctcBreakdown: {
+      type: Schema2.Types.Mixed,
+      default: null
+    },
+    openings: {
+      type: Number,
+      default: 1
+    },
+    priority: {
+      type: String,
+      default: "Medium"
+    },
+    status: {
+      type: String,
+      default: "Active",
+      index: true
+    },
+    description: {
+      type: String,
+      default: ""
+    },
+    responsibilities: [String],
+    requirements: [String],
+    niceToHave: [String],
+    benefits: [String],
+    skills: [String],
+    applicationDeadline: String,
+    hiringManager: {
+      name: String,
+      email: String,
+      designation: String
+    },
+    recruiterEmail: String,
+    applicantsCount: {
+      type: Number,
+      default: 0
+    },
+    postedDate: String
+  },
+  {
+    timestamps: true,
+    toJSON: {
+      transform(_doc, ret) {
+        ret.id = ret.id || (ret._id ? String(ret._id) : "");
+        delete ret._id;
+        delete ret.__v;
+        return ret;
+      }
+    }
+  }
+);
+var Job = mongoose2.models.Job || mongoose2.model("Job", JobSchema);
+var Job_default = Job;
+
+// packages/schema-types/src/models/Candidate.ts
+import mongoose3, { Schema as Schema3 } from "mongoose";
+import bcrypt2 from "bcryptjs";
+var CandidateSchema = new Schema3(
+  {
+    id: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true
+    },
+    fullName: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    email: {
+      type: String,
+      required: true,
+      lowercase: true,
+      trim: true,
+      index: true
+    },
+    password: {
+      type: String,
+      required: false
+    },
+    googleId: {
+      type: String,
+      sparse: true,
+      index: true
+    },
+    phone: {
+      type: String,
+      default: ""
+    },
+    avatarUrl: {
+      type: String,
+      default: ""
+    },
+    country: String,
+    timezone: String,
+    currency: String,
+    compliance: String,
+    payroll: String,
+    companySize: String,
+    industry: String,
+    referralSource: String,
+    uid: {
+      type: String,
+      index: true
+    },
+    currentStageId: {
+      type: String,
+      default: "stage-applied"
+    },
+    targetRole: String,
+    experienceYears: String,
+    skills: [String],
+    bio: String,
+    linkedInUrl: String,
+    linkedinUrl: String,
+    githubUrl: String,
+    portfolioUrl: String,
+    resumeUrl: String,
+    companyId: {
+      type: String,
+      index: true
+    },
+    registeredCompanyIds: {
+      type: [String],
+      default: []
+    },
+    registeredCompanies: {
+      type: [
+        {
+          companyId: String,
+          companyName: String,
+          registeredAt: String,
+          status: { type: String, default: "active" }
+        }
+      ],
+      default: []
+    },
+    roadmapStage: {
+      type: String,
+      default: "Applied"
+    },
+    status: {
+      type: String,
+      default: "Active"
+    },
+    isCompleted: {
+      type: Boolean,
+      default: false
+    },
+    emailVerified: {
+      type: Boolean,
+      default: false
+    }
+  },
+  {
+    timestamps: true,
+    toJSON: {
+      transform(_doc, ret) {
+        delete ret.password;
+        ret.id = ret.id || (ret._id ? String(ret._id) : void 0);
+        delete ret.__v;
+        return ret;
+      }
+    }
+  }
+);
+CandidateSchema.pre("save", async function() {
+  if (!this.isModified("password") || !this.password) {
+    return;
+  }
+  const salt = await bcrypt2.genSalt(10);
+  this.password = await bcrypt2.hash(this.password, salt);
+});
+CandidateSchema.methods.comparePassword = async function(candidatePassword) {
+  if (!this.password) return false;
+  return bcrypt2.compare(candidatePassword, this.password);
+};
+var Candidate = mongoose3.models.Candidate || mongoose3.model("Candidate", CandidateSchema);
+var Candidate_default = Candidate;
+
+// packages/schema-types/src/models/Settings.ts
+import mongoose4, { Schema as Schema4 } from "mongoose";
+var SettingsSchema = new Schema4(
+  {
+    scope: { type: String, required: true, index: true },
+    targetId: { type: String, required: true, index: true },
+    data: { type: Schema4.Types.Mixed, required: true }
+  },
+  { timestamps: true }
+);
+var Settings = mongoose4.models.Settings || mongoose4.model("Settings", SettingsSchema);
+var AdminSettingsModel = mongoose4.models.AdminSettings || mongoose4.model("AdminSettings", SettingsSchema);
+var CompanySettingsModel = mongoose4.models.CompanySettings || mongoose4.model("CompanySettings", SettingsSchema);
+var CandidateSettingsModel = mongoose4.models.CandidateSettings || mongoose4.model("CandidateSettings", SettingsSchema);
+var Settings_default = Settings;
+
+// packages/utilities/src/auth/passport.ts
+var JWT_SECRET2 = process.env.JWT_SECRET || "talentflow_super_secret_jwt_key_2026_production";
+var GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "mock_google_client_id.apps.googleusercontent.com";
+var GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || "mock_google_client_secret";
+var isProd = process.env.NODE_ENV === "production" || Boolean(process.env.VERCEL);
+var apiBase = process.env.VITE_API_URL || process.env.API_URL || (isProd ? "" : "http://localhost:5000");
+var GOOGLE_CALLBACK_URL = process.env.GOOGLE_CALLBACK_URL || (apiBase ? `${apiBase.replace(/\/+$/, "")}/api/auth/google/callback` : "/api/auth/google/callback");
+function configurePassport() {
+  passport.serializeUser((entity, done) => {
+    done(null, entity.id || (entity._id ? String(entity._id) : void 0));
+  });
+  passport.deserializeUser(async (id, done) => {
+    try {
+      const candidate = await Candidate_default.findOne({ $or: [{ id }, { _id: id }] });
+      if (candidate) return done(null, candidate);
+      const company = await Company_default.findOne({ $or: [{ id }, { _id: id }] });
+      if (company) return done(null, company);
+      done(null, null);
+    } catch (err) {
+      done(err, null);
+    }
+  });
+  passport.use(
+    new LocalStrategy(
+      {
+        usernameField: "email",
+        passwordField: "password",
+        session: false
+      },
+      async (email, password, done) => {
+        try {
+          const cleanEmail = email.trim().toLowerCase();
+          const candidate = await Candidate_default.findOne({ email: cleanEmail });
+          if (candidate) {
+            if (!candidate.password) {
+              return done(null, false, {
+                message: "Account was registered using Google OAuth. Please sign in with Google."
+              });
+            }
+            const isMatch = await candidate.comparePassword(password);
+            if (!isMatch) {
+              return done(null, false, {
+                message: "Invalid email or password. Please check your credentials."
+              });
+            }
+            return done(null, candidate);
+          }
+          const company = await Company_default.findOne({
+            $or: [{ "admin.workEmail": cleanEmail }, { subdomain: cleanEmail }, { id: cleanEmail }]
+          });
+          if (company) {
+            if (!company.password) {
+              return done(null, false, {
+                message: "Account was registered using Google OAuth. Please sign in with Google."
+              });
+            }
+            const isMatch = await company.comparePassword(password);
+            if (!isMatch) {
+              return done(null, false, {
+                message: "Invalid email or password. Please check your credentials."
+              });
+            }
+            return done(null, company);
+          }
+          return done(null, false, {
+            message: "Invalid email or password. Please check your credentials."
+          });
+        } catch (err) {
+          return done(err);
+        }
+      }
+    )
+  );
+  passport.use(
+    new GoogleStrategy(
+      {
+        clientID: GOOGLE_CLIENT_ID,
+        clientSecret: GOOGLE_CLIENT_SECRET,
+        callbackURL: GOOGLE_CALLBACK_URL,
+        passReqToCallback: true
+      },
+      async (req, _accessToken, _refreshToken, profile, done) => {
+        try {
+          const email = profile.emails?.[0]?.value?.toLowerCase() || "";
+          const fullName = profile.displayName || `${profile.name?.givenName || ""} ${profile.name?.familyName || ""}`.trim() || "Google Account";
+          const googleId = profile.id;
+          const avatarUrl = profile.photos?.[0]?.value || "";
+          const roleFromState = req.query?.state || "candidate";
+          if (!email) {
+            return done(new Error("No email returned from Google profile"), void 0);
+          }
+          if (roleFromState === "candidate") {
+            let candidate = await Candidate_default.findOne({ $or: [{ googleId }, { email }] });
+            if (candidate) {
+              if (!candidate.googleId) candidate.googleId = googleId;
+              if (!candidate.avatarUrl && avatarUrl) candidate.avatarUrl = avatarUrl;
+              candidate.emailVerified = true;
+              await candidate.save();
+              return done(null, candidate);
+            }
+            const cleanId = `cand-${Date.now().toString().slice(-6)}-${email.replace(/[^a-z0-9]/g, "").slice(0, 8)}`;
+            candidate = await Candidate_default.create({
+              id: cleanId,
+              fullName,
+              email,
+              avatarUrl,
+              googleId,
+              emailVerified: true,
+              isCompleted: false,
+              createdAt: (/* @__PURE__ */ new Date()).toISOString(),
+              updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+            });
+            return done(null, candidate);
+          } else {
+            let company = await Company_default.findOne({
+              $or: [{ googleId }, { "admin.workEmail": email }]
+            });
+            if (company) {
+              if (!company.googleId) company.googleId = googleId;
+              company.emailVerified = true;
+              await company.save();
+              return done(null, company);
+            }
+            const compSlug = fullName.toLowerCase().replace(/[^a-z0-9]/g, "-").slice(0, 30);
+            const cleanCompSlug = `comp-${Date.now().toString().slice(-6)}-${compSlug}`;
+            company = await Company_default.create({
+              id: cleanCompSlug,
+              name: `${fullName}'s Workspace`,
+              subdomain: cleanCompSlug,
+              domain: email.split("@")[1] || "company.com",
+              googleId,
+              admin: {
+                fullName,
+                workEmail: email,
+                avatarUrl,
+                uid: cleanCompSlug
+              },
+              emailVerified: true,
+              isCompleted: false
+            });
+            return done(null, company);
+          }
+        } catch (err) {
+          return done(err, void 0);
+        }
+      }
+    )
+  );
+  passport.use(
+    new JwtStrategy(
+      {
+        jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+        secretOrKey: JWT_SECRET2
+      },
+      async (jwtPayload, done) => {
+        try {
+          if (jwtPayload.role === "candidate" || jwtPayload.candidateId) {
+            const candidate = await Candidate_default.findOne({
+              $or: [{ id: jwtPayload.candidateId || jwtPayload.id }, { email: jwtPayload.email }]
+            });
+            if (candidate) return done(null, candidate);
+          }
+          if (jwtPayload.role === "company" || jwtPayload.companyId) {
+            const company = await Company_default.findOne({
+              $or: [
+                { id: jwtPayload.companyId || jwtPayload.id },
+                { "admin.workEmail": jwtPayload.email }
+              ]
+            });
+            if (company) return done(null, company);
+          }
+          if (jwtPayload.role === "admin") {
+            return done(null, { id: jwtPayload.id, email: jwtPayload.email, role: "admin" });
+          }
+          return done(null, false);
+        } catch (err) {
+          return done(err, false);
+        }
+      }
+    )
+  );
+  return passport;
+}
+
+// packages/api/src/routes/index.ts
+import { Router as Router8 } from "express";
+
+// packages/api/src/routes/authRoutes.ts
+import { Router } from "express";
+import passport2 from "passport";
 
 // packages/api/src/services/candidateService.ts
 import bcrypt3 from "bcryptjs";
@@ -4571,12 +4577,10 @@ function createApp() {
   app2.use(
     cors({
       origin: [
-        config_default.CLIENT_DOMAIN_URL,
         config_default.ADMIN_DOMAIN_URL,
         config_default.CANDIDATE_DOMAIN_URL,
         config_default.COMPANY_DOMAIN_URL,
         config_default.LANDING_DOMAIN_URL,
-        config_default.GRAVITON_DOMAIN_URL,
         "http://localhost:3000",
         "http://localhost:3001",
         "http://localhost:3002",
@@ -4596,7 +4600,7 @@ function createApp() {
     ["/api/system-health", "/api/server-health", "/api/health"],
     (_req, res) => {
       const dbStatus = getDbStatus();
-      const dragonflyConfig = getDragonflyConfig();
+      const dragonflyConfig2 = getDragonflyConfig();
       return successResponse(
         res,
         httpStatusCodes.SUCCESS,
@@ -4615,9 +4619,9 @@ function createApp() {
           },
           cache: {
             engine: "Dragonfly DB",
-            configured: dragonflyConfig.isConfigured,
-            host: dragonflyConfig.host,
-            port: dragonflyConfig.port
+            configured: dragonflyConfig2.isConfigured,
+            host: dragonflyConfig2.host,
+            port: dragonflyConfig2.port
           },
           auth: {
             engine: "Passport.js + JWT",

@@ -35,6 +35,7 @@ import {
   calculateDefaultCtcBreakdown,
 } from "@talent-flow/api";
 import { toast, Swal } from "../lib/sweetalert";
+import { getCandidateDomainUrl } from "@talent-flow/utilities";
 import { CreateJobModal } from "./CreateJobModal";
 import { CandidateJobPreview } from "./CandidateJobPreview";
 import { CtcBreakdownViewModal } from "./CtcBreakdownViewModal";
@@ -160,7 +161,7 @@ export const CompanyJobsList: React.FC<CompanyJobsListProps> = ({
   };
 
   const copyShareLink = (job: JobPosting) => {
-    const url = `${window.location.origin}/candidates-portal?jobId=${job.id}`;
+    const url = `${getCandidateDomainUrl()}?jobId=${job.id}`;
     navigator.clipboard.writeText(url);
     toast.success("Public job link copied to clipboard!");
   };

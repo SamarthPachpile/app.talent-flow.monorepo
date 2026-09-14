@@ -14,6 +14,7 @@ import { useWorkspace } from "../../lib/workspace-store";
 import type { ApprovalRole } from "../../lib/workspace-data";
 import { AdminLoginPage } from "../admin-login-page";
 import { Footer } from "../Footer";
+import { getCompanyDomainUrl, getCandidateDomainUrl } from "@talent-flow/utilities";
 
 export function ApprovalsPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
@@ -217,15 +218,15 @@ export function ApprovalsPage() {
 
       <Footer
         linksCol1={[
-          { label: "Admin Pipeline", href: "/admin-panel/dashboard" },
-          { label: "Onboarded Companies", href: "/admin-panel/companies" },
-          { label: "Approvals Flow", href: "/admin-panel/approvals" },
-          { label: "Offers Central", href: "/admin-panel/offers" },
+          { label: "Admin Pipeline", href: "/dashboard" },
+          { label: "Onboarded Companies", href: "/companies" },
+          { label: "Approvals Flow", href: "/approvals" },
+          { label: "Offers Central", href: "/offers" },
         ]}
         linksCol2={[
-          { label: "Company Portal", href: "/companies" },
-          { label: "Candidate Portal", href: "/candidates-portal" },
-          { label: "Admin Settings", href: "/admin-panel/settings" },
+          { label: "Company Portal", href: getCompanyDomainUrl() },
+          { label: "Candidate Portal", href: getCandidateDomainUrl() },
+          { label: "Admin Settings", href: "/settings" },
         ]}
       />
     </div>

@@ -7,8 +7,14 @@ import path from "path";
 export default defineConfig(({ mode }) => {
   const envDir = path.resolve(__dirname, "../../");
   const env = loadEnv(mode, envDir, "");
-  const portStr =
-    env.VITE_PORT_COMPANY_ONBOARDING || env.VITE_ONBOARDING_PORT || env.VITE_PORT || "3002";
+  let serverPort = 3002;
+  try {
+    const urlStr = env.VITE_COMPANY_DOMAIN_URL || env.COMPANY_DOMAIN_URL;
+    if (urlStr) {
+      const p = new URL(urlStr).port;
+      if (p) serverPort = Number(p);
+    }
+  } catch {}
 
   return {
     plugins: [react(), tailwindcss(), tsconfigPaths()],
@@ -24,7 +30,7 @@ export default defineConfig(({ mode }) => {
         "@talent-flow/company-portal-api": path.resolve(__dirname, "../api/src/client/index.ts"),
         "@talent-flow/api": path.resolve(__dirname, "../api/src/client/index.ts"),
         "@talent-flow/schema-types": path.resolve(__dirname, "../schema-types/src/index.ts"),
-        "@talent-flow/utilities": path.resolve(__dirname, "../utilities/src/index.ts"),
+        "@talent-flow/utilities": path.resolve(__dirname, "../utilities/src"),
         "@api": path.resolve(__dirname, "../api/src/client/index.ts"),
         "@graviton": path.resolve(__dirname, "../graviton-it-solutions/src"),
         "@graviton-it-solutions": path.resolve(__dirname, "../graviton-it-solutions/src"),
@@ -41,7 +47,7 @@ export default defineConfig(({ mode }) => {
     },
     envDir,
     server: {
-      port: Number(portStr),
+      port: serverPort,
       host: true,
       open: false,
       proxy: {

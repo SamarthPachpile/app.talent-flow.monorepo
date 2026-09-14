@@ -7,8 +7,14 @@ import path from "path";
 export default defineConfig(({ mode }) => {
   const envDir = path.resolve(__dirname, "../../");
   const env = loadEnv(mode, envDir, "");
-  const portStr =
-    env.VITE_PORT_GRAVITON_IT_SOLUTIONS || env.VITE_GRAVITON_PORT || env.VITE_PORT || "3000";
+  let serverPort = 3000;
+  try {
+    const urlStr = env.VITE_LANDING_DOMAIN_URL || env.LANDING_DOMAIN_URL;
+    if (urlStr) {
+      const p = new URL(urlStr).port;
+      if (p) serverPort = Number(p);
+    }
+  } catch {}
 
   return {
     plugins: [react(), tailwindcss(), tsconfigPaths()],
@@ -25,7 +31,7 @@ export default defineConfig(({ mode }) => {
         ),
         "@talent-flow/api": path.resolve(__dirname, "../api/src/client/index.ts"),
         "@talent-flow/schema-types": path.resolve(__dirname, "../schema-types/src/index.ts"),
-        "@talent-flow/utilities": path.resolve(__dirname, "../utilities/src/index.ts"),
+        "@talent-flow/utilities": path.resolve(__dirname, "../utilities/src"),
         "@api": path.resolve(__dirname, "../api/src/client/index.ts"),
         "@talent-flow/admin-panel": path.resolve(
           __dirname,
@@ -41,7 +47,7 @@ export default defineConfig(({ mode }) => {
     },
     envDir,
     server: {
-      port: Number(portStr),
+      port: serverPort,
       host: true,
       open: false,
       proxy: {

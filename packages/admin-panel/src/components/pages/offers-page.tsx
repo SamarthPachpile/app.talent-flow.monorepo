@@ -13,6 +13,7 @@ import { useWorkspace } from "../../lib/workspace-store";
 import { OFFER_FLOW, type Offer } from "../../lib/workspace-data";
 import { formatInrCurrency } from "@talent-flow/api";
 import { Footer } from "../Footer";
+import { getCompanyDomainUrl, getCandidateDomainUrl } from "@talent-flow/utilities";
 
 const statusTone: Record<Offer["status"], string> = {
   draft: "bg-muted text-muted-foreground",
@@ -242,15 +243,15 @@ export function OffersPage() {
 
       <Footer
         linksCol1={[
-          { label: "Admin Pipeline", href: "/admin-panel/dashboard" },
-          { label: "Onboarded Companies", href: "/admin-panel/companies" },
-          { label: "Offers Central", href: "/admin-panel/offers" },
-          { label: "Approvals Flow", href: "/admin-panel/approvals" },
+          { label: "Admin Pipeline", href: "/dashboard" },
+          { label: "Onboarded Companies", href: "/companies" },
+          { label: "Offers Central", href: "/offers" },
+          { label: "Approvals Flow", href: "/approvals" },
         ]}
         linksCol2={[
-          { label: "Company Portal", href: "/companies" },
-          { label: "Candidate Portal", href: "/candidates-portal" },
-          { label: "Admin Settings", href: "/admin-panel/settings" },
+          { label: "Company Portal", href: getCompanyDomainUrl() },
+          { label: "Candidate Portal", href: getCandidateDomainUrl() },
+          { label: "Admin Settings", href: "/settings" },
         ]}
       />
     </div>

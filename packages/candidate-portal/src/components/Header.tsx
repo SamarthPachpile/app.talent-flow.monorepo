@@ -37,7 +37,7 @@ export const Header: React.FC<HeaderProps> = ({
     if (onLogout) {
       onLogout();
     }
-    window.location.href = "/candidates-portal";
+    window.location.href = "/";
   };
 
   const compColor = company?.brandColor || "#6366f1";
@@ -50,7 +50,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Brand Logo & Candidate Title */}
           <div className="flex items-center gap-3">
             <a
-              href="/candidates-portal"
+              href="/"
               title="Candidate Portal Directory"
               className="flex items-center gap-2.5 group cursor-pointer"
             >

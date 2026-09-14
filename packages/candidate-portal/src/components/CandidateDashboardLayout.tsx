@@ -50,6 +50,7 @@ import { CandidateSettingsComponent } from "./CandidateSettings";
 import { Footer } from "./Footer";
 import { toast } from "../lib/sweetalert";
 import { CompanyApiService } from "@talent-flow/api";
+import { getCompanyDomainUrl, getAdminDomainUrl } from "@talent-flow/utilities";
 
 export type SidebarTab =
   "search_jobs" | "companies" | "my_applications" | "profile" | "gdpr" | "my_application";
@@ -833,9 +834,9 @@ export const CandidateDashboardLayout: React.FC<CandidateDashboardLayoutProps> =
             },
           ]}
           linksCol2={[
-            { label: "Company Directory", href: "/candidates-portal" },
-            { label: "Company Workspace", href: "/companies" },
-            { label: "Admin CRM", href: "/admin-panel" },
+            { label: "Company Directory", href: "/" },
+            { label: "Company Workspace", href: getCompanyDomainUrl() },
+            { label: "Admin CRM", href: getAdminDomainUrl() },
           ]}
         />
       </div>

@@ -127,18 +127,15 @@ Configure these in the **Environment Variables** tab of your Vercel Project sett
 
 ### 1. Database & Cache (Required)
 
-| Variable              | Example Value                                                                                 | Description                           |
-| :-------------------- | :-------------------------------------------------------------------------------------------- | :------------------------------------ |
-| `MONGODB_URI`         | `mongodb+srv://<user>:<password>@cluster0.mongodb.net/talentflow?retryWrites=true&w=majority` | MongoDB Atlas Connection String       |
-| `MONGODB_DATABASE`    | `talentflow`                                                                                  | Target database name                  |
-| `DRAGONFLY_HOST`      | `fly-db.internal` or Upstash Redis Host                                                       | Dragonfly DB / Redis Host             |
-| `DRAGONFLY_PORT`      | `6379`                                                                                        | Dragonfly DB / Redis Port             |
-| `DRAGONFLY_PASSWORD`  | `your_redis_password`                                                                         | Dragonfly DB / Redis Auth Password    |
-| `DRAGONFLY_USERNAME`  | `default`                                                                                     | Dragonfly DB / Redis Username         |
-| `DRAGONFLY_CACHE_TTL` | `3600`                                                                                        | Default cache TTL in seconds (1 hour) |
+| Variable              | Example Value                                                                                 | Description                                 |
+| :-------------------- | :-------------------------------------------------------------------------------------------- | :------------------------------------------ |
+| `MONGODB_URI`         | `mongodb+srv://<user>:<password>@cluster0.mongodb.net/talentflow?retryWrites=true&w=majority` | MongoDB Atlas Connection String             |
+| `MONGODB_DATABASE`    | `talentflow`                                                                                  | Target database name                        |
+| `DRAGONFLY_URL`       | `rediss://default:your_password@h6upazt0j.dragonflydb.cloud:6385`                             | Dragonfly DB / Upstash Redis connection URL |
+| `DRAGONFLY_CACHE_TTL` | `3600`                                                                                        | Default cache TTL in seconds (1 hour)       |
 
 > [!TIP]
-> On cloud platforms like Vercel, you can use **Upstash Redis** or a hosted **Dragonfly Cloud** instance. Both are 100% Redis wire-protocol compatible with TalentFlow's `DragonflyCacheService`.
+> On cloud platforms like Vercel, you can use **Upstash Redis** or a hosted **Dragonfly Cloud** instance. Both are 100% Redis wire-protocol compatible with TalentFlow's `DragonflyCacheService`. Port, host, and authentication are derived directly from `DRAGONFLY_URL`.
 
 ### 2. Authentication & JWT (Required)
 
@@ -158,16 +155,14 @@ Configure these in the **Environment Variables** tab of your Vercel Project sett
 | `GOOGLE_CALLBACK_URL`   | `https://api.yourdomain.com/api/auth/google/callback` | Google OAuth redirect callback URL        |
 | `VITE_GOOGLE_CLIENT_ID` | `123456789-abc.apps.googleusercontent.com`            | Frontend Google Client ID exposed to Vite |
 
-### 4. Client Domain Cross-Origin URLs
+### 4. Portal Domain URLs (CORS & Navigation)
 
 | Variable               | Example Value                                            | Description                                     |
 | :--------------------- | :------------------------------------------------------- | :---------------------------------------------- |
-| `CLIENT_DOMAIN_URL`    | `https://app-talent-flow-monorepo-graviton-i.vercel.app` | Main landing site URL for CORS whitelist        |
-| `LANDING_DOMAIN_URL`   | `https://app-talent-flow-monorepo-graviton-i.vercel.app` | Main landing site URL for CORS whitelist        |
-| `GRAVITON_DOMAIN_URL`  | `https://app-talent-flow-monorepo-graviton-i.vercel.app` | Graviton IT solutions URL for CORS whitelist    |
-| `CANDIDATE_DOMAIN_URL` | `https://app-talent-flow-monorepo-candidate.vercel.app`  | Candidate portal URL for CORS whitelist         |
-| `ADMIN_DOMAIN_URL`     | `https://app-talent-flow-monorepo-admin-pane.vercel.app` | Admin panel URL for CORS whitelist              |
-| `COMPANY_DOMAIN_URL`   | `https://app-talent-flow-monorepo-company-po.vercel.app` | Company portal URL for CORS whitelist           |
+| `LANDING_DOMAIN_URL`   | `https://app-talent-flow-monorepo-graviton-i.vercel.app` | Main Landing / Graviton site URL (CORS allowed) |
+| `ADMIN_DOMAIN_URL`     | `https://app-talent-flow-monorepo-admin-pane.vercel.app` | Admin panel portal URL (CORS allowed)           |
+| `COMPANY_DOMAIN_URL`   | `https://app-talent-flow-monorepo-company-po.vercel.app` | Company portal URL (CORS allowed)               |
+| `CANDIDATE_DOMAIN_URL` | `https://app-talent-flow-monorepo-candidate.vercel.app`  | Candidate portal URL (CORS allowed)             |
 | `VITE_API_URL`         | `https://app-talent-flow-monorepo-api.vercel.app`        | Base API URL configured across frontend portals |
 
 ---

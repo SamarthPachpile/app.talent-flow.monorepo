@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import CTASection from "./CTASection";
 import { Footer } from "./Footer";
+import { getCandidateDomainUrl, getAdminDomainUrl } from "@talent-flow/utilities";
 
 interface HomePageProps {
   onGetStarted: () => void;
@@ -1658,8 +1659,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onSignIn, onSe
         ]}
         linksCol2={[
           { label: "Sign In", href: "#", onClick: onSignIn },
-          { label: "Candidate Portal", href: "/candidates-portal" },
-          { label: "Admin CRM", href: "/admin-panel" },
+          { label: "Candidate Portal", href: getCandidateDomainUrl() },
+          { label: "Admin CRM", href: getAdminDomainUrl() },
         ]}
       />
     </div>
