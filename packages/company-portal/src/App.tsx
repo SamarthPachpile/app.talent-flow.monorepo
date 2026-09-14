@@ -14,12 +14,28 @@ import { CompanyApiService, CompanyAuthService, CompanyDocument } from "@talent-
 
 import SmoothScrollProvider from "./components/SmoothScrollProvider";
 
+export const getCompanyBasePath = () => {
+  if (typeof window === "undefined") return "";
+  const p = window.location.pathname;
+  if (p.startsWith("/companies")) return "/companies";
+  if (p.startsWith("/company")) return "/company";
+  return "";
+};
+
+export const buildCompanyUrl = (subpath: string) => {
+  const base = getCompanyBasePath();
+  const cleanSub = subpath.startsWith("/") ? subpath : `/${subpath}`;
+  if (!base) return cleanSub;
+  if (cleanSub === "/" || cleanSub === "") return base;
+  return `${base}${cleanSub}`;
+};
+
 export const App: React.FC = () => {
   const [, setCurrentPath] = useState<string>(() => {
     if (typeof window !== "undefined") {
       return window.location.pathname;
     }
-    return "/companies";
+    return "/";
   });
 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
@@ -316,7 +332,11 @@ export const App: React.FC = () => {
       }
 
       const cleanPath = path.split("?")[0].replace(/\/+$/, "");
-      const segments = cleanPath.split("/").filter(Boolean);
+      const isSubpath = cleanPath.startsWith("/companies") || cleanPath.startsWith("/company");
+      const relativeClean = isSubpath
+        ? cleanPath.replace(/^\/(companies|company)/, "") || "/"
+        : cleanPath || "/";
+      const segments = relativeClean.split("/").filter(Boolean);
 
       const searchParams = new URLSearchParams(window.location.search);
       const urlSubTab = searchParams.get("tab");
@@ -337,10 +357,10 @@ export const App: React.FC = () => {
         setDashboardSubTab(urlSubTab);
       }
 
-      // Check if path has a specific company slug (/companies/<company_slug>)
+      // Check if path has a specific company slug (/:companySlug)
       let requestedSlug: string | null = null;
-      if (segments[0] === "companies" && segments.length >= 2) {
-        const potentialSlug = decodeURIComponent(segments[1]);
+      if (segments.length >= 1) {
+        const potentialSlug = decodeURIComponent(segments[0]);
         if (
           !["login", "auth", "dashboard", "home", "wizard", "register", "signup"].includes(
             potentialSlug.toLowerCase(),
@@ -358,8 +378,8 @@ export const App: React.FC = () => {
             setCompanyNotFoundName(requestedSlug!);
           } else {
             setCompanyNotFound(false);
-            const action = segments[2]?.toLowerCase();
-            if (action === "login") {
+            const action = segments[1]?.toLowerCase();
+            if (action === "login" || action === "auth") {
               setAuthMode("signin");
               setActiveTab("auth");
             } else if (action === "register" || action === "signup") {
@@ -369,7 +389,8 @@ export const App: React.FC = () => {
               toast.error(
                 "Authentication required. Please sign in to access your company dashboard.",
               );
-              window.history.pushState({}, "", "/companies/login");
+              const loginTarget = buildCompanyUrl(`/${requestedSlug}/login`);
+              window.history.pushState({}, "", loginTarget);
               setAuthMode("signin");
               setActiveTab("auth");
             } else {
@@ -384,27 +405,22 @@ export const App: React.FC = () => {
       setCompanyNotFound(false);
 
       const isRegisterRoute =
-        cleanPath === "/companies/register" ||
-        cleanPath === "/companies/signup" ||
-        cleanPath === "/register" ||
-        cleanPath === "/signup" ||
+        relativeClean === "/register" ||
+        relativeClean === "/signup" ||
         searchParams.get("mode") === "register" ||
         searchParams.get("register") === "true";
 
       if (isRegisterRoute) {
         setAuthMode("register");
         setActiveTab("auth");
-      } else if (
-        cleanPath === "/companies/login" ||
-        cleanPath === "/login" ||
-        cleanPath.startsWith("/auth")
-      ) {
+      } else if (relativeClean === "/login" || relativeClean.startsWith("/auth")) {
         setAuthMode("signin");
         setActiveTab("auth");
-      } else if (cleanPath === "/companies/dashboard" || cleanPath === "/dashboard") {
+      } else if (relativeClean === "/dashboard") {
         if (!isAuth) {
           toast.error("Authentication required. Please sign in to access your company dashboard.");
-          window.history.pushState({}, "", "/companies/login");
+          const loginTarget = buildCompanyUrl("/login");
+          window.history.pushState({}, "", loginTarget);
           setAuthMode("signin");
           setActiveTab("auth");
         } else {
@@ -446,14 +462,17 @@ export const App: React.FC = () => {
       }
     }
 
+    const targetUrl = buildCompanyUrl(path);
+
     // Strict Auth Check for protected tabs/routes
     if (
       (path.includes("/dashboard") || targetTab === "wizard" || targetTab === "dashboard") &&
       !isAuth
     ) {
       toast.error("Authentication required. Please sign in to access your company dashboard.");
-      window.history.pushState({}, "", "/companies/login");
-      setCurrentPath("/companies/login");
+      const loginUrl = buildCompanyUrl("/login");
+      window.history.pushState({}, "", loginUrl);
+      setCurrentPath(loginUrl);
       setAuthMode("signin");
       setActiveTab("auth");
       return;
@@ -467,7 +486,7 @@ export const App: React.FC = () => {
         state.profile.subdomain ||
         state.profile.name.toLowerCase().replace(/[^a-z0-9]/g, "") ||
         "company";
-      path = `/companies/${activeSlug}/dashboard`;
+      path = `/${activeSlug}/dashboard`;
     }
 
     // Uncompleted setup enforcement
@@ -477,9 +496,10 @@ export const App: React.FC = () => {
         state.profile.subdomain ||
         state.profile.name.toLowerCase().replace(/[^a-z0-9]/g, "") ||
         "company";
-      const wizPath = `/companies/${activeSlug}/dashboard`;
-      window.history.pushState({}, "", wizPath);
-      setCurrentPath(wizPath);
+      const wizPath = `/${activeSlug}/dashboard`;
+      const fullWizUrl = buildCompanyUrl(wizPath);
+      window.history.pushState({}, "", fullWizUrl);
+      setCurrentPath(fullWizUrl);
       setActiveTab("wizard");
       return;
     }
@@ -503,8 +523,8 @@ export const App: React.FC = () => {
       setDashboardSubTab(urlSubTab);
     }
 
-    window.history.pushState({}, "", path);
-    setCurrentPath(path);
+    window.history.pushState({}, "", targetUrl);
+    setCurrentPath(targetUrl);
 
     if (targetTab) {
       setActiveTab(targetTab);
@@ -578,7 +598,7 @@ export const App: React.FC = () => {
       toast.info(
         `Email Verified! Please complete the setup wizard to submit your workspace details for ${newCompanyName}.`,
       );
-      navigateTo(`/companies/${slug}/dashboard`, "wizard");
+      navigateTo(`/${slug}/dashboard`, "wizard");
     } else {
       // Existing User Login mode -> Fetch authenticated user's company data from MongoDB Atlas
       const loadedDoc = await loadAuthenticatedCompanyData(data.email);
@@ -602,13 +622,13 @@ export const App: React.FC = () => {
 
       if (!isComp) {
         toast.warning("Mandatory Step: Complete your company setup wizard.");
-        navigateTo(`/companies/${compSlug}/dashboard`, "wizard");
+        navigateTo(`/${compSlug}/dashboard`, "wizard");
       } else {
         setDashboardSubTab("dashboard");
         toast.success(
           `Welcome back to ${loadedDoc?.profile?.name || data.companyName || "Workspace"}`,
         );
-        navigateTo(`/companies/${compSlug}/dashboard`, "dashboard");
+        navigateTo(`/${compSlug}/dashboard`, "dashboard");
       }
     }
   };
@@ -648,7 +668,7 @@ export const App: React.FC = () => {
 
     // Direct and immediate redirect to Dashboard
     setDashboardSubTab("dashboard");
-    navigateTo(`/companies/${activeCompanyId}/dashboard`, "dashboard", true);
+    navigateTo(`/${activeCompanyId}/dashboard`, "dashboard", true);
     toast.success("🎉 Setup complete! Welcome to your Company Dashboard.");
 
     const docData: CompanyDocument = {
@@ -751,7 +771,7 @@ export const App: React.FC = () => {
     localStorage.removeItem("talentflow_active_company_id");
     setIsAuthenticated(false);
     toast.info("Company workspace session signed out.");
-    navigateTo("/companies/login", "auth");
+    navigateTo("/login", "auth");
   };
 
   const [candidates] = useState<Candidate[]>([]);

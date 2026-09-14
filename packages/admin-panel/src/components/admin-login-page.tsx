@@ -31,10 +31,14 @@ export function AdminLoginPage({ onSuccess }: AdminLoginPageProps = {}) {
   const [showPassword, setShowPassword] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
 
+  const isSubpath =
+    typeof window !== "undefined" && window.location.pathname.startsWith("/admin-panel");
+  const basePath = isSubpath ? "/admin-panel" : "";
+
   const handleNavigateHome = (e: React.MouseEvent) => {
     e.preventDefault();
     if (typeof window !== "undefined") {
-      window.history.pushState({}, "", "/admin-panel/dashboard");
+      window.history.pushState({}, "", `${basePath}/dashboard`);
       window.dispatchEvent(new PopStateEvent("popstate"));
     }
   };
@@ -70,7 +74,7 @@ export function AdminLoginPage({ onSuccess }: AdminLoginPageProps = {}) {
         if (onSuccess) {
           onSuccess();
         } else if (typeof window !== "undefined") {
-          window.history.pushState({}, "", "/admin-panel/dashboard");
+          window.history.pushState({}, "", `${basePath}/dashboard`);
           window.dispatchEvent(new PopStateEvent("popstate"));
         }
       } else {

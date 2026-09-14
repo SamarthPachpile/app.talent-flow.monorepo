@@ -2,7 +2,7 @@ import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
-import { Company, Candidate } from "@talent-flow/schema-types";
+import { Company, Candidate } from "@talent-flow/schema-types/models";
 
 const JWT_SECRET = process.env.JWT_SECRET || "talentflow_super_secret_jwt_key_2026_production";
 const GOOGLE_CLIENT_ID =

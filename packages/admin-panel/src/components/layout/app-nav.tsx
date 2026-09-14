@@ -14,13 +14,13 @@ import { useWorkspace } from "../../lib/workspace-store";
 import { OPERATOR } from "../../lib/workspace-data";
 import { toast } from "@/lib/sweetalert";
 
-const LINKS = [
-  { to: "/admin-panel/dashboard", label: "Pipeline", exact: true, icon: LayoutGrid },
-  { to: "/admin-panel/companies", label: "Companies", exact: false, icon: Building2 },
-  { to: "/admin-panel/interviews", label: "Interviews", exact: false, icon: CalendarClock },
-  { to: "/admin-panel/approvals", label: "Approvals", exact: false, icon: ClipboardCheck },
-  { to: "/admin-panel/offers", label: "Offers", exact: false, icon: FileSignature },
-  { to: "/admin-panel/settings", label: "Settings", exact: false, icon: Settings },
+const NAV_ITEMS = [
+  { path: "/dashboard", label: "Pipeline", exact: true, icon: LayoutGrid },
+  { path: "/companies", label: "Companies", exact: false, icon: Building2 },
+  { path: "/interviews", label: "Interviews", exact: false, icon: CalendarClock },
+  { path: "/approvals", label: "Approvals", exact: false, icon: ClipboardCheck },
+  { path: "/offers", label: "Offers", exact: false, icon: FileSignature },
+  { path: "/settings", label: "Settings", exact: false, icon: Settings },
 ] as const;
 
 interface AppNavProps {
@@ -30,11 +30,14 @@ interface AppNavProps {
 export function AppNav({ onLogout }: AppNavProps) {
   const { companies, companyId, setCompanyId } = useWorkspace();
   const currentPath = typeof window !== "undefined" ? window.location.pathname : "";
+  const isSubpath = currentPath.startsWith("/admin-panel");
+  const basePath = isSubpath ? "/admin-panel" : "";
 
-  const handleNavClick = (to: string, e: React.MouseEvent) => {
+  const handleNavClick = (targetPath: string, e: React.MouseEvent) => {
     e.preventDefault();
+    const fullTarget = `${basePath}${targetPath}`;
     if (typeof window !== "undefined") {
-      window.history.pushState({}, "", to);
+      window.history.pushState({}, "", fullTarget);
       window.dispatchEvent(new PopStateEvent("popstate"));
     }
   };
@@ -46,18 +49,20 @@ export function AppNav({ onLogout }: AppNavProps) {
       onLogout();
     }
     if (typeof window !== "undefined") {
-      window.history.pushState({}, "", "/admin-panel/login");
+      window.history.pushState({}, "", `${basePath}/login`);
       window.dispatchEvent(new PopStateEvent("popstate"));
     }
   };
 
-  const isLinkActive = (to: string, exact: boolean) => {
+  const isLinkActive = (targetPath: string, exact: boolean) => {
     const cleanCurrent = currentPath.split("?")[0].replace(/\/+$/, "");
-    const cleanTo = to.replace(/\/+$/, "");
+    const relativePath = isSubpath
+      ? cleanCurrent.replace(/^\/admin-panel/, "") || "/"
+      : cleanCurrent || "/";
     if (exact) {
-      return cleanCurrent === cleanTo || cleanCurrent === "/admin-panel";
+      return relativePath === targetPath || relativePath === "/" || relativePath === "";
     }
-    return cleanCurrent.startsWith(cleanTo);
+    return relativePath.startsWith(targetPath);
   };
 
   return (
@@ -66,8 +71,8 @@ export function AppNav({ onLogout }: AppNavProps) {
         <div className="flex flex-wrap items-center justify-between gap-3 px-6 py-3">
           <div className="flex items-center gap-3">
             <a
-              href="/admin-panel"
-              onClick={(e) => handleNavClick("/admin-panel/dashboard", e)}
+              href={`${basePath || "/"}`}
+              onClick={(e) => handleNavClick("/dashboard", e)}
               title="Admin Panel Home"
               className="grid size-8 place-items-center rounded-md bg-ember text-xs font-semibold text-ember-foreground shadow-xs hover:opacity-90 transition-opacity cursor-pointer"
             >
@@ -85,13 +90,14 @@ export function AppNav({ onLogout }: AppNavProps) {
           </div>
 
           <nav className="flex flex-wrap items-center gap-1">
-            {LINKS.map((l) => {
-              const active = isLinkActive(l.to, l.exact);
+            {NAV_ITEMS.map((l) => {
+              const active = isLinkActive(l.path, l.exact);
+              const fullHref = `${basePath}${l.path}`;
               return (
                 <a
-                  key={l.to}
-                  href={l.to}
-                  onClick={(e) => handleNavClick(l.to, e)}
+                  key={l.path}
+                  href={fullHref}
+                  onClick={(e) => handleNavClick(l.path, e)}
                   className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm transition-colors cursor-pointer ${
                     active
                       ? "bg-accent font-medium text-foreground"
