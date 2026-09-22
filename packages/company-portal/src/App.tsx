@@ -10,12 +10,19 @@ import { Candidate } from "./components/CompanyPipelineBoard";
 import { toast } from "./lib/sweetalert";
 import { Building2, ArrowLeft, Plus } from "lucide-react";
 import { getDefaultOnboardingState } from "./lib/defaultOnboardingState";
-import { CompanyApiService, CompanyAuthService, CompanyDocument } from "@talent-flow/api";
+import {
+  CompanyApiService,
+  CompanyAuthService,
+  CompanyDocument,
+  getStorageItem,
+  setStorageItem,
+  removeStorageItem,
+} from "@talent-flow/api";
 import { getCandidateDomainUrl } from "@talent-flow/utilities";
 
 import SmoothScrollProvider from "./components/SmoothScrollProvider";
 
-export const getCompanyBasePath = () => {
+const getCompanyBasePath = () => {
   if (typeof window === "undefined") return "";
   const p = window.location.pathname;
   if (p.startsWith("/companies")) return "/companies";
@@ -23,7 +30,7 @@ export const getCompanyBasePath = () => {
   return "";
 };
 
-export const buildCompanyUrl = (subpath: string) => {
+const buildCompanyUrl = (subpath: string) => {
   const base = getCompanyBasePath();
   let cleanSub = subpath.startsWith("/") ? subpath : `/${subpath}`;
   if (!base) {
@@ -35,22 +42,16 @@ export const buildCompanyUrl = (subpath: string) => {
 };
 
 export const App: React.FC = () => {
-  const [, setCurrentPath] = useState<string>(() => {
-    if (typeof window !== "undefined") {
-      return window.location.pathname;
-    }
-    return "/";
-  });
+  const [, setCurrentPath] = useState<string>(() =>
+    typeof window !== "undefined" ? window.location.pathname : "/",
+  );
 
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    if (typeof window !== "undefined") {
-      return (
-        localStorage.getItem("talentflow_company_auth") === "true" &&
-        !!localStorage.getItem("talentflow_company_profile")
-      );
-    }
-    return false;
-  });
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() =>
+    Boolean(
+      getStorageItem<string | null>("talentflow_company_auth", null) === "true" &&
+      getStorageItem<Record<string, unknown> | null>("talentflow_company_profile", null),
+    ),
+  );
 
   const [activeTab, setActiveTab] = useState<string>("home");
   const [authMode, setAuthMode] = useState<"signin" | "register">("signin");
@@ -60,74 +61,51 @@ export const App: React.FC = () => {
   const [companyNotFoundName, setCompanyNotFoundName] = useState<string>("");
 
   const [state, setState] = useState<OnboardingState>(() => {
-    if (typeof window !== "undefined") {
-      const savedProfile = localStorage.getItem("talentflow_company_profile");
-      if (savedProfile) {
-        try {
-          const parsed = JSON.parse(savedProfile);
-          if (parsed.name || parsed.profile?.name) {
-            const compName = parsed.profile?.name || parsed.name || "";
-            const compEmail = parsed.admin?.workEmail || parsed.email || "";
-            const compAdminName = parsed.admin?.fullName || parsed.adminName || "";
-            const baseState = getDefaultOnboardingState(compName, compEmail, compAdminName);
-            const fullDocState = (parsed.fullOnboardingState || parsed) as Partial<OnboardingState>;
-            const slug = parsed.subdomain || parsed.id || baseState.profile.subdomain;
-            return {
-              ...baseState,
-              ...fullDocState,
-              profile: {
-                ...baseState.profile,
-                ...(fullDocState.profile || {}),
-                name: compName || baseState.profile.name,
-                subdomain: slug,
-                domain: parsed.domain || fullDocState.profile?.domain || baseState.profile.domain,
-                industry:
-                  parsed.industry || fullDocState.profile?.industry || baseState.profile.industry,
-                size: parsed.size || fullDocState.profile?.size || baseState.profile.size,
-                brandColor:
-                  parsed.brandColor ||
-                  fullDocState.profile?.brandColor ||
-                  baseState.profile.brandColor,
-                headquarters:
-                  parsed.headquarters ||
-                  fullDocState.profile?.headquarters ||
-                  baseState.profile.headquarters,
-              },
-              admin: {
-                ...baseState.admin,
-                ...(fullDocState.admin || {}),
-                fullName: compAdminName || baseState.admin.fullName,
-                workEmail: compEmail || baseState.admin.workEmail,
-                phone: parsed.admin?.phone || fullDocState.admin?.phone || baseState.admin.phone,
-              },
-              isCompleted: parsed.isCompleted ?? fullDocState.isCompleted ?? false,
-            };
-          }
-        } catch {
-          // Ignore invalid JSON in localStorage
-        }
-      }
+    const parsed = getStorageItem<Record<string, any> | null>("talentflow_company_profile", null);
+    if (parsed && (parsed.name || parsed.profile?.name)) {
+      const compName = parsed.profile?.name || parsed.name || "";
+      const compEmail = parsed.admin?.workEmail || parsed.email || "";
+      const compAdminName = parsed.admin?.fullName || parsed.adminName || "";
+      const baseState = getDefaultOnboardingState(compName, compEmail, compAdminName);
+      const fullDocState = (parsed.fullOnboardingState || parsed) as Partial<OnboardingState>;
+      const slug = parsed.subdomain || parsed.id || baseState.profile.subdomain;
+      return {
+        ...baseState,
+        ...fullDocState,
+        profile: {
+          ...baseState.profile,
+          ...(fullDocState.profile || {}),
+          name: compName || baseState.profile.name,
+          subdomain: slug,
+          domain: parsed.domain || fullDocState.profile?.domain || baseState.profile.domain,
+          industry: parsed.industry || fullDocState.profile?.industry || baseState.profile.industry,
+          size: parsed.size || fullDocState.profile?.size || baseState.profile.size,
+          brandColor:
+            parsed.brandColor || fullDocState.profile?.brandColor || baseState.profile.brandColor,
+          headquarters:
+            parsed.headquarters ||
+            fullDocState.profile?.headquarters ||
+            baseState.profile.headquarters,
+        },
+        admin: {
+          ...baseState.admin,
+          ...(fullDocState.admin || {}),
+          fullName: compAdminName || baseState.admin.fullName,
+          workEmail: compEmail || baseState.admin.workEmail,
+          phone: parsed.admin?.phone || fullDocState.admin?.phone || baseState.admin.phone,
+        },
+        isCompleted: parsed.isCompleted ?? fullDocState.isCompleted ?? false,
+      };
     }
-
     return getDefaultOnboardingState("", "", "");
   });
 
-  // Helper to load company profile for authenticated session from MongoDB Atlas
+  // Helper to load company profile for authenticated session
   const loadAuthenticatedCompanyData = useCallback(async (userEmail?: string, userUid?: string) => {
-    let emailToUse = userEmail;
-    if (!emailToUse && typeof window !== "undefined") {
-      const savedProfile = localStorage.getItem("talentflow_company_profile");
-      if (savedProfile) {
-        try {
-          const parsed = JSON.parse(savedProfile);
-          emailToUse = parsed.admin?.workEmail || parsed.email;
-        } catch {
-          // Ignore
-        }
-      }
-    }
+    const saved = getStorageItem<Record<string, any> | null>("talentflow_company_profile", null);
+    const emailToUse = userEmail || saved?.admin?.workEmail || saved?.email;
 
-    if (!emailToUse) return;
+    if (!emailToUse) return null;
 
     try {
       const doc = await CompanyApiService.getCompanyByEmailOrUid(emailToUse, userUid);
@@ -249,24 +227,21 @@ export const App: React.FC = () => {
 
         setState(loadedState);
 
-        localStorage.setItem(
-          "talentflow_company_profile",
-          JSON.stringify({
-            ...loadedState,
-            id: doc.id,
-            name: doc.name,
-            subdomain: doc.subdomain,
-            domain: doc.domain,
-            industry: doc.industry,
-            size: doc.size,
-            brandColor: doc.brandColor,
-            headquarters: doc.headquarters,
-            email: doc.admin?.workEmail,
-            adminName: doc.admin?.fullName,
-            isCompleted: isCompleted,
-          }),
-        );
-        localStorage.setItem("talentflow_active_company_id", doc.id || slug);
+        setStorageItem("talentflow_company_profile", {
+          ...loadedState,
+          id: doc.id,
+          name: doc.name,
+          subdomain: doc.subdomain,
+          domain: doc.domain,
+          industry: doc.industry,
+          size: doc.size,
+          brandColor: doc.brandColor,
+          headquarters: doc.headquarters,
+          email: doc.admin?.workEmail,
+          adminName: doc.admin?.fullName,
+          isCompleted: isCompleted,
+        });
+        setStorageItem("talentflow_active_company_id", doc.id || slug);
         return loadedState;
       }
     } catch (err) {
@@ -283,23 +258,25 @@ export const App: React.FC = () => {
         const compDoc = await CompanyApiService.getCompanyByEmailOrUid(user.email, user.uid);
         if (compDoc) {
           setIsAuthenticated(true);
-          localStorage.setItem("talentflow_company_auth", "true");
+          setStorageItem("talentflow_company_auth", "true");
           await loadAuthenticatedCompanyData(user.email, user.uid);
         } else {
-          // User is not a company workspace account (could be a candidate user)
+          // User is not a company workspace account
           const storedAuth =
-            typeof window !== "undefined" &&
-            localStorage.getItem("talentflow_company_auth") === "true" &&
-            !!localStorage.getItem("talentflow_company_profile");
+            getStorageItem<string | null>("talentflow_company_auth", null) === "true" &&
+            Boolean(
+              getStorageItem<Record<string, unknown> | null>("talentflow_company_profile", null),
+            );
           if (!storedAuth) {
             setIsAuthenticated(false);
           }
         }
       } else {
         const hasAuthFlag =
-          typeof window !== "undefined" &&
-          localStorage.getItem("talentflow_company_auth") === "true" &&
-          !!localStorage.getItem("talentflow_company_profile");
+          getStorageItem<string | null>("talentflow_company_auth", null) === "true" &&
+          Boolean(
+            getStorageItem<Record<string, unknown> | null>("talentflow_company_profile", null),
+          );
         if (!hasAuthFlag) {
           setIsAuthenticated(false);
         }
@@ -311,29 +288,24 @@ export const App: React.FC = () => {
     };
   }, [loadAuthenticatedCompanyData]);
 
-  // Route PopState & Navigation handler with strict Authentication Guard & Wizard Lifespan Guard
+  // Route PopState & Navigation handler
   useEffect(() => {
     const handlePopState = () => {
       const path = window.location.pathname;
       setCurrentPath(path);
       const isAuth =
         isAuthenticated ||
-        (typeof window !== "undefined" &&
-          localStorage.getItem("talentflow_company_auth") === "true" &&
-          !!localStorage.getItem("talentflow_company_profile"));
+        (getStorageItem<string | null>("talentflow_company_auth", null) === "true" &&
+          Boolean(
+            getStorageItem<Record<string, unknown> | null>("talentflow_company_profile", null),
+          ));
 
-      let isComp = state.isCompleted;
-      if (typeof window !== "undefined") {
-        try {
-          const saved = localStorage.getItem("talentflow_company_profile");
-          if (saved) {
-            const parsed = JSON.parse(saved);
-            if (parsed.isCompleted !== undefined) isComp = parsed.isCompleted;
-          }
-        } catch {
-          // ignore
-        }
-      }
+      const savedProf = getStorageItem<Record<string, unknown> | null>(
+        "talentflow_company_profile",
+        null,
+      );
+      const isComp =
+        savedProf?.isCompleted !== undefined ? Boolean(savedProf.isCompleted) : state.isCompleted;
 
       const cleanPath = path.split("?")[0].replace(/\/+$/, "");
       const isSubpath = cleanPath.startsWith("/companies") || cleanPath.startsWith("/company");
@@ -354,70 +326,82 @@ export const App: React.FC = () => {
           "connectors",
           "interactions",
           "overview",
-          "team",
           "settings",
+          "team",
+          "branding",
+          "email-templates",
         ].includes(urlSubTab)
       ) {
         setDashboardSubTab(urlSubTab);
       }
 
-      // Check if path has a specific company slug (/:companySlug)
-      let requestedSlug: string | null = null;
-      if (segments.length >= 1) {
-        const potentialSlug = decodeURIComponent(segments[0]);
-        if (
-          !["login", "auth", "dashboard", "home", "wizard", "register", "signup"].includes(
-            potentialSlug.toLowerCase(),
-          )
-        ) {
-          requestedSlug = potentialSlug;
-        }
-      }
-
-      if (requestedSlug) {
-        // Query MongoDB Atlas to verify company existence in database
-        CompanyApiService.getCompanyByNameOrDocId(requestedSlug).then((comp) => {
-          if (!comp) {
-            setCompanyNotFound(true);
-            setCompanyNotFoundName(requestedSlug!);
-          } else {
-            setCompanyNotFound(false);
-            const action = segments[1]?.toLowerCase();
-            if (action === "login" || action === "auth") {
-              setAuthMode("signin");
-              setActiveTab("auth");
-            } else if (action === "register" || action === "signup") {
-              setAuthMode("register");
-              setActiveTab("auth");
-            } else if (!isAuth) {
-              toast.error(
-                "Authentication required. Please sign in to access your company dashboard.",
-              );
-              const loginTarget = buildCompanyUrl(`/${requestedSlug}/login`);
-              window.history.pushState({}, "", loginTarget);
-              setAuthMode("signin");
-              setActiveTab("auth");
-            } else {
-              setActiveTab(isComp ? "dashboard" : "wizard");
-            }
-          }
-        });
+      // Root route "/" or "/companies" -> Home
+      if (segments.length === 0) {
+        setCompanyNotFound(false);
+        setCompanyNotFoundName("");
+        setActiveTab("home");
         return;
       }
 
-      // Generic non-company-specific routes
-      setCompanyNotFound(false);
-
-      const isRegisterRoute =
-        relativeClean === "/register" ||
-        relativeClean === "/signup" ||
-        searchParams.get("mode") === "register" ||
-        searchParams.get("register") === "true";
-
-      if (isRegisterRoute) {
+      // Explicit static auth routes
+      if (segments[0] === "login" || segments[0] === "signin" || segments[0] === "auth") {
+        setCompanyNotFound(false);
+        setCompanyNotFoundName("");
+        setAuthMode("signin");
+        setActiveTab("auth");
+        return;
+      }
+      if (segments[0] === "signup" || segments[0] === "register") {
+        setCompanyNotFound(false);
+        setCompanyNotFoundName("");
         setAuthMode("register");
         setActiveTab("auth");
-      } else if (relativeClean === "/login" || relativeClean.startsWith("/auth")) {
+        return;
+      }
+
+      if (segments[0] === "dashboard") {
+        setCompanyNotFound(false);
+        setCompanyNotFoundName("");
+        if (!isAuth) {
+          toast.error("Authentication required. Please sign in to access your company dashboard.");
+          const loginTarget = buildCompanyUrl("/login");
+          window.history.pushState({}, "", loginTarget);
+          setAuthMode("signin");
+          setActiveTab("auth");
+        } else {
+          setActiveTab(isComp ? "dashboard" : "wizard");
+        }
+        return;
+      }
+
+      const requestedSlug = segments[0];
+      const action = segments[1];
+
+      // Handle company sub-paths: /:companySlug or /:companySlug/login or /:companySlug/dashboard
+      if (action === "login" || action === "signin" || action === "auth") {
+        setAuthMode("signin");
+        setActiveTab("auth");
+      } else if (action === "signup" || action === "register") {
+        setAuthMode("register");
+        setActiveTab("auth");
+      } else if (action === "dashboard") {
+        if (!isAuth) {
+          toast.error("Authentication required. Please sign in to access your company dashboard.");
+          const loginTarget = buildCompanyUrl(`/${requestedSlug}/login`);
+          window.history.pushState({}, "", loginTarget);
+          setAuthMode("signin");
+          setActiveTab("auth");
+        } else {
+          setActiveTab(isComp ? "dashboard" : "wizard");
+        }
+      } else if (relativeClean === "/register" || relativeClean === "/signup") {
+        setAuthMode("register");
+        setActiveTab("auth");
+      } else if (
+        relativeClean === "/login" ||
+        relativeClean === "/signin" ||
+        relativeClean === "/auth"
+      ) {
         setAuthMode("signin");
         setActiveTab("auth");
       } else if (relativeClean === "/dashboard") {
@@ -431,7 +415,16 @@ export const App: React.FC = () => {
           setActiveTab(isComp ? "dashboard" : "wizard");
         }
       } else {
-        setActiveTab("home");
+        // Query MongoDB Atlas to verify company existence in database
+        CompanyApiService.getCompanyByNameOrDocId(requestedSlug).then((comp) => {
+          if (!comp) {
+            setCompanyNotFound(true);
+            setCompanyNotFoundName(requestedSlug);
+          } else {
+            setCompanyNotFound(false);
+            setActiveTab(isComp ? "dashboard" : "wizard");
+          }
+        });
       }
     };
 
@@ -449,22 +442,21 @@ export const App: React.FC = () => {
 
     const isAuth =
       isAuthenticated ||
-      (typeof window !== "undefined" &&
-        localStorage.getItem("talentflow_company_auth") === "true" &&
-        !!localStorage.getItem("talentflow_company_profile"));
+      (getStorageItem<string | null>("talentflow_company_auth", null) === "true" &&
+        Boolean(
+          getStorageItem<Record<string, unknown> | null>("talentflow_company_profile", null),
+        ));
 
-    let isComp = isCompletedOverride !== undefined ? isCompletedOverride : state.isCompleted;
-    if (typeof window !== "undefined" && isCompletedOverride === undefined) {
-      try {
-        const saved = localStorage.getItem("talentflow_company_profile");
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          if (parsed.isCompleted !== undefined) isComp = parsed.isCompleted;
-        }
-      } catch {
-        // ignore
-      }
-    }
+    const savedProf = getStorageItem<Record<string, unknown> | null>(
+      "talentflow_company_profile",
+      null,
+    );
+    const isComp =
+      isCompletedOverride !== undefined
+        ? isCompletedOverride
+        : savedProf?.isCompleted !== undefined
+          ? Boolean(savedProf.isCompleted)
+          : state.isCompleted;
 
     const targetUrl = buildCompanyUrl(path);
 
@@ -549,18 +541,18 @@ export const App: React.FC = () => {
     isNewAccount?: boolean;
     signupPayload?: Partial<CompanyDocument>;
   }) => {
-    localStorage.setItem("talentflow_company_auth", "true");
+    setStorageItem("talentflow_company_auth", "true");
     setIsAuthenticated(true);
 
     const slug =
       data.companySlug ||
-      localStorage.getItem("talentflow_active_company_id") ||
+      getStorageItem<string | null>("talentflow_active_company_id", null) ||
       (data.companyName ? data.companyName.toLowerCase().replace(/[^a-z0-9]/g, "") : "company");
 
-    localStorage.setItem("talentflow_active_company_id", slug);
+    setStorageItem("talentflow_active_company_id", slug);
 
     if (data.isNewAccount) {
-      // New Company Account created -> Mandatory Setup Wizard (One-time after signup)
+      // New Company Account created -> Mandatory Setup Wizard
       const newCompanyName = data.companyName || "New Enterprise Co";
       const payload = data.signupPayload || {};
       const newState: OnboardingState = getDefaultOnboardingState(
@@ -577,50 +569,42 @@ export const App: React.FC = () => {
           referralSource: payload.referralSource,
         },
       );
-      newState.isCompleted = false; // Mandatory Setup Wizard
+      newState.isCompleted = false;
       newState.systemMetadata.companyId = slug;
 
       setState(newState);
-      localStorage.setItem(
-        "talentflow_company_profile",
-        JSON.stringify({
-          ...newState,
-          id: slug,
-          name: newCompanyName,
-          subdomain: newState.profile.subdomain,
-          domain: newState.profile.domain,
-          industry: newState.profile.industry,
-          size: newState.profile.size,
-          brandColor: newState.profile.brandColor,
-          headquarters: newState.profile.headquarters,
-          email: data.email,
-          adminName: data.adminName,
-          isCompleted: false,
-        }),
-      );
+      setStorageItem("talentflow_company_profile", {
+        ...newState,
+        id: slug,
+        name: newCompanyName,
+        subdomain: newState.profile.subdomain,
+        domain: newState.profile.domain,
+        industry: newState.profile.industry,
+        size: newState.profile.size,
+        brandColor: newState.profile.brandColor,
+        headquarters: newState.profile.headquarters,
+        email: data.email,
+        adminName: data.adminName,
+        isCompleted: false,
+      });
 
       toast.info(
         `Email Verified! Please complete the setup wizard to submit your workspace details for ${newCompanyName}.`,
       );
       navigateTo(`/${slug}/dashboard`, "wizard");
     } else {
-      // Existing User Login mode -> Fetch authenticated user's company data from MongoDB Atlas
+      // Existing User Login mode -> Fetch company data
       const loadedDoc = await loadAuthenticatedCompanyData(data.email);
 
-      const savedStr = localStorage.getItem("talentflow_company_profile");
+      const saved = getStorageItem<Record<string, any> | null>("talentflow_company_profile", null);
       let isComp = loadedDoc ? loadedDoc.isCompleted !== false : true;
       let compSlug = loadedDoc?.profile?.subdomain || loadedDoc?.systemMetadata?.companyId || slug;
-      if (savedStr) {
-        try {
-          const parsed = JSON.parse(savedStr);
-          if (parsed.isCompleted !== undefined) {
-            isComp = parsed.isCompleted !== false;
-          }
-          if (parsed.subdomain || parsed.id) {
-            compSlug = parsed.subdomain || parsed.id;
-          }
-        } catch {
-          // ignore
+      if (saved) {
+        if (saved.isCompleted !== undefined) {
+          isComp = saved.isCompleted !== false;
+        }
+        if (saved.subdomain || saved.id) {
+          compSlug = saved.subdomain || saved.id;
         }
       }
 
@@ -645,32 +629,29 @@ export const App: React.FC = () => {
     setState(finalCompletedState);
 
     const activeCompanyId =
-      localStorage.getItem("talentflow_active_company_id") ||
+      getStorageItem<string | null>("talentflow_active_company_id", null) ||
       finalCompletedState.systemMetadata?.companyId ||
       finalCompletedState.profile.subdomain ||
       finalCompletedState.profile.name.toLowerCase().replace(/[^a-z0-9]/g, "");
 
-    localStorage.setItem("talentflow_active_company_id", activeCompanyId);
+    setStorageItem("talentflow_active_company_id", activeCompanyId);
 
-    localStorage.setItem(
-      "talentflow_company_profile",
-      JSON.stringify({
-        ...finalCompletedState,
-        id: activeCompanyId,
-        name: finalCompletedState.profile.name,
-        subdomain: finalCompletedState.profile.subdomain,
-        domain: finalCompletedState.profile.domain,
-        industry: finalCompletedState.profile.industry,
-        size: finalCompletedState.profile.size,
-        brandColor: finalCompletedState.profile.brandColor,
-        headquarters: finalCompletedState.profile.headquarters,
-        email: finalCompletedState.admin.workEmail,
-        adminName: finalCompletedState.admin.fullName,
-        isCompleted: true,
-      }),
-    );
+    setStorageItem("talentflow_company_profile", {
+      ...finalCompletedState,
+      id: activeCompanyId,
+      name: finalCompletedState.profile.name,
+      subdomain: finalCompletedState.profile.subdomain,
+      domain: finalCompletedState.profile.domain,
+      industry: finalCompletedState.profile.industry,
+      size: finalCompletedState.profile.size,
+      brandColor: finalCompletedState.profile.brandColor,
+      headquarters: finalCompletedState.profile.headquarters,
+      email: finalCompletedState.admin.workEmail,
+      adminName: finalCompletedState.admin.fullName,
+      isCompleted: true,
+    });
 
-    // Direct and immediate redirect to Dashboard
+    // Direct redirect to Dashboard
     setDashboardSubTab("dashboard");
     navigateTo(`/${activeCompanyId}/dashboard`, "dashboard", true);
     toast.success("🎉 Setup complete! Welcome to your Company Dashboard.");
@@ -726,7 +707,6 @@ export const App: React.FC = () => {
         unknown
       >,
       emailConfig: finalCompletedState.emailConfig as unknown as Record<string, unknown>,
-      careerPortal: finalCompletedState.careerPortal as unknown as Record<string, unknown>,
       candidateExperience: finalCompletedState.candidateExperience as unknown as Record<
         string,
         unknown
@@ -738,13 +718,12 @@ export const App: React.FC = () => {
       >,
       approvalMatrix: finalCompletedState.approvalMatrix as unknown as Record<string, unknown>,
       systemMetadata: finalCompletedState.systemMetadata as unknown as Record<string, unknown>,
-      fullOnboardingState: finalCompletedState as unknown as Record<string, unknown>,
       isCompleted: true,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
 
-    // Save in MongoDB Atlas and run cron asynchronously in background
+    // Save in database and run cron asynchronously in background
     CompanyApiService.saveCompany(docData)
       .then(() => {
         const allMembers = [
@@ -770,9 +749,9 @@ export const App: React.FC = () => {
 
   const handleLogout = async () => {
     await CompanyAuthService.signOut();
-    localStorage.removeItem("talentflow_company_auth");
-    localStorage.removeItem("talentflow_company_profile");
-    localStorage.removeItem("talentflow_active_company_id");
+    removeStorageItem("talentflow_company_auth");
+    removeStorageItem("talentflow_company_profile");
+    removeStorageItem("talentflow_active_company_id");
     setIsAuthenticated(false);
     toast.info("Company workspace session signed out.");
     navigateTo("/login", "auth");

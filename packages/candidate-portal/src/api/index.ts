@@ -1,3 +1,6 @@
-export * from "./candidateHttpClient";
-export * from "./candidateAuthApi";
-export * from "./candidateDataApi";
+/**
+ * Candidate Portal API Client
+ * Re-exports unified API services from @talent-flow/api
+ */
+
+export * from "@talent-flow/api";

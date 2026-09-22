@@ -12,6 +12,7 @@ export * from "./admin";
 export * from "./graviton";
 export * from "./signupOptions";
 export * from "./defaultSettings";
+export * from "./text.constants";
 
 import {
   COMMON_BRANDING,

@@ -1,8 +1,9 @@
 /**
  * Graviton IT Solutions Platform Constants
- * Re-exports shared corporate marketing constants and provides package-specific constant mappings.
+ * Re-exports shared corporate marketing constants, text constants, and provides package-specific constant mappings.
  */
 
+export * from "./text.constants";
 export {
   COMMON_BRANDING,
   COMMON_PORTALS,
@@ -20,12 +21,8 @@ export {
   REFERRAL_SOURCE_OPTIONS,
 } from "@talent-flow/api";
 
-import { GRAVITON_PORTAL_TEXTS, COMMON_BRANDING, COMMON_ACTIONS } from "@talent-flow/api";
+import { GRAVITON_TEXT_CONSTANTS } from "./text.constants";
 
-export const GRAVITON_CONSTANTS = {
-  ...GRAVITON_PORTAL_TEXTS,
-  branding: COMMON_BRANDING,
-  actions: COMMON_ACTIONS,
-} as const;
+export const GRAVITON_CONSTANTS = GRAVITON_TEXT_CONSTANTS;
 
 export default GRAVITON_CONSTANTS;

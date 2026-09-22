@@ -1,8 +1,9 @@
 /**
  * Super Admin Panel Constants
- * Re-exports shared admin constants and provides package-specific constant mappings.
+ * Re-exports shared admin constants, text constants, and provides package-specific constant mappings.
  */
 
+export * from "./text.constants";
 export {
   COMMON_BRANDING,
   COMMON_PORTALS,
@@ -17,12 +18,8 @@ export {
   REFERRAL_SOURCE_OPTIONS,
 } from "@talent-flow/api";
 
-import { ADMIN_PORTAL_TEXTS, COMMON_BRANDING, COMMON_ACTIONS } from "@talent-flow/api";
+import { ADMIN_TEXT_CONSTANTS } from "./text.constants";
 
-export const ADMIN_CONSTANTS = {
-  ...ADMIN_PORTAL_TEXTS,
-  branding: COMMON_BRANDING,
-  actions: COMMON_ACTIONS,
-} as const;
+export const ADMIN_CONSTANTS = ADMIN_TEXT_CONSTANTS;
 
 export default ADMIN_CONSTANTS;

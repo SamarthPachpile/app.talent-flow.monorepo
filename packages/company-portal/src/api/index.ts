@@ -1,4 +1,6 @@
-export * from "./companyHttpClient";
-export * from "./companyAuthApi";
-export * from "./companyDataApi";
-export * from "./jobApi";
+/**
+ * Company Onboarding Portal API Client
+ * Re-exports unified API services from @talent-flow/api
+ */
+
+export * from "@talent-flow/api";

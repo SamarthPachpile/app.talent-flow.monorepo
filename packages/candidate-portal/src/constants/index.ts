@@ -1,8 +1,9 @@
 /**
  * Candidate Portal Constants
- * Re-exports shared candidate constants and provides package-specific constant mappings.
+ * Re-exports shared candidate constants, text constants, and provides package-specific constant mappings.
  */
 
+export * from "./text.constants";
 export {
   COMMON_BRANDING,
   COMMON_PORTALS,
@@ -17,12 +18,8 @@ export {
   REFERRAL_SOURCE_OPTIONS,
 } from "@talent-flow/api";
 
-import { CANDIDATE_PORTAL_TEXTS, COMMON_BRANDING, COMMON_ACTIONS } from "@talent-flow/api";
+import { CANDIDATE_TEXT_CONSTANTS } from "./text.constants";
 
-export const CANDIDATE_CONSTANTS = {
-  ...CANDIDATE_PORTAL_TEXTS,
-  branding: COMMON_BRANDING,
-  actions: COMMON_ACTIONS,
-} as const;
+export const CANDIDATE_CONSTANTS = CANDIDATE_TEXT_CONSTANTS;
 
 export default CANDIDATE_CONSTANTS;

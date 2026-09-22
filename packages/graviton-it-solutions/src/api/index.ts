@@ -1,2 +1,6 @@
-export * from "./gravitonHttpClient";
-export * from "./gravitonApi";
+/**
+ * Graviton IT Solutions API Client
+ * Re-exports unified API services from @talent-flow/api
+ */
+
+export * from "@talent-flow/api";

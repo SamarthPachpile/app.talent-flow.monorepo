@@ -18,6 +18,9 @@ import {
   CandidateAuthService,
   CompanyApiService,
   CompanyDocument,
+  getStorageItem,
+  setStorageItem,
+  removeStorageItem,
 } from "@talent-flow/api";
 
 type CandidatePortalView = "companies_list" | "auth" | "wizard" | "dashboard" | "company_root";
@@ -130,39 +133,24 @@ const getRouteInfo = (pathname: string) => {
 };
 
 export function App() {
-  const [currentPath, setCurrentPath] = useState<string>(() => {
-    if (typeof window !== "undefined") {
-      return window.location.pathname;
-    }
-    return "/";
-  });
+  const [currentPath, setCurrentPath] = useState<string>(() =>
+    typeof window !== "undefined" ? window.location.pathname : "/",
+  );
 
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
-    return !!localStorage.getItem("talentflow_candidate_auth");
-  });
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() =>
+    Boolean(getStorageItem<{ authenticated?: boolean } | null>("talentflow_candidate_auth", null)),
+  );
 
   const [activeCompany, setActiveCompany] = useState<CompanyDocument | null>(null);
-
   const [portalState, setPortalState] = useState<CandidatePortalState>(emptyCandidatePortalState);
 
-  const [candidateProfile, setCandidateProfile] = useState<Partial<CandidateDocument>>(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("talentflow_candidate_profile");
-      if (saved) {
-        try {
-          return JSON.parse(saved);
-        } catch {
-          // ignore
-        }
-      }
-    }
-    return {
+  const [candidateProfile, setCandidateProfile] = useState<Partial<CandidateDocument>>(() =>
+    getStorageItem<Partial<CandidateDocument>>("talentflow_candidate_profile", {
       fullName: "Candidate User",
       email: "candidate@example.com",
       isCompleted: true,
-    };
-  });
+    }),
+  );
 
   const [activeStageId, setActiveStageId] = useState<StageId>("application");
   const [darkMode, setDarkMode] = useState(false);
@@ -173,84 +161,68 @@ export function App() {
   // Load Company document when companySlug changes
   useEffect(() => {
     const route = getRouteInfo(currentPath);
-    if (route.companySlug) {
-      setIsCompanyLoading(true);
-      let isMounted = true;
-      CompanyApiService.getCompanyByNameOrDocId(route.companySlug).then((comp) => {
-        if (isMounted) {
-          setIsCompanyLoading(false);
-          if (comp) {
-            setActiveCompany(comp);
-            setIsCompanyNotFound(false);
-            setPortalState((prev) => ({
-              ...prev,
-              candidate: {
-                ...prev.candidate,
-                companyName: comp.name || prev.candidate.companyName,
-              },
-            }));
-          } else {
-            setActiveCompany(null);
-            setIsCompanyNotFound(true);
-          }
-        }
-      });
-      return () => {
-        isMounted = false;
-      };
-    } else {
+    if (!route.companySlug) {
       setActiveCompany(null);
       setIsCompanyNotFound(false);
       setIsCompanyLoading(false);
+      return;
     }
+
+    setIsCompanyLoading(true);
+    let isMounted = true;
+    CompanyApiService.getCompanyByNameOrDocId(route.companySlug).then((comp) => {
+      if (!isMounted) return;
+      setIsCompanyLoading(false);
+      if (comp) {
+        setActiveCompany(comp);
+        setIsCompanyNotFound(false);
+        setPortalState((prev) => ({
+          ...prev,
+          candidate: {
+            ...prev.candidate,
+            companyName: comp.name || prev.candidate.companyName,
+          },
+        }));
+      } else {
+        setActiveCompany(null);
+        setIsCompanyNotFound(true);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
   }, [currentPath]);
 
-  // Helper to load candidate data dynamically from Firestore 'candidates' collection
+  // Helper to load candidate data dynamically from 'candidates' collection
   const loadAuthenticatedCandidateData = useCallback(
     async (emailToUse?: string, uidToUse?: string) => {
-      let email = emailToUse;
-      if (!email && typeof window !== "undefined") {
-        const authStr = localStorage.getItem("talentflow_candidate_auth");
-        if (authStr) {
-          try {
-            const parsed = JSON.parse(authStr);
-            email = parsed.email;
-          } catch {
-            // ignore
-          }
-        }
-      }
+      const email =
+        emailToUse ||
+        getStorageItem<{ email?: string } | null>("talentflow_candidate_auth", null)?.email;
 
       if (!email) return;
 
       try {
         const candDoc = await CandidateApiService.getCandidateByEmailOrUid(email, uidToUse);
         if (candDoc) {
-          let isLocallyCompleted = false;
-          if (typeof window !== "undefined") {
-            try {
-              const savedStr = localStorage.getItem("talentflow_candidate_profile");
-              if (savedStr) {
-                const parsed = JSON.parse(savedStr);
-                if (parsed.isCompleted === true) isLocallyCompleted = true;
-              }
-            } catch {
-              // ignore
-            }
-          }
+          const localSaved = getStorageItem<Partial<CandidateDocument> | null>(
+            "talentflow_candidate_profile",
+            null,
+          );
+          const isLocallyCompleted = localSaved?.isCompleted === true;
 
           const finalCandDoc = {
             ...candDoc,
             isCompleted: isLocallyCompleted || candDoc.isCompleted !== false,
           };
           setCandidateProfile(finalCandDoc);
-          localStorage.setItem("talentflow_candidate_profile", JSON.stringify(finalCandDoc));
+          setStorageItem("talentflow_candidate_profile", finalCandDoc);
           const dynamicState = createCandidatePortalStateFromDoc(finalCandDoc, activeCompany);
           setPortalState(dynamicState);
           setActiveStageId(dynamicState.candidate.currentStageId || "application");
         }
       } catch (err) {
-        console.warn("Error fetching candidate from MongoDB 'candidates' collection:", err);
+        console.warn("Error fetching candidate from 'candidates' collection:", err);
       }
     },
     [activeCompany],
@@ -371,9 +343,7 @@ export function App() {
   const handleWizardCompleted = async (completedCandidate: CandidateDocument) => {
     const updatedCandidate = { ...completedCandidate, isCompleted: true };
     setCandidateProfile(updatedCandidate);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("talentflow_candidate_profile", JSON.stringify(updatedCandidate));
-    }
+    setStorageItem("talentflow_candidate_profile", updatedCandidate);
 
     await CandidateApiService.saveCandidate(updatedCandidate);
 
@@ -393,7 +363,7 @@ export function App() {
     setActiveStageId(dynamicState.candidate.currentStageId || "application");
 
     toast.success(
-      `Candidate profile for ${completedCandidate.fullName} saved to MongoDB Atlas & registered under company!`,
+      `Candidate profile for ${completedCandidate.fullName} saved to database & registered under company!`,
     );
     navigateTo(companySlug ? `/${companySlug}/dashboard` : "/dashboard");
   };
@@ -412,24 +382,21 @@ export function App() {
       avatarUrl: newAvatarUrl,
     };
     setCandidateProfile(updatedProfile);
-
-    if (typeof window !== "undefined") {
-      localStorage.setItem("talentflow_candidate_profile", JSON.stringify(updatedProfile));
-    }
+    setStorageItem("talentflow_candidate_profile", updatedProfile);
 
     if (updatedProfile.email || updatedProfile.id) {
       try {
         await CandidateApiService.saveCandidate(updatedProfile as CandidateDocument);
       } catch (err) {
-        console.warn("Failed to persist avatar to MongoDB Atlas:", err);
+        console.warn("Failed to persist avatar:", err);
       }
     }
   };
 
   const handleLogout = async () => {
     await CandidateAuthService.signOut();
-    localStorage.removeItem("talentflow_candidate_auth");
-    localStorage.removeItem("talentflow_candidate_profile");
+    removeStorageItem("talentflow_candidate_auth");
+    removeStorageItem("talentflow_candidate_profile");
     setIsAuthenticated(false);
     toast.info("Signed out of candidate portal");
 

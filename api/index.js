@@ -3923,7 +3923,11 @@ var AuthController = {
     try {
       const destination = (req.body.destination || req.body.email || "").trim().toLowerCase();
       if (!destination) {
-        errorResponse(res, httpStatusCodes.BAD_REQUEST, "Email address is required to dispatch OTP");
+        errorResponse(
+          res,
+          httpStatusCodes.BAD_REQUEST,
+          "Email address is required to dispatch OTP"
+        );
         return;
       }
       const otp = Math.floor(1e5 + Math.random() * 9e5).toString();
@@ -3967,21 +3971,16 @@ var AuthController = {
       const rawOtp = userEnteredOtp || otp || code;
       const trimmedOtp = (rawOtp || "").trim();
       if (!trimmedOtp) {
-        errorResponse(
-          res,
-          httpStatusCodes.BAD_REQUEST,
-          "Verification passcode is required.",
-          { valid: false }
-        );
+        errorResponse(res, httpStatusCodes.BAD_REQUEST, "Verification passcode is required.", {
+          valid: false
+        });
         return;
       }
       let cachedOtp = null;
       if (cleanEmail) {
         cachedOtp = await getCache(`email_otp:${cleanEmail}`);
       }
-      const isValid = Boolean(
-        cachedOtp && trimmedOtp === cachedOtp.toString().trim()
-      );
+      const isValid = Boolean(cachedOtp && trimmedOtp === cachedOtp.toString().trim());
       if (!isValid) {
         errorResponse(
           res,
