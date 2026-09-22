@@ -21,6 +21,7 @@ export interface CandidateAuthResult {
   userProfile?: Record<string, unknown>;
   verificationSent?: boolean;
   token?: string;
+  otp?: string;
 }
 
 type AuthStateCallback = (user: CandidateAuthUser | null) => void;
@@ -153,6 +154,7 @@ export const CandidateAuthService = {
           role?: string;
         };
         token?: string;
+        otp?: string;
       }>("/api/candidates-auth/candidate-signup", {
         email,
         password,
@@ -175,7 +177,7 @@ export const CandidateAuthService = {
       }
 
       notifyCandidateAuthChange(user);
-      return { user, verificationSent: true, token: res.data?.token };
+      return { user, verificationSent: true, token: res.data?.token, otp: res.data?.otp };
     } catch (err: unknown) {
       console.error("[CandidateAuthService.signUp] Error:", err);
       return { user: null, error: (err as Error)?.message || "Candidate Sign up failed" };
@@ -196,6 +198,7 @@ export const CandidateAuthService = {
         userProfile?: Record<string, unknown>;
         verificationSent?: boolean;
         token?: string;
+        otp?: string;
       }>("/api/candidates-auth/signup-details", {
         ...data,
         role: "candidate",
@@ -221,6 +224,7 @@ export const CandidateAuthService = {
         userProfile: res.data?.userProfile,
         verificationSent: res.data?.verificationSent ?? true,
         token: res.data?.token,
+        otp: res.data?.otp,
       };
     } catch (err: unknown) {
       console.error("[CandidateAuthService.signUpWithFullDetails] Error:", err);
@@ -228,12 +232,70 @@ export const CandidateAuthService = {
     }
   },
 
+  async sendOtp(
+    destination: string,
+  ): Promise<{ success: boolean; otp?: string; message?: string }> {
+    try {
+      const res = await candidateHttpClient.post<{ otp?: string; message?: string }>(
+        "/api/candidates-auth/send-otp",
+        {
+          destination,
+          email: destination,
+        },
+      );
+      return {
+        success: true,
+        otp: res.data?.otp,
+        message: res.data?.message || `Verification code dispatched to ${destination}`,
+      };
+    } catch (err: unknown) {
+      return {
+        success: false,
+        message: (err as Error)?.message || "Failed to dispatch verification code",
+      };
+    }
+  },
+
+  async verifyOtp(
+    userEnteredOtp: string,
+    email?: string,
+  ): Promise<{ success: boolean; valid?: boolean; verified?: boolean; message?: string }> {
+    try {
+      const res = await candidateHttpClient.post<{
+        valid?: boolean;
+        verified?: boolean;
+        message?: string;
+      }>("/api/candidates-auth/verify-otp", {
+        userEnteredOtp,
+        email: email || currentCandidateAuthUser?.email,
+      });
+      const isValid = Boolean(res.data?.valid || res.data?.verified);
+      if (isValid && currentCandidateAuthUser) {
+        currentCandidateAuthUser.emailVerified = true;
+        notifyCandidateAuthChange(currentCandidateAuthUser);
+      }
+      return {
+        success: isValid,
+        valid: isValid,
+        verified: isValid,
+        message: res.data?.message || (isValid ? "Email verified successfully!" : "Invalid code"),
+      };
+    } catch (err: unknown) {
+      return {
+        success: false,
+        valid: false,
+        verified: false,
+        message: (err as Error)?.message || "Verification code is incorrect",
+      };
+    }
+  },
+
   async sendVerificationEmail(
     customEmail?: string,
-  ): Promise<{ success: boolean; message?: string }> {
+  ): Promise<{ success: boolean; otp?: string; message?: string }> {
     try {
       const targetEmail = customEmail || currentCandidateAuthUser?.email || "";
-      const res = await candidateHttpClient.post<{ message?: string }>(
+      const res = await candidateHttpClient.post<{ message?: string; otp?: string }>(
         "/api/candidates-auth/send-verification",
         {
           email: targetEmail,
@@ -241,6 +303,7 @@ export const CandidateAuthService = {
       );
       return {
         success: true,
+        otp: res.data?.otp,
         message: res.data?.message || `Verification link dispatched to ${targetEmail}.`,
       };
     } catch {
@@ -281,18 +344,20 @@ export const CandidateAuthService = {
     }
   },
 
-  async checkEmailVerified(): Promise<boolean> {
+  async checkEmailVerified(emailToCheck?: string): Promise<boolean> {
     try {
-      if (!currentCandidateAuthUser?.email) return true;
-      const res = await candidateHttpClient.get<{ verified?: boolean }>(
-        "/api/candidates-auth/verify-status",
-        {
-          params: { email: currentCandidateAuthUser.email },
-        },
-      );
-      return res.data?.verified ?? true;
+      const email = emailToCheck || currentCandidateAuthUser?.email;
+      if (!email) return false;
+      const res = await candidateHttpClient.get<{
+        data?: { verified?: boolean };
+        verified?: boolean;
+      }>("/api/candidates-auth/verify-status", {
+        params: { email },
+      });
+      const isVerified = res.data?.data?.verified ?? res.data?.verified ?? false;
+      return Boolean(isVerified);
     } catch {
-      return true;
+      return false;
     }
   },
 

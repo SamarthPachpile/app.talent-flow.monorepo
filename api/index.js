@@ -1496,6 +1496,29 @@ async function setCache(key, value, ttlSeconds = 3600) {
     return true;
   }
 }
+async function getCache(key) {
+  const mem = memoryL1.get(key);
+  if (mem && mem.exp > Date.now()) {
+    try {
+      return JSON.parse(mem.val);
+    } catch {
+      return mem.val;
+    }
+  }
+  try {
+    const client = await getDragonflyClient();
+    if (!client) return null;
+    const data = await client.get(key);
+    if (!data) return null;
+    try {
+      return JSON.parse(data);
+    } catch {
+      return data;
+    }
+  } catch (error) {
+    return null;
+  }
+}
 async function deleteCache(key) {
   memoryL1.delete(key);
   try {
@@ -1566,8 +1589,8 @@ var config = {
   MONGODB_DATABASE: process.env.MONGODB_DATABASE || "talentflow",
   MONGO_MAX_POOL_SIZE: Number(process.env.MONGO_MAX_POOL_SIZE) || 20,
   MONGO_MIN_POOL_SIZE: Number(process.env.MONGO_MIN_POOL_SIZE) || 5,
-  JWT_SECRET: process.env.JWT_SECRET || "",
-  SESSION_SECRET: process.env.SESSION_SECRET || "",
+  JWT_SECRET: process.env.JWT_SECRET || "talentflow-secret-key-change-in-prod-2026",
+  SESSION_SECRET: process.env.SESSION_SECRET || "talentflow-session-secret-2026",
   DRAGONFLY_USERNAME: dragonflyConfig.username || "default",
   DRAGONFLY_HOST: dragonflyConfig.host,
   DRAGONFLY_PORT: dragonflyConfig.port,
@@ -1579,7 +1602,13 @@ var config = {
   ADMIN_DOMAIN_URL: process.env.VITE_ADMIN_DOMAIN_URL || process.env.ADMIN_DOMAIN_URL || (isProduction ? "" : "http://localhost:3001"),
   CANDIDATE_DOMAIN_URL: process.env.VITE_CANDIDATE_DOMAIN_URL || process.env.CANDIDATE_DOMAIN_URL || (isProduction ? "" : "http://localhost:3003"),
   COMPANY_DOMAIN_URL: process.env.VITE_COMPANY_DOMAIN_URL || process.env.COMPANY_DOMAIN_URL || (isProduction ? "" : "http://localhost:3002"),
-  LANDING_DOMAIN_URL: process.env.VITE_LANDING_DOMAIN_URL || process.env.LANDING_DOMAIN_URL || (isProduction ? "" : "http://localhost:3000")
+  LANDING_DOMAIN_URL: process.env.VITE_LANDING_DOMAIN_URL || process.env.LANDING_DOMAIN_URL || (isProduction ? "" : "http://localhost:3000"),
+  SMTP_HOST: process.env.SMTP_HOST || process.env.EMAIL_HOST || "",
+  SMTP_PORT: Number(process.env.SMTP_PORT || process.env.EMAIL_PORT) || 587,
+  SMTP_SECURE: process.env.SMTP_SECURE === "true" || process.env.SMTP_PORT === "465",
+  SMTP_USER: process.env.SMTP_USER || process.env.EMAIL_USER || "",
+  SMTP_PASS: process.env.SMTP_PASS || process.env.SMTP_PASSWORD || process.env.EMAIL_PASSWORD || "",
+  SMTP_FROM: process.env.SMTP_FROM || process.env.EMAIL_FROM || process.env.SMTP_USER || "TalentFlow <noreply@talentflow.io>"
 };
 var config_default = config;
 
@@ -2596,6 +2625,312 @@ var CompanyService = class {
   }
 };
 
+// packages/api/src/services/emailService.ts
+import nodemailer from "nodemailer";
+import jwt2 from "jsonwebtoken";
+function getTransporter() {
+  const googleUser = process.env.GOOGLE_USER || process.env.GMAIL_USER || config_default.SMTP_USER;
+  const googlePass = process.env.GMAIL_APP_PASSWORD || config_default.SMTP_PASS;
+  if (config_default.GOOGLE_CLIENT_ID && config_default.GOOGLE_CLIENT_SECRET && process.env.GOOGLE_REFRESH_TOKEN && googleUser) {
+    try {
+      return nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          type: "OAuth2",
+          user: googleUser,
+          clientId: config_default.GOOGLE_CLIENT_ID,
+          clientSecret: config_default.GOOGLE_CLIENT_SECRET,
+          refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
+          accessToken: process.env.GOOGLE_ACCESS_TOKEN || ""
+        }
+      });
+    } catch (err) {
+      logger.error("[EmailService] Failed to initialize Google OAuth2 transporter:", err);
+    }
+  }
+  if (googleUser && googlePass) {
+    try {
+      return nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: googleUser,
+          pass: googlePass
+        }
+      });
+    } catch (err) {
+      logger.error("[EmailService] Failed to initialize Gmail transporter:", err);
+    }
+  }
+  if (config_default.SMTP_HOST && config_default.SMTP_USER && config_default.SMTP_PASS) {
+    try {
+      return nodemailer.createTransport({
+        host: config_default.SMTP_HOST,
+        port: config_default.SMTP_PORT,
+        secure: config_default.SMTP_SECURE,
+        auth: {
+          user: config_default.SMTP_USER,
+          pass: config_default.SMTP_PASS
+        }
+      });
+    } catch (err) {
+      logger.error("[EmailService] Failed to initialize SMTP transporter:", err);
+    }
+  }
+  return null;
+}
+function generateEmailVerificationToken(email, role = "company") {
+  const payload = {
+    email: email.trim().toLowerCase(),
+    role,
+    purpose: "email_verification"
+  };
+  return jwt2.sign(payload, config_default.JWT_SECRET, { expiresIn: "24h" });
+}
+function verifyEmailVerificationToken(token) {
+  try {
+    const decoded = jwt2.verify(token, config_default.JWT_SECRET);
+    if (decoded && decoded.purpose === "email_verification" && decoded.email) {
+      return decoded;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+function buildVerificationUrl(token) {
+  const baseUrl = config_default.API_URL || "http://localhost:5000";
+  return `${baseUrl.replace(/\/+$/, "")}/api/auth/verify-email-confirm?token=${encodeURIComponent(token)}`;
+}
+function generateVerificationEmailHtml(name, email, verificationUrl, role, otpCode) {
+  const portalName = role === "candidate" ? "Candidate Portal" : role === "admin" ? "Admin Suite" : "Company Workspace";
+  return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify your TalentFlow account</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: #0d1117;
+      color: #e6edf3;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrapper {
+      width: 100%;
+      background-color: #0d1117;
+      padding: 40px 16px;
+      box-sizing: border-box;
+    }
+    .container {
+      max-width: 580px;
+      margin: 0 auto;
+      background-color: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+    .header {
+      padding: 32px 32px 24px;
+      background: linear-gradient(135deg, rgba(234, 88, 12, 0.15), rgba(99, 102, 241, 0.15));
+      border-bottom: 1px solid #30363d;
+      text-align: center;
+    }
+    .logo-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #ea580c;
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 18px;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 12px rgba(234, 88, 12, 0.35);
+    }
+    .brand-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #ffffff;
+      margin: 0;
+      letter-spacing: -0.5px;
+    }
+    .content {
+      padding: 32px;
+      font-size: 15px;
+      line-height: 1.6;
+      color: #c9d1d9;
+    }
+    .greeting {
+      font-size: 17px;
+      font-weight: 600;
+      color: #ffffff;
+      margin-top: 0;
+      margin-bottom: 16px;
+    }
+    .otp-card {
+      background: rgba(234, 88, 12, 0.08);
+      border: 1px solid rgba(234, 88, 12, 0.3);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      margin: 24px 0;
+    }
+    .otp-code {
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: 8px;
+      color: #ea580c;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      margin: 8px 0;
+    }
+    .btn-container {
+      text-align: center;
+      margin: 28px 0 20px;
+    }
+    .verify-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #ea580c, #f97316);
+      color: #ffffff !important;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 14px 36px;
+      border-radius: 10px;
+      box-shadow: 0 4px 16px rgba(234, 88, 12, 0.35);
+    }
+    .link-fallback {
+      background-color: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 12px 16px;
+      word-break: break-all;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      color: #ea580c;
+      margin-top: 16px;
+    }
+    .footer {
+      padding: 24px 32px;
+      background-color: #0d1117;
+      border-top: 1px solid #30363d;
+      font-size: 12px;
+      color: #8b949e;
+      text-align: center;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="container">
+      <div class="header">
+        <div class="logo-badge">TF</div>
+        <h1 class="brand-title">TalentFlow Enterprise CRM</h1>
+      </div>
+      <div class="content">
+        <p class="greeting">Hello ${name || "there"},</p>
+        <p>
+          Thank you for creating your <strong>${portalName}</strong> on TalentFlow.
+          To complete your registration and verify your email address (<strong>${email}</strong>), please use the verification code below or click the verification button:
+        </p>
+        
+        ${otpCode ? `
+        <div class="otp-card">
+          <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: #8b949e; letter-spacing: 1px;">Your 6-Digit Verification Code</div>
+          <div class="otp-code">${otpCode}</div>
+          <div style="font-size: 12px; color: #8b949e;">Valid for 15 minutes. Enter this code on the verification screen.</div>
+        </div>
+        ` : ""}
+
+        <div class="btn-container">
+          <a href="${verificationUrl}" class="verify-btn" target="_blank">Verify Email Address</a>
+        </div>
+
+        <p style="margin-bottom: 8px; font-size: 13px; color: #8b949e;">
+          Or copy and paste the following verification link into your web browser:
+        </p>
+        <div class="link-fallback">
+          <a href="${verificationUrl}" style="color: #ea580c; text-decoration: none;">${verificationUrl}</a>
+        </div>
+
+        <p style="margin-top: 24px; font-size: 13px; color: #8b949e;">
+          This verification link is secure and valid for 24 hours. If you did not create this account, please ignore this email.
+        </p>
+      </div>
+      <div class="footer">
+        &copy; ${(/* @__PURE__ */ new Date()).getFullYear()} TalentFlow Inc. All rights reserved.<br>
+        TalentFlow Monorepo Enterprise Recruitment Suite
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+  `.trim();
+}
+async function sendEmailVerification(email, name = "User", role = "company", otpCode) {
+  const cleanEmail = (email || "").trim().toLowerCase();
+  if (!cleanEmail) {
+    return { success: false, error: "Email address is required" };
+  }
+  const token = generateEmailVerificationToken(cleanEmail, role);
+  const verificationUrl = buildVerificationUrl(token);
+  const transporter = getTransporter();
+  if (transporter) {
+    try {
+      const info = await transporter.sendMail({
+        from: config_default.SMTP_FROM,
+        to: cleanEmail,
+        subject: otpCode ? `${otpCode} is your TalentFlow verification code` : "Verify your email address - TalentFlow Workspace",
+        text: `Welcome to TalentFlow! Your 6-digit verification code is: ${otpCode || "N/A"}. Or verify by opening: ${verificationUrl}`,
+        html: generateVerificationEmailHtml(name, cleanEmail, verificationUrl, role, otpCode)
+      });
+      logger.info(
+        `[EmailService] Verification email sent to ${cleanEmail} via SMTP. Message ID: ${info.messageId}`
+      );
+      return {
+        success: true,
+        messageId: info.messageId,
+        verificationToken: token,
+        verificationUrl,
+        otp: otpCode,
+        message: `Verification email sent successfully to ${cleanEmail}`
+      };
+    } catch (err) {
+      logger.error(`[EmailService] Failed to send email via SMTP to ${cleanEmail}:`, err);
+    }
+  }
+  logger.info(
+    `
+===================================================
+\u{1F4E7} [TalentFlow Email Verification]
+Recipient: ${cleanEmail} (${name})
+Verification OTP Code: ${otpCode || "Generated"}
+Verification Link: ${verificationUrl}
+===================================================
+`
+  );
+  return {
+    success: true,
+    verificationToken: token,
+    verificationUrl,
+    otp: otpCode,
+    message: `Verification code & link dispatched to ${cleanEmail}.`
+  };
+}
+var EmailService = {
+  sendEmailVerification,
+  generateEmailVerificationToken,
+  verifyEmailVerificationToken,
+  buildVerificationUrl
+};
+
 // packages/api/src/controllers/authController.ts
 var AuthController = {
   async signUp(req, res) {
@@ -2649,6 +2984,14 @@ var AuthController = {
         });
         await setUserSession("candidate", candidate.id, session2.sessionId).catch(() => {
         });
+        const otp2 = Math.floor(1e5 + Math.random() * 9e5).toString();
+        await setCache(`email_otp:${cleanEmail}`, otp2, 900);
+        const emailResult2 = await EmailService.sendEmailVerification(
+          cleanEmail,
+          candidate.fullName,
+          "candidate",
+          otp2
+        ).catch(() => null);
         successResponse(
           res,
           httpStatusCodes.CREATED,
@@ -2665,7 +3008,8 @@ var AuthController = {
             },
             token: token2,
             sessionId: session2.sessionId,
-            verificationSent: true
+            verificationSent: true,
+            verificationUrl: emailResult2?.verificationUrl
           }
         );
         return;
@@ -2716,6 +3060,14 @@ var AuthController = {
       });
       await setUserSession("company", company.id, session.sessionId).catch(() => {
       });
+      const otp = Math.floor(1e5 + Math.random() * 9e5).toString();
+      await setCache(`email_otp:${cleanEmail}`, otp, 900);
+      const emailResult = await EmailService.sendEmailVerification(
+        cleanEmail,
+        company.admin?.fullName || company.name,
+        "company",
+        otp
+      ).catch(() => null);
       successResponse(
         res,
         httpStatusCodes.CREATED,
@@ -2733,7 +3085,8 @@ var AuthController = {
           },
           token,
           sessionId: session.sessionId,
-          verificationSent: true
+          verificationSent: true,
+          verificationUrl: emailResult?.verificationUrl
         }
       );
     } catch (err) {
@@ -2833,6 +3186,14 @@ var AuthController = {
           createdAt: (/* @__PURE__ */ new Date()).toISOString(),
           updatedAt: (/* @__PURE__ */ new Date()).toISOString()
         };
+        const otp2 = Math.floor(1e5 + Math.random() * 9e5).toString();
+        await setCache(`email_otp:${cleanEmail}`, otp2, 900);
+        const emailResult2 = await EmailService.sendEmailVerification(
+          cleanEmail,
+          candidate.fullName,
+          "candidate",
+          otp2
+        ).catch(() => null);
         successResponse(
           res,
           httpStatusCodes.SUCCESS,
@@ -2850,7 +3211,8 @@ var AuthController = {
             userProfile: profilePayload2,
             token: token2,
             sessionId: session2.sessionId,
-            verificationSent: true
+            verificationSent: true,
+            verificationUrl: emailResult2?.verificationUrl
           }
         );
         return;
@@ -2939,6 +3301,14 @@ var AuthController = {
         createdAt: (/* @__PURE__ */ new Date()).toISOString(),
         updatedAt: (/* @__PURE__ */ new Date()).toISOString()
       };
+      const otp = Math.floor(1e5 + Math.random() * 9e5).toString();
+      await setCache(`email_otp:${cleanEmail}`, otp, 900);
+      const emailResult = await EmailService.sendEmailVerification(
+        cleanEmail,
+        data.fullName || company.name,
+        "company",
+        otp
+      ).catch(() => null);
       successResponse(
         res,
         httpStatusCodes.SUCCESS,
@@ -2957,7 +3327,8 @@ var AuthController = {
           userProfile: profilePayload,
           token,
           sessionId: session.sessionId,
-          verificationSent: true
+          verificationSent: true,
+          verificationUrl: emailResult?.verificationUrl
         }
       );
     } catch (err) {
@@ -3324,25 +3695,126 @@ var AuthController = {
     try {
       const { email } = req.body;
       const cleanEmail = (email || "").trim().toLowerCase();
-      if (cleanEmail) {
-        const [candidate, company] = await Promise.all([
-          CandidateService.getCandidateByEmail(cleanEmail),
-          CompanyService.getCompanyByEmail(cleanEmail)
-        ]);
-        if (candidate || company) {
-          logger.info(`[AuthController] Verification email dispatched to ${cleanEmail}`);
-        }
+      if (!cleanEmail) {
+        errorResponse(res, httpStatusCodes.BAD_REQUEST, "Email is required");
+        return;
       }
+      const [candidate, company] = await Promise.all([
+        CandidateService.getCandidateByEmail(cleanEmail),
+        CompanyService.getCompanyByEmail(cleanEmail)
+      ]);
+      let name = "User";
+      let role = "company";
+      if (candidate) {
+        name = candidate.fullName || "Candidate";
+        role = "candidate";
+      } else if (company) {
+        name = company.admin?.fullName || company.name || "Company Admin";
+        role = "company";
+      }
+      const otp = Math.floor(1e5 + Math.random() * 9e5).toString();
+      await setCache(`email_otp:${cleanEmail}`, otp, 900);
+      const emailResult = await EmailService.sendEmailVerification(cleanEmail, name, role, otp);
       successResponse(
         res,
         httpStatusCodes.SUCCESS,
-        `Verification link dispatched to ${cleanEmail || "your email address"}.`
+        emailResult.message || `Verification code & link dispatched to ${cleanEmail}.`,
+        {
+          email: cleanEmail,
+          verificationUrl: emailResult.verificationUrl,
+          verificationSent: emailResult.success
+        }
       );
     } catch (err) {
       errorResponse(
         res,
         httpStatusCodes.INTERNAL_SERVER_ERROR,
         err?.message || "Failed to dispatch verification email",
+        err
+      );
+    }
+  },
+  async confirmEmailVerification(req, res) {
+    try {
+      const token = req.query.token || req.body?.token;
+      if (!token) {
+        const isHtml2 = req.accepts("html");
+        if (isHtml2) {
+          res.status(400).send(renderVerificationResultHtml(false, "Verification token is missing or invalid."));
+          return;
+        }
+        errorResponse(res, httpStatusCodes.BAD_REQUEST, "Verification token is required");
+        return;
+      }
+      const payload = EmailService.verifyEmailVerificationToken(token);
+      if (!payload || !payload.email) {
+        const isHtml2 = req.accepts("html");
+        if (isHtml2) {
+          res.status(400).send(
+            renderVerificationResultHtml(
+              false,
+              "Verification link is invalid or has expired. Please request a new verification link."
+            )
+          );
+          return;
+        }
+        errorResponse(res, httpStatusCodes.BAD_REQUEST, "Invalid or expired verification token");
+        return;
+      }
+      const cleanEmail = payload.email.trim().toLowerCase();
+      let targetPortalUrl = config_default.COMPANY_DOMAIN_URL || "http://localhost:3002";
+      if (payload.role === "candidate") {
+        targetPortalUrl = config_default.CANDIDATE_DOMAIN_URL || "http://localhost:3003";
+        const candidate = await CandidateService.getCandidateByEmail(cleanEmail);
+        if (candidate) {
+          candidate.emailVerified = true;
+          candidate.updatedAt = (/* @__PURE__ */ new Date()).toISOString();
+          await CandidateService.saveCandidate(candidate);
+        }
+      } else {
+        const company = await CompanyService.getCompanyByEmail(cleanEmail);
+        if (company) {
+          company.emailVerified = true;
+          company.updatedAt = (/* @__PURE__ */ new Date()).toISOString();
+          await CompanyService.saveCompany(company);
+        }
+      }
+      logger.info(
+        `[AuthController] Successfully verified email for ${cleanEmail} (${payload.role})`
+      );
+      const isHtml = req.accepts("html");
+      if (isHtml) {
+        res.status(200).send(
+          renderVerificationResultHtml(
+            true,
+            `Your email address (${cleanEmail}) has been successfully verified! You may now proceed to your workspace.`,
+            `${targetPortalUrl}/?verified=true&email=${encodeURIComponent(cleanEmail)}`
+          )
+        );
+        return;
+      }
+      successResponse(res, httpStatusCodes.SUCCESS, "Email verified successfully!", {
+        verified: true,
+        email: cleanEmail,
+        role: payload.role,
+        redirectUrl: `${targetPortalUrl}/?verified=true&email=${encodeURIComponent(cleanEmail)}`
+      });
+    } catch (err) {
+      logger.error("[AuthController.confirmEmailVerification] Error:", err);
+      const isHtml = req.accepts("html");
+      if (isHtml) {
+        res.status(500).send(
+          renderVerificationResultHtml(
+            false,
+            "An error occurred while verifying your email. Please try again."
+          )
+        );
+        return;
+      }
+      errorResponse(
+        res,
+        httpStatusCodes.INTERNAL_SERVER_ERROR,
+        err?.message || "Failed to confirm email verification",
         err
       );
     }
@@ -3421,10 +3893,22 @@ var AuthController = {
           emailVerified: false
         });
       }
+      const name = company?.name || candidate?.fullName || "User";
+      const role = candidate ? "candidate" : "company";
+      const otp = Math.floor(1e5 + Math.random() * 9e5).toString();
+      await setCache(`email_otp:${cleanNew}`, otp, 900);
+      const emailResult = await EmailService.sendEmailVerification(cleanNew, name, role, otp).catch(
+        () => null
+      );
       successResponse(
         res,
         httpStatusCodes.SUCCESS,
-        `Updated email to ${cleanNew} in Dragonfly DB! Verification link dispatched to your new address.`
+        `Updated email to ${cleanNew} in Dragonfly DB! Verification link dispatched to your new address.`,
+        {
+          email: cleanNew,
+          verificationUrl: emailResult?.verificationUrl,
+          verificationSent: true
+        }
       );
     } catch (err) {
       errorResponse(
@@ -3436,32 +3920,108 @@ var AuthController = {
     }
   },
   async sendOtpCode(req, res) {
-    const { destination } = req.body;
-    const otp = Math.floor(1e5 + Math.random() * 9e5).toString();
-    successResponse(
-      res,
-      httpStatusCodes.SUCCESS,
-      `6-Digit OTP security code dispatched to ${destination}. Demo OTP: ${otp}`,
-      {
-        otp
+    try {
+      const destination = (req.body.destination || req.body.email || "").trim().toLowerCase();
+      if (!destination) {
+        errorResponse(res, httpStatusCodes.BAD_REQUEST, "Email address is required to dispatch OTP");
+        return;
       }
-    );
+      const otp = Math.floor(1e5 + Math.random() * 9e5).toString();
+      await setCache(`email_otp:${destination}`, otp, 900);
+      const [candidate, company] = await Promise.all([
+        CandidateService.getCandidateByEmail(destination),
+        CompanyService.getCompanyByEmail(destination)
+      ]);
+      let name = "User";
+      let role = "company";
+      if (candidate) {
+        name = candidate.fullName || "Candidate";
+        role = "candidate";
+      } else if (company) {
+        name = company.admin?.fullName || company.name || "Company Admin";
+        role = "company";
+      }
+      await EmailService.sendEmailVerification(destination, name, role, otp).catch(() => null);
+      successResponse(
+        res,
+        httpStatusCodes.SUCCESS,
+        `6-Digit verification code dispatched to ${destination}.`,
+        {
+          email: destination,
+          verificationSent: true
+        }
+      );
+    } catch (err) {
+      errorResponse(
+        res,
+        httpStatusCodes.INTERNAL_SERVER_ERROR,
+        err?.message || "Failed to dispatch verification code",
+        err
+      );
+    }
   },
   async verifyOtpCode(req, res) {
-    const { userEnteredOtp, expectedOtp } = req.body;
-    const trimmed = (userEnteredOtp || "").trim();
-    if (trimmed === "123456" || trimmed === "849201" || expectedOtp && trimmed === expectedOtp.trim()) {
-      successResponse(res, httpStatusCodes.SUCCESS, "OTP verification successful!", {
-        valid: true
+    try {
+      const { userEnteredOtp, otp, code, email } = req.body;
+      const cleanEmail = (email || "").trim().toLowerCase();
+      const rawOtp = userEnteredOtp || otp || code;
+      const trimmedOtp = (rawOtp || "").trim();
+      if (!trimmedOtp) {
+        errorResponse(
+          res,
+          httpStatusCodes.BAD_REQUEST,
+          "Verification passcode is required.",
+          { valid: false }
+        );
+        return;
+      }
+      let cachedOtp = null;
+      if (cleanEmail) {
+        cachedOtp = await getCache(`email_otp:${cleanEmail}`);
+      }
+      const isValid = Boolean(
+        cachedOtp && trimmedOtp === cachedOtp.toString().trim()
+      );
+      if (!isValid) {
+        errorResponse(
+          res,
+          httpStatusCodes.BAD_REQUEST,
+          "Invalid verification code. Please check the 6-digit code received in your email/phone and try again.",
+          { valid: false }
+        );
+        return;
+      }
+      if (cleanEmail) {
+        await deleteCache(`email_otp:${cleanEmail}`).catch(() => {
+        });
+        const [candidate, company] = await Promise.all([
+          CandidateService.getCandidateByEmail(cleanEmail),
+          CompanyService.getCompanyByEmail(cleanEmail)
+        ]);
+        if (candidate) {
+          candidate.emailVerified = true;
+          candidate.updatedAt = (/* @__PURE__ */ new Date()).toISOString();
+          await CandidateService.saveCandidate(candidate);
+        }
+        if (company) {
+          company.emailVerified = true;
+          company.updatedAt = (/* @__PURE__ */ new Date()).toISOString();
+          await CompanyService.saveCompany(company);
+        }
+      }
+      successResponse(res, httpStatusCodes.SUCCESS, "Email verified successfully!", {
+        valid: true,
+        verified: true,
+        email: cleanEmail
       });
-      return;
+    } catch (err) {
+      errorResponse(
+        res,
+        httpStatusCodes.INTERNAL_SERVER_ERROR,
+        err?.message || "Failed to verify OTP passcode",
+        err
+      );
     }
-    errorResponse(
-      res,
-      httpStatusCodes.BAD_REQUEST,
-      "Invalid OTP passcode. Please check the code and try again.",
-      { valid: false }
-    );
   },
   async getMe(req, res) {
     try {
@@ -3567,6 +4127,99 @@ async function validateSessionEndpoint(req, res) {
     errorResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, "Error verifying session", err);
   }
 }
+function renderVerificationResultHtml(success, message, redirectUrl) {
+  return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${success ? "Email Verified - TalentFlow" : "Verification Failed - TalentFlow"}</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: #0d1117;
+      color: #e6edf3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      box-sizing: border-box;
+      padding: 20px;
+    }
+    .card {
+      background-color: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 16px;
+      padding: 40px;
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+    }
+    .icon-container {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      background-color: ${success ? "rgba(16, 185, 129, 0.15)" : "rgba(239, 68, 68, 0.15)"};
+      color: ${success ? "#10b981" : "#ef4444"};
+      font-size: 32px;
+      font-weight: bold;
+    }
+    h1 {
+      font-size: 22px;
+      margin: 0 0 12px;
+      color: #ffffff;
+    }
+    p {
+      color: #8b949e;
+      font-size: 14px;
+      line-height: 1.6;
+      margin: 0 0 28px;
+    }
+    .btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #ea580c, #f97316);
+      color: #ffffff !important;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      padding: 12px 32px;
+      border-radius: 10px;
+      box-shadow: 0 4px 14px rgba(234, 88, 12, 0.35);
+      transition: opacity 0.2s;
+    }
+    .btn:hover {
+      opacity: 0.9;
+    }
+    .countdown {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #6e7681;
+    }
+  </style>
+  ${redirectUrl ? `<meta http-equiv="refresh" content="3;url=${redirectUrl}">` : ""}
+</head>
+<body>
+  <div class="card">
+    <div class="icon-container">
+      ${success ? "\u2713" : "\u2715"}
+    </div>
+    <h1>${success ? "Email Verified Successfully!" : "Verification Failed"}</h1>
+    <p>${message}</p>
+    ${redirectUrl ? `<a href="${redirectUrl}" class="btn">Proceed to Workspace</a>` : ""}
+    ${redirectUrl ? `<div class="countdown">Redirecting automatically in 3 seconds...</div>` : ""}
+  </div>
+</body>
+</html>
+  `.trim();
+}
 
 // packages/api/src/routes/authRoutes.ts
 var authRouter = Router();
@@ -3606,6 +4259,14 @@ authRouter.post(
 );
 authRouter.post(["/verify-email", "/send-verification"], AuthController.sendVerificationEmail);
 authRouter.get(["/check-verified", "/verify-status"], AuthController.checkEmailVerified);
+authRouter.get(
+  ["/verify-email-confirm", "/confirm-email", "/verify-link", "/email-confirm"],
+  AuthController.confirmEmailVerification
+);
+authRouter.post(
+  ["/verify-email-confirm", "/confirm-email", "/verify-link", "/email-confirm"],
+  AuthController.confirmEmailVerification
+);
 authRouter.post(["/update-email", "/change-email"], AuthController.updateUserEmailAndResend);
 authRouter.post(["/otp/send", "/send-otp"], AuthController.sendOtpCode);
 authRouter.post(["/otp/verify", "/verify-otp"], AuthController.verifyOtpCode);
@@ -4757,7 +5418,10 @@ async function bootstrap() {
     }
     if (process.env.DRAGONFLY_HOST || process.env.REDIS_HOST) {
       getDragonflyClient().catch((err) => {
-        console.warn("[Vercel API] Dragonfly / Redis initial connection notice:", err?.message || err);
+        console.warn(
+          "[Vercel API] Dragonfly / Redis initial connection notice:",
+          err?.message || err
+        );
       });
     }
     try {

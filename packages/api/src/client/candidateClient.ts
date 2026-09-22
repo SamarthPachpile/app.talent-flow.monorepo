@@ -200,6 +200,7 @@ export class CandidateAuthService {
     sessionId?: string;
     verificationSent?: boolean;
     userProfile?: any;
+    otp?: string;
   }> {
     try {
       const res = await candidateHttpClient.post<any>("/api/candidates-auth/signup-details", {
@@ -235,6 +236,7 @@ export class CandidateAuthService {
         verificationSent: true,
         token: res.data?.token,
         sessionId: res.data?.sessionId,
+        otp: res.data?.otp,
       };
     } catch (err: unknown) {
       return { user: null, error: (err as Error)?.message || "Registration failed" };
@@ -278,12 +280,63 @@ export class CandidateAuthService {
     }
   }
 
+  static async sendOtp(
+    destination: string,
+  ): Promise<{ success: boolean; otp?: string; message?: string }> {
+    try {
+      const res = await candidateHttpClient.post<any>("/api/candidates-auth/send-otp", {
+        destination,
+        email: destination,
+      });
+      return {
+        success: true,
+        otp: res.data?.otp,
+        message: res.data?.message || `Verification code sent to ${destination}`,
+      };
+    } catch (err: unknown) {
+      return {
+        success: false,
+        message: (err as Error)?.message || "Failed to dispatch verification code",
+      };
+    }
+  }
+
+  static async verifyOtp(
+    userEnteredOtp: string,
+    email?: string,
+  ): Promise<{ success: boolean; valid?: boolean; verified?: boolean; message?: string }> {
+    try {
+      const res = await candidateHttpClient.post<any>("/api/candidates-auth/verify-otp", {
+        userEnteredOtp,
+        email: email || currentAuthUser?.email,
+      });
+      const isValid = Boolean(res.data?.valid || res.data?.verified);
+      if (isValid && currentAuthUser) {
+        currentAuthUser.emailVerified = true;
+        notifyAuthChange(currentAuthUser);
+      }
+      return {
+        success: isValid,
+        valid: isValid,
+        verified: isValid,
+        message: res.data?.message || (isValid ? "Email verified successfully!" : "Invalid code"),
+      };
+    } catch (err: unknown) {
+      return {
+        success: false,
+        valid: false,
+        verified: false,
+        message: (err as Error)?.message || "Verification code is incorrect",
+      };
+    }
+  }
+
   static async sendVerificationEmail(
     customEmail?: string,
-  ): Promise<{ success: boolean; message?: string }> {
+  ): Promise<{ success: boolean; otp?: string; message?: string }> {
     try {
       const targetEmail = customEmail || currentAuthUser?.email || "";
-      const res = await candidateHttpClient.post<{ message?: string }>(
+      const res = await candidateHttpClient.post<{ message?: string; otp?: string }>(
         "/api/candidates-auth/send-verification",
         {
           email: targetEmail,
@@ -291,6 +344,7 @@ export class CandidateAuthService {
       );
       return {
         success: true,
+        otp: res.data?.otp,
         message: res.data?.message || `Verification link sent to ${targetEmail}`,
       };
     } catch {
@@ -320,18 +374,20 @@ export class CandidateAuthService {
     }
   }
 
-  static async checkEmailVerified(): Promise<boolean> {
+  static async checkEmailVerified(emailToCheck?: string): Promise<boolean> {
     try {
-      if (!currentAuthUser?.email) return true;
-      const res = await candidateHttpClient.get<{ verified?: boolean }>(
-        "/api/candidates-auth/verify-status",
-        {
-          params: { email: currentAuthUser.email },
-        },
-      );
-      return res.data?.verified ?? true;
+      const email = emailToCheck || currentAuthUser?.email;
+      if (!email) return false;
+      const res = await candidateHttpClient.get<{
+        data?: { verified?: boolean };
+        verified?: boolean;
+      }>("/api/candidates-auth/verify-status", {
+        params: { email },
+      });
+      const isVerified = res.data?.data?.verified ?? res.data?.verified ?? false;
+      return Boolean(isVerified);
     } catch {
-      return true;
+      return false;
     }
   }
 

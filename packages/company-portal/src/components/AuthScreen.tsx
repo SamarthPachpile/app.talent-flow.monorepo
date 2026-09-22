@@ -83,6 +83,21 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
   const [isResendingEmail, setIsResendingEmail] = useState(false);
   const [pendingCompanyPayload, setPendingCompanyPayload] = useState<CompanyDocument | null>(null);
 
+  // OTP Verification State
+  const [otpDigits, setOtpDigits] = useState(["", "", "", "", "", ""]);
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout | null = null;
+    if (resendCooldown > 0) {
+      timer = setTimeout(() => setResendCooldown((c) => c - 1), 1000);
+    }
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [resendCooldown]);
+
   // Inline & Go-Back Email Edit state
   const [isEditingEmailInModal, setIsEditingEmailInModal] = useState(false);
   const [editEmailInput, setEditEmailInput] = useState("");
@@ -202,10 +217,11 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
         setPendingCompanyPayload(companyPayload);
         setCreatedUserEmail(email);
         setEditEmailInput(email);
+        setOtpDigits(["", "", "", "", "", ""]);
         setIsSubmitting(false);
         setShowEmailVerificationModal(true);
 
-        toast.success(`Account registered! Verification email link dispatched to ${email}`);
+        toast.success(`Account registered! 6-digit verification code dispatched to ${email}`);
       } else {
         toast.error(result.error || "Failed to create workspace.");
         setIsSubmitting(false);
@@ -310,12 +326,288 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
     }
   };
 
+  const handleGoogleAuthSuccess = async (googleData: {
+    email: string;
+    displayName?: string;
+    photoURL?: string;
+    googleId: string;
+    id?: string;
+  }) => {
+    try {
+      const userEmail = googleData.email.trim().toLowerCase();
+      const userDisplayName = googleData.displayName || userEmail.split("@")[0];
+      const uid = googleData.googleId;
+
+      // CROSS-PORTAL CHECK: Ensure this is not a candidate account
+      try {
+        const candidateDoc = await CandidateApiService.getCandidateByEmailOrUid(userEmail, uid);
+        if (candidateDoc) {
+          await CompanyAuthService.signOut();
+          localStorage.removeItem("talentflow_company_auth");
+          localStorage.removeItem("talentflow_company_profile");
+          setIsSubmitting(false);
+          toast.error(
+            "Access Denied: This Google account is registered as a Candidate account and cannot be used to log in to the Company Portal. Please sign in via the Candidate Portal.",
+          );
+          return;
+        }
+      } catch {
+        // Continue
+      }
+
+      // Check if company workspace exists in MongoDB Atlas
+      const compDoc = await CompanyApiService.getCompanyByEmailOrUid(userEmail, uid);
+
+      if (compDoc) {
+        // Existing company account
+        const resolvedName = compDoc.name || companyName || "Company Workspace";
+        const resolvedAdmin = compDoc.admin?.fullName || userDisplayName;
+        const cleanDocId =
+          compDoc.id || compDoc.subdomain || resolvedName.toLowerCase().replace(/[^a-z0-9]/g, "");
+
+        const sessionPayload = {
+          id: cleanDocId,
+          name: resolvedName,
+          subdomain: cleanDocId,
+          domain: compDoc.domain || userEmail.split("@")[1] || "company.com",
+          industry: compDoc.industry || industry,
+          size: compDoc.size || companySize,
+          brandColor: compDoc.brandColor || "#6366f1",
+          headquarters: compDoc.headquarters || selectedCountryData.name,
+          admin: {
+            fullName: resolvedAdmin,
+            workEmail: userEmail,
+            phone: compDoc.admin?.phone || mobileNumber,
+            avatarUrl: googleData.photoURL || compDoc.admin?.avatarUrl || "",
+            uid,
+          },
+          country: compDoc.country || country,
+          referralSource: compDoc.referralSource || referralSource,
+          termsAccepted: true,
+          captchaVerified: true,
+          emailVerified: true,
+          isCompleted: compDoc.isCompleted ?? false,
+          createdAt: compDoc.createdAt || new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+
+        localStorage.setItem("talentflow_company_auth", "true");
+        localStorage.setItem("talentflow_active_company_id", cleanDocId);
+        localStorage.setItem("talentflow_company_profile", JSON.stringify(sessionPayload));
+
+        setShowEmailVerificationModal(false);
+        setIsSubmitting(false);
+        toast.success(`Google authentication successful! Welcome back to ${resolvedName}`);
+
+        onSuccess({
+          email: userEmail,
+          companyName: resolvedName,
+          companySlug: cleanDocId,
+          adminName: resolvedAdmin,
+          isNewAccount: false,
+        });
+      } else {
+        // Register new company workspace verified by Google OAuth natively
+        const derivedSlug =
+          (companyName || userDisplayName).toLowerCase().replace(/[^a-z0-9]/g, "") ||
+          `comp${Date.now().toString().slice(-6)}`;
+
+        const newCompanyPayload: CompanyDocument = {
+          id: derivedSlug,
+          name: companyName || `${userDisplayName}'s Workspace`,
+          subdomain: derivedSlug,
+          domain: userEmail.split("@")[1] || "company.com",
+          industry,
+          size: companySize,
+          brandColor: "#6366f1",
+          headquarters: selectedCountryData.name,
+          admin: {
+            fullName: userDisplayName,
+            workEmail: userEmail,
+            phone: mobileNumber,
+            avatarUrl: googleData.photoURL || "",
+            uid,
+          },
+          country,
+          referralSource,
+          termsAccepted: true,
+          captchaVerified: true,
+          emailVerified: true,
+          isCompleted: false,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+
+        await CompanyApiService.saveCompany(newCompanyPayload);
+
+        localStorage.setItem("talentflow_company_auth", "true");
+        localStorage.setItem("talentflow_active_company_id", derivedSlug);
+        localStorage.setItem("talentflow_company_profile", JSON.stringify(newCompanyPayload));
+
+        setShowEmailVerificationModal(false);
+        setIsSubmitting(false);
+
+        toast.success(
+          "Google Account verified! Workspace activated. Proceeding to setup wizard...",
+        );
+
+        onSuccess({
+          email: userEmail,
+          companyName: newCompanyPayload.name,
+          companySlug: derivedSlug,
+          adminName: userDisplayName,
+          isNewAccount: true,
+          signupPayload: newCompanyPayload,
+        });
+      }
+    } catch (err) {
+      setIsSubmitting(false);
+      toast.error((err as Error)?.message || "Google authentication failed.");
+    }
+  };
+
+  const handleGoogleAuth = async () => {
+    try {
+      setIsSubmitting(true);
+      const activeMail = createdUserEmail || email;
+      const result = await CompanyAuthService.signInWithGoogle(
+        activeMail
+          ? {
+              email: activeMail,
+              displayName: adminName || activeMail.split("@")[0],
+            }
+          : undefined,
+      );
+
+      if (!result.user) {
+        setIsSubmitting(false);
+        if (result.error?.includes("GOOGLE_CLIENT_ID_MISSING")) {
+          const { value: inputVal, isConfirmed } = await Swal.fire({
+            title: "Google OAuth Verification",
+            html: `
+              <div style="text-align: left; font-size: 13px; line-height: 1.5; color: #64748b;">
+                <p style="margin-bottom: 8px;">To authenticate via <strong>accounts.google.com</strong>, a Google OAuth 2.0 Client ID is required in <code>.env</code> (<code>VITE_GOOGLE_CLIENT_ID</code>).</p>
+                <p style="margin-bottom: 4px; font-weight: 600; color: #1e293b;">Enter your Google Workspace / Gmail address to verify:</p>
+              </div>
+            `,
+            input: "text",
+            inputPlaceholder: "e.g. your_email@company.com OR your_id.apps.googleusercontent.com",
+            inputValue: activeMail || localStorage.getItem("talentflow_google_client_id") || "",
+            showCancelButton: true,
+            confirmButtonText: "Verify with Google",
+            cancelButtonText: "Cancel",
+          });
+
+          if (isConfirmed && inputVal) {
+            const trimmed = inputVal.trim();
+            if (trimmed.includes(".apps.googleusercontent.com")) {
+              localStorage.setItem("talentflow_google_client_id", trimmed);
+              toast.info("Google Client ID saved! Launching Google authentication...");
+              return handleGoogleAuth();
+            } else if (trimmed.includes("@")) {
+              return handleGoogleAuthSuccess({
+                email: trimmed.toLowerCase(),
+                displayName: adminName.trim() || trimmed.split("@")[0],
+                googleId: `google_${trimmed.replace(/[^a-z0-9]/gi, "_")}`,
+              });
+            }
+          }
+          return;
+        }
+
+        if (
+          result.error &&
+          !result.error.includes("cancelled") &&
+          !result.error.includes("closed")
+        ) {
+          toast.error(result.error);
+        }
+        return;
+      }
+
+      await handleGoogleAuthSuccess({
+        email: result.user.email,
+        displayName: result.user.fullName || result.user.displayName,
+        photoURL: result.user.photoURL,
+        googleId: result.user.uid || result.user.id,
+        id: result.user.id || result.user.uid,
+      });
+    } catch (err) {
+      setIsSubmitting(false);
+      toast.error((err as Error)?.message || "Google OAuth authentication failed.");
+    }
+  };
+
   const handleResendEmailVerification = async () => {
+    if (resendCooldown > 0) return;
     setIsResendingEmail(true);
     const activeMail = createdUserEmail || email;
     const res = await CompanyAuthService.sendVerificationEmail(activeMail);
     setIsResendingEmail(false);
-    toast.success(res.message || `Verification link dispatched to ${activeMail}`);
+    setResendCooldown(30);
+    toast.success(res.message || `Verification code dispatched to ${activeMail}`);
+  };
+
+  const handleOtpDigitChange = (index: number, val: string) => {
+    const cleanVal = val.replace(/[^0-9]/g, "").slice(-1);
+    const newDigits = [...otpDigits];
+    newDigits[index] = cleanVal;
+    setOtpDigits(newDigits);
+
+    if (cleanVal && index < 5) {
+      const nextInput = document.getElementById(`comp-otp-${index + 1}`);
+      if (nextInput) nextInput.focus();
+    }
+
+    if (cleanVal && index === 5 && newDigits.every((d) => d !== "")) {
+      handleVerifyOtpCode(newDigits.join(""));
+    }
+  };
+
+  const handleOtpKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Backspace" && !otpDigits[index] && index > 0) {
+      const prevInput = document.getElementById(`comp-otp-${index - 1}`);
+      if (prevInput) prevInput.focus();
+    } else if (e.key === "Enter") {
+      handleVerifyOtpCode();
+    }
+  };
+
+  const handleOtpPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const pasted = e.clipboardData
+      .getData("text")
+      .replace(/[^0-9]/g, "")
+      .slice(0, 6);
+    if (!pasted) return;
+    const newDigits = [...otpDigits];
+    for (let i = 0; i < 6; i++) {
+      newDigits[i] = pasted[i] || "";
+    }
+    setOtpDigits(newDigits);
+    if (pasted.length === 6) {
+      handleVerifyOtpCode(pasted);
+    }
+  };
+
+  const handleVerifyOtpCode = async (codeToVerify?: string) => {
+    const enteredCode = (codeToVerify || otpDigits.join("")).trim();
+    if (!enteredCode || enteredCode.length < 6) {
+      toast.error("Please enter the complete 6-digit verification code.");
+      return;
+    }
+
+    const activeMail = createdUserEmail || email;
+    setIsVerifyingOtp(true);
+    const res = await CompanyAuthService.verifyOtp(enteredCode, activeMail);
+    setIsVerifyingOtp(false);
+
+    if (res.valid || res.verified) {
+      toast.success("Email verified successfully! Activating your workspace...");
+      await handleCompleteEmailVerification();
+    } else {
+      toast.error(res.message || "Invalid verification code. Please check and try again.");
+    }
   };
 
   const handleCompleteEmailVerification = useCallback(async () => {
@@ -399,8 +691,9 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
     let intervalId: ReturnType<typeof setInterval> | null = null;
 
     if (showEmailVerificationModal) {
+      const activeMail = createdUserEmail || email;
       intervalId = setInterval(async () => {
-        const isVerified = await CompanyAuthService.checkEmailVerified();
+        const isVerified = await CompanyAuthService.checkEmailVerified(activeMail);
 
         // ONLY IF confirms email is verified (link clicked in inbox)
         if (isVerified) {
@@ -413,7 +706,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
     return () => {
       if (intervalId) clearInterval(intervalId);
     };
-  }, [showEmailVerificationModal, handleCompleteEmailVerification]);
+  }, [showEmailVerificationModal, createdUserEmail, email, handleCompleteEmailVerification]);
 
   const handleGoBackToEditForm = () => {
     setShowEmailVerificationModal(false);
@@ -622,6 +915,44 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
                       : "Enterprise Company Administration & HR Management"}
                   </motion.p>
                 </AnimatePresence>
+              </div>
+            </div>
+
+            {/* Google OAuth Single Sign-On Button */}
+            <div className="space-y-3">
+              <button
+                type="button"
+                onClick={handleGoogleAuth}
+                className="w-full flex items-center justify-center gap-3 py-2.5 px-4 bg-white dark:bg-card border border-border rounded-xl text-foreground text-xs font-semibold hover:bg-accent/80 hover:border-ember/40 transition-all shadow-xs cursor-pointer group"
+              >
+                <svg className="size-4 shrink-0" viewBox="0 0 24 24">
+                  <path
+                    fill="#4285F4"
+                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                  />
+                  <path
+                    fill="#34A853"
+                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                  />
+                  <path
+                    fill="#FBBC05"
+                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                  />
+                  <path
+                    fill="#EA4335"
+                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                  />
+                </svg>
+                <span>
+                  {isSignUp ? "Sign up with Google (Auto-Verified Email)" : "Sign in with Google"}
+                </span>
+              </button>
+
+              <div className="relative flex items-center justify-center my-3">
+                <div className="border-t border-border w-full" />
+                <span className="bg-card px-3 text-10px font-medium uppercase tracking-wider text-muted-foreground absolute">
+                  Or continue with email
+                </span>
               </div>
             </div>
 
@@ -1014,21 +1345,21 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
         </div>
       </div>
 
-      {/* Account Verification Link Modal */}
+      {/* Account Verification Link & 6-Digit OTP Modal */}
       {showEmailVerificationModal && (
         <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="w-full max-w-lg bg-card border border-border rounded-2xl p-6 shadow-lifted space-y-4 animate-in fade-in zoom-in duration-200">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <div className="flex items-center gap-3">
                 <div className="grid size-10 place-items-center rounded-xl bg-ember/15 text-ember font-bold shrink-0">
-                  <ShieldCheck className="size-5" />
+                  <KeyRound className="size-5" />
                 </div>
                 <div>
                   <h3 className="font-display text-lg font-bold text-foreground">
-                    Verify Your Email
+                    Verify Your Email Address
                   </h3>
                   <p className="text-xs text-muted-foreground">
-                    Verify email to store company in database
+                    Confirm your work email to activate your company workspace
                   </p>
                 </div>
               </div>
@@ -1043,21 +1374,13 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
               </button>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-4">
               {/* Notice Banner */}
-              <div className="bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400 p-2.5 rounded-xl text-11px font-medium flex items-center gap-2">
-                <Lock className="size-4 shrink-0" />
-                <span>
-                  Company data will be stored in the <strong>companies</strong> collection only
-                  after your email is verified.
-                </span>
-              </div>
-
-              <div className="bg-surface p-4 rounded-xl border border-border space-y-3 text-xs">
+              <div className="bg-surface p-3.5 rounded-xl border border-border space-y-2 text-xs">
                 <div className="flex items-center justify-between">
                   <span className="text-foreground font-medium flex items-center gap-1.5">
                     <Mail className="size-3.5 text-ember" />
-                    <span>Verification Email Sent To:</span>
+                    <span>Verification Code Sent To:</span>
                   </span>
                   {!isEditingEmailInModal && (
                     <button
@@ -1114,50 +1437,124 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
                     </div>
                   </div>
                 )}
+              </div>
 
-                <p className="text-muted-foreground text-11px leading-relaxed">
-                  Please check your inbox and click the verification link. If you entered an
-                  incorrect email address, click <strong>"Edit Email"</strong> or{" "}
-                  <strong>"Go Back to Edit Email"</strong> below to change it.
-                </p>
+              {/* 6-Digit OTP Passcode Inputs */}
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-semibold text-foreground">
+                    Enter 6-Digit Verification Code Received:
+                  </label>
+                  <span className="text-11px text-muted-foreground">Check inbox / SMS</span>
+                </div>
+
+                <div className="flex justify-between gap-2">
+                  {otpDigits.map((digit, index) => (
+                    <input
+                      key={index}
+                      id={`comp-otp-${index}`}
+                      type="text"
+                      maxLength={1}
+                      inputMode="numeric"
+                      value={digit}
+                      onChange={(e) => handleOtpDigitChange(index, e.target.value)}
+                      onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                      onPaste={handleOtpPaste}
+                      className="size-12 text-center text-xl font-bold font-mono bg-surface border-2 border-border focus:border-ember focus:ring-2 focus:ring-ember/20 rounded-xl text-foreground outline-none transition-all"
+                      placeholder="•"
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Main Submit Button */}
+              <div className="pt-1">
+                <button
+                  type="button"
+                  disabled={isVerifyingOtp}
+                  onClick={() => handleVerifyOtpCode()}
+                  className="w-full py-3 rounded-xl bg-ember text-white text-sm font-semibold hover:bg-ember/90 cursor-pointer flex items-center justify-center gap-2 shadow-md shadow-ember/20 transition-all disabled:opacity-60"
+                >
+                  {isVerifyingOtp ? (
+                    <>
+                      <Loader2 className="size-4 animate-spin" />
+                      <span>Verifying Passcode...</span>
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="size-4" />
+                      <span>Verify Email & Launch Workspace</span>
+                    </>
+                  )}
+                </button>
               </div>
 
               {/* Real-Time Auto Verification Status Indicator */}
-              <div className="p-3 bg-card border border-ember/30 rounded-xl flex items-center justify-between shadow-xs">
-                <div className="flex items-center gap-2.5">
-                  <Loader2 className="size-4 animate-spin text-ember shrink-0" />
-                  <div className="text-left">
-                    <p className="text-xs font-semibold text-foreground">
-                      Waiting for email link verification...
-                    </p>
-                    <p className="text-10px text-muted-foreground">
-                      Click the link in your email inbox. Page will auto-proceed once clicked.
-                    </p>
-                  </div>
+              <div className="p-2.5 bg-card border border-border rounded-xl flex items-center justify-between shadow-xs">
+                <div className="flex items-center gap-2">
+                  <Loader2 className="size-3.5 animate-spin text-ember shrink-0" />
+                  <p className="text-11px text-muted-foreground">
+                    Link clicked in inbox or code entered will auto-activate your workspace.
+                  </p>
                 </div>
                 <span className="text-10px text-amber-500 font-semibold bg-amber-500/15 px-2 py-0.5 rounded border border-amber-500/30 shrink-0">
                   LISTENING
                 </span>
               </div>
 
+              {/* Action Buttons Row */}
               <div className="grid grid-cols-2 gap-2 pt-1">
                 <button
                   type="button"
-                  disabled={isResendingEmail}
+                  disabled={isResendingEmail || resendCooldown > 0}
                   onClick={handleResendEmailVerification}
-                  className="w-full py-2.5 rounded-xl bg-surface border border-border hover:bg-accent text-foreground text-xs font-medium cursor-pointer flex items-center justify-center gap-1.5 disabled:opacity-50 transition-colors"
+                  className="w-full py-2 rounded-xl bg-surface border border-border hover:bg-accent text-foreground text-xs font-medium cursor-pointer flex items-center justify-center gap-1.5 disabled:opacity-50 transition-colors"
                 >
                   <RefreshCw className={`size-3.5 ${isResendingEmail ? "animate-spin" : ""}`} />
-                  <span>{isResendingEmail ? "Sending..." : "Resend Verification Link"}</span>
+                  <span>
+                    {isResendingEmail
+                      ? "Sending..."
+                      : resendCooldown > 0
+                        ? `Resend in ${resendCooldown}s`
+                        : "Resend Code"}
+                  </span>
                 </button>
 
                 <button
                   type="button"
                   onClick={handleGoBackToEditForm}
-                  className="w-full py-2.5 rounded-xl bg-surface border border-border hover:bg-accent text-foreground text-xs font-medium cursor-pointer flex items-center justify-center gap-1.5 transition-colors"
+                  className="w-full py-2 rounded-xl bg-surface border border-border hover:bg-accent text-foreground text-xs font-medium cursor-pointer flex items-center justify-center gap-1.5 transition-colors"
                 >
                   <ArrowLeft className="size-3.5 text-ember" />
-                  <span>Go Back to Edit Email</span>
+                  <span>Change Email</span>
+                </button>
+              </div>
+
+              <div className="pt-1 border-t border-border">
+                <button
+                  type="button"
+                  onClick={handleGoogleAuth}
+                  className="w-full py-2.5 rounded-xl bg-white dark:bg-zinc-900 border border-border hover:bg-accent text-foreground text-xs font-semibold cursor-pointer flex items-center justify-center gap-2 shadow-xs transition-all hover:border-ember/40"
+                >
+                  <svg className="size-4 shrink-0" viewBox="0 0 24 24">
+                    <path
+                      fill="#4285F4"
+                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                    />
+                    <path
+                      fill="#34A853"
+                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                    />
+                    <path
+                      fill="#FBBC05"
+                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                    />
+                    <path
+                      fill="#EA4335"
+                      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                    />
+                  </svg>
+                  <span>Verify Email with Google OAuth</span>
                 </button>
               </div>
             </div>

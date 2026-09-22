@@ -77,6 +77,12 @@ export type ConfigType = {
   CANDIDATE_DOMAIN_URL: string;
   COMPANY_DOMAIN_URL: string;
   LANDING_DOMAIN_URL: string;
+  SMTP_HOST: string;
+  SMTP_PORT: number;
+  SMTP_SECURE: boolean;
+  SMTP_USER: string;
+  SMTP_PASS: string;
+  SMTP_FROM: string;
 };
 
 const dragonflyConfig = getDragonflyConfig();
@@ -91,8 +97,8 @@ export const config: ConfigType = {
   MONGODB_DATABASE: process.env.MONGODB_DATABASE || "talentflow",
   MONGO_MAX_POOL_SIZE: Number(process.env.MONGO_MAX_POOL_SIZE) || 20,
   MONGO_MIN_POOL_SIZE: Number(process.env.MONGO_MIN_POOL_SIZE) || 5,
-  JWT_SECRET: process.env.JWT_SECRET || "",
-  SESSION_SECRET: process.env.SESSION_SECRET || "",
+  JWT_SECRET: process.env.JWT_SECRET || "talentflow-secret-key-change-in-prod-2026",
+  SESSION_SECRET: process.env.SESSION_SECRET || "talentflow-session-secret-2026",
   DRAGONFLY_USERNAME: dragonflyConfig.username || "default",
   DRAGONFLY_HOST: dragonflyConfig.host,
   DRAGONFLY_PORT: dragonflyConfig.port,
@@ -117,6 +123,16 @@ export const config: ConfigType = {
     process.env.VITE_LANDING_DOMAIN_URL ||
     process.env.LANDING_DOMAIN_URL ||
     (isProduction ? "" : "http://localhost:3000"),
+  SMTP_HOST: process.env.SMTP_HOST || process.env.EMAIL_HOST || "",
+  SMTP_PORT: Number(process.env.SMTP_PORT || process.env.EMAIL_PORT) || 587,
+  SMTP_SECURE: process.env.SMTP_SECURE === "true" || process.env.SMTP_PORT === "465",
+  SMTP_USER: process.env.SMTP_USER || process.env.EMAIL_USER || "",
+  SMTP_PASS: process.env.SMTP_PASS || process.env.SMTP_PASSWORD || process.env.EMAIL_PASSWORD || "",
+  SMTP_FROM:
+    process.env.SMTP_FROM ||
+    process.env.EMAIL_FROM ||
+    process.env.SMTP_USER ||
+    "TalentFlow <noreply@talentflow.io>",
 };
 
 export { logger };

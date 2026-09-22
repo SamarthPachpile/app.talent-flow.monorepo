@@ -47,6 +47,14 @@ authRouter.post(
 // Verification & Security
 authRouter.post(["/verify-email", "/send-verification"], AuthController.sendVerificationEmail);
 authRouter.get(["/check-verified", "/verify-status"], AuthController.checkEmailVerified);
+authRouter.get(
+  ["/verify-email-confirm", "/confirm-email", "/verify-link", "/email-confirm"],
+  AuthController.confirmEmailVerification,
+);
+authRouter.post(
+  ["/verify-email-confirm", "/confirm-email", "/verify-link", "/email-confirm"],
+  AuthController.confirmEmailVerification,
+);
 authRouter.post(["/update-email", "/change-email"], AuthController.updateUserEmailAndResend);
 authRouter.post(["/otp/send", "/send-otp"], AuthController.sendOtpCode);
 authRouter.post(["/otp/verify", "/verify-otp"], AuthController.verifyOtpCode);

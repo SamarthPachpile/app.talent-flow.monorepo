@@ -90,6 +90,21 @@ export function CandidateAuthScreen({
     null,
   );
 
+  // OTP Verification State
+  const [otpDigits, setOtpDigits] = useState(["", "", "", "", "", ""]);
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout | null = null;
+    if (resendCooldown > 0) {
+      timer = setTimeout(() => setResendCooldown((c) => c - 1), 1000);
+    }
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [resendCooldown]);
+
   // Inline & Go-Back Email Edit state
   const [isEditingEmailInModal, setIsEditingEmailInModal] = useState(false);
   const [editEmailInput, setEditEmailInput] = useState("");
@@ -304,11 +319,75 @@ export function CandidateAuthScreen({
   const selectedCountryData = COUNTRY_OPTIONS[country] || COUNTRY_OPTIONS["United States"];
 
   const handleResendEmailVerification = async () => {
+    if (resendCooldown > 0) return;
     setIsResendingEmail(true);
     const activeMail = createdUserEmail || email;
     const res = await CandidateAuthService.sendVerificationEmail(activeMail);
     setIsResendingEmail(false);
-    toast.success(res.message || `Verification link dispatched to ${activeMail}`);
+    setResendCooldown(30);
+    toast.success(res.message || `Verification code & link dispatched to ${activeMail}`);
+  };
+
+  const handleOtpDigitChange = (index: number, val: string) => {
+    const cleanVal = val.replace(/[^0-9]/g, "").slice(-1);
+    const newDigits = [...otpDigits];
+    newDigits[index] = cleanVal;
+    setOtpDigits(newDigits);
+
+    if (cleanVal && index < 5) {
+      const nextInput = document.getElementById(`cand-otp-${index + 1}`);
+      if (nextInput) nextInput.focus();
+    }
+
+    if (cleanVal && index === 5 && newDigits.every((d) => d !== "")) {
+      handleVerifyOtpCode(newDigits.join(""));
+    }
+  };
+
+  const handleOtpKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Backspace" && !otpDigits[index] && index > 0) {
+      const prevInput = document.getElementById(`cand-otp-${index - 1}`);
+      if (prevInput) prevInput.focus();
+    } else if (e.key === "Enter") {
+      handleVerifyOtpCode();
+    }
+  };
+
+  const handleOtpPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const pasted = e.clipboardData
+      .getData("text")
+      .replace(/[^0-9]/g, "")
+      .slice(0, 6);
+    if (!pasted) return;
+    const newDigits = [...otpDigits];
+    for (let i = 0; i < 6; i++) {
+      newDigits[i] = pasted[i] || "";
+    }
+    setOtpDigits(newDigits);
+    if (pasted.length === 6) {
+      handleVerifyOtpCode(pasted);
+    }
+  };
+
+  const handleVerifyOtpCode = async (codeToVerify?: string) => {
+    const enteredCode = (codeToVerify || otpDigits.join("")).trim();
+    if (!enteredCode || enteredCode.length < 6) {
+      toast.error("Please enter the complete 6-digit verification code.");
+      return;
+    }
+
+    const activeMail = createdUserEmail || email;
+    setIsVerifyingOtp(true);
+    const res = await CandidateAuthService.verifyOtp(enteredCode, activeMail);
+    setIsVerifyingOtp(false);
+
+    if (res.valid || res.verified) {
+      toast.success("Email verified successfully! Activating candidate profile...");
+      await handleCompleteEmailVerification();
+    } else {
+      toast.error(res.message || "Invalid verification code. Please check and try again.");
+    }
   };
 
   const handleGoBackToEditForm = () => {
@@ -446,8 +525,9 @@ export function CandidateAuthScreen({
     let intervalId: ReturnType<typeof setInterval> | null = null;
 
     if (showEmailVerificationModal) {
+      const activeMail = createdUserEmail || email;
       intervalId = setInterval(async () => {
-        const isVerified = await CandidateAuthService.checkEmailVerified();
+        const isVerified = await CandidateAuthService.checkEmailVerified(activeMail);
         if (isVerified) {
           if (intervalId) clearInterval(intervalId);
           await handleCompleteEmailVerification();
@@ -458,7 +538,7 @@ export function CandidateAuthScreen({
     return () => {
       if (intervalId) clearInterval(intervalId);
     };
-  }, [showEmailVerificationModal, handleCompleteEmailVerification]);
+  }, [showEmailVerificationModal, createdUserEmail, email, handleCompleteEmailVerification]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -576,10 +656,11 @@ export function CandidateAuthScreen({
         setPendingCandidatePayload(initialCandidateDoc);
         setCreatedUserEmail(email);
         setEditEmailInput(email);
+
         setIsSubmitting(false);
         setShowEmailVerificationModal(true);
 
-        toast.success(`Account registered! Verification email link dispatched to ${email}`);
+        toast.success(`Account registered! Verification code & link dispatched to ${email}`);
       } else {
         toast.error(result.error || "Failed to create account.");
         setIsSubmitting(false);
@@ -1260,21 +1341,21 @@ export function CandidateAuthScreen({
         </div>
       </div>
 
-      {/* Account Verification Link Modal - Matching Company Portal 1-to-1 */}
+      {/* Account Verification Link & 6-Digit OTP Modal */}
       {showEmailVerificationModal && (
         <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="w-full max-w-lg bg-card border border-border rounded-2xl p-6 shadow-lifted space-y-4 animate-in fade-in zoom-in duration-200">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <div className="flex items-center gap-3">
                 <div className="grid size-10 place-items-center rounded-xl bg-ember/15 text-ember font-bold shrink-0">
-                  <ShieldCheck className="size-5" />
+                  <KeyRound className="size-5" />
                 </div>
                 <div>
                   <h3 className="font-display text-lg font-bold text-foreground">
-                    Verify Your Email
+                    Verify Your Email Address
                   </h3>
                   <p className="text-xs text-muted-foreground">
-                    Verify email to store candidate in database
+                    Confirm your candidate email to activate your profile
                   </p>
                 </div>
               </div>
@@ -1289,21 +1370,13 @@ export function CandidateAuthScreen({
               </button>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-4">
               {/* Notice Banner */}
-              <div className="bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400 p-2.5 rounded-xl text-11px font-medium flex items-center gap-2">
-                <Lock className="size-4 shrink-0" />
-                <span>
-                  Candidate data will be stored in the <strong>candidates</strong> collection only
-                  after your email is verified.
-                </span>
-              </div>
-
-              <div className="bg-surface p-4 rounded-xl border border-border space-y-3 text-xs">
+              <div className="bg-surface p-3.5 rounded-xl border border-border space-y-2 text-xs">
                 <div className="flex items-center justify-between">
                   <span className="text-foreground font-medium flex items-center gap-1.5">
                     <Mail className="size-3.5 text-ember" />
-                    <span>Verification Email Sent To:</span>
+                    <span>Verification Code Sent To:</span>
                   </span>
                   {!isEditingEmailInModal && (
                     <button
@@ -1360,50 +1433,93 @@ export function CandidateAuthScreen({
                     </div>
                   </div>
                 )}
+              </div>
 
-                <p className="text-muted-foreground text-11px leading-relaxed">
-                  Please check your inbox and click the verification link. If you entered an
-                  incorrect email address, click <strong>"Edit Email"</strong> or{" "}
-                  <strong>"Go Back to Edit Email"</strong> below to change it.
-                </p>
+              {/* 6-Digit OTP Passcode Inputs */}
+              <div className="space-y-2.5">
+                <label className="block text-xs font-semibold text-foreground">
+                  Enter 6-Digit Verification Code
+                </label>
+
+                <div className="flex justify-between gap-2">
+                  {otpDigits.map((digit, index) => (
+                    <input
+                      key={index}
+                      id={`cand-otp-${index}`}
+                      type="text"
+                      maxLength={1}
+                      inputMode="numeric"
+                      value={digit}
+                      onChange={(e) => handleOtpDigitChange(index, e.target.value)}
+                      onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                      onPaste={handleOtpPaste}
+                      className="size-12 text-center text-xl font-bold font-mono bg-surface border-2 border-border focus:border-ember focus:ring-2 focus:ring-ember/20 rounded-xl text-foreground outline-none transition-all"
+                      placeholder="•"
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Main Submit Button */}
+              <div className="pt-1">
+                <button
+                  type="button"
+                  disabled={isVerifyingOtp}
+                  onClick={() => handleVerifyOtpCode()}
+                  className="w-full py-3 rounded-xl bg-ember text-white text-sm font-semibold hover:bg-ember/90 cursor-pointer flex items-center justify-center gap-2 shadow-md shadow-ember/20 transition-all disabled:opacity-60"
+                >
+                  {isVerifyingOtp ? (
+                    <>
+                      <Loader2 className="size-4 animate-spin" />
+                      <span>Verifying Passcode...</span>
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="size-4" />
+                      <span>Verify Email & Complete Profile</span>
+                    </>
+                  )}
+                </button>
               </div>
 
               {/* Real-Time Auto Verification Status Indicator */}
-              <div className="p-3 bg-card border border-ember/30 rounded-xl flex items-center justify-between shadow-xs">
-                <div className="flex items-center gap-2.5">
-                  <Loader2 className="size-4 animate-spin text-ember shrink-0" />
-                  <div className="text-left">
-                    <p className="text-xs font-semibold text-foreground">
-                      Waiting for email link verification...
-                    </p>
-                    <p className="text-10px text-muted-foreground">
-                      Click the link in your email inbox. Page will auto-proceed once clicked.
-                    </p>
-                  </div>
+              <div className="p-2.5 bg-card border border-border rounded-xl flex items-center justify-between shadow-xs">
+                <div className="flex items-center gap-2">
+                  <Loader2 className="size-3.5 animate-spin text-ember shrink-0" />
+                  <p className="text-11px text-muted-foreground">
+                    Link clicked in inbox or code entered will auto-activate your profile.
+                  </p>
                 </div>
                 <span className="text-10px text-amber-500 font-semibold bg-amber-500/15 px-2 py-0.5 rounded border border-amber-500/30 shrink-0">
                   LISTENING
                 </span>
               </div>
 
+              {/* Action Buttons Row */}
               <div className="grid grid-cols-2 gap-2 pt-1">
                 <button
                   type="button"
-                  disabled={isResendingEmail}
+                  disabled={isResendingEmail || resendCooldown > 0}
                   onClick={handleResendEmailVerification}
-                  className="w-full py-2.5 rounded-xl bg-surface border border-border hover:bg-accent text-foreground text-xs font-medium cursor-pointer flex items-center justify-center gap-1.5 disabled:opacity-50 transition-colors"
+                  className="w-full py-2 rounded-xl bg-surface border border-border hover:bg-accent text-foreground text-xs font-medium cursor-pointer flex items-center justify-center gap-1.5 disabled:opacity-50 transition-colors"
                 >
                   <RefreshCw className={`size-3.5 ${isResendingEmail ? "animate-spin" : ""}`} />
-                  <span>{isResendingEmail ? "Sending..." : "Resend Verification Link"}</span>
+                  <span>
+                    {isResendingEmail
+                      ? "Sending..."
+                      : resendCooldown > 0
+                        ? `Resend in ${resendCooldown}s`
+                        : "Resend Code"}
+                  </span>
                 </button>
 
                 <button
                   type="button"
                   onClick={handleGoBackToEditForm}
-                  className="w-full py-2.5 rounded-xl bg-surface border border-border hover:bg-accent text-foreground text-xs font-medium cursor-pointer flex items-center justify-center gap-1.5 transition-colors"
+                  className="w-full py-2 rounded-xl bg-surface border border-border hover:bg-accent text-foreground text-xs font-medium cursor-pointer flex items-center justify-center gap-1.5 transition-colors"
                 >
                   <ArrowLeft className="size-3.5 text-ember" />
-                  <span>Go Back to Edit Email</span>
+                  <span>Change Email</span>
                 </button>
               </div>
             </div>

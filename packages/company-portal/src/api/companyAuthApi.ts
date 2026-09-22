@@ -21,6 +21,7 @@ export interface AuthResult {
   userProfile?: Record<string, unknown>;
   verificationSent?: boolean;
   token?: string;
+  otp?: string;
 }
 
 type AuthStateCallback = (user: AuthUser | null) => void;
@@ -149,6 +150,7 @@ export const CompanyAuthService = {
           role?: string;
         };
         token?: string;
+        otp?: string;
       }>("/api/companies-auth/company-signup", {
         email,
         password,
@@ -171,7 +173,7 @@ export const CompanyAuthService = {
       }
 
       notifyAuthChange(user);
-      return { user, verificationSent: true, token: res.data?.token };
+      return { user, verificationSent: true, token: res.data?.token, otp: res.data?.otp };
     } catch (err: unknown) {
       console.error("[CompanyAuthService.signUp] Error:", err);
       return { user: null, error: (err as Error)?.message || "Sign up failed" };
@@ -192,6 +194,7 @@ export const CompanyAuthService = {
         userProfile?: Record<string, unknown>;
         verificationSent?: boolean;
         token?: string;
+        otp?: string;
       }>("/api/companies-auth/signup-details", {
         ...data,
         role: "company",
@@ -217,6 +220,7 @@ export const CompanyAuthService = {
         userProfile: res.data?.userProfile,
         verificationSent: res.data?.verificationSent ?? true,
         token: res.data?.token,
+        otp: res.data?.otp,
       };
     } catch (err: unknown) {
       console.error("[CompanyAuthService.signUpWithFullDetails] Error:", err);
@@ -224,12 +228,70 @@ export const CompanyAuthService = {
     }
   },
 
+  async sendOtp(
+    destination: string,
+  ): Promise<{ success: boolean; otp?: string; message?: string }> {
+    try {
+      const res = await companyHttpClient.post<{ otp?: string; message?: string }>(
+        "/api/companies-auth/send-otp",
+        {
+          destination,
+          email: destination,
+        },
+      );
+      return {
+        success: true,
+        otp: res.data?.otp,
+        message: res.data?.message || `Verification code dispatched to ${destination}`,
+      };
+    } catch (err: unknown) {
+      return {
+        success: false,
+        message: (err as Error)?.message || "Failed to dispatch verification code",
+      };
+    }
+  },
+
+  async verifyOtp(
+    userEnteredOtp: string,
+    email?: string,
+  ): Promise<{ success: boolean; valid?: boolean; verified?: boolean; message?: string }> {
+    try {
+      const res = await companyHttpClient.post<{
+        valid?: boolean;
+        verified?: boolean;
+        message?: string;
+      }>("/api/companies-auth/verify-otp", {
+        userEnteredOtp,
+        email: email || currentAuthUser?.email,
+      });
+      const isValid = Boolean(res.data?.valid || res.data?.verified);
+      if (isValid && currentAuthUser) {
+        currentAuthUser.emailVerified = true;
+        notifyAuthChange(currentAuthUser);
+      }
+      return {
+        success: isValid,
+        valid: isValid,
+        verified: isValid,
+        message: res.data?.message || (isValid ? "Email verified successfully!" : "Invalid code"),
+      };
+    } catch (err: unknown) {
+      return {
+        success: false,
+        valid: false,
+        verified: false,
+        message: (err as Error)?.message || "Verification code is incorrect",
+      };
+    }
+  },
+
   async sendVerificationEmail(
     customEmail?: string,
-  ): Promise<{ success: boolean; message?: string }> {
+  ): Promise<{ success: boolean; otp?: string; message?: string }> {
     try {
       const targetEmail = customEmail || currentAuthUser?.email || "";
-      const res = await companyHttpClient.post<{ message?: string }>(
+      const res = await companyHttpClient.post<{ message?: string; otp?: string }>(
         "/api/companies-auth/send-verification",
         {
           email: targetEmail,
@@ -237,6 +299,7 @@ export const CompanyAuthService = {
       );
       return {
         success: true,
+        otp: res.data?.otp,
         message: res.data?.message || `Verification link dispatched to ${targetEmail}.`,
       };
     } catch {
@@ -277,18 +340,20 @@ export const CompanyAuthService = {
     }
   },
 
-  async checkEmailVerified(): Promise<boolean> {
+  async checkEmailVerified(emailToCheck?: string): Promise<boolean> {
     try {
-      if (!currentAuthUser?.email) return true;
-      const res = await companyHttpClient.get<{ verified?: boolean }>(
-        "/api/companies-auth/verify-status",
-        {
-          params: { email: currentAuthUser.email },
-        },
-      );
-      return res.data?.verified ?? true;
+      const email = emailToCheck || currentAuthUser?.email;
+      if (!email) return false;
+      const res = await companyHttpClient.get<{
+        data?: { verified?: boolean };
+        verified?: boolean;
+      }>("/api/companies-auth/verify-status", {
+        params: { email },
+      });
+      const isVerified = res.data?.data?.verified ?? res.data?.verified ?? false;
+      return Boolean(isVerified);
     } catch {
-      return true;
+      return false;
     }
   },
 

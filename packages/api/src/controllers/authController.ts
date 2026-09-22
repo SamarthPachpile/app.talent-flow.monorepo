@@ -1,11 +1,16 @@
 import type { Request, Response } from "express";
 import { CandidateService } from "../services/candidateService";
 import { CompanyService } from "../services/companyService";
+import { EmailService } from "../services/emailService";
+import config from "../config";
 import { generateToken, verifyToken, JwtUserPayload } from "@talent-flow/utilities/auth";
 import {
   DragonflySessionService,
   setUserSession,
   deleteUserSession,
+  setCache,
+  getCache,
+  deleteCache,
 } from "@talent-flow/utilities/dragonfly";
 import { successResponse, errorResponse, logger } from "@talent-flow/utilities";
 import { httpStatusCodes } from "@talent-flow/schema-types";
@@ -75,6 +80,18 @@ export const AuthController = {
 
         await setUserSession("candidate", candidate.id, session.sessionId).catch(() => {});
 
+        // Generate 6-digit OTP code & cache in Dragonfly DB
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        await setCache(`email_otp:${cleanEmail}`, otp, 900);
+
+        // Automatically dispatch verification email
+        const emailResult = await EmailService.sendEmailVerification(
+          cleanEmail,
+          candidate.fullName,
+          "candidate",
+          otp,
+        ).catch(() => null);
+
         successResponse(
           res,
           httpStatusCodes.CREATED,
@@ -92,6 +109,7 @@ export const AuthController = {
             token,
             sessionId: session.sessionId,
             verificationSent: true,
+            verificationUrl: emailResult?.verificationUrl,
           },
         );
         return;
@@ -154,6 +172,18 @@ export const AuthController = {
 
       await setUserSession("company", company.id, session.sessionId).catch(() => {});
 
+      // Generate 6-digit OTP code & cache in Dragonfly DB
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      await setCache(`email_otp:${cleanEmail}`, otp, 900);
+
+      // Automatically dispatch verification email
+      const emailResult = await EmailService.sendEmailVerification(
+        cleanEmail,
+        company.admin?.fullName || company.name,
+        "company",
+        otp,
+      ).catch(() => null);
+
       successResponse(
         res,
         httpStatusCodes.CREATED,
@@ -172,6 +202,7 @@ export const AuthController = {
           token,
           sessionId: session.sessionId,
           verificationSent: true,
+          verificationUrl: emailResult?.verificationUrl,
         },
       );
     } catch (err: unknown) {
@@ -285,6 +316,18 @@ export const AuthController = {
           updatedAt: new Date().toISOString(),
         };
 
+        // Generate 6-digit OTP code & cache in Dragonfly DB
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        await setCache(`email_otp:${cleanEmail}`, otp, 900);
+
+        // Automatically dispatch verification email
+        const emailResult = await EmailService.sendEmailVerification(
+          cleanEmail,
+          candidate.fullName,
+          "candidate",
+          otp,
+        ).catch(() => null);
+
         successResponse(
           res,
           httpStatusCodes.SUCCESS,
@@ -303,6 +346,7 @@ export const AuthController = {
             token,
             sessionId: session.sessionId,
             verificationSent: true,
+            verificationUrl: emailResult?.verificationUrl,
           },
         );
         return;
@@ -403,6 +447,18 @@ export const AuthController = {
         updatedAt: new Date().toISOString(),
       };
 
+      // Generate 6-digit OTP code & cache in Dragonfly DB
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      await setCache(`email_otp:${cleanEmail}`, otp, 900);
+
+      // Automatically dispatch verification email
+      const emailResult = await EmailService.sendEmailVerification(
+        cleanEmail,
+        data.fullName || company.name,
+        "company",
+        otp,
+      ).catch(() => null);
+
       successResponse(
         res,
         httpStatusCodes.SUCCESS,
@@ -422,6 +478,7 @@ export const AuthController = {
           token,
           sessionId: session.sessionId,
           verificationSent: true,
+          verificationUrl: emailResult?.verificationUrl,
         },
       );
     } catch (err: unknown) {
@@ -844,26 +901,147 @@ export const AuthController = {
       const { email } = req.body;
       const cleanEmail = (email || "").trim().toLowerCase();
 
-      if (cleanEmail) {
-        const [candidate, company] = await Promise.all([
-          CandidateService.getCandidateByEmail(cleanEmail),
-          CompanyService.getCompanyByEmail(cleanEmail),
-        ]);
-        if (candidate || company) {
-          logger.info(`[AuthController] Verification email dispatched to ${cleanEmail}`);
-        }
+      if (!cleanEmail) {
+        errorResponse(res, httpStatusCodes.BAD_REQUEST, "Email is required");
+        return;
       }
+
+      const [candidate, company] = await Promise.all([
+        CandidateService.getCandidateByEmail(cleanEmail),
+        CompanyService.getCompanyByEmail(cleanEmail),
+      ]);
+
+      let name = "User";
+      let role: "company" | "candidate" | "admin" = "company";
+      if (candidate) {
+        name = candidate.fullName || "Candidate";
+        role = "candidate";
+      } else if (company) {
+        name = company.admin?.fullName || company.name || "Company Admin";
+        role = "company";
+      }
+
+      // Generate 6-digit OTP code & cache in Dragonfly DB
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      await setCache(`email_otp:${cleanEmail}`, otp, 900);
+
+      const emailResult = await EmailService.sendEmailVerification(cleanEmail, name, role, otp);
 
       successResponse(
         res,
         httpStatusCodes.SUCCESS,
-        `Verification link dispatched to ${cleanEmail || "your email address"}.`,
+        emailResult.message || `Verification code & link dispatched to ${cleanEmail}.`,
+        {
+          email: cleanEmail,
+          verificationUrl: emailResult.verificationUrl,
+          verificationSent: emailResult.success,
+        },
       );
     } catch (err: unknown) {
       errorResponse(
         res,
         httpStatusCodes.INTERNAL_SERVER_ERROR,
         (err as Error)?.message || "Failed to dispatch verification email",
+        err,
+      );
+    }
+  },
+
+  async confirmEmailVerification(req: Request, res: Response): Promise<void> {
+    try {
+      const token = (req.query.token as string) || (req.body?.token as string);
+      if (!token) {
+        const isHtml = req.accepts("html");
+        if (isHtml) {
+          res
+            .status(400)
+            .send(renderVerificationResultHtml(false, "Verification token is missing or invalid."));
+          return;
+        }
+        errorResponse(res, httpStatusCodes.BAD_REQUEST, "Verification token is required");
+        return;
+      }
+
+      const payload = EmailService.verifyEmailVerificationToken(token);
+      if (!payload || !payload.email) {
+        const isHtml = req.accepts("html");
+        if (isHtml) {
+          res
+            .status(400)
+            .send(
+              renderVerificationResultHtml(
+                false,
+                "Verification link is invalid or has expired. Please request a new verification link.",
+              ),
+            );
+          return;
+        }
+        errorResponse(res, httpStatusCodes.BAD_REQUEST, "Invalid or expired verification token");
+        return;
+      }
+
+      const cleanEmail = payload.email.trim().toLowerCase();
+      let targetPortalUrl = config.COMPANY_DOMAIN_URL || "http://localhost:3002";
+
+      if (payload.role === "candidate") {
+        targetPortalUrl = config.CANDIDATE_DOMAIN_URL || "http://localhost:3003";
+        const candidate = await CandidateService.getCandidateByEmail(cleanEmail);
+        if (candidate) {
+          candidate.emailVerified = true;
+          candidate.updatedAt = new Date().toISOString();
+          await CandidateService.saveCandidate(candidate);
+        }
+      } else {
+        const company = await CompanyService.getCompanyByEmail(cleanEmail);
+        if (company) {
+          company.emailVerified = true;
+          company.updatedAt = new Date().toISOString();
+          await CompanyService.saveCompany(company);
+        }
+      }
+
+      logger.info(
+        `[AuthController] Successfully verified email for ${cleanEmail} (${payload.role})`,
+      );
+
+      const isHtml = req.accepts("html");
+      if (isHtml) {
+        res
+          .status(200)
+          .send(
+            renderVerificationResultHtml(
+              true,
+              `Your email address (${cleanEmail}) has been successfully verified! You may now proceed to your workspace.`,
+              `${targetPortalUrl}/?verified=true&email=${encodeURIComponent(cleanEmail)}`,
+            ),
+          );
+        return;
+      }
+
+      successResponse(res, httpStatusCodes.SUCCESS, "Email verified successfully!", {
+        verified: true,
+        email: cleanEmail,
+        role: payload.role,
+        redirectUrl: `${targetPortalUrl}/?verified=true&email=${encodeURIComponent(cleanEmail)}`,
+      });
+    } catch (err: unknown) {
+      logger.error("[AuthController.confirmEmailVerification] Error:", err);
+      const isHtml = req.accepts("html");
+      if (isHtml) {
+        res
+          .status(500)
+          .send(
+            renderVerificationResultHtml(
+              false,
+              "An error occurred while verifying your email. Please try again.",
+            ),
+          );
+        return;
+      }
+      errorResponse(
+        res,
+        httpStatusCodes.INTERNAL_SERVER_ERROR,
+        (err as Error)?.message || "Failed to confirm email verification",
         err,
       );
     }
@@ -952,10 +1130,23 @@ export const AuthController = {
         });
       }
 
+      const name = company?.name || candidate?.fullName || "User";
+      const role = candidate ? "candidate" : "company";
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      await setCache(`email_otp:${cleanNew}`, otp, 900);
+      const emailResult = await EmailService.sendEmailVerification(cleanNew, name, role, otp).catch(
+        () => null,
+      );
+
       successResponse(
         res,
         httpStatusCodes.SUCCESS,
         `Updated email to ${cleanNew} in Dragonfly DB! Verification link dispatched to your new address.`,
+        {
+          email: cleanNew,
+          verificationUrl: emailResult?.verificationUrl,
+          verificationSent: true,
+        },
       );
     } catch (err: unknown) {
       errorResponse(
@@ -968,40 +1159,126 @@ export const AuthController = {
   },
 
   async sendOtpCode(req: Request, res: Response): Promise<void> {
-    const { destination } = req.body;
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    try {
+      const destination = (((req.body.destination || req.body.email) as string) || "")
+        .trim()
+        .toLowerCase();
+      if (!destination) {
+        errorResponse(
+          res,
+          httpStatusCodes.BAD_REQUEST,
+          "Email address is required to dispatch OTP",
+        );
+        return;
+      }
 
-    successResponse(
-      res,
-      httpStatusCodes.SUCCESS,
-      `6-Digit OTP security code dispatched to ${destination}. Demo OTP: ${otp}`,
-      {
-        otp,
-      },
-    );
+      // Generate 6-digit OTP code & cache in Dragonfly DB with 15 mins TTL
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      await setCache(`email_otp:${destination}`, otp, 900);
+
+      const [candidate, company] = await Promise.all([
+        CandidateService.getCandidateByEmail(destination),
+        CompanyService.getCompanyByEmail(destination),
+      ]);
+
+      let name = "User";
+      let role: "company" | "candidate" | "admin" = "company";
+      if (candidate) {
+        name = candidate.fullName || "Candidate";
+        role = "candidate";
+      } else if (company) {
+        name = company.admin?.fullName || company.name || "Company Admin";
+        role = "company";
+      }
+
+      // Automatically dispatch email with OTP
+      await EmailService.sendEmailVerification(destination, name, role, otp).catch(() => null);
+
+      successResponse(
+        res,
+        httpStatusCodes.SUCCESS,
+        `6-Digit verification code dispatched to ${destination}.`,
+        {
+          email: destination,
+          verificationSent: true,
+        },
+      );
+    } catch (err: unknown) {
+      errorResponse(
+        res,
+        httpStatusCodes.INTERNAL_SERVER_ERROR,
+        (err as Error)?.message || "Failed to dispatch verification code",
+        err,
+      );
+    }
   },
 
   async verifyOtpCode(req: Request, res: Response): Promise<void> {
-    const { userEnteredOtp, expectedOtp } = req.body;
-    const trimmed = (userEnteredOtp || "").trim();
+    try {
+      const { userEnteredOtp, otp, code, email } = req.body;
+      const cleanEmail = ((email as string) || "").trim().toLowerCase();
+      const rawOtp = userEnteredOtp || otp || code;
+      const trimmedOtp = ((rawOtp as string) || "").trim();
 
-    if (
-      trimmed === "123456" ||
-      trimmed === "849201" ||
-      (expectedOtp && trimmed === expectedOtp.trim())
-    ) {
-      successResponse(res, httpStatusCodes.SUCCESS, "OTP verification successful!", {
+      if (!trimmedOtp) {
+        errorResponse(res, httpStatusCodes.BAD_REQUEST, "Verification passcode is required.", {
+          valid: false,
+        });
+        return;
+      }
+
+      let cachedOtp: string | null = null;
+      if (cleanEmail) {
+        cachedOtp = await getCache<string>(`email_otp:${cleanEmail}`);
+      }
+
+      const isValid = Boolean(cachedOtp && trimmedOtp === cachedOtp.toString().trim());
+
+      if (!isValid) {
+        errorResponse(
+          res,
+          httpStatusCodes.BAD_REQUEST,
+          "Invalid verification code. Please check the 6-digit code received in your email/phone and try again.",
+          { valid: false },
+        );
+        return;
+      }
+
+      // Mark emailVerified = true in Dragonfly DB and MongoDB
+      if (cleanEmail) {
+        await deleteCache(`email_otp:${cleanEmail}`).catch(() => {});
+
+        const [candidate, company] = await Promise.all([
+          CandidateService.getCandidateByEmail(cleanEmail),
+          CompanyService.getCompanyByEmail(cleanEmail),
+        ]);
+
+        if (candidate) {
+          candidate.emailVerified = true;
+          candidate.updatedAt = new Date().toISOString();
+          await CandidateService.saveCandidate(candidate);
+        }
+
+        if (company) {
+          company.emailVerified = true;
+          company.updatedAt = new Date().toISOString();
+          await CompanyService.saveCompany(company);
+        }
+      }
+
+      successResponse(res, httpStatusCodes.SUCCESS, "Email verified successfully!", {
         valid: true,
+        verified: true,
+        email: cleanEmail,
       });
-      return;
+    } catch (err: unknown) {
+      errorResponse(
+        res,
+        httpStatusCodes.INTERNAL_SERVER_ERROR,
+        (err as Error)?.message || "Failed to verify OTP passcode",
+        err,
+      );
     }
-
-    errorResponse(
-      res,
-      httpStatusCodes.BAD_REQUEST,
-      "Invalid OTP passcode. Please check the code and try again.",
-      { valid: false },
-    );
   },
 
   async getMe(req: Request, res: Response): Promise<void> {
@@ -1130,4 +1407,102 @@ export async function validateSessionEndpoint(req: Request, res: Response): Prom
   } catch (err) {
     errorResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, "Error verifying session", err);
   }
+}
+
+function renderVerificationResultHtml(
+  success: boolean,
+  message: string,
+  redirectUrl?: string,
+): string {
+  return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${success ? "Email Verified - TalentFlow" : "Verification Failed - TalentFlow"}</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: #0d1117;
+      color: #e6edf3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      box-sizing: border-box;
+      padding: 20px;
+    }
+    .card {
+      background-color: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 16px;
+      padding: 40px;
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+    }
+    .icon-container {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      background-color: ${success ? "rgba(16, 185, 129, 0.15)" : "rgba(239, 68, 68, 0.15)"};
+      color: ${success ? "#10b981" : "#ef4444"};
+      font-size: 32px;
+      font-weight: bold;
+    }
+    h1 {
+      font-size: 22px;
+      margin: 0 0 12px;
+      color: #ffffff;
+    }
+    p {
+      color: #8b949e;
+      font-size: 14px;
+      line-height: 1.6;
+      margin: 0 0 28px;
+    }
+    .btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #ea580c, #f97316);
+      color: #ffffff !important;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      padding: 12px 32px;
+      border-radius: 10px;
+      box-shadow: 0 4px 14px rgba(234, 88, 12, 0.35);
+      transition: opacity 0.2s;
+    }
+    .btn:hover {
+      opacity: 0.9;
+    }
+    .countdown {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #6e7681;
+    }
+  </style>
+  ${redirectUrl ? `<meta http-equiv="refresh" content="3;url=${redirectUrl}">` : ""}
+</head>
+<body>
+  <div class="card">
+    <div class="icon-container">
+      ${success ? "✓" : "✕"}
+    </div>
+    <h1>${success ? "Email Verified Successfully!" : "Verification Failed"}</h1>
+    <p>${message}</p>
+    ${redirectUrl ? `<a href="${redirectUrl}" class="btn">Proceed to Workspace</a>` : ""}
+    ${redirectUrl ? `<div class="countdown">Redirecting automatically in 3 seconds...</div>` : ""}
+  </div>
+</body>
+</html>
+  `.trim();
 }

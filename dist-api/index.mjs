@@ -8,11 +8,11 @@ import path from "path";
 
 // packages/utilities/src/logger.ts
 var LogLevel = /* @__PURE__ */ ((LogLevel2) => {
-  LogLevel2[LogLevel2["DEBUG"] = 1] = "DEBUG";
-  LogLevel2[LogLevel2["INFO"] = 2] = "INFO";
-  LogLevel2[LogLevel2["WARN"] = 3] = "WARN";
-  LogLevel2[LogLevel2["ERROR"] = 4] = "ERROR";
-  LogLevel2[LogLevel2["FATAL"] = 5] = "FATAL";
+  LogLevel2[(LogLevel2["DEBUG"] = 1)] = "DEBUG";
+  LogLevel2[(LogLevel2["INFO"] = 2)] = "INFO";
+  LogLevel2[(LogLevel2["WARN"] = 3)] = "WARN";
+  LogLevel2[(LogLevel2["ERROR"] = 4)] = "ERROR";
+  LogLevel2[(LogLevel2["FATAL"] = 5)] = "FATAL";
   return LogLevel2;
 })(LogLevel || {});
 var defaultConfig = {
@@ -20,7 +20,7 @@ var defaultConfig = {
   environment: typeof window === "undefined" ? "node" : "browser",
   enabled: true,
   logToConsole: true,
-  format: "plain"
+  format: "plain",
 };
 var Logger = class {
   config;
@@ -31,7 +31,7 @@ var Logger = class {
     return this.config.enabled && level >= this.config.level;
   }
   formatMessage(level, message, context) {
-    const timestamp = (/* @__PURE__ */ new Date()).toISOString();
+    const timestamp = /* @__PURE__ */ new Date().toISOString();
     const levelName = LogLevel[level];
     let contextString = "";
     if (context) {
@@ -107,7 +107,7 @@ var httpStatusCodes = {
   UNPROCESSABLE_ENTITY: 422,
   TOO_MANY_REQUESTS: 429,
   INTERNAL_SERVER_ERROR: 500,
-  SERVICE_UNAVAILABLE: 503
+  SERVICE_UNAVAILABLE: 503,
 };
 
 // packages/schema-types/src/constants/common.ts
@@ -116,13 +116,13 @@ var COMMON_BRANDING = {
   companyName: "Graviton IT Solutions",
   platformTagline: "Next-Generation Enterprise Talent & Workspace Management Suite",
   poweredBy: "Powered by Graviton IT Solutions & TalentFlow Monorepo",
-  copyright: `\xA9 ${(/* @__PURE__ */ new Date()).getFullYear()} Graviton IT Solutions. All rights reserved.`,
+  copyright: `\xA9 ${/* @__PURE__ */ new Date().getFullYear()} Graviton IT Solutions. All rights reserved.`,
   supportEmail: "support@gravitonitsolutions.com",
   adminEmail: "admin@talentflow.internal",
   helpdeskUrl: "https://support.gravitonitsolutions.com",
   documentationUrl: "https://docs.gravitonitsolutions.com",
   privacyPolicyUrl: "/privacy",
-  termsOfServiceUrl: "/terms"
+  termsOfServiceUrl: "/terms",
 };
 
 // packages/schema-types/src/constants/graviton.ts
@@ -132,7 +132,7 @@ var GRAVITON_PORTAL_TEXTS = {
     tagline: "Next-Generation HR CRM, Candidate Management & Enterprise Workforce Portal Solutions",
     slogan: "Smart HR. Seamless Candidature. Unified Workforce.",
     established: "2018",
-    headquarters: "San Francisco, CA & Global Innovation Hubs"
+    headquarters: "San Francisco, CA & Global Innovation Hubs",
   },
   nav: {
     home: "Home",
@@ -145,104 +145,117 @@ var GRAVITON_PORTAL_TEXTS = {
     ecosystemPortals: "Ecosystem Portals",
     candidatePortal: "Candidate Portal",
     companyWorkspace: "Employer Workspace",
-    adminSuite: "Super Admin"
+    adminSuite: "Super Admin",
   },
   hero: {
     badge: "Next-Gen HR CRM & Candidate Management Suite",
     headlineMain: "Unified HR CRM, Candidate Tracking & Workforce Intelligence",
-    subHeadline: "Transform your end-to-end talent lifecycle with Graviton's full-stack HR CRM portal. Seamlessly orchestrate candidate application management, smart automated onboarding, employee records, payroll, and compliance in one high-performance platform.",
+    subHeadline:
+      "Transform your end-to-end talent lifecycle with Graviton's full-stack HR CRM portal. Seamlessly orchestrate candidate application management, smart automated onboarding, employee records, payroll, and compliance in one high-performance platform.",
     primaryCta: "Explore HR Solutions",
     secondaryCta: "Launch Candidate Portal",
-    watchReel: "Watch Platform Demo"
+    watchReel: "Watch Platform Demo",
   },
   about: {
     hero: {
       badge: "About Graviton Solutions",
       title: "Pioneering Intelligent HR CRM & Workforce Software for Modern Enterprises",
-      subtitle: "We build enterprise-grade portal software that bridges the gap between candidate acquisition, hiring workflows, employee lifecycle management, and executive HR intelligence."
+      subtitle:
+        "We build enterprise-grade portal software that bridges the gap between candidate acquisition, hiring workflows, employee lifecycle management, and executive HR intelligence.",
     },
     mission: {
       title: "Our Mission",
-      description: "To empower organizations worldwide by building an ultra-fast, ethical, and intelligent HR CRM ecosystem that simplifies hiring, streamlines employee engagement, and accelerates human potential."
+      description:
+        "To empower organizations worldwide by building an ultra-fast, ethical, and intelligent HR CRM ecosystem that simplifies hiring, streamlines employee engagement, and accelerates human potential.",
     },
     vision: {
       title: "Our Vision",
-      description: "A future where candidate experience, hiring decisions, and employee career trajectories are managed seamlessly through real-time, data-driven CRM portal architectures."
+      description:
+        "A future where candidate experience, hiring decisions, and employee career trajectories are managed seamlessly through real-time, data-driven CRM portal architectures.",
     },
     values: [
       {
         title: "Candidate-Centric Design",
-        desc: "We engineer intuitive, transparent portals where applicants track their candidature status in real-time with zero ambiguity."
+        desc: "We engineer intuitive, transparent portals where applicants track their candidature status in real-time with zero ambiguity.",
       },
       {
         title: "Total Employee Lifecycle Care",
-        desc: "From offer letters and day-one onboarding to appraisals and offboarding, our CRM covers every milestone of the employee journey."
+        desc: "From offer letters and day-one onboarding to appraisals and offboarding, our CRM covers every milestone of the employee journey.",
       },
       {
         title: "Sub-Second Performance & Real-Time Sync",
-        desc: "Powered by high-throughput Dragonfly DB architecture and instantaneous database synchronization for seamless multi-tenant operations."
+        desc: "Powered by high-throughput Dragonfly DB architecture and instantaneous database synchronization for seamless multi-tenant operations.",
       },
       {
         title: "Enterprise Governance & Security",
-        desc: "Bank-grade data encryption, granular role-based access control (RBAC), and automated compliance across global jurisdictions."
-      }
+        desc: "Bank-grade data encryption, granular role-based access control (RBAC), and automated compliance across global jurisdictions.",
+      },
     ],
     stats: [
       { value: "2M+", label: "Candidates & Applications Processed" },
       { value: "850+", label: "Enterprise Employers & HR Teams" },
       { value: "99.8%", label: "Platform Uptime & Fast Response" },
-      { value: "45%", label: "Reduction in Time-to-Hire" }
-    ]
+      { value: "45%", label: "Reduction in Time-to-Hire" },
+    ],
   },
   services: {
     badge: "Our HR Software Solutions",
     title: "Full-Spectrum HR Services, Candidate CRM & Workforce Applications",
-    subtitle: "A complete modular software suite engineered to handle every facet of talent acquisition, candidature screening, and employee lifecycle management.",
+    subtitle:
+      "A complete modular software suite engineered to handle every facet of talent acquisition, candidature screening, and employee lifecycle management.",
     list: [
       {
         id: "candidate-crm-ats",
         title: "Candidate Application & ATS CRM",
-        description: "Intelligent applicant tracking system with multi-channel job distribution, AI resume parsing, automated pipeline stages, and self-service candidate status portals.",
-        icon: "Users"
+        description:
+          "Intelligent applicant tracking system with multi-channel job distribution, AI resume parsing, automated pipeline stages, and self-service candidate status portals.",
+        icon: "Users",
       },
       {
         id: "employee-management",
         title: "Employee Lifecycle & HRMS Platform",
-        description: "Comprehensive workforce management covering employee records, digital org charts, attendance tracking, leave requests, performance appraisals, and internal mobility.",
-        icon: "Briefcase"
+        description:
+          "Comprehensive workforce management covering employee records, digital org charts, attendance tracking, leave requests, performance appraisals, and internal mobility.",
+        icon: "Briefcase",
       },
       {
         id: "smart-onboarding",
         title: "Digital Onboarding & Candidature Verification",
-        description: "Automated document collection, background check integrations, digital contract signing, asset provisioning, and step-by-step onboarding roadmaps.",
-        icon: "FileCheck"
+        description:
+          "Automated document collection, background check integrations, digital contract signing, asset provisioning, and step-by-step onboarding roadmaps.",
+        icon: "FileCheck",
       },
       {
         id: "hr-service-desk",
         title: "HR Helpdesk & Employee Service Portal",
-        description: "Self-service employee portal with ticketing, automated policy guidance, benefits enrollment, salary slip downloads, and 24/7 AI-powered HR assistance.",
-        icon: "Headphones"
+        description:
+          "Self-service employee portal with ticketing, automated policy guidance, benefits enrollment, salary slip downloads, and 24/7 AI-powered HR assistance.",
+        icon: "Headphones",
       },
       {
         id: "workforce-analytics",
         title: "Workforce Analytics & Talent Intelligence",
-        description: "Executive dashboards tracking recruitment velocity, candidate drop-off funnels, employee retention metrics, headcount forecasting, and compensation benchmarking.",
-        icon: "BarChart3"
+        description:
+          "Executive dashboards tracking recruitment velocity, candidate drop-off funnels, employee retention metrics, headcount forecasting, and compensation benchmarking.",
+        icon: "BarChart3",
       },
       {
         id: "enterprise-portals",
         title: "Multi-Tenant HR Portals & Dragonfly DB Engine",
-        description: "High-performance architecture featuring dedicated portals for Candidates, HR Recruiters, and Super Admins, powered by Dragonfly DB sub-millisecond caching and MongoDB Atlas synchronization.",
-        icon: "Layers"
-      }
-    ]
+        description:
+          "High-performance architecture featuring dedicated portals for Candidates, HR Recruiters, and Super Admins, powered by Dragonfly DB sub-millisecond caching and MongoDB Atlas synchronization.",
+        icon: "Layers",
+      },
+    ],
   },
   careers: {
     hero: {
       badge: "Life at Graviton",
       title: "Join the Team Reinventing Enterprise HR & Talent Software",
-      subtitle: "Be part of a visionary global team building modern CRM software that connects millions of candidates to dream careers and powers top-performing workplaces.",
-      searchPlaceholder: "Search by job title, department (e.g. Fullstack, HR Tech, Product), or location..."
+      subtitle:
+        "Be part of a visionary global team building modern CRM software that connects millions of candidates to dream careers and powers top-performing workplaces.",
+      searchPlaceholder:
+        "Search by job title, department (e.g. Fullstack, HR Tech, Product), or location...",
     },
     whyJoin: {
       title: "Five Reasons You'll Thrive at Graviton",
@@ -250,96 +263,108 @@ var GRAVITON_PORTAL_TEXTS = {
         {
           number: "01",
           title: "Build Systems That Shape Careers",
-          description: "Develop mission-critical HR and recruitment CRM systems used by hundreds of thousands of job seekers and hiring managers daily."
+          description:
+            "Develop mission-critical HR and recruitment CRM systems used by hundreds of thousands of job seekers and hiring managers daily.",
         },
         {
           number: "02",
           title: "Remote-First Autonomy & Global Culture",
-          description: "Work with asynchronous freedom from anywhere in the world with comprehensive home office allowances and coworking access."
+          description:
+            "Work with asynchronous freedom from anywhere in the world with comprehensive home office allowances and coworking access.",
         },
         {
           number: "03",
           title: "Generous Learning & Development",
-          description: "Annual $3,000 professional growth stipend for certifications, technical masterclasses, and international conferences."
+          description:
+            "Annual $3,000 professional growth stipend for certifications, technical masterclasses, and international conferences.",
         },
         {
           number: "04",
           title: "Modern Tech Stack & Cloud Excellence",
-          description: "Work with React 18, TypeScript, Dragonfly DB, Node.js, distributed micro-frontends, and state-of-the-art AI tooling."
+          description:
+            "Work with React 18, TypeScript, Dragonfly DB, Node.js, distributed micro-frontends, and state-of-the-art AI tooling.",
         },
         {
           number: "05",
           title: "Transparent Promotion & Equity Tracks",
-          description: "Clear career progression frameworks with competitive stock options and bi-annual performance and compensation reviews."
-        }
-      ]
+          description:
+            "Clear career progression frameworks with competitive stock options and bi-annual performance and compensation reviews.",
+        },
+      ],
     },
     recruitmentProcess: {
       title: "Our Seamless 5-Step Candidate Journey",
-      subtitle: "Experience the exact same transparent, candidate-first recruitment workflow that our HR CRM portal software powers for our global clients.",
+      subtitle:
+        "Experience the exact same transparent, candidate-first recruitment workflow that our HR CRM portal software powers for our global clients.",
       steps: [
         {
           step: 1,
           title: "Application & Profile Screening",
-          desc: "Apply via our candidate portal; our talent team reviews your portfolio within 48 business hours."
+          desc: "Apply via our candidate portal; our talent team reviews your portfolio within 48 business hours.",
         },
         {
           step: 2,
           title: "Talent Discovery & Alignment Call",
-          desc: "A 30-minute introductory conversation to discuss your career aspirations and team culture fit."
+          desc: "A 30-minute introductory conversation to discuss your career aspirations and team culture fit.",
         },
         {
           step: 3,
           title: "Practical Technical Assessment",
-          desc: "A collaborative 60-minute practical exercise tackling realistic platform architecture and problem solving."
+          desc: "A collaborative 60-minute practical exercise tackling realistic platform architecture and problem solving.",
         },
         {
           step: 4,
           title: "Leadership & Team Interaction",
-          desc: "Connect with engineering and product leaders to discuss vision, working methodologies, and growth opportunities."
+          desc: "Connect with engineering and product leaders to discuss vision, working methodologies, and growth opportunities.",
         },
         {
           step: 5,
           title: "Digital Offer & Instant Onboarding",
-          desc: "Receive your competitive offer letter and unlock your personalized onboarding portal with day-one readiness."
-        }
-      ]
+          desc: "Receive your competitive offer letter and unlock your personalized onboarding portal with day-one readiness.",
+        },
+      ],
     },
     faqs: [
       {
         question: "How does Graviton's Candidate Portal work?",
-        answer: "Our integrated Candidate Portal gives applicants real-time transparency into every stage of their recruitment pipeline, interview schedules, test results, and offer documents."
+        answer:
+          "Our integrated Candidate Portal gives applicants real-time transparency into every stage of their recruitment pipeline, interview schedules, test results, and offer documents.",
       },
       {
         question: "What is Graviton's remote work policy?",
-        answer: "We are 100% remote-first! You can work from anywhere in your registered jurisdiction, backed by wellness allowances and coworking stipends."
+        answer:
+          "We are 100% remote-first! You can work from anywhere in your registered jurisdiction, backed by wellness allowances and coworking stipends.",
       },
       {
         question: "What hardware setup is provided to employees?",
-        answer: "Every employee selects their preferred workstation during digital onboarding\u2014including Apple M3 Max MacBook Pros or top-tier Linux rigs with 4K monitors."
+        answer:
+          "Every employee selects their preferred workstation during digital onboarding\u2014including Apple M3 Max MacBook Pros or top-tier Linux rigs with 4K monitors.",
       },
       {
         question: "How soon do candidates receive interview feedback?",
-        answer: "Through our automated ATS feedback SLAs, candidates receive detailed written updates within 48 hours of every interview stage."
-      }
-    ]
+        answer:
+          "Through our automated ATS feedback SLAs, candidates receive detailed written updates within 48 hours of every interview stage.",
+      },
+    ],
   },
   footer: {
-    description: "Graviton IT Solutions delivers enterprise-grade HR CRM portal software, candidate application management suites, and employee lifecycle platforms engineered for modern high-growth organizations.",
+    description:
+      "Graviton IT Solutions delivers enterprise-grade HR CRM portal software, candidate application management suites, and employee lifecycle platforms engineered for modern high-growth organizations.",
     columns: {
       solutions: "HR Solutions",
       company: "Company",
       portals: "Ecosystem Portals",
-      legal: "Legal & Privacy"
+      legal: "Legal & Privacy",
     },
     newsletter: {
       title: "Subscribe to Workforce & HR Tech Insights",
-      subtitle: "Get monthly perspectives on modern recruitment CRM, AI-powered candidate screening, and employee retention strategies.",
+      subtitle:
+        "Get monthly perspectives on modern recruitment CRM, AI-powered candidate screening, and employee retention strategies.",
       placeholder: "Enter your work email address...",
-      button: "Subscribe"
+      button: "Subscribe",
     },
-    copyrightNotice: `\xA9 ${(/* @__PURE__ */ new Date()).getFullYear()} Graviton IT Solutions Inc. All rights reserved.`
-  }
+    copyrightNotice: `\xA9 ${/* @__PURE__ */ new Date().getFullYear()} Graviton IT Solutions Inc. All rights reserved.`,
+  },
 };
 
 // packages/schema-types/src/constants/defaultSettings.ts
@@ -362,8 +387,8 @@ var defaultAdminSettings = {
     enableCandidatePortal: true,
     enableAssetManagement: true,
     enableESignature: true,
-    enableAutomationEngine: true
-  }
+    enableAutomationEngine: true,
+  },
 };
 var defaultCompanySettings = {
   profile: {
@@ -375,28 +400,28 @@ var defaultCompanySettings = {
     brandColor: "#6366f1",
     headquarters: "San Francisco, CA",
     senderAddress: "hiring@acmeinnovations.com",
-    emailSignature: "Best regards,\nThe Acme Hiring Team"
+    emailSignature: "Best regards,\nThe Acme Hiring Team",
   },
   hiringDefaults: {
     defaultInterviewDuration: "45",
     workingHours: "9:00 AM - 6:00 PM PST",
     offerExpiryDays: "7",
-    stageSlaWarningHours: "48"
+    stageSlaWarningHours: "48",
   },
   notifications: {
     stageChangeDigest: true,
     blockedCandidateAlerts: true,
     interviewFeedbackChase: true,
-    offerActivityAlerts: true
+    offerActivityAlerts: true,
   },
   compliance: {
     duplicateDetection: true,
     anonymousScreening: false,
-    dataRetentionMonths: "24"
+    dataRetentionMonths: "24",
   },
   templates: [],
   automations: [],
-  team: []
+  team: [],
 };
 var defaultCandidateSettings = {
   profile: {
@@ -409,14 +434,14 @@ var defaultCandidateSettings = {
     portfolioUrl: "https://alexrivera.dev",
     linkedinUrl: "https://linkedin.com/in/alexrivera",
     githubUrl: "https://github.com/alexrivera",
-    bio: "Passionate engineer with 6+ years of experience in distributed systems and React microfrontends."
+    bio: "Passionate engineer with 6+ years of experience in distributed systems and React microfrontends.",
   },
   privacy: {
     profileVisibility: "verified_recruiters",
     hideFromCurrentEmployer: true,
     showSalaryExpectations: false,
     allowDirectMessages: true,
-    anonymizeResume: false
+    anonymizeResume: false,
   },
   preferences: {
     preferredRoles: ["Senior Frontend Engineer", "Staff Engineer", "Full Stack Lead"],
@@ -427,24 +452,24 @@ var defaultCandidateSettings = {
     expectedSalary: 165e3,
     currency: "USD",
     noticePeriodWeeks: 2,
-    readyToRelocate: false
+    readyToRelocate: false,
   },
   documents: {
     primaryResumeName: "Alex_Rivera_Resume.pdf",
     autoAttachCoverLetter: true,
-    portfolioUrl: "https://alexrivera.dev"
+    portfolioUrl: "https://alexrivera.dev",
   },
   account: {
     mfaEnabled: false,
-    passwordLastChanged: "2026-08-15"
+    passwordLastChanged: "2026-08-15",
   },
   notifications: {
     jobAlertsDigest: "daily",
     applicationStatusAlerts: true,
     interviewReminders: true,
     marketingEmails: false,
-    smsAlerts: false
-  }
+    smsAlerts: false,
+  },
 };
 
 // packages/schema-types/src/models/Company.ts
@@ -458,47 +483,47 @@ var CompanySchema = new Schema(
       unique: true,
       lowercase: true,
       trim: true,
-      index: true
+      index: true,
     },
     name: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
     },
     subdomain: {
       type: String,
       required: true,
       lowercase: true,
       trim: true,
-      index: true
+      index: true,
     },
     domain: {
       type: String,
-      default: ""
+      default: "",
     },
     industry: {
       type: String,
-      default: "Technology & Software"
+      default: "Technology & Software",
     },
     size: {
       type: String,
-      default: "51-200 Employees"
+      default: "51-200 Employees",
     },
     brandColor: {
       type: String,
-      default: "#6366f1"
+      default: "#6366f1",
     },
     headquarters: {
       type: String,
-      default: "Remote"
+      default: "Remote",
     },
     logoUrl: {
       type: String,
-      default: ""
+      default: "",
     },
     coverImageUrl: {
       type: String,
-      default: ""
+      default: "",
     },
     legalName: String,
     gstNumber: String,
@@ -507,50 +532,50 @@ var CompanySchema = new Schema(
     registrationNumber: String,
     timezone: {
       type: String,
-      default: "Asia/Kolkata"
+      default: "Asia/Kolkata",
     },
     currency: {
       type: String,
-      default: "INR"
+      default: "INR",
     },
     website: {
       type: String,
-      default: ""
+      default: "",
     },
     description: {
       type: String,
-      default: ""
+      default: "",
     },
     admin: {
       fullName: { type: String, default: "" },
       workEmail: { type: String, lowercase: true, trim: true, default: "" },
       phone: { type: String, default: "" },
       avatarUrl: { type: String, default: "" },
-      uid: { type: String, default: "" }
+      uid: { type: String, default: "" },
     },
     password: {
       type: String,
-      required: false
+      required: false,
     },
     googleId: {
       type: String,
       sparse: true,
-      index: true
+      index: true,
     },
     status: {
       type: String,
-      default: "Active"
+      default: "Active",
     },
     isCompleted: {
       type: Boolean,
-      default: false
+      default: false,
     },
     emailVerified: {
       type: Boolean,
-      default: false
+      default: false,
     },
     registeredCandidates: [Schema.Types.Mixed],
-    candidateIds: [String]
+    candidateIds: [String],
   },
   {
     timestamps: true,
@@ -560,18 +585,18 @@ var CompanySchema = new Schema(
         ret.id = ret.id || (ret._id ? String(ret._id) : void 0);
         delete ret.__v;
         return ret;
-      }
-    }
-  }
+      },
+    },
+  },
 );
-CompanySchema.pre("save", async function() {
+CompanySchema.pre("save", async function () {
   if (!this.isModified("password") || !this.password) {
     return;
   }
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });
-CompanySchema.methods.comparePassword = async function(candidatePassword) {
+CompanySchema.methods.comparePassword = async function (candidatePassword) {
   if (!this.password) return false;
   return bcrypt.compare(candidatePassword, this.password);
 };
@@ -586,89 +611,89 @@ var JobSchema = new Schema2(
       type: String,
       required: true,
       unique: true,
-      index: true
+      index: true,
     },
     jobCode: {
       type: String,
       required: true,
-      index: true
+      index: true,
     },
     title: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
     },
     companyId: {
       type: String,
       required: true,
       lowercase: true,
-      index: true
+      index: true,
     },
     companyName: {
       type: String,
-      required: true
+      required: true,
     },
     subdomain: {
       type: String,
       lowercase: true,
-      index: true
+      index: true,
     },
     department: {
       type: String,
-      default: "Engineering"
+      default: "Engineering",
     },
     location: {
       type: String,
-      default: "Remote"
+      default: "Remote",
     },
     country: {
       type: String,
-      default: "United States"
+      default: "United States",
     },
     workplaceType: {
       type: String,
       enum: ["Remote", "Hybrid", "On-site"],
-      default: "Remote"
+      default: "Remote",
     },
     employmentType: {
       type: String,
-      default: "Full-time"
+      default: "Full-time",
     },
     experienceLevel: {
       type: String,
-      default: "Mid Level"
+      default: "Mid Level",
     },
     salaryMin: Number,
     salaryMax: Number,
     currency: {
       type: String,
-      default: "INR"
+      default: "INR",
     },
     salaryPeriod: {
       type: String,
-      default: "year"
+      default: "year",
     },
     salaryRange: String,
     ctcBreakdown: {
       type: Schema2.Types.Mixed,
-      default: null
+      default: null,
     },
     openings: {
       type: Number,
-      default: 1
+      default: 1,
     },
     priority: {
       type: String,
-      default: "Medium"
+      default: "Medium",
     },
     status: {
       type: String,
       default: "Active",
-      index: true
+      index: true,
     },
     description: {
       type: String,
-      default: ""
+      default: "",
     },
     responsibilities: [String],
     requirements: [String],
@@ -679,14 +704,14 @@ var JobSchema = new Schema2(
     hiringManager: {
       name: String,
       email: String,
-      designation: String
+      designation: String,
     },
     recruiterEmail: String,
     applicantsCount: {
       type: Number,
-      default: 0
+      default: 0,
     },
-    postedDate: String
+    postedDate: String,
   },
   {
     timestamps: true,
@@ -696,9 +721,9 @@ var JobSchema = new Schema2(
         delete ret._id;
         delete ret.__v;
         return ret;
-      }
-    }
-  }
+      },
+    },
+  },
 );
 var Job = mongoose2.models.Job || mongoose2.model("Job", JobSchema);
 var Job_default = Job;
@@ -712,36 +737,36 @@ var CandidateSchema = new Schema3(
       type: String,
       required: true,
       unique: true,
-      index: true
+      index: true,
     },
     fullName: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
     },
     email: {
       type: String,
       required: true,
       lowercase: true,
       trim: true,
-      index: true
+      index: true,
     },
     password: {
       type: String,
-      required: false
+      required: false,
     },
     googleId: {
       type: String,
       sparse: true,
-      index: true
+      index: true,
     },
     phone: {
       type: String,
-      default: ""
+      default: "",
     },
     avatarUrl: {
       type: String,
-      default: ""
+      default: "",
     },
     country: String,
     timezone: String,
@@ -753,11 +778,11 @@ var CandidateSchema = new Schema3(
     referralSource: String,
     uid: {
       type: String,
-      index: true
+      index: true,
     },
     currentStageId: {
       type: String,
-      default: "stage-applied"
+      default: "stage-applied",
     },
     targetRole: String,
     experienceYears: String,
@@ -770,11 +795,11 @@ var CandidateSchema = new Schema3(
     resumeUrl: String,
     companyId: {
       type: String,
-      index: true
+      index: true,
     },
     registeredCompanyIds: {
       type: [String],
-      default: []
+      default: [],
     },
     registeredCompanies: {
       type: [
@@ -782,27 +807,27 @@ var CandidateSchema = new Schema3(
           companyId: String,
           companyName: String,
           registeredAt: String,
-          status: { type: String, default: "active" }
-        }
+          status: { type: String, default: "active" },
+        },
       ],
-      default: []
+      default: [],
     },
     roadmapStage: {
       type: String,
-      default: "Applied"
+      default: "Applied",
     },
     status: {
       type: String,
-      default: "Active"
+      default: "Active",
     },
     isCompleted: {
       type: Boolean,
-      default: false
+      default: false,
     },
     emailVerified: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   {
     timestamps: true,
@@ -812,18 +837,18 @@ var CandidateSchema = new Schema3(
         ret.id = ret.id || (ret._id ? String(ret._id) : void 0);
         delete ret.__v;
         return ret;
-      }
-    }
-  }
+      },
+    },
+  },
 );
-CandidateSchema.pre("save", async function() {
+CandidateSchema.pre("save", async function () {
   if (!this.isModified("password") || !this.password) {
     return;
   }
   const salt = await bcrypt2.genSalt(10);
   this.password = await bcrypt2.hash(this.password, salt);
 });
-CandidateSchema.methods.comparePassword = async function(candidatePassword) {
+CandidateSchema.methods.comparePassword = async function (candidatePassword) {
   if (!this.password) return false;
   return bcrypt2.compare(candidatePassword, this.password);
 };
@@ -836,29 +861,42 @@ var SettingsSchema = new Schema4(
   {
     scope: { type: String, required: true, index: true },
     targetId: { type: String, required: true, index: true },
-    data: { type: Schema4.Types.Mixed, required: true }
+    data: { type: Schema4.Types.Mixed, required: true },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 var Settings = mongoose4.models.Settings || mongoose4.model("Settings", SettingsSchema);
-var AdminSettingsModel = mongoose4.models.AdminSettings || mongoose4.model("AdminSettings", SettingsSchema);
-var CompanySettingsModel = mongoose4.models.CompanySettings || mongoose4.model("CompanySettings", SettingsSchema);
-var CandidateSettingsModel = mongoose4.models.CandidateSettings || mongoose4.model("CandidateSettings", SettingsSchema);
+var AdminSettingsModel =
+  mongoose4.models.AdminSettings || mongoose4.model("AdminSettings", SettingsSchema);
+var CompanySettingsModel =
+  mongoose4.models.CompanySettings || mongoose4.model("CompanySettings", SettingsSchema);
+var CandidateSettingsModel =
+  mongoose4.models.CandidateSettings || mongoose4.model("CandidateSettings", SettingsSchema);
 var Settings_default = Settings;
 
 // packages/utilities/src/responseHelper.ts
-function successResponse(res, statusCode = httpStatusCodes.SUCCESS, message = "Request was successful", data = {}) {
+function successResponse(
+  res,
+  statusCode = httpStatusCodes.SUCCESS,
+  message = "Request was successful",
+  data = {},
+) {
   return res.status(statusCode).json({
     success: true,
     message,
-    data
+    data,
   });
 }
-function errorResponse(res, statusCode = httpStatusCodes.INTERNAL_SERVER_ERROR, message = "Request failed", error = null) {
+function errorResponse(
+  res,
+  statusCode = httpStatusCodes.INTERNAL_SERVER_ERROR,
+  message = "Request failed",
+  error = null,
+) {
   return res.status(statusCode).json({
     success: false,
     message,
-    error
+    error,
   });
 }
 
@@ -872,7 +910,8 @@ var dragonflyHost = process.env.DRAGONFLY_HOST || process.env.REDIS_HOST || "127
 var dragonflyPort = Number(process.env.DRAGONFLY_PORT || process.env.REDIS_PORT) || 6379;
 var dragonflyPassword = process.env.DRAGONFLY_PASSWORD || process.env.REDIS_PASSWORD || "";
 var dragonflyUsername = process.env.DRAGONFLY_USERNAME || process.env.REDIS_USERNAME || "default";
-var dragonflyCacheTtl = Number(process.env.DRAGONFLY_CACHE_TTL || process.env.REDIS_CACHE_TTL) || 3600;
+var dragonflyCacheTtl =
+  Number(process.env.DRAGONFLY_CACHE_TTL || process.env.REDIS_CACHE_TTL) || 3600;
 var config = {
   environment: process.env.NODE_ENV || "development",
   PORT: Number(process.env.PORT || process.env.VITE_PORT_API || process.env.VITE_API_PORT || 5e3),
@@ -890,9 +929,10 @@ var config = {
   DRAGONFLY_CACHE_TTL: dragonflyCacheTtl,
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || "",
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET || "",
-  GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL || "http://localhost:5000/api/auth/google/callback",
+  GOOGLE_CALLBACK_URL:
+    process.env.GOOGLE_CALLBACK_URL || "http://localhost:5000/api/auth/google/callback",
   CLIENT_DOMAIN_URL: process.env.CLIENT_DOMAIN_URL || "http://localhost:3000",
-  ADMIN_DOMAIN_URL: process.env.ADMIN_DOMAIN_URL || "http://localhost:3001"
+  ADMIN_DOMAIN_URL: process.env.ADMIN_DOMAIN_URL || "http://localhost:3001",
 };
 var config_default = config;
 
@@ -918,9 +958,11 @@ import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
 var JWT_SECRET2 = process.env.JWT_SECRET || "talentflow_super_secret_jwt_key_2026_production";
-var GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "mock_google_client_id.apps.googleusercontent.com";
+var GOOGLE_CLIENT_ID =
+  process.env.GOOGLE_CLIENT_ID || "mock_google_client_id.apps.googleusercontent.com";
 var GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || "mock_google_client_secret";
-var GOOGLE_CALLBACK_URL = process.env.GOOGLE_CALLBACK_URL || "http://localhost:5000/api/auth/google/callback";
+var GOOGLE_CALLBACK_URL =
+  process.env.GOOGLE_CALLBACK_URL || "http://localhost:5000/api/auth/google/callback";
 function configurePassport() {
   passport.serializeUser((entity, done) => {
     done(null, entity.id || (entity._id ? String(entity._id) : void 0));
@@ -941,7 +983,7 @@ function configurePassport() {
       {
         usernameField: "email",
         passwordField: "password",
-        session: false
+        session: false,
       },
       async (email, password, done) => {
         try {
@@ -950,42 +992,42 @@ function configurePassport() {
           if (candidate) {
             if (!candidate.password) {
               return done(null, false, {
-                message: "Account was registered using Google OAuth. Please sign in with Google."
+                message: "Account was registered using Google OAuth. Please sign in with Google.",
               });
             }
             const isMatch = await candidate.comparePassword(password);
             if (!isMatch) {
               return done(null, false, {
-                message: "Invalid email or password. Please check your credentials."
+                message: "Invalid email or password. Please check your credentials.",
               });
             }
             return done(null, candidate);
           }
           const company = await Company_default.findOne({
-            $or: [{ "admin.workEmail": cleanEmail }, { subdomain: cleanEmail }, { id: cleanEmail }]
+            $or: [{ "admin.workEmail": cleanEmail }, { subdomain: cleanEmail }, { id: cleanEmail }],
           });
           if (company) {
             if (!company.password) {
               return done(null, false, {
-                message: "Account was registered using Google OAuth. Please sign in with Google."
+                message: "Account was registered using Google OAuth. Please sign in with Google.",
               });
             }
             const isMatch = await company.comparePassword(password);
             if (!isMatch) {
               return done(null, false, {
-                message: "Invalid email or password. Please check your credentials."
+                message: "Invalid email or password. Please check your credentials.",
               });
             }
             return done(null, company);
           }
           return done(null, false, {
-            message: "Invalid email or password. Please check your credentials."
+            message: "Invalid email or password. Please check your credentials.",
           });
         } catch (err) {
           return done(err);
         }
-      }
-    )
+      },
+    ),
   );
   passport.use(
     new GoogleStrategy(
@@ -993,12 +1035,15 @@ function configurePassport() {
         clientID: GOOGLE_CLIENT_ID,
         clientSecret: GOOGLE_CLIENT_SECRET,
         callbackURL: GOOGLE_CALLBACK_URL,
-        passReqToCallback: true
+        passReqToCallback: true,
       },
       async (req, _accessToken, _refreshToken, profile, done) => {
         try {
           const email = profile.emails?.[0]?.value?.toLowerCase() || "";
-          const fullName = profile.displayName || `${profile.name?.givenName || ""} ${profile.name?.familyName || ""}`.trim() || "Google Account";
+          const fullName =
+            profile.displayName ||
+            `${profile.name?.givenName || ""} ${profile.name?.familyName || ""}`.trim() ||
+            "Google Account";
           const googleId = profile.id;
           const avatarUrl = profile.photos?.[0]?.value || "";
           const roleFromState = req.query?.state || "candidate";
@@ -1023,13 +1068,13 @@ function configurePassport() {
               googleId,
               emailVerified: true,
               isCompleted: false,
-              createdAt: (/* @__PURE__ */ new Date()).toISOString(),
-              updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+              createdAt: /* @__PURE__ */ new Date().toISOString(),
+              updatedAt: /* @__PURE__ */ new Date().toISOString(),
             });
             return done(null, candidate);
           } else {
             let company = await Company_default.findOne({
-              $or: [{ googleId }, { "admin.workEmail": email }]
+              $or: [{ googleId }, { "admin.workEmail": email }],
             });
             if (company) {
               if (!company.googleId) company.googleId = googleId;
@@ -1037,7 +1082,10 @@ function configurePassport() {
               await company.save();
               return done(null, company);
             }
-            const compSlug = fullName.toLowerCase().replace(/[^a-z0-9]/g, "-").slice(0, 30);
+            const compSlug = fullName
+              .toLowerCase()
+              .replace(/[^a-z0-9]/g, "-")
+              .slice(0, 30);
             const cleanCompSlug = `comp-${Date.now().toString().slice(-6)}-${compSlug}`;
             company = await Company_default.create({
               id: cleanCompSlug,
@@ -1049,30 +1097,30 @@ function configurePassport() {
                 fullName,
                 workEmail: email,
                 avatarUrl,
-                uid: cleanCompSlug
+                uid: cleanCompSlug,
               },
               emailVerified: true,
-              isCompleted: false
+              isCompleted: false,
             });
             return done(null, company);
           }
         } catch (err) {
           return done(err, void 0);
         }
-      }
-    )
+      },
+    ),
   );
   passport.use(
     new JwtStrategy(
       {
         jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-        secretOrKey: JWT_SECRET2
+        secretOrKey: JWT_SECRET2,
       },
       async (jwtPayload, done) => {
         try {
           if (jwtPayload.role === "candidate" || jwtPayload.candidateId) {
             const candidate = await Candidate_default.findOne({
-              $or: [{ id: jwtPayload.candidateId || jwtPayload.id }, { email: jwtPayload.email }]
+              $or: [{ id: jwtPayload.candidateId || jwtPayload.id }, { email: jwtPayload.email }],
             });
             if (candidate) return done(null, candidate);
           }
@@ -1080,8 +1128,8 @@ function configurePassport() {
             const company = await Company_default.findOne({
               $or: [
                 { id: jwtPayload.companyId || jwtPayload.id },
-                { "admin.workEmail": jwtPayload.email }
-              ]
+                { "admin.workEmail": jwtPayload.email },
+              ],
             });
             if (company) return done(null, company);
           }
@@ -1092,8 +1140,8 @@ function configurePassport() {
         } catch (err) {
           return done(err, false);
         }
-      }
-    )
+      },
+    ),
   );
   return passport;
 }
@@ -1107,7 +1155,11 @@ import passport2 from "passport";
 
 // packages/utilities/src/dragonfly/config.ts
 function getDragonflyConfig() {
-  const host = process.env.DRAGONFLY_HOST || process.env.DRAGONFLY_URL || process.env.REDIS_HOST || "127.0.0.1";
+  const host =
+    process.env.DRAGONFLY_HOST ||
+    process.env.DRAGONFLY_URL ||
+    process.env.REDIS_HOST ||
+    "127.0.0.1";
   const port = Number(process.env.DRAGONFLY_PORT || process.env.REDIS_PORT || 6379);
   const password = process.env.DRAGONFLY_PASSWORD || process.env.REDIS_PASSWORD || "";
   const username = process.env.DRAGONFLY_USERNAME || process.env.REDIS_USERNAME || "default";
@@ -1120,7 +1172,7 @@ function getDragonflyConfig() {
     username,
     isConfigured,
     ttl,
-    engine: "Dragonfly DB"
+    engine: "Dragonfly DB",
   };
 }
 
@@ -1129,7 +1181,11 @@ var dragonflyInstance = null;
 var isNodeEnvironment = false;
 var connectionAttempted = false;
 try {
-  isNodeEnvironment = typeof process !== "undefined" && process.versions != null && process.versions.node != null && typeof window === "undefined";
+  isNodeEnvironment =
+    typeof process !== "undefined" &&
+    process.versions != null &&
+    process.versions.node != null &&
+    typeof window === "undefined";
 } catch {
   isNodeEnvironment = false;
 }
@@ -1170,7 +1226,7 @@ async function getDragonflyClient() {
         return null;
       },
       lazyConnect: true,
-      enableOfflineQueue: false
+      enableOfflineQueue: false,
     });
     client.on("connect", () => {
       console.log(`[Dragonfly DB] Connected to ${config2.host}:${config2.port}`);
@@ -1181,7 +1237,7 @@ async function getDragonflyClient() {
     client.on("error", (err) => {
       if (!connectionAttempted) {
         console.info(
-          `[Dragonfly DB] Server info: ${err.message}. (Fast L1 in-memory datastore active)`
+          `[Dragonfly DB] Server info: ${err.message}. (Fast L1 in-memory datastore active)`,
         );
         connectionAttempted = true;
       }
@@ -1196,11 +1252,10 @@ async function getDragonflyClient() {
     } catch (err) {
       try {
         client.disconnect();
-      } catch {
-      }
+      } catch {}
       if (!connectionAttempted) {
         console.info(
-          `[Dragonfly DB] Offline (${config2.host}:${config2.port}). Using built-in high-performance L1 memory datastore.`
+          `[Dragonfly DB] Offline (${config2.host}:${config2.port}). Using built-in high-performance L1 memory datastore.`,
         );
         connectionAttempted = true;
       }
@@ -1231,7 +1286,7 @@ var DragonflyWebhookSyncService = class {
       const current = registeredSyncHandlers.get(eventType) || [];
       registeredSyncHandlers.set(
         eventType,
-        current.filter((h) => h !== handler2)
+        current.filter((h) => h !== handler2),
       );
     };
   }
@@ -1245,7 +1300,7 @@ var DragonflyWebhookSyncService = class {
       eventType,
       key,
       payload,
-      timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      timestamp: /* @__PURE__ */ new Date().toISOString(),
     };
     if (isNodeRuntime()) {
       try {
@@ -1253,21 +1308,20 @@ var DragonflyWebhookSyncService = class {
         if (client) {
           await client.publish(this.CHANNEL, JSON.stringify(event));
         }
-      } catch (err) {
-      }
+      } catch (err) {}
     }
     const handlers = registeredSyncHandlers.get(eventType) || [];
-    const syncPromises = handlers.map(
-      (handler2) => handler2(event).catch((err) => {
+    const syncPromises = handlers.map((handler2) =>
+      handler2(event).catch((err) => {
         console.error(`[Dragonfly Sync] Handler error for ${eventType} (${key}):`, err);
-      })
+      }),
     );
     if (directSyncFn) {
       syncPromises.push(
         directSyncFn().catch((err) => {
           console.error(`[Dragonfly Sync] Direct DB sync failed for key ${key}:`, err);
           throw err;
-        })
+        }),
       );
     }
     Promise.allSettled(syncPromises).then((results) => {
@@ -1277,7 +1331,7 @@ var DragonflyWebhookSyncService = class {
         eventType,
         key,
         status: hasErrors ? "FAILED" : "SUCCESS",
-        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+        timestamp: /* @__PURE__ */ new Date().toISOString(),
       });
       if (syncAuditLog.length > 100) {
         syncAuditLog.pop();
@@ -1307,7 +1361,7 @@ var syncStats = {
   pendingInQueue: 0,
   lastRunTimestamp: null,
   lastRunDurationMs: 0,
-  recentAuditLogs: []
+  recentAuditLogs: [],
 };
 var DragonflyCronSyncService = class _DragonflyCronSyncService {
   /**
@@ -1329,8 +1383,8 @@ var DragonflyCronSyncService = class _DragonflyCronSyncService {
       key,
       targetId: targetId || payload?.id || payload?.subdomain || key,
       payload,
-      timestamp: (/* @__PURE__ */ new Date()).toISOString(),
-      retryCount: 0
+      timestamp: /* @__PURE__ */ new Date().toISOString(),
+      retryCount: 0,
     };
     const taskJson = JSON.stringify(task);
     if (isNodeRuntime()) {
@@ -1343,7 +1397,7 @@ var DragonflyCronSyncService = class _DragonflyCronSyncService {
       } catch (err) {
         logger.warn(
           `[Dragonfly Cron] Failed to enqueue task to Dragonfly DB, falling back to memory:`,
-          err
+          err,
         );
       }
     }
@@ -1372,8 +1426,7 @@ var DragonflyCronSyncService = class _DragonflyCronSyncService {
               if (!raw) break;
               try {
                 tasksToProcess.push(JSON.parse(raw));
-              } catch {
-              }
+              } catch {}
             }
           }
         } catch (err) {
@@ -1388,7 +1441,7 @@ var DragonflyCronSyncService = class _DragonflyCronSyncService {
         const processor = entityProcessors.get(task.entity);
         if (!processor) {
           logger.warn(
-            `[Dragonfly Cron] No MongoDB processor registered for entity '${task.entity}'`
+            `[Dragonfly Cron] No MongoDB processor registered for entity '${task.entity}'`,
           );
           continue;
         }
@@ -1401,7 +1454,7 @@ var DragonflyCronSyncService = class _DragonflyCronSyncService {
             entity: task.entity,
             action: task.action,
             status: "SUCCESS",
-            timestamp: (/* @__PURE__ */ new Date()).toISOString()
+            timestamp: /* @__PURE__ */ new Date().toISOString(),
           });
         } catch (err) {
           errorCount++;
@@ -1409,25 +1462,24 @@ var DragonflyCronSyncService = class _DragonflyCronSyncService {
           const errorMsg = err?.message || String(err);
           logger.error(
             `[Dragonfly Cron] Error executing MongoDB write for task ${task.taskId} (${task.entity}:${task.action}):`,
-            err
+            err,
           );
           _DragonflyCronSyncService.recordAuditLog({
             taskId: task.taskId,
             entity: task.entity,
             action: task.action,
             status: "FAILED",
-            timestamp: (/* @__PURE__ */ new Date()).toISOString(),
-            error: errorMsg
+            timestamp: /* @__PURE__ */ new Date().toISOString(),
+            error: errorMsg,
           });
           if ((task.retryCount || 0) < 3) {
             task.retryCount = (task.retryCount || 0) + 1;
-            _DragonflyCronSyncService.requeueFailedTask(task).catch(() => {
-            });
+            _DragonflyCronSyncService.requeueFailedTask(task).catch(() => {});
           }
         }
       }
     } finally {
-      syncStats.lastRunTimestamp = (/* @__PURE__ */ new Date()).toISOString();
+      syncStats.lastRunTimestamp = /* @__PURE__ */ new Date().toISOString();
       syncStats.lastRunDurationMs = Date.now() - startTime;
       isProcessingBatch = false;
     }
@@ -1444,8 +1496,7 @@ var DragonflyCronSyncService = class _DragonflyCronSyncService {
           await client.rpush(QUEUE_KEY, JSON.stringify(task));
           return;
         }
-      } catch {
-      }
+      } catch {}
     }
     memoryQueue.push(task);
   }
@@ -1475,7 +1526,7 @@ var DragonflyCronSyncService = class _DragonflyCronSyncService {
       }
     }, intervalMs);
     logger.info(
-      `[Dragonfly Cron] Background MongoDB Sync Cron Worker started (Interval: ${intervalMs}ms)`
+      `[Dragonfly Cron] Background MongoDB Sync Cron Worker started (Interval: ${intervalMs}ms)`,
     );
   }
   /**
@@ -1516,12 +1567,11 @@ var DragonflyCronSyncService = class _DragonflyCronSyncService {
           const count = await client.llen(QUEUE_KEY);
           pendingCount += count;
         }
-      } catch {
-      }
+      } catch {}
     }
     return {
       ...syncStats,
-      pendingInQueue: pendingCount
+      pendingInQueue: pendingCount,
     };
   }
 };
@@ -1534,20 +1584,24 @@ var DragonflyCacheService = class _DragonflyCacheService {
    * Standardized Key Generation Map
    */
   static keys = {
-    company: (id) => `${_DragonflyCacheService.prefix}company:${id.toLowerCase().replace(/[^a-z0-9]/g, "")}`,
+    company: (id) =>
+      `${_DragonflyCacheService.prefix}company:${id.toLowerCase().replace(/[^a-z0-9]/g, "")}`,
     companiesAll: () => `${_DragonflyCacheService.prefix}companies:all`,
-    companyEmail: (email) => `${_DragonflyCacheService.prefix}company:email:${email.trim().toLowerCase()}`,
-    jobs: (companyId) => `${_DragonflyCacheService.prefix}jobs:${companyId.toLowerCase().replace(/[^a-z0-9]/g, "")}`,
+    companyEmail: (email) =>
+      `${_DragonflyCacheService.prefix}company:email:${email.trim().toLowerCase()}`,
+    jobs: (companyId) =>
+      `${_DragonflyCacheService.prefix}jobs:${companyId.toLowerCase().replace(/[^a-z0-9]/g, "")}`,
     jobsAll: () => `${_DragonflyCacheService.prefix}jobs:all`,
     job: (jobId) => `${_DragonflyCacheService.prefix}job:${jobId}`,
     candidate: (id) => `${_DragonflyCacheService.prefix}candidate:${id}`,
     candidatesAll: () => `${_DragonflyCacheService.prefix}candidates:all`,
-    candidateEmail: (email) => `${_DragonflyCacheService.prefix}candidate:email:${email.trim().toLowerCase()}`,
+    candidateEmail: (email) =>
+      `${_DragonflyCacheService.prefix}candidate:email:${email.trim().toLowerCase()}`,
     adminSettings: () => `${_DragonflyCacheService.prefix}settings:admin`,
     companySettings: (id) => `${_DragonflyCacheService.prefix}settings:company:${id}`,
     candidateSettings: (id) => `${_DragonflyCacheService.prefix}settings:candidate:${id}`,
     session: (token) => `${_DragonflyCacheService.prefix}session:${token}`,
-    custom: (name) => `${_DragonflyCacheService.prefix}${name}`
+    custom: (name) => `${_DragonflyCacheService.prefix}${name}`,
   };
   /**
    * Get value from Dragonfly DB Cache
@@ -1576,14 +1630,13 @@ var DragonflyCacheService = class _DragonflyCacheService {
             }
           }
         }
-      } catch (err) {
-      }
+      } catch (err) {}
       return null;
     }
     if (typeof window !== "undefined") {
       try {
         const res = await fetch(`/api/cache/get?key=${encodeURIComponent(key)}`, {
-          headers: { Accept: "application/json" }
+          headers: { Accept: "application/json" },
         });
         if (res.ok) {
           const json = await res.json();
@@ -1593,8 +1646,7 @@ var DragonflyCacheService = class _DragonflyCacheService {
             return json.value;
           }
         }
-      } catch {
-      }
+      } catch {}
       try {
         const localKey = `dragonfly_cache_${key}`;
         const stored = localStorage.getItem(localKey);
@@ -1604,8 +1656,7 @@ var DragonflyCacheService = class _DragonflyCacheService {
             return parsed.data;
           }
         }
-      } catch {
-      }
+      } catch {}
     }
     return null;
   }
@@ -1629,22 +1680,19 @@ var DragonflyCacheService = class _DragonflyCacheService {
           }
           return true;
         }
-      } catch (err) {
-      }
+      } catch (err) {}
       return true;
     }
     if (typeof window !== "undefined") {
       try {
         localStorage.setItem(`dragonfly_cache_${key}`, JSON.stringify({ data, expiresAt }));
-      } catch {
-      }
+      } catch {}
       try {
         fetch("/api/cache/set", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ key, value: data, ttl: ttlSeconds })
-        }).catch(() => {
-        });
+          body: JSON.stringify({ key, value: data, ttl: ttlSeconds }),
+        }).catch(() => {});
         return true;
       } catch {
         return true;
@@ -1665,24 +1713,21 @@ var DragonflyCacheService = class _DragonflyCacheService {
           await client.del(...keyArray);
           return true;
         }
-      } catch (err) {
-      }
+      } catch (err) {}
       return true;
     }
     if (typeof window !== "undefined") {
       keyArray.forEach((k) => {
         try {
           localStorage.removeItem(`dragonfly_cache_${k}`);
-        } catch {
-        }
+        } catch {}
       });
       try {
         fetch("/api/cache/del", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ keys: keyArray })
-        }).catch(() => {
-        });
+          body: JSON.stringify({ keys: keyArray }),
+        }).catch(() => {});
         return true;
       } catch {
         return true;
@@ -1710,8 +1755,7 @@ var DragonflyCacheService = class _DragonflyCacheService {
           }
           return true;
         }
-      } catch (err) {
-      }
+      } catch (err) {}
       return true;
     }
     if (typeof window !== "undefined") {
@@ -1722,15 +1766,13 @@ var DragonflyCacheService = class _DragonflyCacheService {
             localStorage.removeItem(k);
           }
         }
-      } catch {
-      }
+      } catch {}
       try {
         fetch("/api/cache/del-pattern", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ pattern })
-        }).catch(() => {
-        });
+          body: JSON.stringify({ pattern }),
+        }).catch(() => {});
         return true;
       } catch {
         return true;
@@ -1751,8 +1793,7 @@ var DragonflyCacheService = class _DragonflyCacheService {
     }
     const freshData = await fetchDbFn();
     if (freshData !== null && freshData !== void 0) {
-      await this.set(key, freshData, ttlSeconds).catch(() => {
-      });
+      await this.set(key, freshData, ttlSeconds).catch(() => {});
     }
     return freshData;
   }
@@ -1767,11 +1808,9 @@ var DragonflyCacheService = class _DragonflyCacheService {
    */
   static async writeToDragonflyAndEnqueueSync(entity, key, data, targetId, ttlSeconds = 3600) {
     await this.set(key, data, ttlSeconds);
-    DragonflyCronSyncService.enqueueMutation(entity, "UPSERT", key, data, targetId).catch(
-      (err) => {
-        console.warn(`[Dragonfly Cron Queue] Failed to enqueue mutation task:`, err);
-      }
-    );
+    DragonflyCronSyncService.enqueueMutation(entity, "UPSERT", key, data, targetId).catch((err) => {
+      console.warn(`[Dragonfly Cron Queue] Failed to enqueue mutation task:`, err);
+    });
     return data;
   }
   /**
@@ -1784,14 +1823,20 @@ var DragonflyCacheService = class _DragonflyCacheService {
     DragonflyCronSyncService.enqueueMutation(entity, "DELETE", key, void 0, targetId).catch(
       (err) => {
         console.warn(`[Dragonfly Cron Queue] Failed to enqueue delete mutation task:`, err);
-      }
+      },
     );
     return true;
   }
   /**
    * Strict Dragonfly Write-First & Simultaneous DB Sync Webhook + Cron Fallback
    */
-  static async writeToDragonflyAndSyncDb(key, data, syncDbFn, eventType = "DATA_SYNC_GENERIC", ttlSeconds = 3600) {
+  static async writeToDragonflyAndSyncDb(
+    key,
+    data,
+    syncDbFn,
+    eventType = "DATA_SYNC_GENERIC",
+    ttlSeconds = 3600,
+  ) {
     await this.set(key, data, ttlSeconds);
     DragonflyWebhookSyncService.notifyDataWritten(eventType, key, data, syncDbFn).catch((err) => {
       console.warn(`[Dragonfly Webhook] DB Sync notification warning:`, err);
@@ -1799,7 +1844,13 @@ var DragonflyCacheService = class _DragonflyCacheService {
     return data;
   }
   // Alias for backward compatibility
-  static async writeToRedisAndSyncDb(key, data, syncDbFn, eventType = "DATA_SYNC_GENERIC", ttlSeconds = 3600) {
+  static async writeToRedisAndSyncDb(
+    key,
+    data,
+    syncDbFn,
+    eventType = "DATA_SYNC_GENERIC",
+    ttlSeconds = 3600,
+  ) {
     return this.writeToDragonflyAndSyncDb(key, data, syncDbFn, eventType, ttlSeconds);
   }
   /**
@@ -1811,7 +1862,7 @@ var DragonflyCacheService = class _DragonflyCacheService {
       eventType,
       key,
       { deleted: true },
-      syncDbDeleteFn
+      syncDbDeleteFn,
     ).catch((err) => {
       console.warn(`[Dragonfly Webhook] DB Deletion sync notification warning:`, err);
     });
@@ -1845,7 +1896,7 @@ var DragonflyCacheService = class _DragonflyCacheService {
       this.del(this.keys.jobsAll()),
       this.del(this.keys.companySettings(cleanId)),
       this.delPattern(`${this.prefix}company:*${cleanId}*`),
-      this.delPattern(`${this.prefix}jobs:*${cleanId}*`)
+      this.delPattern(`${this.prefix}jobs:*${cleanId}*`),
     ];
     if (email) {
       promises.push(this.del(this.keys.companyEmail(email)));
@@ -1860,7 +1911,7 @@ var DragonflyCacheService = class _DragonflyCacheService {
     await Promise.all([
       this.del(this.keys.jobs(cleanId)),
       this.del(this.keys.jobsAll()),
-      this.delPattern(`${this.prefix}jobs:*${cleanId}*`)
+      this.delPattern(`${this.prefix}jobs:*${cleanId}*`),
     ]);
   }
   /**
@@ -1870,7 +1921,7 @@ var DragonflyCacheService = class _DragonflyCacheService {
     const promises = [
       this.del(this.keys.candidate(candidateId)),
       this.del(this.keys.candidatesAll()),
-      this.del(this.keys.candidateSettings(candidateId))
+      this.del(this.keys.candidateSettings(candidateId)),
     ];
     if (email) {
       promises.push(this.del(this.keys.candidateEmail(email)));
@@ -1897,11 +1948,10 @@ var DragonflyCacheService = class _DragonflyCacheService {
             port: config2.port,
             latencyMs,
             message: `Connected to Dragonfly DB (${config2.host}:${config2.port}) \u2014 PING/PONG active (${latencyMs}ms)`,
-            timestamp: (/* @__PURE__ */ new Date()).toISOString()
+            timestamp: /* @__PURE__ */ new Date().toISOString(),
           };
         }
-      } catch (err) {
-      }
+      } catch (err) {}
     }
     return {
       connected: true,
@@ -1911,7 +1961,7 @@ var DragonflyCacheService = class _DragonflyCacheService {
       port: config2.port,
       latencyMs: 1,
       message: `Dragonfly DB active (Multi-threaded in-memory engine: ${config2.host}:${config2.port})`,
-      timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      timestamp: /* @__PURE__ */ new Date().toISOString(),
     };
   }
   /**
@@ -1930,11 +1980,10 @@ var DragonflyCacheService = class _DragonflyCacheService {
             keysCount: keys.length,
             cachedMemoryKeys: memoryL1Cache.size,
             host: config2.host,
-            usedMemoryHuman: "Multi-threaded RAM"
+            usedMemoryHuman: "Multi-threaded RAM",
           };
         }
-      } catch (err) {
-      }
+      } catch (err) {}
     }
     return {
       connected: true,
@@ -1942,7 +1991,7 @@ var DragonflyCacheService = class _DragonflyCacheService {
       keysCount: memoryL1Cache.size,
       cachedMemoryKeys: memoryL1Cache.size,
       host: config2.host,
-      usedMemoryHuman: "Dynamic"
+      usedMemoryHuman: "Dynamic",
     };
   }
 };
@@ -1956,7 +2005,8 @@ var DragonflySessionService = class {
    * Generates a cryptographically secure random session token
    */
   static generateToken() {
-    const randomPart = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    const randomPart =
+      Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     const timestampPart = Date.now().toString(36);
     return `tf_sess_${timestampPart}_${randomPart}`;
   }
@@ -1967,7 +2017,7 @@ var DragonflySessionService = class {
     const token = this.generateToken();
     const sessionId = `sess_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
     const ttlSeconds = options.ttlSeconds || this.defaultTtlSeconds;
-    const nowIso = (/* @__PURE__ */ new Date()).toISOString();
+    const nowIso = /* @__PURE__ */ new Date().toISOString();
     const expiresAt = Date.now() + ttlSeconds * 1e3;
     const session = {
       sessionId,
@@ -1984,20 +2034,19 @@ var DragonflySessionService = class {
       createdAt: nowIso,
       expiresAt,
       lastActiveAt: nowIso,
-      metadata: options.metadata || {}
+      metadata: options.metadata || {},
     };
     const sessionKey = DragonflyCacheService.keys.session(token);
     await DragonflyCacheService.set(sessionKey, session, ttlSeconds);
     const userSessionsKey = DragonflyCacheService.keys.custom(`user_sessions:${options.userId}`);
-    const existingTokens = await DragonflyCacheService.get(userSessionsKey) || [];
+    const existingTokens = (await DragonflyCacheService.get(userSessionsKey)) || [];
     const updatedTokens = [.../* @__PURE__ */ new Set([...existingTokens, token])];
     await DragonflyCacheService.set(userSessionsKey, updatedTokens, ttlSeconds);
     if (typeof window !== "undefined") {
       try {
         localStorage.setItem(LOCAL_SESSION_STORAGE_KEY, token);
         localStorage.setItem(`talentflow_session_data`, JSON.stringify(session));
-      } catch {
-      }
+      } catch {}
     }
     return session;
   }
@@ -2024,8 +2073,7 @@ var DragonflySessionService = class {
             return parsed;
           }
         }
-      } catch {
-      }
+      } catch {}
     }
     return null;
   }
@@ -2045,15 +2093,14 @@ var DragonflySessionService = class {
     const session = await this.getSession(token);
     if (!session) return false;
     const ttl = additionalTtlSeconds || this.defaultTtlSeconds;
-    session.lastActiveAt = (/* @__PURE__ */ new Date()).toISOString();
+    session.lastActiveAt = /* @__PURE__ */ new Date().toISOString();
     session.expiresAt = Date.now() + ttl * 1e3;
     const sessionKey = DragonflyCacheService.keys.session(token);
     await DragonflyCacheService.set(sessionKey, session, ttl);
     if (typeof window !== "undefined") {
       try {
         localStorage.setItem("talentflow_session_data", JSON.stringify(session));
-      } catch {
-      }
+      } catch {}
     }
     return true;
   }
@@ -2067,7 +2114,7 @@ var DragonflySessionService = class {
     await DragonflyCacheService.del(sessionKey);
     if (session && session.userId) {
       const userSessionsKey = DragonflyCacheService.keys.custom(`user_sessions:${session.userId}`);
-      const tokens = await DragonflyCacheService.get(userSessionsKey) || [];
+      const tokens = (await DragonflyCacheService.get(userSessionsKey)) || [];
       const filtered = tokens.filter((t) => t !== token);
       if (filtered.length > 0) {
         await DragonflyCacheService.set(userSessionsKey, filtered, this.defaultTtlSeconds);
@@ -2081,8 +2128,7 @@ var DragonflySessionService = class {
           localStorage.removeItem(LOCAL_SESSION_STORAGE_KEY);
           localStorage.removeItem("talentflow_session_data");
         }
-      } catch {
-      }
+      } catch {}
     }
     return true;
   }
@@ -2092,7 +2138,7 @@ var DragonflySessionService = class {
   static async destroyAllUserSessions(userId) {
     if (!userId) return 0;
     const userSessionsKey = DragonflyCacheService.keys.custom(`user_sessions:${userId}`);
-    const tokens = await DragonflyCacheService.get(userSessionsKey) || [];
+    const tokens = (await DragonflyCacheService.get(userSessionsKey)) || [];
     for (const token of tokens) {
       await DragonflyCacheService.del(DragonflyCacheService.keys.session(token));
     }
@@ -2162,7 +2208,7 @@ var CandidateService = class {
             await DragonflyCacheService.set(
               DragonflyCacheService.keys.candidateEmail(doc.email),
               doc,
-              3600
+              3600,
             );
           }
           return doc;
@@ -2171,7 +2217,7 @@ var CandidateService = class {
           return null;
         }
       },
-      3600
+      3600,
     );
   }
   static async getCandidateByEmail(email) {
@@ -2186,7 +2232,7 @@ var CandidateService = class {
             await DragonflyCacheService.set(
               DragonflyCacheService.keys.candidate(doc.id),
               doc,
-              3600
+              3600,
             );
           }
           return doc;
@@ -2195,7 +2241,7 @@ var CandidateService = class {
           return null;
         }
       },
-      3600
+      3600,
     );
   }
   static async getAllCandidates() {
@@ -2210,7 +2256,7 @@ var CandidateService = class {
               await DragonflyCacheService.set(
                 DragonflyCacheService.keys.candidate(cand.id),
                 cand,
-                3600
+                3600,
               );
             }
           }
@@ -2220,7 +2266,7 @@ var CandidateService = class {
           return [];
         }
       },
-      600
+      600,
     );
   }
   static async saveCandidate(candidate) {
@@ -2228,17 +2274,21 @@ var CandidateService = class {
     const cleanId = (candidate.id || cleanEmail || "cand").toLowerCase().replace(/[^a-z0-9-]/g, "");
     const existing = await this.getCandidate(cleanId);
     let hashedPassword = candidate.password || existing?.password;
-    if (candidate.password && !candidate.password.startsWith("$2a$") && !candidate.password.startsWith("$2b$")) {
+    if (
+      candidate.password &&
+      !candidate.password.startsWith("$2a$") &&
+      !candidate.password.startsWith("$2b$")
+    ) {
       const salt = await bcrypt3.genSalt(10);
       hashedPassword = await bcrypt3.hash(candidate.password, salt);
     }
     const payload = {
-      ...existing || {},
+      ...(existing || {}),
       ...candidate,
       id: cleanId,
       email: cleanEmail || existing?.email || "",
       password: hashedPassword,
-      updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+      updatedAt: /* @__PURE__ */ new Date().toISOString(),
     };
     const cacheKey = DragonflyCacheService.keys.candidate(cleanId);
     await DragonflyCacheService.set(cacheKey, payload, 3600);
@@ -2246,7 +2296,7 @@ var CandidateService = class {
       await DragonflyCacheService.set(
         DragonflyCacheService.keys.candidateEmail(cleanEmail),
         payload,
-        3600
+        3600,
       );
     }
     await DragonflyCacheService.del(DragonflyCacheService.keys.candidatesAll());
@@ -2254,7 +2304,7 @@ var CandidateService = class {
       "candidate",
       cacheKey,
       payload,
-      cleanId
+      cleanId,
     );
     return payload;
   }
@@ -2275,24 +2325,28 @@ var CandidateService = class {
     const cleanCompId = companyId.toLowerCase().replace(/[^a-z0-9-]/g, "");
     const candidate = await this.getCandidate(cleanId);
     if (!candidate) return null;
-    const registeredCompanyIds = Array.isArray(candidate.registeredCompanyIds) ? [...candidate.registeredCompanyIds] : [];
+    const registeredCompanyIds = Array.isArray(candidate.registeredCompanyIds)
+      ? [...candidate.registeredCompanyIds]
+      : [];
     if (!registeredCompanyIds.includes(cleanCompId)) {
       registeredCompanyIds.push(cleanCompId);
     }
-    const regCompanies = Array.isArray(candidate.registeredCompanies) ? [...candidate.registeredCompanies] : [];
+    const regCompanies = Array.isArray(candidate.registeredCompanies)
+      ? [...candidate.registeredCompanies]
+      : [];
     if (!regCompanies.some((c) => c.companyId === cleanCompId)) {
       regCompanies.push({
         companyId: cleanCompId,
         companyName: companyName || cleanCompId,
-        registeredAt: (/* @__PURE__ */ new Date()).toISOString(),
-        status: "active"
+        registeredAt: /* @__PURE__ */ new Date().toISOString(),
+        status: "active",
       });
     }
     const updated = {
       ...candidate,
       registeredCompanyIds,
       registeredCompanies: regCompanies,
-      updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+      updatedAt: /* @__PURE__ */ new Date().toISOString(),
     };
     return this.saveCandidate(updated);
   }
@@ -2303,7 +2357,10 @@ var CandidateService = class {
       cacheKey,
       async () => {
         try {
-          const doc = await Settings_default.findOne({ scope: "candidate", targetId: cleanId }).lean();
+          const doc = await Settings_default.findOne({
+            scope: "candidate",
+            targetId: cleanId,
+          }).lean();
           if (doc && doc.data) {
             return { ...defaultCandidateSettings, ...doc.data };
           }
@@ -2312,7 +2369,7 @@ var CandidateService = class {
         }
         return defaultCandidateSettings;
       },
-      86400
+      86400,
     );
   }
   static async saveSettings(settings, candidateId = "cand-alex") {
@@ -2324,14 +2381,14 @@ var CandidateService = class {
       scope: "candidate",
       targetId: cleanId,
       data: merged,
-      updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+      updatedAt: /* @__PURE__ */ new Date().toISOString(),
     };
     await DragonflyCacheService.set(cacheKey, merged, 86400);
     await DragonflyCacheService.writeToDragonflyAndEnqueueSync(
       "settings",
       cacheKey,
       settingsPayload,
-      `candidate:${cleanId}`
+      `candidate:${cleanId}`,
     );
     return merged;
   }
@@ -2359,13 +2416,13 @@ var CompanyService = class {
       async () => {
         try {
           const doc = await Company_default.findOne({
-            $or: [{ id: cleanId }, { subdomain: cleanId }]
+            $or: [{ id: cleanId }, { subdomain: cleanId }],
           }).lean();
           if (doc && doc.admin?.workEmail) {
             await DragonflyCacheService.set(
               DragonflyCacheService.keys.companyEmail(doc.admin.workEmail),
               doc,
-              3600
+              3600,
             );
           }
           return doc;
@@ -2374,7 +2431,7 @@ var CompanyService = class {
           return null;
         }
       },
-      3600
+      3600,
     );
   }
   static async getCompanyByEmail(email) {
@@ -2385,7 +2442,7 @@ var CompanyService = class {
       async () => {
         try {
           const doc = await Company_default.findOne({
-            $or: [{ "admin.workEmail": cleanEmail }, { id: cleanEmail }, { subdomain: cleanEmail }]
+            $or: [{ "admin.workEmail": cleanEmail }, { id: cleanEmail }, { subdomain: cleanEmail }],
           }).lean();
           if (doc && doc.id) {
             await DragonflyCacheService.set(DragonflyCacheService.keys.company(doc.id), doc, 3600);
@@ -2396,7 +2453,7 @@ var CompanyService = class {
           return null;
         }
       },
-      3600
+      3600,
     );
   }
   static async getAllCompanies() {
@@ -2411,7 +2468,7 @@ var CompanyService = class {
               await DragonflyCacheService.set(
                 DragonflyCacheService.keys.company(comp.id),
                 comp,
-                3600
+                3600,
               );
             }
           }
@@ -2421,25 +2478,31 @@ var CompanyService = class {
           return [];
         }
       },
-      600
+      600,
     );
   }
   static async saveCompany(company) {
     const cleanEmail = (company.admin?.workEmail || company.email || "").trim().toLowerCase();
-    const cleanId = (company.id || company.subdomain || company.name || "comp").toLowerCase().replace(/[^a-z0-9-]/g, "");
+    const cleanId = (company.id || company.subdomain || company.name || "comp")
+      .toLowerCase()
+      .replace(/[^a-z0-9-]/g, "");
     const existing = await this.getCompany(cleanId);
     let hashedPassword = company.password || existing?.password;
-    if (company.password && !company.password.startsWith("$2a$") && !company.password.startsWith("$2b$")) {
+    if (
+      company.password &&
+      !company.password.startsWith("$2a$") &&
+      !company.password.startsWith("$2b$")
+    ) {
       const salt = await bcrypt4.genSalt(10);
       hashedPassword = await bcrypt4.hash(company.password, salt);
     }
     const payload = {
-      ...existing || {},
+      ...(existing || {}),
       ...company,
       id: cleanId,
       password: hashedPassword,
       subdomain: company.subdomain || existing?.subdomain || cleanId,
-      updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+      updatedAt: /* @__PURE__ */ new Date().toISOString(),
     };
     const cacheKey = DragonflyCacheService.keys.company(cleanId);
     await DragonflyCacheService.set(cacheKey, payload, 3600);
@@ -2447,7 +2510,7 @@ var CompanyService = class {
       await DragonflyCacheService.set(
         DragonflyCacheService.keys.companyEmail(cleanEmail),
         payload,
-        3600
+        3600,
       );
     }
     await DragonflyCacheService.del(DragonflyCacheService.keys.companiesAll());
@@ -2455,7 +2518,7 @@ var CompanyService = class {
       "company",
       cacheKey,
       payload,
-      cleanId
+      cleanId,
     );
     return payload;
   }
@@ -2465,7 +2528,7 @@ var CompanyService = class {
     const company = await this.getCompany(cleanId);
     if (company?.admin?.workEmail) {
       await DragonflyCacheService.del(
-        DragonflyCacheService.keys.companyEmail(company.admin.workEmail)
+        DragonflyCacheService.keys.companyEmail(company.admin.workEmail),
       );
     }
     await DragonflyCacheService.del(cacheKey);
@@ -2477,20 +2540,22 @@ var CompanyService = class {
     const cleanId = companyId.toLowerCase().replace(/[^a-z0-9-]/g, "");
     const company = await this.getCompany(cleanId);
     if (!company) return null;
-    const registeredCandidateIds = Array.isArray(company.registeredCandidateIds) ? [...company.registeredCandidateIds] : [];
+    const registeredCandidateIds = Array.isArray(company.registeredCandidateIds)
+      ? [...company.registeredCandidateIds]
+      : [];
     const candId = candidate.id || candidate.email || "";
     if (candId && !registeredCandidateIds.includes(candId)) {
       registeredCandidateIds.push(candId);
     }
     const updatedStats = {
-      ...company.stats || {},
-      totalCandidates: (company.stats?.totalCandidates || 0) + 1
+      ...(company.stats || {}),
+      totalCandidates: (company.stats?.totalCandidates || 0) + 1,
     };
     const updated = {
       ...company,
       registeredCandidateIds,
       stats: updatedStats,
-      updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+      updatedAt: /* @__PURE__ */ new Date().toISOString(),
     };
     return this.saveCompany(updated);
   }
@@ -2501,7 +2566,10 @@ var CompanyService = class {
       cacheKey,
       async () => {
         try {
-          const doc = await Settings_default.findOne({ scope: "company", targetId: cleanId }).lean();
+          const doc = await Settings_default.findOne({
+            scope: "company",
+            targetId: cleanId,
+          }).lean();
           if (doc && doc.data) {
             return { ...defaultCompanySettings, ...doc.data };
           }
@@ -2510,7 +2578,7 @@ var CompanyService = class {
         }
         return defaultCompanySettings;
       },
-      86400
+      86400,
     );
   }
   static async saveSettings(settings, companyId = "company") {
@@ -2522,14 +2590,14 @@ var CompanyService = class {
       scope: "company",
       targetId: cleanId,
       data: merged,
-      updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+      updatedAt: /* @__PURE__ */ new Date().toISOString(),
     };
     await DragonflyCacheService.set(cacheKey, merged, 86400);
     await DragonflyCacheService.writeToDragonflyAndEnqueueSync(
       "settings",
       cacheKey,
       settingsPayload,
-      `company:${cleanId}`
+      `company:${cleanId}`,
     );
     return merged;
   }
@@ -2544,7 +2612,7 @@ var AuthController = {
         errorResponse(
           res,
           httpStatusCodes.BAD_REQUEST,
-          "Email, password, and full name are required"
+          "Email, password, and full name are required",
         );
         return;
       }
@@ -2555,11 +2623,13 @@ var AuthController = {
           errorResponse(
             res,
             httpStatusCodes.CONFLICT,
-            "An account with this email address already exists. Please sign in instead."
+            "An account with this email address already exists. Please sign in instead.",
           );
           return;
         }
-        const cleanCandId = extraData.id || `cand-${Date.now().toString().slice(-6)}-${cleanEmail.replace(/[^a-z0-9]/g, "").slice(0, 8)}`;
+        const cleanCandId =
+          extraData.id ||
+          `cand-${Date.now().toString().slice(-6)}-${cleanEmail.replace(/[^a-z0-9]/g, "").slice(0, 8)}`;
         const candidate = await CandidateService.saveCandidate({
           id: cleanCandId,
           email: cleanEmail,
@@ -2569,14 +2639,14 @@ var AuthController = {
           country: extraData.country || "United States",
           emailVerified: false,
           isCompleted: false,
-          ...extraData
+          ...extraData,
         });
         const tokenPayload2 = {
           id: candidate.id,
           email: candidate.email,
           role: "candidate",
           fullName: candidate.fullName,
-          candidateId: candidate.id
+          candidateId: candidate.id,
         };
         const token2 = generateToken(tokenPayload2);
         const session2 = await DragonflySessionService.createSession({
@@ -2584,10 +2654,9 @@ var AuthController = {
           email: candidate.email,
           role: "candidate",
           displayName: candidate.fullName,
-          candidateId: candidate.id
+          candidateId: candidate.id,
         });
-        await setUserSession("candidate", candidate.id, session2.sessionId).catch(() => {
-        });
+        await setUserSession("candidate", candidate.id, session2.sessionId).catch(() => {});
         successResponse(
           res,
           httpStatusCodes.CREATED,
@@ -2600,12 +2669,12 @@ var AuthController = {
               fullName: candidate.fullName,
               role: "candidate",
               emailVerified: candidate.emailVerified,
-              candidateId: candidate.id
+              candidateId: candidate.id,
             },
             token: token2,
             sessionId: session2.sessionId,
-            verificationSent: true
-          }
+            verificationSent: true,
+          },
         );
         return;
       }
@@ -2614,11 +2683,15 @@ var AuthController = {
         errorResponse(
           res,
           httpStatusCodes.CONFLICT,
-          "An account with this email address already exists. Please sign in instead."
+          "An account with this email address already exists. Please sign in instead.",
         );
         return;
       }
-      const compSlug = (extraData.companyName || fullName || "company").toLowerCase().replace(/[^a-z0-9]/g, "-").replace(/-+/g, "-").slice(0, 30);
+      const compSlug = (extraData.companyName || fullName || "company")
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, "-")
+        .replace(/-+/g, "-")
+        .slice(0, 30);
       const cleanCompSlug = extraData.id || `comp-${Date.now().toString().slice(-6)}-${compSlug}`;
       const company = await CompanyService.saveCompany({
         id: cleanCompSlug,
@@ -2630,20 +2703,20 @@ var AuthController = {
           fullName: fullName.trim(),
           workEmail: cleanEmail,
           phone: extraData.phone || "",
-          uid: cleanCompSlug
+          uid: cleanCompSlug,
         },
         phone: extraData.phone || "",
         country: extraData.country || "United States",
         emailVerified: false,
         isCompleted: false,
-        ...extraData
+        ...extraData,
       });
       const tokenPayload = {
         id: company.id,
         email: cleanEmail,
         role: "company",
         fullName: company.name,
-        companyId: company.id
+        companyId: company.id,
       };
       const token = generateToken(tokenPayload);
       const session = await DragonflySessionService.createSession({
@@ -2651,10 +2724,9 @@ var AuthController = {
         email: cleanEmail,
         role: "company",
         displayName: company.name,
-        companyId: company.id
+        companyId: company.id,
       });
-      await setUserSession("company", company.id, session.sessionId).catch(() => {
-      });
+      await setUserSession("company", company.id, session.sessionId).catch(() => {});
       successResponse(
         res,
         httpStatusCodes.CREATED,
@@ -2668,12 +2740,12 @@ var AuthController = {
             companyName: company.name,
             role: "company",
             emailVerified: company.emailVerified,
-            companyId: company.id
+            companyId: company.id,
           },
           token,
           sessionId: session.sessionId,
-          verificationSent: true
-        }
+          verificationSent: true,
+        },
       );
     } catch (err) {
       logger.error("[AuthController.signUp] Error:", err);
@@ -2681,7 +2753,7 @@ var AuthController = {
         res,
         httpStatusCodes.INTERNAL_SERVER_ERROR,
         err?.message || "Failed to register user",
-        err
+        err,
       );
     }
   },
@@ -2693,7 +2765,7 @@ var AuthController = {
         errorResponse(
           res,
           httpStatusCodes.BAD_REQUEST,
-          "Email, password, and full name are required"
+          "Email, password, and full name are required",
         );
         return;
       }
@@ -2706,7 +2778,7 @@ var AuthController = {
             errorResponse(
               res,
               httpStatusCodes.CONFLICT,
-              "An account with this email address already exists. Please sign in with your password or use password reset."
+              "An account with this email address already exists. Please sign in with your password or use password reset.",
             );
             return;
           }
@@ -2730,7 +2802,7 @@ var AuthController = {
             termsAccepted: data.termsAccepted ?? true,
             captchaVerified: data.captchaVerified ?? true,
             emailVerified: false,
-            isCompleted: false
+            isCompleted: false,
           });
         }
         const candId = candidate.id;
@@ -2739,7 +2811,7 @@ var AuthController = {
           email: candidate.email,
           role: "candidate",
           fullName: candidate.fullName,
-          candidateId: candId
+          candidateId: candId,
         };
         const token2 = generateToken(tokenPayload2);
         const session2 = await DragonflySessionService.createSession({
@@ -2747,10 +2819,9 @@ var AuthController = {
           email: candidate.email,
           role: "candidate",
           displayName: candidate.fullName,
-          candidateId: candId
+          candidateId: candId,
         });
-        await setUserSession("candidate", candId, session2.sessionId).catch(() => {
-        });
+        await setUserSession("candidate", candId, session2.sessionId).catch(() => {});
         const profilePayload2 = {
           uid: candId,
           id: candId,
@@ -2769,8 +2840,8 @@ var AuthController = {
           captchaVerified: data.captchaVerified ?? true,
           emailVerified: candidate.emailVerified || false,
           reAuthenticated: isReAuthenticated2,
-          createdAt: (/* @__PURE__ */ new Date()).toISOString(),
-          updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+          createdAt: /* @__PURE__ */ new Date().toISOString(),
+          updatedAt: /* @__PURE__ */ new Date().toISOString(),
         };
         successResponse(
           res,
@@ -2784,13 +2855,13 @@ var AuthController = {
               fullName: candidate.fullName,
               role: "candidate",
               emailVerified: candidate.emailVerified,
-              candidateId: candId
+              candidateId: candId,
             },
             userProfile: profilePayload2,
             token: token2,
             sessionId: session2.sessionId,
-            verificationSent: true
-          }
+            verificationSent: true,
+          },
         );
         return;
       }
@@ -2801,7 +2872,7 @@ var AuthController = {
           errorResponse(
             res,
             httpStatusCodes.CONFLICT,
-            "An account with this email address was created using Google Sign-In. Please sign in with Google."
+            "An account with this email address was created using Google Sign-In. Please sign in with Google.",
           );
           return;
         }
@@ -2810,13 +2881,17 @@ var AuthController = {
           errorResponse(
             res,
             httpStatusCodes.CONFLICT,
-            "An account with this email address already exists. Please sign in with your password or use password reset."
+            "An account with this email address already exists. Please sign in with your password or use password reset.",
           );
           return;
         }
         isReAuthenticated = true;
       } else {
-        const compSlug = (data.companyName || data.fullName || "company").toLowerCase().replace(/[^a-z0-9]/g, "-").replace(/-+/g, "-").slice(0, 30);
+        const compSlug = (data.companyName || data.fullName || "company")
+          .toLowerCase()
+          .replace(/[^a-z0-9]/g, "-")
+          .replace(/-+/g, "-")
+          .slice(0, 30);
         const cleanCompSlug = `comp-${Date.now().toString().slice(-6)}-${compSlug}`;
         company = await CompanyService.saveCompany({
           id: cleanCompSlug,
@@ -2832,10 +2907,10 @@ var AuthController = {
             fullName: data.fullName.trim(),
             workEmail: cleanEmail,
             phone: data.phone || "",
-            uid: cleanCompSlug
+            uid: cleanCompSlug,
           },
           emailVerified: false,
-          isCompleted: false
+          isCompleted: false,
         });
       }
       const compId = company.id;
@@ -2844,7 +2919,7 @@ var AuthController = {
         email: cleanEmail,
         role: "company",
         fullName: company.name,
-        companyId: compId
+        companyId: compId,
       };
       const token = generateToken(tokenPayload);
       const session = await DragonflySessionService.createSession({
@@ -2852,10 +2927,9 @@ var AuthController = {
         email: cleanEmail,
         role: "company",
         displayName: company.name,
-        companyId: compId
+        companyId: compId,
       });
-      await setUserSession("company", compId, session.sessionId).catch(() => {
-      });
+      await setUserSession("company", compId, session.sessionId).catch(() => {});
       const profilePayload = {
         uid: compId,
         id: compId,
@@ -2875,8 +2949,8 @@ var AuthController = {
         captchaVerified: data.captchaVerified ?? true,
         emailVerified: company.emailVerified || false,
         reAuthenticated: isReAuthenticated,
-        createdAt: (/* @__PURE__ */ new Date()).toISOString(),
-        updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+        createdAt: /* @__PURE__ */ new Date().toISOString(),
+        updatedAt: /* @__PURE__ */ new Date().toISOString(),
       };
       successResponse(
         res,
@@ -2891,13 +2965,13 @@ var AuthController = {
             companyName: company.name,
             role: "company",
             emailVerified: company.emailVerified,
-            companyId: compId
+            companyId: compId,
           },
           userProfile: profilePayload,
           token,
           sessionId: session.sessionId,
-          verificationSent: true
-        }
+          verificationSent: true,
+        },
       );
     } catch (err) {
       logger.error("[AuthController.signUpWithFullDetails] Error:", err);
@@ -2905,7 +2979,7 @@ var AuthController = {
         res,
         httpStatusCodes.INTERNAL_SERVER_ERROR,
         err?.message || "Failed to process signup",
-        err
+        err,
       );
     }
   },
@@ -2923,7 +2997,7 @@ var AuthController = {
           errorResponse(
             res,
             httpStatusCodes.UNAUTHORIZED,
-            "This candidate account was registered using Google Sign-In. Please sign in with Google."
+            "This candidate account was registered using Google Sign-In. Please sign in with Google.",
           );
           return;
         }
@@ -2932,7 +3006,7 @@ var AuthController = {
           errorResponse(
             res,
             httpStatusCodes.UNAUTHORIZED,
-            "Invalid email or password. Please check your credentials."
+            "Invalid email or password. Please check your credentials.",
           );
           return;
         }
@@ -2942,7 +3016,7 @@ var AuthController = {
           email: candidate.email,
           role: "candidate",
           fullName: candidate.fullName,
-          candidateId: candId
+          candidateId: candId,
         };
         const token = generateToken(tokenPayload);
         const session = await DragonflySessionService.createSession({
@@ -2950,10 +3024,9 @@ var AuthController = {
           email: candidate.email,
           role: "candidate",
           displayName: candidate.fullName,
-          candidateId: candId
+          candidateId: candId,
         });
-        await setUserSession("candidate", candId, session.sessionId).catch(() => {
-        });
+        await setUserSession("candidate", candId, session.sessionId).catch(() => {});
         successResponse(res, httpStatusCodes.SUCCESS, "Sign in successful (from Dragonfly DB)", {
           user: {
             id: candId,
@@ -2963,20 +3036,22 @@ var AuthController = {
             role: "candidate",
             avatarUrl: candidate.avatarUrl,
             emailVerified: candidate.emailVerified,
-            candidateId: candId
+            candidateId: candId,
           },
           token,
-          sessionId: session.sessionId
+          sessionId: session.sessionId,
         });
         return;
       }
-      const company = await CompanyService.getCompanyByEmail(cleanEmail) || await CompanyService.getCompany(cleanEmail);
+      const company =
+        (await CompanyService.getCompanyByEmail(cleanEmail)) ||
+        (await CompanyService.getCompany(cleanEmail));
       if (company) {
         if (!company.password) {
           errorResponse(
             res,
             httpStatusCodes.UNAUTHORIZED,
-            "This company workspace was registered using Google Sign-In. Please sign in with Google."
+            "This company workspace was registered using Google Sign-In. Please sign in with Google.",
           );
           return;
         }
@@ -2985,7 +3060,7 @@ var AuthController = {
           errorResponse(
             res,
             httpStatusCodes.UNAUTHORIZED,
-            "Invalid email or password. Please check your credentials."
+            "Invalid email or password. Please check your credentials.",
           );
           return;
         }
@@ -2995,7 +3070,7 @@ var AuthController = {
           email: company.admin?.workEmail || cleanEmail,
           role: "company",
           fullName: company.name,
-          companyId: compId
+          companyId: compId,
         };
         const token = generateToken(tokenPayload);
         const session = await DragonflySessionService.createSession({
@@ -3003,10 +3078,9 @@ var AuthController = {
           email: company.admin?.workEmail || cleanEmail,
           role: "company",
           displayName: company.name,
-          companyId: compId
+          companyId: compId,
         });
-        await setUserSession("company", compId, session.sessionId).catch(() => {
-        });
+        await setUserSession("company", compId, session.sessionId).catch(() => {});
         successResponse(res, httpStatusCodes.SUCCESS, "Sign in successful (from Dragonfly DB)", {
           user: {
             id: compId,
@@ -3017,10 +3091,10 @@ var AuthController = {
             role: "company",
             avatarUrl: company.logoUrl || company.admin?.avatarUrl || "",
             emailVerified: company.emailVerified,
-            companyId: compId
+            companyId: compId,
           },
           token,
-          sessionId: session.sessionId
+          sessionId: session.sessionId,
         });
         return;
       }
@@ -3029,7 +3103,7 @@ var AuthController = {
         "admin@talentflow.io",
         "admin@graviton.in",
         "admin@talentflow.internal",
-        "ops-admin@talentflow.hub"
+        "ops-admin@talentflow.hub",
       ].filter(Boolean);
       if (adminEmails.includes(cleanEmail)) {
         const adminPassword = process.env.ADMIN_PASSWORD || "Admin@1234";
@@ -3039,17 +3113,16 @@ var AuthController = {
             id: adminId,
             email: cleanEmail,
             role: "admin",
-            fullName: "Platform Administrator"
+            fullName: "Platform Administrator",
           };
           const token = generateToken(tokenPayload);
           const session = await DragonflySessionService.createSession({
             userId: adminId,
             email: cleanEmail,
             role: "admin",
-            displayName: "Platform Administrator"
+            displayName: "Platform Administrator",
           });
-          await setUserSession("admin", adminId, session.sessionId).catch(() => {
-          });
+          await setUserSession("admin", adminId, session.sessionId).catch(() => {});
           successResponse(res, httpStatusCodes.SUCCESS, "Admin sign in successful", {
             user: {
               id: adminId,
@@ -3057,10 +3130,10 @@ var AuthController = {
               email: cleanEmail,
               fullName: "Platform Administrator",
               role: "admin",
-              emailVerified: true
+              emailVerified: true,
             },
             token,
-            sessionId: session.sessionId
+            sessionId: session.sessionId,
           });
           return;
         }
@@ -3068,7 +3141,7 @@ var AuthController = {
       errorResponse(
         res,
         httpStatusCodes.UNAUTHORIZED,
-        "Invalid email or password. Please check your credentials."
+        "Invalid email or password. Please check your credentials.",
       );
     } catch (err) {
       logger.error("[AuthController.signIn] Error:", err);
@@ -3076,7 +3149,7 @@ var AuthController = {
         res,
         httpStatusCodes.INTERNAL_SERVER_ERROR,
         err?.message || "Failed to sign in",
-        err
+        err,
       );
     }
   },
@@ -3087,7 +3160,7 @@ var AuthController = {
         errorResponse(
           res,
           httpStatusCodes.BAD_REQUEST,
-          "Email is required for Google authentication"
+          "Email is required for Google authentication",
         );
         return;
       }
@@ -3099,7 +3172,7 @@ var AuthController = {
             ...candidate,
             googleId: candidate.googleId || googleId || `google-${Date.now()}`,
             avatarUrl: candidate.avatarUrl || avatarUrl || "",
-            emailVerified: true
+            emailVerified: true,
           };
           candidate = await CandidateService.saveCandidate(updated);
         } else {
@@ -3111,7 +3184,7 @@ var AuthController = {
             googleId: googleId || `google-${Date.now()}`,
             avatarUrl: avatarUrl || "",
             emailVerified: true,
-            isCompleted: false
+            isCompleted: false,
           });
         }
         const candId = candidate.id;
@@ -3120,7 +3193,7 @@ var AuthController = {
           email: candidate.email,
           role: "candidate",
           fullName: candidate.fullName,
-          candidateId: candId
+          candidateId: candId,
         };
         const token2 = generateToken(tokenPayload2);
         const session2 = await DragonflySessionService.createSession({
@@ -3128,10 +3201,9 @@ var AuthController = {
           email: candidate.email,
           role: "candidate",
           displayName: candidate.fullName,
-          candidateId: candId
+          candidateId: candId,
         });
-        await setUserSession("candidate", candId, session2.sessionId).catch(() => {
-        });
+        await setUserSession("candidate", candId, session2.sessionId).catch(() => {});
         successResponse(res, httpStatusCodes.SUCCESS, "Google authentication successful", {
           user: {
             id: candId,
@@ -3141,10 +3213,10 @@ var AuthController = {
             role: "candidate",
             avatarUrl: candidate.avatarUrl,
             emailVerified: candidate.emailVerified,
-            candidateId: candId
+            candidateId: candId,
           },
           token: token2,
-          sessionId: session2.sessionId
+          sessionId: session2.sessionId,
         });
         return;
       }
@@ -3154,17 +3226,16 @@ var AuthController = {
           id: adminId,
           email: cleanEmail,
           role: "admin",
-          fullName: fullName || "Platform Administrator"
+          fullName: fullName || "Platform Administrator",
         };
         const token2 = generateToken(tokenPayload2);
         const session2 = await DragonflySessionService.createSession({
           userId: adminId,
           email: cleanEmail,
           role: "admin",
-          displayName: fullName || "Platform Administrator"
+          displayName: fullName || "Platform Administrator",
         });
-        await setUserSession("admin", adminId, session2.sessionId).catch(() => {
-        });
+        await setUserSession("admin", adminId, session2.sessionId).catch(() => {});
         successResponse(res, httpStatusCodes.SUCCESS, "Google authentication successful", {
           user: {
             id: adminId,
@@ -3173,10 +3244,10 @@ var AuthController = {
             fullName: fullName || "Platform Administrator",
             role: "admin",
             avatarUrl: avatarUrl || "",
-            emailVerified: true
+            emailVerified: true,
           },
           token: token2,
-          sessionId: session2.sessionId
+          sessionId: session2.sessionId,
         });
         return;
       }
@@ -3187,13 +3258,17 @@ var AuthController = {
           googleId: company.googleId || googleId || `google-${Date.now()}`,
           emailVerified: true,
           admin: {
-            ...company.admin || { fullName: fullName || "Admin", workEmail: cleanEmail },
-            avatarUrl: avatarUrl || company.admin?.avatarUrl || ""
-          }
+            ...(company.admin || { fullName: fullName || "Admin", workEmail: cleanEmail }),
+            avatarUrl: avatarUrl || company.admin?.avatarUrl || "",
+          },
         };
         company = await CompanyService.saveCompany(updated);
       } else {
-        const compSlug = (fullName || cleanEmail.split("@")[0] || "company").toLowerCase().replace(/[^a-z0-9]/g, "-").replace(/-+/g, "-").slice(0, 30);
+        const compSlug = (fullName || cleanEmail.split("@")[0] || "company")
+          .toLowerCase()
+          .replace(/[^a-z0-9]/g, "-")
+          .replace(/-+/g, "-")
+          .slice(0, 30);
         const cleanCompSlug = `comp-${Date.now().toString().slice(-6)}-${compSlug}`;
         const compName = `${fullName || cleanEmail.split("@")[0]}'s Workspace`;
         company = await CompanyService.saveCompany({
@@ -3210,10 +3285,10 @@ var AuthController = {
             fullName: fullName || "Admin",
             workEmail: cleanEmail,
             avatarUrl: avatarUrl || "",
-            uid: cleanCompSlug
+            uid: cleanCompSlug,
           },
           emailVerified: true,
-          isCompleted: false
+          isCompleted: false,
         });
       }
       const compId = company.id;
@@ -3222,7 +3297,7 @@ var AuthController = {
         email: cleanEmail,
         role: "company",
         fullName: company.name,
-        companyId: compId
+        companyId: compId,
       };
       const token = generateToken(tokenPayload);
       const session = await DragonflySessionService.createSession({
@@ -3230,10 +3305,9 @@ var AuthController = {
         email: cleanEmail,
         role: "company",
         displayName: company.name,
-        companyId: compId
+        companyId: compId,
       });
-      await setUserSession("company", compId, session.sessionId).catch(() => {
-      });
+      await setUserSession("company", compId, session.sessionId).catch(() => {});
       successResponse(res, httpStatusCodes.SUCCESS, "Google authentication successful", {
         user: {
           id: compId,
@@ -3244,10 +3318,10 @@ var AuthController = {
           role: "company",
           avatarUrl: company.logoUrl || avatarUrl || "",
           emailVerified: company.emailVerified,
-          companyId: compId
+          companyId: compId,
         },
         token,
-        sessionId: session.sessionId
+        sessionId: session.sessionId,
       });
     } catch (err) {
       logger.error("[AuthController.googleAuth] Error:", err);
@@ -3255,7 +3329,7 @@ var AuthController = {
         res,
         httpStatusCodes.INTERNAL_SERVER_ERROR,
         err?.message || "Failed Google authentication",
-        err
+        err,
       );
     }
   },
@@ -3266,7 +3340,7 @@ var AuthController = {
       if (cleanEmail) {
         const [candidate, company] = await Promise.all([
           CandidateService.getCandidateByEmail(cleanEmail),
-          CompanyService.getCompanyByEmail(cleanEmail)
+          CompanyService.getCompanyByEmail(cleanEmail),
         ]);
         if (candidate || company) {
           logger.info(`[AuthController] Verification email dispatched to ${cleanEmail}`);
@@ -3275,14 +3349,14 @@ var AuthController = {
       successResponse(
         res,
         httpStatusCodes.SUCCESS,
-        `Verification link dispatched to ${cleanEmail || "your email address"}.`
+        `Verification link dispatched to ${cleanEmail || "your email address"}.`,
       );
     } catch (err) {
       errorResponse(
         res,
         httpStatusCodes.INTERNAL_SERVER_ERROR,
         err?.message || "Failed to dispatch verification email",
-        err
+        err,
       );
     }
   },
@@ -3295,7 +3369,7 @@ var AuthController = {
       }
       const [candidate, company] = await Promise.all([
         CandidateService.getCandidateByEmail(email),
-        CompanyService.getCompanyByEmail(email)
+        CompanyService.getCompanyByEmail(email),
       ]);
       const isVerified = Boolean(candidate?.emailVerified || company?.emailVerified);
       successResponse(
@@ -3304,15 +3378,15 @@ var AuthController = {
         "Email verification status retrieved (Dragonfly DB)",
         {
           verified: isVerified,
-          email
-        }
+          email,
+        },
       );
     } catch (err) {
       errorResponse(
         res,
         httpStatusCodes.INTERNAL_SERVER_ERROR,
         err?.message || "Failed to check verification status",
-        err
+        err,
       );
     }
   },
@@ -3325,19 +3399,19 @@ var AuthController = {
         errorResponse(
           res,
           httpStatusCodes.BAD_REQUEST,
-          "Both currentEmail and newEmail are required"
+          "Both currentEmail and newEmail are required",
         );
         return;
       }
       const [existingCand, existingComp] = await Promise.all([
         CandidateService.getCandidateByEmail(cleanNew),
-        CompanyService.getCompanyByEmail(cleanNew)
+        CompanyService.getCompanyByEmail(cleanNew),
       ]);
       if (existingCand || existingComp) {
         errorResponse(
           res,
           httpStatusCodes.CONFLICT,
-          `The email address '${cleanNew}' is already in use by another account.`
+          `The email address '${cleanNew}' is already in use by another account.`,
         );
         return;
       }
@@ -3346,7 +3420,7 @@ var AuthController = {
         await CandidateService.saveCandidate({
           ...candidate,
           email: cleanNew,
-          emailVerified: false
+          emailVerified: false,
         });
       }
       const company = await CompanyService.getCompanyByEmail(cleanCurrent);
@@ -3355,22 +3429,22 @@ var AuthController = {
           ...company,
           admin: {
             ...company.admin,
-            workEmail: cleanNew
+            workEmail: cleanNew,
           },
-          emailVerified: false
+          emailVerified: false,
         });
       }
       successResponse(
         res,
         httpStatusCodes.SUCCESS,
-        `Updated email to ${cleanNew} in Dragonfly DB! Verification link dispatched to your new address.`
+        `Updated email to ${cleanNew} in Dragonfly DB! Verification link dispatched to your new address.`,
       );
     } catch (err) {
       errorResponse(
         res,
         httpStatusCodes.INTERNAL_SERVER_ERROR,
         err?.message || "Failed to update email address",
-        err
+        err,
       );
     }
   },
@@ -3382,16 +3456,20 @@ var AuthController = {
       httpStatusCodes.SUCCESS,
       `6-Digit OTP security code dispatched to ${destination}. Demo OTP: ${otp}`,
       {
-        otp
-      }
+        otp,
+      },
     );
   },
   async verifyOtpCode(req, res) {
     const { userEnteredOtp, expectedOtp } = req.body;
     const trimmed = (userEnteredOtp || "").trim();
-    if (trimmed === "123456" || trimmed === "849201" || expectedOtp && trimmed === expectedOtp.trim()) {
+    if (
+      trimmed === "123456" ||
+      trimmed === "849201" ||
+      (expectedOtp && trimmed === expectedOtp.trim())
+    ) {
       successResponse(res, httpStatusCodes.SUCCESS, "OTP verification successful!", {
-        valid: true
+        valid: true,
       });
       return;
     }
@@ -3399,18 +3477,19 @@ var AuthController = {
       res,
       httpStatusCodes.BAD_REQUEST,
       "Invalid OTP passcode. Please check the code and try again.",
-      { valid: false }
+      { valid: false },
     );
   },
   async getMe(req, res) {
     try {
       const authHeader = req.headers.authorization;
-      const token = authHeader && authHeader.startsWith("Bearer ") ? authHeader.split(" ")[1] : null;
+      const token =
+        authHeader && authHeader.startsWith("Bearer ") ? authHeader.split(" ")[1] : null;
       if (!token) {
         errorResponse(
           res,
           httpStatusCodes.UNAUTHORIZED,
-          "Authentication token required (Bearer <token>)"
+          "Authentication token required (Bearer <token>)",
         );
         return;
       }
@@ -3421,9 +3500,13 @@ var AuthController = {
       }
       let profile = null;
       if (decoded.role === "candidate") {
-        profile = await CandidateService.getCandidate(decoded.id) || await CandidateService.getCandidateByEmail(decoded.email);
+        profile =
+          (await CandidateService.getCandidate(decoded.id)) ||
+          (await CandidateService.getCandidateByEmail(decoded.email));
       } else if (decoded.role === "company") {
-        profile = await CompanyService.getCompany(decoded.id) || await CompanyService.getCompanyByEmail(decoded.email);
+        profile =
+          (await CompanyService.getCompany(decoded.id)) ||
+          (await CompanyService.getCompanyByEmail(decoded.email));
       }
       successResponse(
         res,
@@ -3431,15 +3514,15 @@ var AuthController = {
         "Current authenticated user profile (Dragonfly DB)",
         {
           user: decoded,
-          profile
-        }
+          profile,
+        },
       );
     } catch (err) {
       errorResponse(
         res,
         httpStatusCodes.INTERNAL_SERVER_ERROR,
         "Failed to retrieve authenticated user",
-        err
+        err,
       );
     }
   },
@@ -3447,25 +3530,23 @@ var AuthController = {
     try {
       const sessionId = req.headers["session-id"] || req.headers["x-session-id"];
       const authHeader = req.headers.authorization;
-      const token = authHeader && authHeader.startsWith("Bearer ") ? authHeader.split(" ")[1] : null;
+      const token =
+        authHeader && authHeader.startsWith("Bearer ") ? authHeader.split(" ")[1] : null;
       if (sessionId) {
-        await DragonflySessionService.destroySession(sessionId).catch(() => {
-        });
+        await DragonflySessionService.destroySession(sessionId).catch(() => {});
       }
       if (token) {
         const payload = verifyToken(token);
         if (payload) {
-          await deleteUserSession(payload.role, payload.id).catch(() => {
-          });
-          await DragonflySessionService.destroySession(token).catch(() => {
-          });
+          await deleteUserSession(payload.role, payload.id).catch(() => {});
+          await DragonflySessionService.destroySession(token).catch(() => {});
         }
       }
       successResponse(res, httpStatusCodes.SUCCESS, "Signed out successfully");
     } catch (err) {
       errorResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, "Error signing out", err);
     }
-  }
+  },
 };
 async function validateSessionEndpoint(req, res) {
   const sessionId = req.headers["session-id"] || req.headers["x-session-id"];
@@ -3475,7 +3556,7 @@ async function validateSessionEndpoint(req, res) {
     errorResponse(
       res,
       httpStatusCodes.BAD_REQUEST,
-      "Session ID or Authorization token is required"
+      "Session ID or Authorization token is required",
     );
     return;
   }
@@ -3485,7 +3566,7 @@ async function validateSessionEndpoint(req, res) {
     if (sessionData) {
       successResponse(res, httpStatusCodes.SUCCESS, "Session is active and valid (Dragonfly DB)", {
         valid: true,
-        session: sessionData
+        session: sessionData,
       });
       return;
     }
@@ -3494,13 +3575,13 @@ async function validateSessionEndpoint(req, res) {
       if (payload) {
         successResponse(res, httpStatusCodes.SUCCESS, "Token is valid (offline session mode)", {
           valid: true,
-          user: payload
+          user: payload,
         });
         return;
       }
     }
     errorResponse(res, httpStatusCodes.UNAUTHORIZED, "Session expired or invalid", {
-      valid: false
+      valid: false,
     });
   } catch (err) {
     errorResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, "Error verifying session", err);
@@ -3511,37 +3592,37 @@ async function validateSessionEndpoint(req, res) {
 var authRouter = Router();
 authRouter.post(
   ["/signup", "/candidate-signup", "/company-signup", "/register"],
-  AuthController.signUp
+  AuthController.signUp,
 );
 authRouter.post(
   ["/signup-details", "/signup-full", "/register-full", "/signup/full"],
-  AuthController.signUpWithFullDetails
+  AuthController.signUpWithFullDetails,
 );
 authRouter.post(
   ["/signin", "/candidate-signin", "/company-signin", "/admin-signin", "/login"],
-  AuthController.signIn
+  AuthController.signIn,
 );
 authRouter.post(["/google", "/google-auth", "/google-signin"], AuthController.googleAuth);
 authRouter.get(["/me", "/verify-token", "/current-user"], AuthController.getMe);
 authRouter.post(
   ["/signout", "/candidate-signout", "/company-signout", "/admin-signout", "/logout"],
-  AuthController.signOut
+  AuthController.signOut,
 );
 authRouter.get(["/google/config", "/google-config"], (req, res) => {
   const clientId = process.env.VITE_GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID || "";
   const isConfigured = Boolean(clientId && !clientId.startsWith("mock_"));
   res.json({
     clientId: isConfigured ? clientId : "",
-    isConfigured
+    isConfigured,
   });
 });
 authRouter.get(
   ["/session/validate", "/validate-session", "/session-check"],
-  validateSessionEndpoint
+  validateSessionEndpoint,
 );
 authRouter.post(
   ["/session/validate", "/validate-session", "/session-check"],
-  validateSessionEndpoint
+  validateSessionEndpoint,
 );
 authRouter.post(["/verify-email", "/send-verification"], AuthController.sendVerificationEmail);
 authRouter.get(["/check-verified", "/verify-status"], AuthController.checkEmailVerified);
@@ -3552,19 +3633,19 @@ authRouter.get("/google/redirect", (req, res, next) => {
   const role = req.query.role || "company";
   passport2.authenticate("google", {
     scope: ["profile", "email"],
-    state: role
+    state: role,
   })(req, res, next);
 });
 authRouter.get(
   "/google/callback",
   passport2.authenticate("google", {
     session: false,
-    failureRedirect: "/auth/error"
+    failureRedirect: "/auth/error",
   }),
   (req, res) => {
     const user = req.user;
     res.redirect(`/?auth=google&email=${encodeURIComponent(user?.email || "")}`);
-  }
+  },
 );
 
 // packages/api/src/routes/adminRoutes.ts
@@ -3592,10 +3673,13 @@ async function connectToDatabase(customUri) {
       socketTimeoutMS: 45e3,
       maxPoolSize: config_default.MONGO_MAX_POOL_SIZE || 20,
       minPoolSize: config_default.MONGO_MIN_POOL_SIZE || 5,
-      autoIndex: true
+      autoIndex: true,
     });
     logger.info(
-      "[MongoDB] Successfully connected to MongoDB database " + (mongoose5.connection.name || "") + " on " + (mongoose5.connection.host || "")
+      "[MongoDB] Successfully connected to MongoDB database " +
+        (mongoose5.connection.name || "") +
+        " on " +
+        (mongoose5.connection.host || ""),
     );
     mongoose5.connection.on("error", (err) => {
       logger.error("[MongoDB] Connection error:", { error: String(err) });
@@ -3613,7 +3697,8 @@ async function connectToDatabase(customUri) {
     const err = error;
     if (err.name === "MongooseServerSelectionError") {
       logger.error(
-        "[MongoDB] Failed to connect to MongoDB Atlas cluster. Your current IP may not be whitelisted in MongoDB Atlas Network Access.\nTo allow access: Go to MongoDB Atlas Console -> Security -> Network Access -> Add IP Address (whitelist your current IP or 0.0.0.0/0 for development).\nUnderlying error: " + err.message
+        "[MongoDB] Failed to connect to MongoDB Atlas cluster. Your current IP may not be whitelisted in MongoDB Atlas Network Access.\nTo allow access: Go to MongoDB Atlas Console -> Security -> Network Access -> Add IP Address (whitelist your current IP or 0.0.0.0/0 for development).\nUnderlying error: " +
+          err.message,
       );
     } else {
       logger.error("[MongoDB] Database connection error:", { error: String(error) });
@@ -3628,7 +3713,7 @@ function getDbStatus() {
     readyState: state,
     host: mongoose5.connection.host || "Atlas Cluster",
     database: mongoose5.connection.name || config_default.MONGODB_DATABASE || "talentflow",
-    lastPing: (/* @__PURE__ */ new Date()).toISOString()
+    lastPing: /* @__PURE__ */ new Date().toISOString(),
   };
 }
 
@@ -3640,7 +3725,10 @@ var AdminService = class {
       CACHE_KEY_ADMIN_SETTINGS,
       async () => {
         try {
-          const doc = await Settings_default.findOne({ scope: "admin", targetId: "platform" }).lean();
+          const doc = await Settings_default.findOne({
+            scope: "admin",
+            targetId: "platform",
+          }).lean();
           if (doc && doc.data) {
             return { ...defaultAdminSettings, ...doc.data };
           }
@@ -3649,7 +3737,7 @@ var AdminService = class {
         }
         return defaultAdminSettings;
       },
-      86400
+      86400,
     );
   }
   static async saveAdminSettings(settings) {
@@ -3659,14 +3747,14 @@ var AdminService = class {
       scope: "admin",
       targetId: "platform",
       data: merged,
-      updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+      updatedAt: /* @__PURE__ */ new Date().toISOString(),
     };
     await DragonflyCacheService.set(CACHE_KEY_ADMIN_SETTINGS, merged, 86400);
     await DragonflyCacheService.writeToDragonflyAndEnqueueSync(
       "settings",
       CACHE_KEY_ADMIN_SETTINGS,
       settingsPayload,
-      "admin:platform"
+      "admin:platform",
     );
     return merged;
   }
@@ -3680,7 +3768,7 @@ var AdminService = class {
         status: dbStatus.connected ? "healthy" : "degraded",
         latencyMs: 12,
         uptime: "99.99%",
-        lastChecked: (/* @__PURE__ */ new Date()).toLocaleTimeString()
+        lastChecked: /* @__PURE__ */ new Date().toLocaleTimeString(),
       },
       {
         id: "cache-dragonfly",
@@ -3688,7 +3776,7 @@ var AdminService = class {
         status: dfConfig.isConfigured ? "healthy" : "degraded",
         latencyMs: 1,
         uptime: "100.0%",
-        lastChecked: (/* @__PURE__ */ new Date()).toLocaleTimeString()
+        lastChecked: /* @__PURE__ */ new Date().toLocaleTimeString(),
       },
       {
         id: "auth-engine",
@@ -3696,7 +3784,7 @@ var AdminService = class {
         status: "healthy",
         latencyMs: 2,
         uptime: "99.98%",
-        lastChecked: (/* @__PURE__ */ new Date()).toLocaleTimeString()
+        lastChecked: /* @__PURE__ */ new Date().toLocaleTimeString(),
       },
       {
         id: "api-gateway",
@@ -3704,8 +3792,8 @@ var AdminService = class {
         status: "healthy",
         latencyMs: 3,
         uptime: "99.95%",
-        lastChecked: (/* @__PURE__ */ new Date()).toLocaleTimeString()
-      }
+        lastChecked: /* @__PURE__ */ new Date().toLocaleTimeString(),
+      },
     ];
   }
   static getAuditLogs() {
@@ -3716,9 +3804,9 @@ var AdminService = class {
         actor: "system-admin",
         role: "Super Admin",
         target: "Dragonfly DB / Port 6379",
-        timestamp: (/* @__PURE__ */ new Date()).toLocaleString(),
+        timestamp: /* @__PURE__ */ new Date().toLocaleString(),
         ipAddress: "127.0.0.1",
-        status: "success"
+        status: "success",
       },
       {
         id: "audit-02",
@@ -3726,10 +3814,10 @@ var AdminService = class {
         actor: "system-admin",
         role: "Super Admin",
         target: "talentflow cluster",
-        timestamp: (/* @__PURE__ */ new Date()).toLocaleString(),
+        timestamp: /* @__PURE__ */ new Date().toLocaleString(),
         ipAddress: "127.0.0.1",
-        status: "success"
-      }
+        status: "success",
+      },
     ];
   }
   static getBackendStatus() {
@@ -3739,7 +3827,7 @@ var AdminService = class {
       database: dbStatus.database || "talentflow",
       authStatus: "ready",
       version: "v2.0.0-modular",
-      lastSync: (/* @__PURE__ */ new Date()).toLocaleTimeString()
+      lastSync: /* @__PURE__ */ new Date().toLocaleTimeString(),
     };
   }
 };
@@ -3755,7 +3843,7 @@ var AdminController = {
         res,
         httpStatusCodes.INTERNAL_SERVER_ERROR,
         "Failed to get admin settings",
-        err
+        err,
       );
     }
   },
@@ -3768,7 +3856,7 @@ var AdminController = {
         res,
         httpStatusCodes.INTERNAL_SERVER_ERROR,
         "Failed to update admin settings",
-        err
+        err,
       );
     }
   },
@@ -3782,7 +3870,7 @@ var AdminController = {
         res,
         httpStatusCodes.INTERNAL_SERVER_ERROR,
         "Failed to get health metrics",
-        err
+        err,
       );
     }
   },
@@ -3799,14 +3887,14 @@ var AdminController = {
       const [companiesCount, candidatesCount, jobsCount] = await Promise.all([
         Company_default.countDocuments().catch(() => 0),
         Candidate_default.countDocuments().catch(() => 0),
-        Job_default.countDocuments().catch(() => 0)
+        Job_default.countDocuments().catch(() => 0),
       ]);
       successResponse(res, httpStatusCodes.SUCCESS, "Platform stats fetched", {
         companies: companiesCount,
         candidates: candidatesCount,
         jobs: jobsCount,
         dragonflyActive: true,
-        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+        timestamp: /* @__PURE__ */ new Date().toISOString(),
       });
     } catch (err) {
       errorResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, "Failed to get stats", err);
@@ -3841,14 +3929,14 @@ var AdminController = {
         res,
         httpStatusCodes.SUCCESS,
         "Dragonfly -> MongoDB Cron Sync status retrieved",
-        stats
+        stats,
       );
     } catch (err) {
       errorResponse(
         res,
         httpStatusCodes.INTERNAL_SERVER_ERROR,
         "Failed to get cron sync status",
-        err
+        err,
       );
     }
   },
@@ -3859,12 +3947,12 @@ var AdminController = {
         res,
         httpStatusCodes.SUCCESS,
         "Dragonfly -> MongoDB Cron Sync executed successfully",
-        result
+        result,
       );
     } catch (err) {
       errorResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, "Failed to execute cron sync", err);
     }
-  }
+  },
 };
 
 // packages/api/src/routes/adminRoutes.ts
@@ -3878,11 +3966,11 @@ adminRoutes.post(["/cache/clear", "/clear-cache"], AdminController.clearCache);
 adminRoutes.post(["/session/revoke", "/revoke-session"], AdminController.revokeSession);
 adminRoutes.get(
   ["/sync/status", "/sync-status", "/cron-status"],
-  AdminController.getCronSyncStatus
+  AdminController.getCronSyncStatus,
 );
 adminRoutes.post(
   ["/sync/trigger", "/sync-trigger", "/sync-now", "/cron-flush"],
-  AdminController.triggerCronSync
+  AdminController.triggerCronSync,
 );
 
 // packages/api/src/routes/candidateRoutes.ts
@@ -3897,14 +3985,14 @@ var CandidateController = {
         res,
         httpStatusCodes.SUCCESS,
         "Candidates retrieved successfully",
-        candidates
+        candidates,
       );
     } catch (err) {
       errorResponse(
         res,
         httpStatusCodes.INTERNAL_SERVER_ERROR,
         "Failed to retrieve candidates",
-        err
+        err,
       );
     }
   },
@@ -3922,7 +4010,7 @@ var CandidateController = {
         res,
         httpStatusCodes.INTERNAL_SERVER_ERROR,
         "Failed to retrieve candidate",
-        err
+        err,
       );
     }
   },
@@ -3957,7 +4045,7 @@ var CandidateController = {
         res,
         httpStatusCodes.SUCCESS,
         "Candidate stored in Dragonfly DB successfully",
-        saved
+        saved,
       );
     } catch (err) {
       errorResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, "Failed to save candidate", err);
@@ -3976,7 +4064,7 @@ var CandidateController = {
         res,
         httpStatusCodes.SUCCESS,
         "Company linked to candidate in Dragonfly DB",
-        updated
+        updated,
       );
     } catch (err) {
       errorResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, "Failed to link company", err);
@@ -3990,7 +4078,7 @@ var CandidateController = {
         res,
         httpStatusCodes.SUCCESS,
         "Candidate settings fetched from Dragonfly DB",
-        settings
+        settings,
       );
     } catch (err) {
       errorResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, "Failed to get settings", err);
@@ -4004,7 +4092,7 @@ var CandidateController = {
         res,
         httpStatusCodes.SUCCESS,
         "Candidate settings saved to Dragonfly DB",
-        settings
+        settings,
       );
     } catch (err) {
       errorResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, "Failed to save settings", err);
@@ -4017,37 +4105,37 @@ var CandidateController = {
       successResponse(
         res,
         httpStatusCodes.SUCCESS,
-        "Candidate deleted from Dragonfly DB successfully"
+        "Candidate deleted from Dragonfly DB successfully",
       );
     } catch (err) {
       errorResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, "Failed to delete candidate", err);
     }
-  }
+  },
 };
 
 // packages/api/src/routes/candidateRoutes.ts
 var candidateRoutes = Router3();
 candidateRoutes.get(
   ["/", "/all-candidates", "/candidates-list"],
-  CandidateController.getAllCandidates
+  CandidateController.getAllCandidates,
 );
 candidateRoutes.post(["/", "/save-candidate", "/save-profile"], CandidateController.saveCandidate);
 candidateRoutes.get(
   ["/search/email", "/search-email", "/find-email"],
-  CandidateController.searchCandidateByEmail
+  CandidateController.searchCandidateByEmail,
 );
 candidateRoutes.get(["/:id", "/profile/:id"], CandidateController.getCandidateById);
 candidateRoutes.post(
   ["/:id/add-company", "/:id/link-company"],
-  CandidateController.addCompanyToCandidate
+  CandidateController.addCompanyToCandidate,
 );
 candidateRoutes.get(
   ["/:candidateId/settings", "/:candidateId/candidate-settings"],
-  CandidateController.getSettings
+  CandidateController.getSettings,
 );
 candidateRoutes.post(
   ["/:candidateId/settings", "/:candidateId/candidate-settings"],
-  CandidateController.saveSettings
+  CandidateController.saveSettings,
 );
 candidateRoutes.delete(["/:id", "/delete-candidate/:id"], CandidateController.deleteCandidate);
 
@@ -4065,7 +4153,7 @@ var CompanyController = {
         res,
         httpStatusCodes.INTERNAL_SERVER_ERROR,
         "Failed to retrieve companies",
-        err
+        err,
       );
     }
   },
@@ -4113,7 +4201,7 @@ var CompanyController = {
         res,
         httpStatusCodes.SUCCESS,
         "Company saved in Dragonfly DB successfully",
-        saved
+        saved,
       );
     } catch (err) {
       errorResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, "Failed to save company", err);
@@ -4132,14 +4220,14 @@ var CompanyController = {
         res,
         httpStatusCodes.SUCCESS,
         "Candidate registered to company workspace in Dragonfly DB",
-        updated
+        updated,
       );
     } catch (err) {
       errorResponse(
         res,
         httpStatusCodes.INTERNAL_SERVER_ERROR,
         "Failed to register candidate",
-        err
+        err,
       );
     }
   },
@@ -4151,7 +4239,7 @@ var CompanyController = {
         res,
         httpStatusCodes.SUCCESS,
         "Company settings fetched from Dragonfly DB",
-        settings
+        settings,
       );
     } catch (err) {
       errorResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, "Failed to get settings", err);
@@ -4165,7 +4253,7 @@ var CompanyController = {
         res,
         httpStatusCodes.SUCCESS,
         "Company settings saved to Dragonfly DB",
-        settings
+        settings,
       );
     } catch (err) {
       errorResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, "Failed to save settings", err);
@@ -4177,12 +4265,12 @@ var CompanyController = {
       successResponse(res, httpStatusCodes.SUCCESS, "Credentials email dispatch scheduled", {
         companySlug,
         recipientCount: recipients?.length || 0,
-        status: "queued"
+        status: "queued",
       });
     } catch (err) {
       errorResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, "Failed to schedule emails", err);
     }
-  }
+  },
 };
 
 // packages/api/src/routes/companyRoutes.ts
@@ -4191,24 +4279,24 @@ companyRoutes.get(["/", "/all-companies", "/companies-list"], CompanyController.
 companyRoutes.post(["/", "/save-company", "/save-profile"], CompanyController.saveCompany);
 companyRoutes.get(
   ["/search/email", "/search-email", "/find-email"],
-  CompanyController.searchCompanyByEmail
+  CompanyController.searchCompanyByEmail,
 );
 companyRoutes.get(["/:id", "/profile/:id"], CompanyController.getCompanyById);
 companyRoutes.post(
   ["/:companyId/register-candidate", "/:companyId/enroll-candidate"],
-  CompanyController.registerCandidate
+  CompanyController.registerCandidate,
 );
 companyRoutes.get(
   ["/:companyId/settings", "/:companyId/company-settings"],
-  CompanyController.getSettings
+  CompanyController.getSettings,
 );
 companyRoutes.post(
   ["/:companyId/settings", "/:companyId/company-settings"],
-  CompanyController.saveSettings
+  CompanyController.saveSettings,
 );
 companyRoutes.post(
   ["/schedule-credentials-email", "/schedule-email", "/send-credentials"],
-  CompanyController.scheduleEmails
+  CompanyController.scheduleEmails,
 );
 
 // packages/api/src/routes/jobRoutes.ts
@@ -4222,7 +4310,10 @@ var JobService = class {
       cacheKey,
       async () => {
         try {
-          const docs = await Job_default.find({ status: { $ne: "archived" } }).sort({ createdAt: -1 }).limit(100).lean();
+          const docs = await Job_default.find({ status: { $ne: "archived" } })
+            .sort({ createdAt: -1 })
+            .limit(100)
+            .lean();
           for (const job of docs) {
             if (job.id) {
               await DragonflyCacheService.set(DragonflyCacheService.keys.job(job.id), job, 3600);
@@ -4234,7 +4325,7 @@ var JobService = class {
           return [];
         }
       },
-      600
+      600,
     );
   }
   static async getJobsForCompany(companyId) {
@@ -4245,15 +4336,17 @@ var JobService = class {
       async () => {
         try {
           const docs = await Job_default.find({
-            $or: [{ companyId: cleanCompId }, { subdomain: cleanCompId }]
-          }).sort({ createdAt: -1 }).lean();
+            $or: [{ companyId: cleanCompId }, { subdomain: cleanCompId }],
+          })
+            .sort({ createdAt: -1 })
+            .lean();
           return docs;
         } catch (err) {
           logger.warn("[JobService] DB getJobsForCompany error:", err);
           return [];
         }
       },
-      600
+      600,
     );
   }
   static async getJobById(jobId) {
@@ -4269,19 +4362,21 @@ var JobService = class {
           return null;
         }
       },
-      3600
+      3600,
     );
   }
   static async createJob(jobData) {
     const jobId = jobData.id || `job_${Date.now()}`;
-    const cleanCompId = (jobData.companyId || jobData.subdomain || "default").toLowerCase().replace(/[^a-z0-9-]/g, "");
+    const cleanCompId = (jobData.companyId || jobData.subdomain || "default")
+      .toLowerCase()
+      .replace(/[^a-z0-9-]/g, "");
     const payload = {
       ...jobData,
       id: jobId,
       companyId: cleanCompId,
       status: jobData.status || "active",
-      createdAt: (/* @__PURE__ */ new Date()).toISOString(),
-      updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+      createdAt: /* @__PURE__ */ new Date().toISOString(),
+      updatedAt: /* @__PURE__ */ new Date().toISOString(),
     };
     const cacheKey = DragonflyCacheService.keys.job(jobId);
     await DragonflyCacheService.set(cacheKey, payload, 3600);
@@ -4294,7 +4389,7 @@ var JobService = class {
     const job = await this.getJobById(jobId);
     if (!job) return null;
     job.status = status;
-    job.updatedAt = (/* @__PURE__ */ new Date()).toISOString();
+    job.updatedAt = /* @__PURE__ */ new Date().toISOString();
     const cacheKey = DragonflyCacheService.keys.job(jobId);
     await DragonflyCacheService.set(cacheKey, job, 3600);
     await DragonflyCacheService.del(DragonflyCacheService.keys.jobsAll());
@@ -4337,7 +4432,7 @@ var JobController = {
         res,
         httpStatusCodes.INTERNAL_SERVER_ERROR,
         "Failed to retrieve company jobs",
-        err
+        err,
       );
     }
   },
@@ -4380,7 +4475,7 @@ var JobController = {
     } catch (err) {
       errorResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, "Failed to delete job", err);
     }
-  }
+  },
 };
 
 // packages/api/src/routes/jobRoutes.ts
@@ -4406,9 +4501,9 @@ var GravitonService = class {
       services: {
         database: db.connected ? "Connected (MongoDB Atlas)" : "Disconnected",
         cache: df.isConfigured ? "Connected (Dragonfly DB Datastore)" : "Degraded",
-        auth: "Active (Passport.js Multi-Tenant Auth Engine)"
+        auth: "Active (Passport.js Multi-Tenant Auth Engine)",
       },
-      timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      timestamp: /* @__PURE__ */ new Date().toISOString(),
     };
   }
 };
@@ -4424,7 +4519,7 @@ var GravitonController = {
         res,
         httpStatusCodes.INTERNAL_SERVER_ERROR,
         "Failed to get ecosystem status",
-        err
+        err,
       );
     }
   },
@@ -4433,12 +4528,12 @@ var GravitonController = {
       const lead = req.body;
       successResponse(res, httpStatusCodes.SUCCESS, "Lead captured successfully", {
         id: `lead_${Date.now()}`,
-        lead
+        lead,
       });
     } catch (err) {
       errorResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, "Failed to submit lead", err);
     }
-  }
+  },
 };
 
 // packages/api/src/routes/gravitonRoutes.ts
@@ -4453,45 +4548,45 @@ settingsRouter.get(["/admin", "/admin-settings"], AdminController.getSettings);
 settingsRouter.post(["/admin", "/admin-settings"], AdminController.updateSettings);
 settingsRouter.get(
   ["/company", "/company/:companyId", "/company-settings", "/company-settings/:companyId"],
-  CompanyController.getSettings
+  CompanyController.getSettings,
 );
 settingsRouter.post(
   ["/company", "/company/:companyId", "/company-settings", "/company-settings/:companyId"],
-  CompanyController.saveSettings
+  CompanyController.saveSettings,
 );
 settingsRouter.get(
   [
     "/candidate",
     "/candidate/:candidateId",
     "/candidate-settings",
-    "/candidate-settings/:candidateId"
+    "/candidate-settings/:candidateId",
   ],
-  CandidateController.getSettings
+  CandidateController.getSettings,
 );
 settingsRouter.post(
   [
     "/candidate",
     "/candidate/:candidateId",
     "/candidate-settings",
-    "/candidate-settings/:candidateId"
+    "/candidate-settings/:candidateId",
   ],
-  CandidateController.saveSettings
+  CandidateController.saveSettings,
 );
 
 // packages/api/src/routes/index.ts
 var apiRouter = Router8();
 apiRouter.use(
   ["/candidates-auth", "/companies-auth", "/admin-auth", "/auth-portal", "/auth-service", "/auth"],
-  authRouter
+  authRouter,
 );
 apiRouter.use(["/admin-portal", "/admin-panel", "/admin"], adminRoutes);
 apiRouter.use(
   ["/candidates-profile", "/candidates-portal", "/candidates-data", "/candidates"],
-  candidateRoutes
+  candidateRoutes,
 );
 apiRouter.use(
   ["/companies-profile", "/companies-workspace", "/companies-portal", "/companies"],
-  companyRoutes
+  companyRoutes,
 );
 apiRouter.use(["/job-postings", "/job-listings", "/jobs-portal", "/jobs"], jobRoutes);
 apiRouter.use(["/graviton-services", "/graviton"], gravitonRoutes);
@@ -4503,7 +4598,7 @@ function loggerMiddleware(req, res, next) {
   res.on("finish", () => {
     const duration = Date.now() - start;
     logger.info(
-      `[HTTP] ${req.method} ${req.originalUrl || req.url} ${res.statusCode} - ${duration}ms`
+      `[HTTP] ${req.method} ${req.originalUrl || req.url} ${res.statusCode} - ${duration}ms`,
     );
   });
   next();
@@ -4522,63 +4617,58 @@ function createApp() {
         "http://localhost:3001",
         "http://localhost:3002",
         "http://localhost:3003",
-        "*"
+        "*",
       ],
       methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
       allowedHeaders: ["Content-Type", "Authorization", "Session-Id", "x-session-id"],
-      credentials: true
-    })
+      credentials: true,
+    }),
   );
   app2.use(express.json({ limit: "50mb" }));
   app2.use(express.urlencoded({ extended: true, limit: "50mb" }));
   const passport3 = configurePassport();
   app2.use(passport3.initialize());
-  app2.get(
-    ["/api/system-health", "/api/server-health", "/api/health"],
-    (_req, res) => {
-      const dbStatus = getDbStatus();
-      const dragonflyConfig = getDragonflyConfig();
-      return successResponse(
-        res,
-        httpStatusCodes.SUCCESS,
-        "TalentFlow API Server is healthy and operational",
-        {
-          service: "TalentFlow Core API",
-          status: "healthy",
-          timestamp: (/* @__PURE__ */ new Date()).toISOString(),
-          environment: config_default.environment,
-          database: {
-            engine: "MongoDB Atlas",
-            connected: dbStatus.connected,
-            readyState: dbStatus.readyState,
-            name: dbStatus.database,
-            host: dbStatus.host
-          },
-          cache: {
-            engine: "Dragonfly DB",
-            configured: dragonflyConfig.isConfigured,
-            host: dragonflyConfig.host,
-            port: dragonflyConfig.port
-          },
-          auth: {
-            engine: "Passport.js + JWT",
-            googleAuthEnabled: Boolean(config_default.GOOGLE_CLIENT_ID)
-          }
-        }
-      );
-    }
-  );
+  app2.get(["/api/system-health", "/api/server-health", "/api/health"], (_req, res) => {
+    const dbStatus = getDbStatus();
+    const dragonflyConfig = getDragonflyConfig();
+    return successResponse(
+      res,
+      httpStatusCodes.SUCCESS,
+      "TalentFlow API Server is healthy and operational",
+      {
+        service: "TalentFlow Core API",
+        status: "healthy",
+        timestamp: /* @__PURE__ */ new Date().toISOString(),
+        environment: config_default.environment,
+        database: {
+          engine: "MongoDB Atlas",
+          connected: dbStatus.connected,
+          readyState: dbStatus.readyState,
+          name: dbStatus.database,
+          host: dbStatus.host,
+        },
+        cache: {
+          engine: "Dragonfly DB",
+          configured: dragonflyConfig.isConfigured,
+          host: dragonflyConfig.host,
+          port: dragonflyConfig.port,
+        },
+        auth: {
+          engine: "Passport.js + JWT",
+          googleAuthEnabled: Boolean(config_default.GOOGLE_CLIENT_ID),
+        },
+      },
+    );
+  });
   app2.use("/api", apiRouter);
   app2.use((_req, res) => {
     return errorResponse(res, httpStatusCodes.DATA_NOT_FOUND, "API endpoint not found");
   });
-  app2.use(
-    (err, _req, res, _next) => {
-      logger.error("[TalentFlow API Error Handler]:", err);
-      const statusCode = err.statusCode || err.status || httpStatusCodes.INTERNAL_SERVER_ERROR;
-      return errorResponse(res, statusCode, err.message || "Internal server error");
-    }
-  );
+  app2.use((err, _req, res, _next) => {
+    logger.error("[TalentFlow API Error Handler]:", err);
+    const statusCode = err.statusCode || err.status || httpStatusCodes.INTERNAL_SERVER_ERROR;
+    return errorResponse(res, statusCode, err.message || "Internal server error");
+  });
   return app2;
 }
 
@@ -4589,57 +4679,51 @@ function initializeDragonflyMongoCronSync(intervalMs = 3e3) {
     return;
   }
   logger.info(
-    "[MongoCronSync] Initializing Dragonfly -> MongoDB Atlas Cron Processors for Candidate, Company, Job, Settings..."
+    "[MongoCronSync] Initializing Dragonfly -> MongoDB Atlas Cron Processors for Candidate, Company, Job, Settings...",
   );
-  DragonflyCronSyncService.registerEntityProcessor(
-    "candidate",
-    async (task) => {
-      const { action, targetId, payload } = task;
-      if (action === "DELETE") {
-        await Candidate_default.deleteOne({
-          $or: [{ id: targetId }, { email: targetId }]
-        });
-        logger.info(`[MongoCronSync] Synced Candidate deletion: ${targetId}`);
-        return;
-      }
-      if (payload) {
-        const cleanId = payload.id || targetId;
-        const cleanEmail = (payload.email || "").trim().toLowerCase();
-        const query = [{ id: cleanId }];
-        if (cleanEmail) query.push({ email: cleanEmail });
-        if (payload.googleId) query.push({ googleId: payload.googleId });
-        const existing = await Candidate_default.findOne({ $or: query });
-        if (existing) {
-          await Candidate_default.updateOne({ _id: existing._id }, { $set: payload });
-        } else {
-          await Candidate_default.create(payload);
-        }
-        logger.info(`[MongoCronSync] Synced Candidate UPSERT to MongoDB: ${cleanId}`);
-      }
+  DragonflyCronSyncService.registerEntityProcessor("candidate", async (task) => {
+    const { action, targetId, payload } = task;
+    if (action === "DELETE") {
+      await Candidate_default.deleteOne({
+        $or: [{ id: targetId }, { email: targetId }],
+      });
+      logger.info(`[MongoCronSync] Synced Candidate deletion: ${targetId}`);
+      return;
     }
-  );
-  DragonflyCronSyncService.registerEntityProcessor(
-    "company",
-    async (task) => {
-      const { action, targetId, payload } = task;
-      if (action === "DELETE") {
-        await Company_default.deleteOne({
-          $or: [{ id: targetId }, { subdomain: targetId }]
-        });
-        logger.info(`[MongoCronSync] Synced Company deletion: ${targetId}`);
-        return;
+    if (payload) {
+      const cleanId = payload.id || targetId;
+      const cleanEmail = (payload.email || "").trim().toLowerCase();
+      const query = [{ id: cleanId }];
+      if (cleanEmail) query.push({ email: cleanEmail });
+      if (payload.googleId) query.push({ googleId: payload.googleId });
+      const existing = await Candidate_default.findOne({ $or: query });
+      if (existing) {
+        await Candidate_default.updateOne({ _id: existing._id }, { $set: payload });
+      } else {
+        await Candidate_default.create(payload);
       }
-      if (payload) {
-        const cleanId = payload.id || payload.subdomain || targetId;
-        await Company_default.findOneAndUpdate(
-          { $or: [{ id: cleanId }, { subdomain: cleanId }] },
-          { $set: payload },
-          { returnDocument: "after", upsert: true, setDefaultsOnInsert: true }
-        );
-        logger.info(`[MongoCronSync] Synced Company UPSERT to MongoDB: ${cleanId}`);
-      }
+      logger.info(`[MongoCronSync] Synced Candidate UPSERT to MongoDB: ${cleanId}`);
     }
-  );
+  });
+  DragonflyCronSyncService.registerEntityProcessor("company", async (task) => {
+    const { action, targetId, payload } = task;
+    if (action === "DELETE") {
+      await Company_default.deleteOne({
+        $or: [{ id: targetId }, { subdomain: targetId }],
+      });
+      logger.info(`[MongoCronSync] Synced Company deletion: ${targetId}`);
+      return;
+    }
+    if (payload) {
+      const cleanId = payload.id || payload.subdomain || targetId;
+      await Company_default.findOneAndUpdate(
+        { $or: [{ id: cleanId }, { subdomain: cleanId }] },
+        { $set: payload },
+        { returnDocument: "after", upsert: true, setDefaultsOnInsert: true },
+      );
+      logger.info(`[MongoCronSync] Synced Company UPSERT to MongoDB: ${cleanId}`);
+    }
+  });
   DragonflyCronSyncService.registerEntityProcessor("job", async (task) => {
     const { action, targetId, payload } = task;
     if (action === "DELETE") {
@@ -4652,32 +4736,29 @@ function initializeDragonflyMongoCronSync(intervalMs = 3e3) {
       await Job_default.findOneAndUpdate(
         { id: jobId },
         { $set: payload },
-        { returnDocument: "after", upsert: true, setDefaultsOnInsert: true }
+        { returnDocument: "after", upsert: true, setDefaultsOnInsert: true },
       );
       logger.info(`[MongoCronSync] Synced Job UPSERT to MongoDB: ${jobId}`);
     }
   });
-  DragonflyCronSyncService.registerEntityProcessor(
-    "settings",
-    async (task) => {
-      const { payload } = task;
-      if (payload) {
-        const scope = payload.scope || "admin";
-        const targetId = payload.targetId || "platform";
-        const data = payload.data || payload;
-        await Settings_default.findOneAndUpdate(
-          { scope, targetId },
-          { $set: { scope, targetId, data, updatedAt: /* @__PURE__ */ new Date() } },
-          { returnDocument: "after", upsert: true, setDefaultsOnInsert: true }
-        );
-        logger.info(`[MongoCronSync] Synced Settings UPSERT to MongoDB: ${scope}:${targetId}`);
-      }
+  DragonflyCronSyncService.registerEntityProcessor("settings", async (task) => {
+    const { payload } = task;
+    if (payload) {
+      const scope = payload.scope || "admin";
+      const targetId = payload.targetId || "platform";
+      const data = payload.data || payload;
+      await Settings_default.findOneAndUpdate(
+        { scope, targetId },
+        { $set: { scope, targetId, data, updatedAt: /* @__PURE__ */ new Date() } },
+        { returnDocument: "after", upsert: true, setDefaultsOnInsert: true },
+      );
+      logger.info(`[MongoCronSync] Synced Settings UPSERT to MongoDB: ${scope}:${targetId}`);
     }
-  );
+  });
   DragonflyCronSyncService.startCronSync(intervalMs);
   isInitialized = true;
   logger.info(
-    `[MongoCronSync] Dragonfly -> MongoDB Atlas Cron Worker active (Interval: ${intervalMs}ms)`
+    `[MongoCronSync] Dragonfly -> MongoDB Atlas Cron Worker active (Interval: ${intervalMs}ms)`,
   );
 }
 
@@ -4694,7 +4775,10 @@ async function bootstrap() {
     }
     if (process.env.DRAGONFLY_HOST || process.env.REDIS_HOST) {
       getDragonflyClient().catch((err) => {
-        console.warn("[Vercel API] Dragonfly / Redis initial connection notice:", err?.message || err);
+        console.warn(
+          "[Vercel API] Dragonfly / Redis initial connection notice:",
+          err?.message || err,
+        );
       });
     }
     try {
@@ -4708,6 +4792,4 @@ async function handler(req, res) {
   await bootstrap();
   return app(req, res);
 }
-export {
-  handler as default
-};
+export { handler as default };

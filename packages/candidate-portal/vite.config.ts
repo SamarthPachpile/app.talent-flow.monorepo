@@ -14,7 +14,9 @@ export default defineConfig(({ mode }) => {
       const p = new URL(urlStr).port;
       if (p) serverPort = Number(p);
     }
-  } catch {}
+  } catch {
+    // Ignore invalid candidate domain URL
+  }
 
   return {
     plugins: [react(), tailwindcss(), tsconfigPaths()],

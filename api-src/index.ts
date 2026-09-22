@@ -18,7 +18,10 @@ async function bootstrap() {
 
     if (process.env.DRAGONFLY_HOST || process.env.REDIS_HOST) {
       getDragonflyClient().catch((err) => {
-        console.warn("[Vercel API] Dragonfly / Redis initial connection notice:", err?.message || err);
+        console.warn(
+          "[Vercel API] Dragonfly / Redis initial connection notice:",
+          err?.message || err,
+        );
       });
     }
 

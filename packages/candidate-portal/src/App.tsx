@@ -22,7 +22,7 @@ import {
 
 type CandidatePortalView = "companies_list" | "auth" | "wizard" | "dashboard" | "company_root";
 
-export const getCandidateBasePath = () => {
+const getCandidateBasePath = () => {
   if (typeof window === "undefined") return "";
   const p = window.location.pathname;
   if (p.startsWith("/candidates-portal")) return "/candidates-portal";
@@ -31,7 +31,7 @@ export const getCandidateBasePath = () => {
   return "";
 };
 
-export const buildCandidateUrl = (subpath: string) => {
+const buildCandidateUrl = (subpath: string) => {
   const base = getCandidateBasePath();
   const cleanSub = subpath.startsWith("/") ? subpath : `/${subpath}`;
   if (!base) return cleanSub;
